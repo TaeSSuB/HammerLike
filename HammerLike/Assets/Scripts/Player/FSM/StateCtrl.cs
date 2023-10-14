@@ -117,18 +117,19 @@ public abstract class StateCtrl : MonoBehaviour
 
     public abstract void InitState();
 
+    public abstract void Release();
 
-	protected void Awake()
+	protected virtual void Awake()
 	{
 		
 	}
 
-	protected void Start()
+    protected virtual void Start()
 	{
         InitState();
 	}
 
-	protected void Update()
+	protected virtual void Update()
 	{
         if (nextState != null)
         {
@@ -144,20 +145,20 @@ public abstract class StateCtrl : MonoBehaviour
         { curState.UpdateState(); }
 	}
 
-	private void FixedUpdate()
+	protected virtual void FixedUpdate()
 	{
         if (curState != null)
         { curState.FixedUpdateState(); }
     }
 
-	private void LateUpdate()
+	protected virtual void LateUpdate()
 	{
         if (curState != null)
         { curState.LateUpdateState(); }
     }
 
 
-	private void OnEnable()
+	private  void OnEnable()
 	{
 		
 	}
