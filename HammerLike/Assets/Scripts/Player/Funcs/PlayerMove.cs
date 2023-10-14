@@ -1,32 +1,32 @@
-
+ï»¿
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-    public float speed = 5f; // ÇÃ·¹ÀÌ¾îÀÇ ÀÌµ¿ ¼Óµµ¸¦ Á¤ÀÇÇÕ´Ï´Ù.
-    public Camera cam; // ¸ŞÀÎ Ä«¸Ş¶ó¸¦ ÇÒ´çÇÏ±â À§ÇÑ º¯¼öÀÔ´Ï´Ù.
+    public float speed = 5f; // í”Œë ˆì´ì–´ì˜ ì´ë™ ì†ë„ë¥¼ ì •ì˜í•©ë‹ˆë‹¤.
+    public Camera cam; // ë©”ì¸ ì¹´ë©”ë¼ë¥¼ í• ë‹¹í•˜ê¸° ìœ„í•œ ë³€ìˆ˜ì…ë‹ˆë‹¤.
 
     void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal"); // ¼öÆò ¹æÇâÀÇ ÀÔ·ÂÀ» ¹Ş½À´Ï´Ù.
-        float vertical = Input.GetAxis("Vertical"); // ¼öÁ÷ ¹æÇâÀÇ ÀÔ·ÂÀ» ¹Ş½À´Ï´Ù.
+        float horizontal = Input.GetAxis("Horizontal"); // ìˆ˜í‰ ë°©í–¥ì˜ ì…ë ¥ì„ ë°›ìŠµë‹ˆë‹¤.
+        float vertical = Input.GetAxis("Vertical"); // ìˆ˜ì§ ë°©í–¥ì˜ ì…ë ¥ì„ ë°›ìŠµë‹ˆë‹¤.
 
-        Vector3 moveDirection = new Vector3(horizontal, 0f, vertical).normalized; // ÀÔ·Â°ªÀ» ¹ÙÅÁÀ¸·Î ÀÌµ¿ ¹æÇâÀ» °áÁ¤ÇÕ´Ï´Ù.
+        Vector3 moveDirection = new Vector3(horizontal, 0f, vertical).normalized; // ì…ë ¥ê°’ì„ ë°”íƒ•ìœ¼ë¡œ ì´ë™ ë°©í–¥ì„ ê²°ì •í•©ë‹ˆë‹¤.
 
-        // ¸¶¿ì½º ¹öÆ°À» ´©¸£°í ÀÖ´Â °æ¿ì
+        // ë§ˆìš°ìŠ¤ ë²„íŠ¼ì„ ëˆ„ë¥´ê³  ìˆëŠ” ê²½ìš°
         if (Input.GetMouseButton(0))
         {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition); // ¸¶¿ì½º À§Ä¡·ÎºÎÅÍ Ray¸¦ ½î¾ÆÁİ´Ï´Ù.
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition); // ë§ˆìš°ìŠ¤ ìœ„ì¹˜ë¡œë¶€í„° Rayë¥¼ ì˜ì•„ì¤ë‹ˆë‹¤.
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit)) // Ray¿Í ¹°Ã¼°¡ Ãæµ¹ÇÑ °æ¿ì
+            if (Physics.Raycast(ray, out hit)) // Rayì™€ ë¬¼ì²´ê°€ ì¶©ëŒí•œ ê²½ìš°
             {
-                Vector3 targetPosition = hit.point; // Ray°¡ ¹°Ã¼¿Í Ãæµ¹ÇÑ À§Ä¡ÀÔ´Ï´Ù.
-                targetPosition.y = transform.position.y; // y ÁÂÇ¥¸¦ ÇÃ·¹ÀÌ¾îÀÇ y ÁÂÇ¥·Î º¯°æÇÕ´Ï´Ù.
-                transform.LookAt(targetPosition); // ÇÃ·¹ÀÌ¾î°¡ ¸¶¿ì½º Ä¿¼­ÀÇ ¹æÇâÀ» ¹Ù¶óº¸°Ô ÇÕ´Ï´Ù.
+                Vector3 targetPosition = hit.point; // Rayê°€ ë¬¼ì²´ì™€ ì¶©ëŒí•œ ìœ„ì¹˜ì…ë‹ˆë‹¤.
+                targetPosition.y = transform.position.y; // y ì¢Œí‘œë¥¼ í”Œë ˆì´ì–´ì˜ y ì¢Œí‘œë¡œ ë³€ê²½í•©ë‹ˆë‹¤.
+                transform.LookAt(targetPosition); // í”Œë ˆì´ì–´ê°€ ë§ˆìš°ìŠ¤ ì»¤ì„œì˜ ë°©í–¥ì„ ë°”ë¼ë³´ê²Œ í•©ë‹ˆë‹¤.
             }
         }
 
-        transform.Translate(moveDirection * speed * Time.deltaTime, Space.World); // ÀÌµ¿ ¹æÇâ°ú ¼Óµµ¸¦ ¹ÙÅÁÀ¸·Î ÇÃ·¹ÀÌ¾î¸¦ ÀÌµ¿½ÃÅµ´Ï´Ù.
+        transform.Translate(moveDirection * speed * Time.deltaTime, Space.World); // ì´ë™ ë°©í–¥ê³¼ ì†ë„ë¥¼ ë°”íƒ•ìœ¼ë¡œ í”Œë ˆì´ì–´ë¥¼ ì´ë™ì‹œí‚µë‹ˆë‹¤.
     }
 }
