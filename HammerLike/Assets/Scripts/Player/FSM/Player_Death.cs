@@ -5,16 +5,18 @@ using UnityEngine;
 
 public class Player_Death :  cState
 {
-	protected Player_Death() : base()
-	{
 
-		int a = 0;
+	public Player player;
+
+	protected Player_Death(Player _player) 
+	{
+		player = _player;
 	}
 
 	public override void EnterState()
-{
+	{
 	base.EnterState();
-}
+	}
 public override void UpdateState()
 {
 	base.UpdateState();

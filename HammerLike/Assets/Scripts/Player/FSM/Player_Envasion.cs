@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class Player_Envasion : cState
 {
-	public Player_Envasion() : base()
+
+	public Player player;
+
+	public Player_Envasion(Player _player)
 	{
+		player = _player;
 	}
 
 	public override void EnterState()

@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class Player_Idle : cState
 {
-	public Player_Idle() : base()
+
+	public Player player;
+
+	public Player_Idle(Player _player)
 	{
-		int a = 0;
+		player = _player;
 	}
 
 	public override void EnterState()

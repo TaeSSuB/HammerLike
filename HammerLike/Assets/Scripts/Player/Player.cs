@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+
+
 
 //FSM은 StateController로 관리
 //Idle <-> Envasion <-> Death 정도로 관리 할 예정.
@@ -32,33 +35,47 @@ using UnityEngine;
 //대신 무기는 어캐할지 좀 고민해봐야할듯
 //Attack쪽에서 관리할지 어떻게 할지,,,,
 
+[Serializable]
+public struct PlayerStat
+{
+	public float maxHp;
+	public float curHp;
 
+	public float maxStamina;
+	public float curStamina;
+	public float staminaRecoverSpd;
+
+	public float moveSpd;
+
+	public float evasionDist;
+	public float evasionCost;
+
+	public float upperHomingSpd;
+	public float legHomingSpd;
+
+
+}
 
 public class Player : MonoBehaviour
 {
-  
-
 
     [Tooltip("State Machine")]
     public StateCtrl fsm;
 
-    [Tooltip("Default Comps")]
-    [Space(10f)]
+	[Tooltip("Default Comps")]
+	[Space(10f)]
+	public Transform mesh;
     public Animator animator;
-
 
 	[Tooltip("Temp Test")]
 	[Space(10f)]
 	public Inventory inven;
 
-
 	public Weapon curWeapon;
-
-
 
 	private void Awake()
 	{
-		
+		fsm = new PlayerFSM();
 
 	}
 	// Start is called before the first frame update

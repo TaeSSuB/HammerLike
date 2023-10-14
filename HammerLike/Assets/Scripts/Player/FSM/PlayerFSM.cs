@@ -7,7 +7,7 @@ public class PlayerFSM : StateCtrl
 	public override void InitState()
 	{
 		//throw new System.NotImplementedException();
-
+		
 	}
 
 	public override void Release()
@@ -18,6 +18,7 @@ public class PlayerFSM : StateCtrl
 	protected override void Awake()
 	{
 		base.Awake();
+
 	}
 
 	protected override void FixedUpdate()

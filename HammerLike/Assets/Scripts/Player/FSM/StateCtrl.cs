@@ -121,7 +121,8 @@ public abstract class StateCtrl : MonoBehaviour
 
 	protected virtual void Awake()
 	{
-		
+        states = new List<KeyValuePair<string, cState>>();
+
 	}
 
     protected virtual void Start()
@@ -170,7 +171,17 @@ public abstract class StateCtrl : MonoBehaviour
 
 	private void OnDestroy()
 	{
-		
+        preState = null;
+        curState = null;
+        nextState = null;
+
+
+        //for (int i = 0; i < states.Count; ++i)
+        //{
+        //    states = new List<KeyValuePair<string, cState>>();
+        //}
+
+        //states = null;
 	}
 
 

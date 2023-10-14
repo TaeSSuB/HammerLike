@@ -9,14 +9,9 @@ public abstract class cState
 {
 	protected cState()
 	{ }
-	
-
-	
 
 	public virtual void EnterState()
-	{
-
-	}
+	{ }
 
 	public virtual void UpdateState()
 	{ }
