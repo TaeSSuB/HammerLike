@@ -41,41 +41,66 @@ public struct PlayerStat
 	public float maxHp;
 	public float curHp;
 
+	[Space(7.5f)]
 	public float maxStamina;
 	public float curStamina;
 	public float staminaRecoverSpd;
 
+	[Space(7.5f)]
 	public float moveSpd;
 
-	public float evasionDist;
-	public float evasionCost;
+	[Space(7.5f)]
+	public EnvasionStat envasionStat;
 
-	public float upperHomingSpd;
-	public float legHomingSpd;
+	//public float evasionDist;	//회피 거리
+	//public float evasionCost;	//회피 스테미너 사용량
 
+	[Space(7.5f)]
+	public float upperHomingSpd; //상체 회전 속도
+	public float legHomingSpd; //하체 회전 속도
+}
 
+public struct EnvasionStat
+{
+	public float evasionDist;   //회피 거리
+	public float evasionCost;   //회피 스테미너 사용량
 }
 
 public class Player : MonoBehaviour
 {
+	public PlayerStat stat;
+
 
     [Tooltip("State Machine")]
-    public StateCtrl fsm;
+    public PlayerFSM fsm;
 
 	[Tooltip("Default Comps")]
 	[Space(10f)]
 	public Transform mesh;
     public Animator animator;
 
-	[Tooltip("Temp Test")]
+	[Tooltip("Action Table")]
 	[Space(10f)]
-	public Inventory inven;
+	public PlayerMove move;
+	public PlayerAtk atk;
+	public PlayerAim aim;
 
-	public Weapon curWeapon;
+	//[Tooltip("Temp Test")]
+	//[Space(10f)]
+	//public Inventory inven;
+
+	//public Weapon curWeapon;
 
 	private void Awake()
 	{
-		fsm = new PlayerFSM();
+		fsm = GetComponent<PlayerFSM>();
+
+		if (!fsm)
+		{
+			gameObject.AddComponent<PlayerFSM>();
+		}
+
+
 
 	}
 	// Start is called before the first frame update
@@ -87,7 +112,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+		move.Move(stat.moveSpd);
     }
 
 	private void LateUpdate()
@@ -106,6 +131,11 @@ public class Player : MonoBehaviour
 		
 	}
 	private void OnDisable()
+	{
+		
+	}
+
+	private void OnDestroy()
 	{
 		
 	}

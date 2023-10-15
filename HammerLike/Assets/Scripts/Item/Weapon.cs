@@ -2,6 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum WeaponType
+{ 
+    Bat,
+    Hammer,
+    Mace,
+    End
+}
+
+public struct WeaponStat
+{
+
+
+}
+
 public class Weapon : MonoBehaviour
 {
     // Start is called before the first frame update

@@ -1,11 +1,22 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CamCtrl : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+
+    public Camera followCam;  //For RenderTex
+    public PixelPerfectCamera zoomCam; //Only control zoom using Height vari, For Screen Render
+
+    [Space(10f)]
+    public Transform followObj;
+
+	private void Awake()
+	{
+		
+	}
+
+	void Start()
     {
         
     }

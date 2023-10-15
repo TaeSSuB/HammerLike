@@ -1,5 +1,51 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1188147887
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1188147888}
+  - component: {fileID: 1188147889}
+  m_Layer: 0
+  m_Name: Col
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1188147888
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188147887}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2941304899269773954}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &1188147889
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188147887}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &2941304899269773953
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,8 +58,9 @@ GameObject:
   - component: {fileID: 1055566027}
   - component: {fileID: 8202893202914209688}
   - component: {fileID: 1055566028}
-  - component: {fileID: 5125377789792643229}
   - component: {fileID: 6022393457034238963}
+  - component: {fileID: 5125377789792643229}
+  - component: {fileID: 2941304899251331658}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -34,6 +81,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2602330183642614466}
+  - {fileID: 1188147888}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -49,11 +97,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72dcf57037228434fa97381671803622, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fsm: {fileID: 0}
+  stat:
+    maxHp: 0
+    curHp: 0
+    maxStamina: 0
+    curStamina: 0
+    staminaRecoverSpd: 0
+    moveSpd: 0
+    upperHomingSpd: 0
+    legHomingSpd: 0
+  fsm: {fileID: 8202893202914209688}
   mesh: {fileID: 2602330183642614466}
   animator: {fileID: 3035563464178128940}
-  inven: {fileID: 0}
-  curWeapon: {fileID: 0}
+  move: {fileID: 1055566028}
+  atk: {fileID: 6022393457034238963}
+  aim: {fileID: 5125377789792643229}
 --- !u!114 &8202893202914209688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,20 +136,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e80dace7a2372574d83ac5ee73d7ba80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  cam: {fileID: 0}
---- !u!114 &5125377789792643229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2941304899269773953}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94f685106fb55fe4397e7b62e53b1da2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6022393457034238963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,6 +148,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d937a16cca8e2824ab9435b0bb321537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5125377789792643229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2941304899269773953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94f685106fb55fe4397e7b62e53b1da2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!54 &2941304899251331658
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2941304899269773953}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &2564779092083141929
 PrefabInstance:
   m_ObjectHideFlags: 0
