@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class PlayerAim : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	public void Aiming()
+	{ 
+		
+	
+	}
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

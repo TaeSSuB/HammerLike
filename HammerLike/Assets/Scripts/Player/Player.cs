@@ -77,7 +77,7 @@ public class Player : MonoBehaviour
 	[Tooltip("Default Comps")]
 	[Space(10f)]
 	public Transform mesh;
-    public Animator animator;
+    public Animator animCtrl;
 
 	[Tooltip("Action Table")]
 	[Space(10f)]
