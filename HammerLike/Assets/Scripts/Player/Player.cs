@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using Johnson;
 
 
 //FSM은 StateController로 관리
@@ -71,19 +72,25 @@ public class Player : MonoBehaviour
 	public PlayerStat stat;
 
 
-    [Tooltip("State Machine")]
+    [Header("State Machine")]
     public PlayerFSM fsm;
 
-	[Tooltip("Default Comps")]
 	[Space(10f)]
+	[Header("Default Comps")]
 	public Transform mesh;
     public Animator animCtrl;
 
-	[Tooltip("Action Table")]
 	[Space(10f)]
+	[Header("Action Table")]
 	public PlayerMove move;
 	public PlayerAtk atk;
 	public PlayerAim aim;
+
+	[Space(10f)]
+	[Header("Anim Bones")]
+	public Transform headBoneTr;
+	public Transform spineBoneTr;
+	public Transform hpBoneTr;
 
 	//[Tooltip("Temp Test")]
 	//[Space(10f)]
@@ -113,11 +120,15 @@ public class Player : MonoBehaviour
     void Update()
     {
 		move.Move(stat.moveSpd);
-    }
+		
+
+	}
 
 	private void LateUpdate()
 	{
-		
+		Vector3 temp = aim.Aiming();
+		Funcs.LookAtSpecificBone(spineBoneTr,eGizmoDir.Foward,temp,new Vector3());
+		//spineBoneTr.forward = aim.Aiming();
 	}
 
 	private void FixedUpdate()

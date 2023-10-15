@@ -13,7 +13,7 @@ public class PlayerMove : MonoBehaviour
         float horizon = Input.GetAxis("Horizontal");
         float vert = Input.GetAxis("Vertical");
 
-        Vector3 dir = new Vector3(horizon, 0f, vert).normalized;
+        Vector3 dir = new Vector3(-horizon, 0f, vert).normalized;
 
         transform.Translate(dir * moveSpd * Time.deltaTime);
     }
