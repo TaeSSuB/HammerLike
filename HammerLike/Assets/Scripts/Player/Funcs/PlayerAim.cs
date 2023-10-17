@@ -11,6 +11,8 @@ public class PlayerAim : MonoBehaviour
 
 	Transform testCube;
 
+	[SerializeField]
+	Camera zoomCam;
 	private void Awake()
 	{
 		testCube = GameObject.CreatePrimitive(PrimitiveType.Cube).transform;
@@ -26,7 +28,16 @@ public class PlayerAim : MonoBehaviour
 		
 
 		Vector3 mouseScreenPos = Input.mousePosition;
+		
+
+		//Vector3 mouseViewPos_main = Camera.main.ScreenToViewportPoint(mouseScreenPos);
+		//Vector3 mouseViewPos_zoom = zoomCam.ScreenToViewportPoint(mouseScreenPos);
+		//Debug.Log("main View : " + mouseViewPos_main + "\nZoom View : " + mouseViewPos_zoom);
+		////당연히 다른 값이 나옴.
+
+		
 		Ray mouseRay = Camera.main.ScreenPointToRay(mouseScreenPos); 
+		//줌 카메라로 바꾼다면 레이 처리 자체가 안될꺼임.
 
 		RaycastHit hit;
 		if (Physics.Raycast(mouseRay, out hit,500f, LayerMask.GetMask("Ground"))) 
@@ -38,7 +49,11 @@ public class PlayerAim : MonoBehaviour
 
 			//231016 0816 지금 이거 정확한 위치가 아님.
 			//아마 실질적인 작동 카메라랑 최종적 렌더링 카메라에서 나오는 단차인듯 함.
-			//다 스크린 좌표로 바꿔서 해보자
+			//둘 다 스크린 좌표로 바꿔서 계산해보기?
+			//231017 1413
+			//둘 다 스크린 좌표로 바꾸더라도 차이가 날것임. 결국에는 최종적 스크린 좌표로 나오는 카메라 자체가 다르니까.
+			//그렇다면 마우스 좌표를 보정해줘야 할 거 같은디
+			
 			testCube.position = mouseWorldPos;
 
 			
