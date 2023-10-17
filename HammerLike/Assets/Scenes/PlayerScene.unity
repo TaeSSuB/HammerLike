@@ -207,7 +207,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 100
   field of view: 60
   orthographic: 1
   orthographic size: 18
@@ -234,7 +234,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 88616536}
   m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
-  m_LocalPosition: {x: 0, y: 18, z: -28}
+  m_LocalPosition: {x: 0, y: 18, z: -21.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -862,7 +862,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 95de168514398304098dac282878fa5c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.022665378
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 95de168514398304098dac282878fa5c,
         type: 3}
@@ -872,7 +872,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 95de168514398304098dac282878fa5c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 13.69
+      value: 13.700084
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 95de168514398304098dac282878fa5c,
         type: 3}
@@ -1683,6 +1683,11 @@ PrefabInstance:
       propertyPath: zoomCam
       value: 
       objectReference: {fileID: 3750450846207805349}
+    - target: {fileID: 5125377789792643229, guid: bcc324288bfab9449a9d20b4da41dde6,
+        type: 3}
+      propertyPath: zoomPixelCam
+      value: 
+      objectReference: {fileID: 3750450846207805351}
     - target: {fileID: 7170195793522241521, guid: bcc324288bfab9449a9d20b4da41dde6,
         type: 3}
       propertyPath: outlineTargets.Array.data[0].IsVisible
@@ -1785,10 +1790,20 @@ PrefabInstance:
       propertyPath: orthographic size
       value: 18
       objectReference: {fileID: 0}
+    - target: {fileID: 3750450846314373363, guid: 50b39ec2696dc6c40a48889df621ed01,
+        type: 3}
+      propertyPath: m_NormalizedViewPortRect.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3750450846314373370, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3750450846314373372, guid: 50b39ec2696dc6c40a48889df621ed01,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -21.2
       objectReference: {fileID: 0}
     - target: {fileID: 3750450846314373374, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}
@@ -1867,13 +1882,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3750450846877432452, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3750450846877432452, guid: 50b39ec2696dc6c40a48889df621ed01,
+        type: 3}
       propertyPath: targetCameraHalfHeight
-      value: 18
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 3750450846877432452, guid: 50b39ec2696dc6c40a48889df621ed01,
+        type: 3}
+      propertyPath: maxCameraHalfHeightEnabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3750450846877432453, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}
       propertyPath: weight
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3750450846877432453, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}
@@ -1883,7 +1908,7 @@ PrefabInstance:
     - target: {fileID: 3750450846877432506, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}
       propertyPath: orthographic size
-      value: 17.777779
+      value: 41.1
       objectReference: {fileID: 0}
     - target: {fileID: 3750450846877432507, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}
@@ -1928,6 +1953,18 @@ Camera:
     type: 3}
   m_PrefabInstance: {fileID: 3750450846207805348}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3750450846207805351 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3750450846877432452, guid: 50b39ec2696dc6c40a48889df621ed01,
+    type: 3}
+  m_PrefabInstance: {fileID: 3750450846207805348}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 820dff5ef6cfac54cafac9e301a77a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &4056546856536841606
 Transform:
   m_ObjectHideFlags: 0
