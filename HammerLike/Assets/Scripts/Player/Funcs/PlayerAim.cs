@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Johnson;
+
 public class PlayerAim : MonoBehaviour
 {
 	//레이 쏴서 하는 방식
@@ -21,6 +23,11 @@ public class PlayerAim : MonoBehaviour
 	Ray mouseRay;
 
 	Vector3 rayResultPoint;
+
+	[SerializeField]
+	Transform renderPlane;
+
+	public RenderTexture renderTex;
 
 	private void Awake()
 	{
@@ -85,40 +92,49 @@ public class PlayerAim : MonoBehaviour
 
 	public Vector3 Aiming(float mouseSpd = 1f)
 	{
+
+		//해상도 바뀌면 렌더 텍스쳐 사이즈 바꾸기
+		//231020 0146 
+		//해상도 16:9 비율 고정 한다고 함.
+		//만약 해상도 비율이 바뀐다면,
+		//1. 렌더텍스쳐 해상도 해당 비율의 최소값으로 바꿔주고
+		//2. 렌더 텍스쳐 쓰는 Plane Scale 비율도 바꿔주고
+		//3. 그거에 맞춰서 zoom Cam의 Max Height 바꿔주셈
+		//직교투영 카메라 size가 10이면 Unity Scale 기준 세로 반지름 10만큼 렌더링함.
+		
+		//=> 즉 해상도를 4:3으로 바꾼다면 최소 해상도를 800*600으로 잡고
+		//1. 렌더 텍스쳐 해상도 800*600 으로 교체
+		//2. plane의 Scale 4,1,3 으로 교체
+		//3. zoomCam의 MaxHeight 30으로 (Plane Scale 1 =  Unity Scale 10) 교체
+		//하면 작동 됨.
+
+		//나중가서는 GameManager 같은 곳에서 16:9 해상도 고정해주고
+		//해상도 바뀔때만 처리해주면 좋을듯
+		
+		
+		float curArea = Screen.width * Screen.height;
+		float areaScaleRatio = curArea / (Defines.minHeight * Defines.minWidth);
+		//너비의 비율이니까 다시 제곱 해줘야함. 걍 한쪽 변 길이 나누기 해도 되고 ㅋㅋ
+		areaScaleRatio = Mathf.Sqrt(areaScaleRatio);
+		Debug.Log("areaScaleRatio : " + areaScaleRatio);
+
 		Vector3 mouseScreenPos = Input.mousePosition;
 
 		Vector2 mouseViewPos_main = Camera.main.ScreenToViewportPoint(mouseScreenPos);
 		Vector2 mouseViewPos_zoom = zoomCam.ScreenToViewportPoint(mouseScreenPos);
-		Debug.Log("main ViewPort : " + mouseViewPos_main + "\nZoom ViewPort : " + mouseViewPos_zoom);
 
-
-		//float zoomCamSize = zoomCam.orthographicSize;
-		float ratio = zoomCam.orthographicSize / zoomPixelCam.maxCameraHalfHeight;
-		Debug.Log("Ratio : " + ratio);
-		//Vector2 offsetViewport = new Vector2(mouseViewPos_main.x - 0.5f, mouseViewPos_main.y - 0.5f);
-		//offsetViewport *= ratio;
-		//offsetViewport += new Vector2(0.5f, 0.5f);
-
-		//Zoom 카메라의 사이즈 비율에 따라서 Main에서 어디 위치로 찍어야 하는지
-		//이건 일단 해상도와 
-		//Vector2 offsetViewport = new Vector2(, );
-
-
-		//Debug.Log("Ratio : " + ratio + "\noffset ViewPort : " + offsetViewport);
-
-		//float temp  = Test()
-
+		float zoomRatio = zoomCam.orthographicSize / zoomPixelCam.maxCameraHalfHeight;
+		//Debug.Log("Ratio : " + ratio);
 
 		//0.5빼서 중점 맞춰주고 
 		//비율 곱해주고
 		//다시 0.5 더해서 뷰포트 좌표에 맞춰주기?
 		Vector2 result = new Vector2(mouseViewPos_main.x - 0.5f, mouseViewPos_main.y - 0.5f);
-		result *= ratio;
+		result *= zoomRatio;
 		result += new Vector2(0.5f, 0.5f);
-		//231017 시발 잘되노;
-
-		//이제 할건 해상도에 따라서 차이나는 부분을 보정해주는거
-		//픽셀 퍼펙트 카메라 오얼 썸띵의 기능
+		result /= areaScaleRatio;
+		//Debug.Log("main ViewPort : " + mouseViewPos_main);
+		//Debug.Log("Result viewPort : " + result);
 
 
 		mouseRay = Camera.main.ViewportPointToRay(result);
@@ -150,49 +166,49 @@ public class PlayerAim : MonoBehaviour
 		}
 
 		return playerToMouseDir;
-		//return Vector3.zero;
+		
 	}
 
 
-	public float Test(float val, float ratio)
-	{
-		//float offset = ((ratio - 1f) * 0.5f) + 1;
-		//Vector2 clamp = new Vector2(0.5f - (1))
+	//public float Test(float val, float ratio)
+	//{
+	//	//float offset = ((ratio - 1f) * 0.5f) + 1;
+	//	//Vector2 clamp = new Vector2(0.5f - (1))
 
-		return val < 0.5f ? 0.5f -  val * ratio : 0.5f + val * ratio;
-	}
+	//	return val < 0.5f ? 0.5f -  val * ratio : 0.5f + val * ratio;
+	//}
 
-	public Vector2 Test(Vector2 val, float ratio)
-	{
-		//float offset = ((ratio - 1f) * 0.5f) + 1;
-		Vector2 temp = new Vector2(Test(val.x, ratio), Test(val.y, ratio));
-		return temp;
+	//public Vector2 Test(Vector2 val, float ratio)
+	//{
+	//	//float offset = ((ratio - 1f) * 0.5f) + 1;
+	//	Vector2 temp = new Vector2(Test(val.x, ratio), Test(val.y, ratio));
+	//	return temp;
 
-		//Vector2 result = val;
+	//	//Vector2 result = val;
 
-		//if (val.x > 0.5f && val.y > 0.5)
-		//{//1사분면
-		//	result.x = val.x * ratio;
-		//	result.y = val.y * ratio;
-		//}
-		//else if (val.x < 0.5f && val.y > 0.5f)
-		//{//2사분면
-		//	result.x = val.x * ratio;
-		//	result.y = val.y * ratio;
-		//}
-		//else if (val.x < 0.5f && val.y < 0.5f)
-		//{//3사분면
-		//	result.x = val.x * ratio;
-		//	result.y = val.y * ratio;
-		//}
-		//else if (val.x > 0.5f && val.y < 0.5f)
-		//{ //4사분면
-		//	result.x = val.x * ratio;
-		//	result.y = val.y * ratio;
-		//}
+	//	//if (val.x > 0.5f && val.y > 0.5)
+	//	//{//1사분면
+	//	//	result.x = val.x * ratio;
+	//	//	result.y = val.y * ratio;
+	//	//}
+	//	//else if (val.x < 0.5f && val.y > 0.5f)
+	//	//{//2사분면
+	//	//	result.x = val.x * ratio;
+	//	//	result.y = val.y * ratio;
+	//	//}
+	//	//else if (val.x < 0.5f && val.y < 0.5f)
+	//	//{//3사분면
+	//	//	result.x = val.x * ratio;
+	//	//	result.y = val.y * ratio;
+	//	//}
+	//	//else if (val.x > 0.5f && val.y < 0.5f)
+	//	//{ //4사분면
+	//	//	result.x = val.x * ratio;
+	//	//	result.y = val.y * ratio;
+	//	//}
 
-		//return result;
-	}
+	//	//return result;
+	//}
 
 
 	private void OnDrawGizmos()

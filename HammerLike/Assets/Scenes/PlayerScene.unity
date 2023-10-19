@@ -886,9 +886,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 840fc650ca4f77b45b311cf4c83c496e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materialIndex: 3
-  tilesX: 2
-  tilesY: 2
+  materialsData: []
 --- !u!1 &1451728667 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8001870922471380120, guid: 95de168514398304098dac282878fa5c,
@@ -1233,7 +1231,7 @@ GameObject:
   - component: {fileID: 2071334556}
   - component: {fileID: 2071334555}
   m_Layer: 0
-  m_Name: Render_Scene
+  m_Name: RenderTex_Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1329,7 +1327,7 @@ Transform:
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 105, z: 0}
   m_LocalScale: {x: 16, y: 1, z: 9}
-  m_ConstrainProportionsScale: 1
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -1820,6 +1818,11 @@ PrefabInstance:
       objectReference: {fileID: 3750450846207805349}
     - target: {fileID: 5125377789792643229, guid: bcc324288bfab9449a9d20b4da41dde6,
         type: 3}
+      propertyPath: renderPlane
+      value: 
+      objectReference: {fileID: 2071334559}
+    - target: {fileID: 5125377789792643229, guid: bcc324288bfab9449a9d20b4da41dde6,
+        type: 3}
       propertyPath: zoomPixelCam
       value: 
       objectReference: {fileID: 3750450846207805351}
@@ -2022,8 +2025,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3750450846877432452, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}
-      propertyPath: targetCameraHalfHeight
+      propertyPath: maxCameraHalfHeight
       value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 3750450846877432452, guid: 50b39ec2696dc6c40a48889df621ed01,
+        type: 3}
+      propertyPath: targetCameraHalfHeight
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3750450846877432452, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}
@@ -2043,7 +2051,7 @@ PrefabInstance:
     - target: {fileID: 3750450846877432506, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}
       propertyPath: orthographic size
-      value: 45
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3750450846877432507, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}

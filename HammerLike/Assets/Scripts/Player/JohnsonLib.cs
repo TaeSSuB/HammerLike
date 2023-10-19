@@ -16,6 +16,17 @@ namespace Johnson
     }
 
 
+    public static class Defines
+    {
+        public const float minWidth = 1280f;
+        public const float minHeight = 720f;
+
+        //public const float minWidth = 800;
+        //public const float minHeight = 600f;
+
+    }
+
+
     public static class Funcs
 	{
 
