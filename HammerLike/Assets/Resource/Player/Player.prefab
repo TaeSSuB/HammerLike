@@ -114,7 +114,7 @@ MonoBehaviour:
   aim: {fileID: 5125377789792643229}
   headBoneTr: {fileID: 612755045067140382}
   spineBoneTr: {fileID: 6519598044952491886}
-  hipBoneTr: {fileID: 4921229117506710867}
+  hpBoneTr: {fileID: 0}
 --- !u!114 &8202893202914209688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,6 +163,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94f685106fb55fe4397e7b62e53b1da2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  zoomPixelCam: {fileID: 0}
+  zoomCam: {fileID: 0}
 --- !u!54 &2941304899251331658
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -214,17 +216,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 462a5e8fa6bd2584684eb21df1394d7b,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 462a5e8fa6bd2584684eb21df1394d7b,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 462a5e8fa6bd2584684eb21df1394d7b,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 462a5e8fa6bd2584684eb21df1394d7b,
         type: 3}
@@ -557,12 +559,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &4921229117506710867 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7483956943199731834, guid: 462a5e8fa6bd2584684eb21df1394d7b,
-    type: 3}
-  m_PrefabInstance: {fileID: 2564779092083141929}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4934630179305950798 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7488563681496851303, guid: 462a5e8fa6bd2584684eb21df1394d7b,
