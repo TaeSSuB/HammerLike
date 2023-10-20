@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerFSM : StateCtrl
 {
+	Player player;
+
 	public override void InitState()
 	{
 		//throw new System.NotImplementedException();

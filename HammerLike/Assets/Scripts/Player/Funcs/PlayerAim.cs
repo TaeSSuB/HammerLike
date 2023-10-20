@@ -6,6 +6,8 @@ using Johnson;
 
 public class PlayerAim : MonoBehaviour
 {
+
+	Player player;
 	//레이 쏴서 하는 방식
 
 	Vector3 mouseWorldPos;
@@ -30,6 +32,8 @@ public class PlayerAim : MonoBehaviour
 
 	private void Awake()
 	{
+		player = GetComponent<Player>();
+
 #if UNITY_EDITOR
 		testCube = GameObject.CreatePrimitive(PrimitiveType.Cube).transform;
 		testCube.transform.localScale *= 4f;
@@ -41,7 +45,7 @@ public class PlayerAim : MonoBehaviour
 
 		//해상도 바뀌면 렌더 텍스쳐 사이즈 바꾸기
 		//231020 0146 
-		//해상도 16:9 비율 고정 한다고 함.
+		//해상도 16:9 비율 고정 한다고 함. (현재 따로 처리한 코드는 없음. 프레임워크 작동되면 게임매니저에서 처리해주시면 될듯함.)
 		//만약 해상도 비율이 바뀐다면,
 		//1. 렌더텍스쳐 해상도 해당 비율의 최소값으로 바꿔주고
 		//2. 렌더 텍스쳐 쓰는 Plane Scale 비율도 바꿔주고
@@ -67,7 +71,7 @@ public class PlayerAim : MonoBehaviour
 		Vector3 mouseScreenPos = Input.mousePosition;
 
 		Vector2 mouseViewPos_main = Camera.main.ScreenToViewportPoint(mouseScreenPos);
-		Vector2 mouseViewPos_zoom = zoomCam.ScreenToViewportPoint(mouseScreenPos);
+		//Vector2 mouseViewPos_zoom = zoomCam.ScreenToViewportPoint(mouseScreenPos);
 
 		float zoomRatio = zoomCam.orthographicSize / zoomPixelCam.maxCameraHalfHeight;
 		//Debug.Log("Ratio : " + ratio);
@@ -109,12 +113,9 @@ public class PlayerAim : MonoBehaviour
 			rayResultPoint = mouseWorldPos;
 
 			playerToMouseDir = (mouseWorldPos - transform.position).normalized;
-
-			
 		}
 
 		return playerToMouseDir;
-		
 	}
 
 
@@ -122,6 +123,11 @@ public class PlayerAim : MonoBehaviour
 	{
 		Gizmos.color = Color.red;
 		Gizmos.DrawLine(Camera.main.transform.position, rayResultPoint);
+	}
+
+	private void OnDestroy()
+	{
+		player = null;
 	}
 }
 

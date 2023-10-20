@@ -8,19 +8,55 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
 
-    public void Move(float moveSpd)
+    Player player;
+
+	private void Awake()
+	{
+        player = GetComponent<Player>();
+    }
+
+	public void Move(float moveSpd)
     {
         float horizon = Input.GetAxis("Horizontal");
         float vert = Input.GetAxis("Vertical");
 
-        Vector3 dir = new Vector3(-horizon, 0f, vert).normalized;
 
-        transform.Translate(dir * moveSpd * Time.deltaTime);
+        if (horizon != 0f | vert != 0f)
+        {
+            player.animCtrl.SetLayerWeight(2, 1f);
+
+            Vector3 dir = new Vector3(horizon, 0f, vert).normalized;
+            
+            player.rd.velocity = dir * moveSpd;
+        }
+        else
+        {
+            player.animCtrl.SetLayerWeight(2, 0f);
+
+            player.rd.velocity = Vector3.zero;
+        }
+
+        //231020 22:30 플레이어 물리 영향 받는거 있다해서 움직이는 코드 수정
+        //transform.Translate(dir * moveSpd * Time.deltaTime);
+    }
+
+    public void Run(float runSpd)
+    { 
+        
+    
     }
 
     public void Envasion(EnvasionStat stat)
-    { 
-        
+    {
+        if (Input.GetKeyUp(KeyCode.Space))
+        { 
+
+        }
     }
 
+
+	private void OnDestroy()
+	{
+        player = null;
+	}
 }

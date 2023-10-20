@@ -48,7 +48,8 @@ public struct PlayerStat
 	public float staminaRecoverSpd;
 
 	[Space(7.5f)]
-	public float moveSpd;
+	public float walkSpd;
+	public float runSpd;
 
 	[Space(7.5f)]
 	public EnvasionStat envasionStat;
@@ -69,6 +70,10 @@ public struct EnvasionStat
 
 public class Player : MonoBehaviour
 {
+	//기능 구현 할 때는 접근지정자 크게 신경 안쓰고 작업함.
+	//차후 기능 작업 끝나고 나면 추가적으로 정리 예정!!
+	//불편해도 양해바람니다!!! 스마미센!!
+
 	public PlayerStat stat;
 
 
@@ -77,14 +82,21 @@ public class Player : MonoBehaviour
 
 	[Space(10f)]
 	[Header("Default Comps")]
-	public Transform mesh;
+	public Transform meshTr;
     public Animator animCtrl;
+	public Rigidbody rd;
+
 
 	[Space(10f)]
 	[Header("Action Table")]
 	public PlayerMove move;
 	public PlayerAtk atk;
 	public PlayerAim aim;
+
+	[Space(10f)]
+	[Header("Cam Controller")]
+	public CamCtrl camCtrl;
+
 
 	[Space(10f)]
 	[Header("Anim Bones")]
@@ -107,7 +119,12 @@ public class Player : MonoBehaviour
 			gameObject.AddComponent<PlayerFSM>();
 		}
 
+		if (!rd)
+		{
+			rd = GetComponent<Rigidbody>();
+		}
 
+		
 
 	}
 	// Start is called before the first frame update
@@ -119,16 +136,16 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		move.Move(stat.moveSpd);
+		move.Move(stat.walkSpd);
 		
 
 	}
 
 	private void LateUpdate()
 	{
-		Vector3 temp = aim.Aiming();
-		Funcs.LookAtSpecificBone(spineBoneTr,eGizmoDir.Foward,temp,new Vector3());
-		//spineBoneTr.forward = aim.Aiming();
+		Vector3 lookDir = aim.Aiming();
+		Funcs.LookAtSpecificBone(spineBoneTr,eGizmoDir.Foward, lookDir, Vector3.zero);
+		
 	}
 
 	private void FixedUpdate()
