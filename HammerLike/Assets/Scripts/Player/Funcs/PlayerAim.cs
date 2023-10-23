@@ -21,6 +21,8 @@ public class PlayerAim : MonoBehaviour
 	Ray mouseRay;
 	Vector3 rayResultPoint;
 
+	public bool TestCubeOption;
+
 
 #if UNITY_EDITOR
 	Transform testCube;
@@ -35,8 +37,11 @@ public class PlayerAim : MonoBehaviour
 		player = GetComponent<Player>();
 
 #if UNITY_EDITOR
-		testCube = GameObject.CreatePrimitive(PrimitiveType.Cube).transform;
-		testCube.transform.localScale *= 4f;
+		if (TestCubeOption)
+		{
+			testCube = GameObject.CreatePrimitive(PrimitiveType.Cube).transform;
+			testCube.transform.localScale *= 4f;
+		}
 #endif
 	}
 
@@ -108,7 +113,10 @@ public class PlayerAim : MonoBehaviour
 			//다시 레이를 쏴서 체크하는 방식이 어쩌면 더 정확할거 같음.
 
 #if UNITY_EDITOR
-			testCube.position = mouseWorldPos;
+			if (TestCubeOption)
+			{
+				testCube.position = mouseWorldPos;
+			}
 #endif
 			rayResultPoint = mouseWorldPos;
 
