@@ -126,6 +126,6 @@ Shader "ProPixelizer/SRP/KMJPixelizedWithOutline"
 			ENDHLSL
 		}
      }
-	CustomEditor "PixelizedWithOutlineShaderGUI"
+	CustomEditor "KMJPixelizedWithOutlineShaderGUI"
 	FallBack "ProPixelizer/Hidden/ProPixelizerBase"
 }
