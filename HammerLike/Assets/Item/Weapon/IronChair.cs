@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Assets.Item.Weapon
 {
-    internal class WoodHammer : Weapon
+    internal class IronChair : Weapon
     {
         protected override void Skill()
         {
