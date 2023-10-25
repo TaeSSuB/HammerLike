@@ -12,6 +12,7 @@ public class PlayerMove : MonoBehaviour
 
     public float distortionOffset;
 
+    public Vector3 preMoveDir;
 
     private void Awake()
 	{
@@ -51,11 +52,11 @@ public class PlayerMove : MonoBehaviour
 
     public void Envasion(EnvasionStat stat)
     {
-        if (Input.GetKeyUp(KeyCode.Space))
-        { 
-
-        }
-    }
+		if (Input.GetKeyUp(KeyCode.Space))
+		{
+            player.fsm.SetNextState("Player_Envasion");
+		}
+	}
 
 
 	private void OnDestroy()

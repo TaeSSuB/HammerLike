@@ -21,10 +21,8 @@ public class PlayerAim : MonoBehaviour
 	Ray mouseRay;
 	Vector3 rayResultPoint;
 
-	public bool TestCubeOption;
-
-
 #if UNITY_EDITOR
+	public bool TestCubeOption;
 	Transform testCube;
 #endif
 

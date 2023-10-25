@@ -19,6 +19,9 @@ public class Player_Idle : cState
 	public override void UpdateState()
 	{
 		base.UpdateState();
+
+
+
 	}
 
 

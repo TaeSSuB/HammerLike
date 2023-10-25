@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class PlayerFSM : StateCtrl
 {
+
 	Player player;
 
 	public override void InitState()
 	{
 		//throw new System.NotImplementedException();
-		
+		curState = AddState(new Player_Idle(player));
+		AddState(new Player_Envasion(player));
+		AddState(new Player_Death(player));
 	}
 
 	public override void Release()
@@ -21,16 +24,8 @@ public class PlayerFSM : StateCtrl
 	{
 		base.Awake();
 
-	}
+		player = GetComponent<Player>();
 
-	protected override void FixedUpdate()
-	{
-		base.FixedUpdate();
-	}
-
-	protected override void LateUpdate()
-	{
-		base.LateUpdate();
 	}
 
 	protected override void Start()
@@ -42,4 +37,15 @@ public class PlayerFSM : StateCtrl
 	{
 		base.Update();
 	}
+
+	protected override void FixedUpdate()
+	{
+		base.FixedUpdate();
+	}
+
+	protected override void LateUpdate()
+	{
+		base.LateUpdate();
+	}
+	
 }
