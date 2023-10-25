@@ -90,7 +90,8 @@ inline void PixelClipAlpha_float(float4x4 unity_MatrixVP, float3 objectCentreWS,
 	#else
 		// do not use dithering - just alpha clip threshold
 	#endif
-	alpha_in = step(alpha_clip_threshold, alpha_in);
+	alpha_in = saturate(alpha_in);
+	//alpha_in = step(alpha_clip_threshold, alpha_in);
 
 	// Always draw edge pixels
 	float x_edge = min(1.0, step(posCS.x, 1) + step(screenParams.x - 1, posCS.x));

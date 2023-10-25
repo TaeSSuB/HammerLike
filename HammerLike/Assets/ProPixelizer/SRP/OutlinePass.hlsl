@@ -62,7 +62,7 @@ void outline_frag(Varyings i, out float4 color : COLOR)
 	PixelClipAlpha_float(UNITY_MATRIX_VP, _PixelGridOrigin.xyz, screenParams, pixelPos, _PixelSize, alpha, _AlphaClipThreshold, alpha_out, dither_uv);
 #endif 
 	//clip(alpha_out - 0.0001);
-	clip(alpha_out - 0.1);
+	clip(alpha_out - 0.8);
 	PackOutline(_OutlineColor, _ID, round(_PixelSize), color);
 #if NORMAL_EDGE_DETECTION_ON
 	color.rb = i.normalCS.rg * 0.5 + 0.5;
