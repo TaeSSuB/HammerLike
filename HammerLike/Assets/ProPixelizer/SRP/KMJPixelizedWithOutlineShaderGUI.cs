@@ -48,6 +48,20 @@ public class KMJPixelizedWithOutlineShaderGUI : ShaderGUI
         useAlpha = Material.IsKeywordEnabled(ALPHA_ON);
         useShadows = Material.IsKeywordEnabled(RECEIVE_SHADOWS_ON);
 
+        string materialPath = AssetDatabase.GetAssetPath(Material);
+    string directory = System.IO.Path.GetDirectoryName(materialPath);
+    string materialName = System.IO.Path.GetFileNameWithoutExtension(materialPath);
+    string gradientTexturePath = System.IO.Path.Combine(directory, materialName + "_GradientTexture.asset");
+    
+    // 저장된 텍스처를 불러오기
+    Texture2D savedGradientTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(gradientTexturePath);
+
+    // 저장된 텍스처가 있다면, 그 텍스처를 기반으로 Gradient 초기화
+    if (savedGradientTexture != null)
+    {
+        currentGradient = TextureToGradient(savedGradientTexture);
+    }
+
         EditorGUILayout.LabelField("ProPixelizer | Appearance+Outline Material", EditorStyles.boldLabel);
         if (GUILayout.Button("User Guide")) Application.OpenURL("https://sites.google.com/view/propixelizer/user-guide");
         EditorGUILayout.Space();
@@ -127,12 +141,34 @@ public class KMJPixelizedWithOutlineShaderGUI : ShaderGUI
     showLighting = EditorGUILayout.BeginFoldoutHeaderGroup(showLighting, "Lighting");
     if (showLighting)
     {
-        EditorGUI.BeginChangeCheck();
+         EditorGUI.BeginChangeCheck();
         currentGradient = EditorGUILayout.GradientField("Lighting Ramp", currentGradient);
         if (EditorGUI.EndChangeCheck())
         {
             Texture2D gradientTexture = GradientToTexture(currentGradient);
             Material.SetTexture("_LightingRamp", gradientTexture);
+
+            // 머터리얼의 경로와 이름을 사용하여 gradient texture의 저장 경로 생성
+            string materialPath = AssetDatabase.GetAssetPath(Material);
+            string directory = System.IO.Path.GetDirectoryName(materialPath);
+            string materialName = System.IO.Path.GetFileNameWithoutExtension(materialPath);
+            string gradientTexturePath = System.IO.Path.Combine(directory, materialName + "_GradientTexture.asset");
+
+            // 시작: 에셋으로 저장하는 부분
+            if (AssetDatabase.LoadAssetAtPath<Texture2D>(gradientTexturePath) == null)
+            {
+                AssetDatabase.CreateAsset(gradientTexture, gradientTexturePath);
+                AssetDatabase.SaveAssets();
+            }
+            else
+            {
+                Texture2D existingTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(gradientTexturePath);
+                existingTexture.SetPixels(gradientTexture.GetPixels());
+                existingTexture.Apply();
+                EditorUtility.SetDirty(existingTexture);
+                AssetDatabase.SaveAssets();
+            }
+            // 끝: 에셋으로 저장하는 부분
         }
 
         var ambient = FindProperty("_AmbientLight", properties);
@@ -143,6 +179,27 @@ public class KMJPixelizedWithOutlineShaderGUI : ShaderGUI
         editor.ShaderProperty(receiveShadows, "Receive shadows");
     }
     EditorGUILayout.EndFoldoutHeaderGroup();
+}
+
+    private Gradient TextureToGradient(Texture2D texture)
+{
+    Gradient gradient = new Gradient();
+
+    int maxKeys = 8;
+    int step = texture.width / maxKeys;
+
+    GradientColorKey[] colorKeys = new GradientColorKey[maxKeys];
+
+    for (int i = 0; i < maxKeys; i++)
+    {
+        colorKeys[i].color = texture.GetPixel(i * step, 0);
+        colorKeys[i].time = i / (float)(maxKeys - 1);
+    }
+
+    gradient.colorKeys = colorKeys;
+    gradient.alphaKeys = new GradientAlphaKey[] { new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1) }; // Assuming full alpha
+
+    return gradient;
 }
 
 
