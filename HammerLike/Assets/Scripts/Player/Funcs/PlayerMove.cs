@@ -10,7 +10,10 @@ public class PlayerMove : MonoBehaviour
 
     Player player;
 
-	private void Awake()
+    public float distortionOffset;
+
+
+    private void Awake()
 	{
         player = GetComponent<Player>();
     }
@@ -26,7 +29,7 @@ public class PlayerMove : MonoBehaviour
             player.animCtrl.SetLayerWeight(2, 1f);
 
             Vector3 dir = new Vector3(horizon, 0f, vert).normalized;
-            
+            dir.z *= distortionOffset;
             player.rd.velocity = dir * moveSpd;
         }
         else

@@ -24,6 +24,16 @@ namespace Johnson
         //public const float minWidth = 800;
         //public const float minHeight = 600f;
 
+
+        public static Vector2[] ViewportPos =
+{
+        new Vector2(0,1),	//LT
+		new Vector2(1,1),	//RT
+		new Vector2(1,0),	//RB
+		new Vector2(0,0),//LB
+		new Vector2(0.5f, 0.5f) //Center
+	};
+
     }
 
 

@@ -20,8 +20,8 @@ public class PixelPerfectCamera : MonoBehaviour {
 
     public static int PIXELS_PER_UNIT = 100;
 
-    public enum Dimension {Width, Height};
-    public enum ConstraintType {None, Horizontal, Vertical};
+    public enum Dimension { Width, Height };
+    public enum ConstraintType { None, Horizontal, Vertical };
 
     // Input
     public bool maxCameraHalfWidthEnabled = false;
@@ -55,6 +55,10 @@ public class PixelPerfectCamera : MonoBehaviour {
     // Internal
     Resolution res;
     Camera cam;
+    public Camera Cam
+    {
+        get { return cam; }
+    }
 
     //void testMethod()
     //{
