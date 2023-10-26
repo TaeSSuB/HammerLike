@@ -6,17 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Item.Weapon
+namespace Assets.Item.Spend
 {
-    internal class IronChair : Weapon
+    internal class HealthPotion : Spend
     {
-        protected override void Skill()
+        protected override void Effect()
         {
-            if (skill_ == true)
-            {
-                showStat();
-            }
+            // Player의 체력을 회복시킴
         }
-
     }
 }
