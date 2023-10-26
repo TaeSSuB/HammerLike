@@ -112,7 +112,9 @@ public class Player : MonoBehaviour
 
 	private void Awake()
 	{
-		fsm = GetComponent<PlayerFSM>();
+		if (!fsm)
+		{ fsm = GetComponent<PlayerFSM>(); }
+				
 
 		if (!fsm)
 		{
@@ -124,6 +126,7 @@ public class Player : MonoBehaviour
 			rd = GetComponent<Rigidbody>();
 		}
 
+		
 		
 
 	}

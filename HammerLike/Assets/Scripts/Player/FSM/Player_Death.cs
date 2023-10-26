@@ -8,7 +8,7 @@ public class Player_Death :  cState
 
 	public Player player;
 
-	protected Player_Death(Player _player) 
+	public Player_Death(Player _player) 
 	{
 		player = _player;
 	}

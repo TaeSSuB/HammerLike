@@ -14,6 +14,17 @@ public abstract class StateCtrl : MonoBehaviour
     //private cState[] states;
     protected List<KeyValuePair<string, cState>> states;
 
+    public T AddState<T>(T state) where T : cState
+    {
+        string tempName = state.GetType().Name;
+        var temp = new KeyValuePair<string, cState>(tempName, state);
+
+        states.Add(temp);
+
+        return state;
+        //curState = state;
+    }
+
     protected cState preState = null;
     public cState GetPreState
     {
