@@ -14,37 +14,47 @@ public class RandomTileUV : MonoBehaviour
 
     public RandomTileMaterialData[] materialsData;
 
-    private void Start()
+    private void Awake()
     {
-        if (materialsData.Length == 0)
+        Renderer rend = GetComponent<Renderer>();
+        rend.material = new Material(rend.sharedMaterial);
+
+        // 현재 오브젝트의 머터리얼이 materialsData에 있는지 확인
+        // rend.material을 사용하여 일치하는 재질을 찾습니다.
+        RandomTileMaterialData selectedData = materialsData.FirstOrDefault(md => md.material == rend.material);
+
+        if (selectedData == null)
         {
             Debug.LogWarning("재질 데이터가 설정되지 않았습니다.");
             return;
         }
 
-        RandomTileMaterialData selectedData = materialsData[Random.Range(0, materialsData.Length)];
+        // 랜덤 시드 초기화
+        Random.InitState(System.DateTime.Now.Millisecond + this.GetInstanceID());
 
-        Renderer rend = GetComponent<Renderer>();
-        if (rend.sharedMaterials.Contains(selectedData.material))
+        MeshFilter mf = GetComponent<MeshFilter>();
+        if (mf == null)
         {
-            Material mat = selectedData.material;
+            Debug.LogWarning("MeshFilter가 필요합니다.");
+            return;
+        }
 
-            // 랜덤한 타일 선택
+        Vector2[] uvs = mf.mesh.uv;
+
+        for (int i = 0; i < uvs.Length; i += 4) // 4개의 정점이 하나의 타일을 나타냅니다.
+        {
             int randomX = Random.Range(0, selectedData.tilesX);
             int randomY = Random.Range(0, selectedData.tilesY);
 
-            // UV 스케일 및 오프셋 설정
             Vector2 scale = new Vector2(1.0f / selectedData.tilesX, 1.0f / selectedData.tilesY);
             Vector2 offset = new Vector2(randomX * scale.x, randomY * scale.y);
 
-            mat.mainTextureScale = scale;
-            mat.mainTextureOffset = offset;
+            uvs[i] = new Vector2(0 + offset.x, 0 + offset.y);
+            uvs[i + 1] = new Vector2(scale.x + offset.x, 0 + offset.y);
+            uvs[i + 2] = new Vector2(scale.x + offset.x, scale.y + offset.y);
+            uvs[i + 3] = new Vector2(0 + offset.x, scale.y + offset.y);
+        }
 
-            rend.material = mat;  // 선택된 재질로 렌더러의 재질 설정
-        }
-        else
-        {
-            Debug.LogWarning("지정한 머터리얼이 유효하지 않습니다.");
-        }
+        mf.mesh.uv = uvs;
     }
 }
