@@ -102,7 +102,10 @@ public class Player : MonoBehaviour
 	[Header("Anim Bones")]
 	public Transform headBoneTr;
 	public Transform spineBoneTr;
-	public Transform hpBoneTr;
+	public Transform hipBoneTr;
+
+	public float resetTime;
+	public Coroutine legResetCor = null;
 
 	//[Tooltip("Temp Test")]
 	//[Space(10f)]
@@ -140,15 +143,76 @@ public class Player : MonoBehaviour
     void Update()
     {
 		move.Move(stat.walkSpd);
-		
+		aim.Aiming();
+
+
+		var temp = aim.rayResultPoint;
+		temp.y = transform.position.y;
+		//transform.forward  = temp;
+		transform.LookAt(temp);
 
 	}
 
 	private void LateUpdate()
 	{
-		Vector3 lookDir = aim.Aiming();
-		Funcs.LookAtSpecificBone(spineBoneTr,eGizmoDir.Foward, lookDir, Vector3.zero);
-		
+
+		//이거보다 회피, 이동기시 그대로
+
+		//마우스 위치로 플레이어의 방향 자체가 달라지고
+		//(대신 하체가 회전하는 잔발 애니메이션이 있어야겠지)
+		//다리는 바라보는 방향이랑 움직이는 방향이랑 상대적인 방향을 체크해서
+		//다리 애니메이션을 8방향이던 재생을 해야 할거같은디...?
+		//플레이어의 회전값을 상체/하체중 하나를 기준이 할 수 있는게 있어야
+		//조작감이 안 어색할거 같음.
+		//상체든 하체든.
+
+
+
+		float angle = Mathf.Acos(Vector3.Dot(move.moveDir, aim.lookDir)) * Mathf.Rad2Deg;
+
+		if (move.isRest)
+		{//멈춰있는 경우
+			Debug.Log("멈춰있음");
+			//일정 시간 지나면 하체가 상체 바라보도록
+
+			//상체만 움직이다가 90도 이상 차이나면 하체가 회전.
+			if (angle >= 90f)
+			{
+
+			}
+		}
+		else
+		{//이동중인 경우
+			Debug.Log("움직이는 중");
+			//이동방항에 맞춰 하체 회전
+			Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.moveDir, Vector3.zero);
+			Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
+			if (legResetCor != null)
+			{
+				legResetCor = null;
+			}
+
+			//마우스 이동값이 없으면 상체가 하체방향으로 가기
+			
+		}
+	
+		//Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.moveDir, Vector3.zero);
+		//Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
+		//다 떠나서 상체 방향이랑 하체 방향의 차이가 90도 이상 나는 경우
+		//상체가 하체 방향에 맞게 회전하기
+		if (angle >= 90f)
+		{
+			Debug.Log("각도 90도 이상 차이");
+		}
+	}
+
+	public IEnumerator LegRotCorou()
+	{
+		yield return new WaitForSeconds(resetTime);
+
+		move.moveDir = aim.lookDir;
+		//Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.moveDir, Vector3.zero);
+		legResetCor = null;
 	}
 
 	private void FixedUpdate()

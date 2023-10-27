@@ -11,7 +11,7 @@ public class PlayerAim : MonoBehaviour
 	//레이 쏴서 하는 방식
 
 	Vector3 mouseWorldPos;
-	Vector3 playerToMouseDir;
+	public Vector3 lookDir;
 
 	[SerializeField]
 	PixelPerfectCamera zoomPixelCam;
@@ -19,7 +19,7 @@ public class PlayerAim : MonoBehaviour
 	Camera zoomCam;
 
 	Ray mouseRay;
-	Vector3 rayResultPoint;
+	public Vector3 rayResultPoint;
 
 #if UNITY_EDITOR
 	public bool TestCubeOption;
@@ -69,7 +69,7 @@ public class PlayerAim : MonoBehaviour
 		float areaScaleRatio = curArea / (Defines.minHeight * Defines.minWidth);
 		//너비의 비율이니까 다시 제곱 해줘야함. 걍 한쪽 변 길이 나누기 해도 되고 ㅋㅋ
 		areaScaleRatio = Mathf.Sqrt(areaScaleRatio);
-		Debug.Log("areaScaleRatio : " + areaScaleRatio);
+		//Debug.Log("areaScaleRatio : " + areaScaleRatio);
 
 		Vector3 mouseScreenPos = Input.mousePosition;
 
@@ -95,7 +95,7 @@ public class PlayerAim : MonoBehaviour
 		if (Physics.Raycast(mouseRay, out hit, 500f, LayerMask.GetMask("Ground")))
 		{
 
-			Debug.Log("dd");
+			//Debug.Log("dd");
 			mouseWorldPos = hit.point;
 			//mouseWorldPos.y = transform.position.y;
 
@@ -117,11 +117,10 @@ public class PlayerAim : MonoBehaviour
 			}
 #endif
 			rayResultPoint = mouseWorldPos;
-
-			playerToMouseDir = (mouseWorldPos - transform.position).normalized;
+			lookDir = (mouseWorldPos - transform.position).normalized;
 		}
 
-		return playerToMouseDir;
+		return lookDir;
 	}
 
 
