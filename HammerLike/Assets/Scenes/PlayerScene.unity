@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.21233684, g: 0.3911344, b: 0.29821664, a: 1}
+  m_IndirectSpecularColor: {r: 0.21268243, g: 0.39149556, b: 0.29814366, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -916,7 +916,7 @@ MonoBehaviour:
   drawingMode: 1
   outlineLayer: 0
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -932,7 +932,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -948,7 +948,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -964,7 +964,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -980,7 +980,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -1106,6 +1106,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ca0e12f5fd65d249aff9be7d3461b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  preState:
+    rid: -2
+  curState:
+    rid: -2
+  nextState:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!54 &976790053
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1236,6 +1247,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ca0e12f5fd65d249aff9be7d3461b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  preState:
+    rid: -2
+  curState:
+    rid: -2
+  nextState:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &981659862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2108,7 +2130,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 95de168514398304098dac282878fa5c,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95de168514398304098dac282878fa5c, type: 3}
@@ -2154,6 +2176,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ca0e12f5fd65d249aff9be7d3461b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  preState:
+    rid: -2
+  curState:
+    rid: -2
+  nextState:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &1575701997
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3121,10 +3154,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1188147887, guid: bcc324288bfab9449a9d20b4da41dde6, type: 3}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
     - target: {fileID: 2941304899269773953, guid: bcc324288bfab9449a9d20b4da41dde6,
         type: 3}
       propertyPath: m_Name
@@ -3185,10 +3214,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3411060205545050232, guid: bcc324288bfab9449a9d20b4da41dde6,
+    - target: {fileID: 3139345533818047967, guid: bcc324288bfab9449a9d20b4da41dde6,
         type: 3}
-      propertyPath: m_TagString
-      value: Untagged
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5125377789792643229, guid: bcc324288bfab9449a9d20b4da41dde6,
         type: 3}
@@ -3200,10 +3229,40 @@ PrefabInstance:
       propertyPath: zoomPixelCam
       value: 
       objectReference: {fileID: 678870304}
-    - target: {fileID: 5231826193309111715, guid: bcc324288bfab9449a9d20b4da41dde6,
+    - target: {fileID: 7170195793522241521, guid: bcc324288bfab9449a9d20b4da41dde6,
         type: 3}
-      propertyPath: m_TagString
-      value: Untagged
+      propertyPath: outlineTargets.Array.data[0].IsVisible
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170195793522241521, guid: bcc324288bfab9449a9d20b4da41dde6,
+        type: 3}
+      propertyPath: outlineTargets.Array.data[1].IsVisible
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170195793522241521, guid: bcc324288bfab9449a9d20b4da41dde6,
+        type: 3}
+      propertyPath: outlineTargets.Array.data[2].IsVisible
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170195793522241521, guid: bcc324288bfab9449a9d20b4da41dde6,
+        type: 3}
+      propertyPath: outlineTargets.Array.data[3].IsVisible
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170195793522241521, guid: bcc324288bfab9449a9d20b4da41dde6,
+        type: 3}
+      propertyPath: outlineTargets.Array.data[4].IsVisible
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170195793522241521, guid: bcc324288bfab9449a9d20b4da41dde6,
+        type: 3}
+      propertyPath: outlineTargets.Array.data[5].IsVisible
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170195793522241521, guid: bcc324288bfab9449a9d20b4da41dde6,
+        type: 3}
+      propertyPath: outlineTargets.Array.data[6].IsVisible
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bcc324288bfab9449a9d20b4da41dde6, type: 3}
@@ -3222,7 +3281,7 @@ PrefabInstance:
     - target: {fileID: 8706781883286603651, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}
       propertyPath: orthographic size
-      value: 19.800001
+      value: 19.565216
       objectReference: {fileID: 0}
     - target: {fileID: 8706781884086390624, guid: 50b39ec2696dc6c40a48889df621ed01,
         type: 3}

@@ -14,10 +14,11 @@ public class PlayerMove : MonoBehaviour
     public float distortionOffset;
 
     public bool isRest;
+    public float restTime;
 
     //public Vector3 preMoveDir;
-    public Vector3 moveDir;
-    public Vector3 lastMoveDir;
+    public Vector3 moveDir = Vector3.forward;
+    public Vector3 lastMoveDir = Vector3.forward;
 
     private void Awake()
 	{
@@ -32,32 +33,40 @@ public class PlayerMove : MonoBehaviour
         //preMoveDir = moveDir;
         //Debug.Log("pre : " + preMoveDir);
         Debug.Log("Last : " + lastMoveDir);
-        Vector3 dir = Vector3.zero;
+        Vector3 dir = Vector3.forward;
 
         if (horizon != 0f | vert != 0f)
         {
-            player.animCtrl.SetLayerWeight(2, 1f);
-                        
+            if (isRest)
+            { 
+                restTime = 0f;
+            }
+
+            isRest = false;
+
             dir = new Vector3(horizon, 0f, vert).normalized;
             moveDir = dir;
+            lastMoveDir = moveDir;
+
             dir.z *= distortionOffset;
             player.rd.velocity = dir * moveSpd;
 
-            isRest = false;
+            //player.animCtrl.SetLayerWeight(2, 1f);
         }
         else
         {
             if (!isRest)
             {
                 lastMoveDir = moveDir;
-                if (player.legResetCor == null)
-                {
-                    player.legResetCor = StartCoroutine(player.LegRotCorou());
-                }
+            }
+            else
+            {
+                restTime += Time.deltaTime;
             }
 
+
             isRest = true;
-            player.animCtrl.SetLayerWeight(2, 0f);
+            //player.animCtrl.SetLayerWeight(2, 0f);
             player.rd.velocity = Vector3.zero;
         }
 

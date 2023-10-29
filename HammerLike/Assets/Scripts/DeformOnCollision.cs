@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,21 +19,21 @@ public class DeformOnCollision : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Ãæµ¹ Æ÷ÀÎÆ®¿¡ °¡Àå °¡±î¿î ¹öÅØ½º¸¦ Ã£¾Æ º¯Çü
+        // ì¶©ëŒ í¬ì¸íŠ¸ì— ê°€ì¥ ê°€ê¹Œìš´ ë²„í…ìŠ¤ë¥¼ ì°¾ì•„ ë³€í˜•
         foreach (ContactPoint contact in collision.contacts)
         {
             for (int i = 0; i < originalVertices.Length; i++)
             {
                 float distance = Vector3.Distance(transform.TransformPoint(currentVertices[i]), contact.point);
-                if (distance < 0.1f)  // ÀÌ °ªÀº º¯ÇüÀÇ ¹İ°æÀ» °áÁ¤
+                if (distance < 0.1f)  // ì´ ê°’ì€ ë³€í˜•ì˜ ë°˜ê²½ì„ ê²°ì •
                 {
                     Vector3 direction = currentVertices[i] - transform.InverseTransformPoint(contact.point);
-                    currentVertices[i] -= direction * 0.5f;  // 0.1f´Â º¯ÇüÀÇ °­µµ
+                    currentVertices[i] -= direction * 0.5f;  // 0.1fëŠ” ë³€í˜•ì˜ ê°•ë„
                 }
             }
         }
 
         mesh.vertices = currentVertices;
-        mesh.RecalculateNormals();  // ³ë¸Ö Àç°è»ê
+        mesh.RecalculateNormals();  // ë…¸ë©€ ì¬ê³„ì‚°
     }
 }
