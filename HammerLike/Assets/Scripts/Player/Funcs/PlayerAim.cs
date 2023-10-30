@@ -11,7 +11,7 @@ public class PlayerAim : MonoBehaviour
 	//레이 쏴서 하는 방식
 
 	Vector3 mouseWorldPos;
-	Vector3 playerToMouseDir;
+	public Vector3 lookDir;
 
 	[SerializeField]
 	PixelPerfectCamera zoomPixelCam;
@@ -19,7 +19,7 @@ public class PlayerAim : MonoBehaviour
 	Camera zoomCam;
 
 	Ray mouseRay;
-	Vector3 rayResultPoint;
+	public Vector3 rayResultPoint;
 
 #if UNITY_EDITOR
 	public bool TestCubeOption;
@@ -118,10 +118,10 @@ public class PlayerAim : MonoBehaviour
 #endif
 			rayResultPoint = mouseWorldPos;
 
-			playerToMouseDir = (mouseWorldPos - transform.position).normalized;
+			lookDir = (mouseWorldPos - transform.position).normalized;
 		}
 
-		return playerToMouseDir;
+		return lookDir;
 	}
 
 

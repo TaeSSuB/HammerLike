@@ -103,7 +103,7 @@ public class Player : MonoBehaviour
 	[Header("Anim Bones")]
 	public Transform headBoneTr;
 	public Transform spineBoneTr;
-	public Transform hpBoneTr;
+	public Transform hipBoneTr;
 
 	//[Tooltip("Temp Test")]
 	//[Space(10f)]
@@ -328,7 +328,7 @@ public class Player : MonoBehaviour
 		//{
 		//	Debug.Log("각도 90도 이상 차이");
 		//}
-	}
+	
 
 	//public IEnumerator LegRotCorou()
 	//{
