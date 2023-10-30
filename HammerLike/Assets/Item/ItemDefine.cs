@@ -49,11 +49,7 @@ namespace ItemInfo
         public Eweapon.AnimationType animationType_;     // enum 1=one_handed, 2=two_handed
         public bool skill_;
         public Eweapon.DodgeType dodgeType_;         // enum 1=dash, 2=tumbling, 3=Shunbo
-        /// Spend var           // 소비아이템에 들어갈 변수들
-        public int spendCount_;
-
         /// accesories var      // 악세사리에 들어갈 변수들
-        public bool accessories_paasive_;
     }
 
 }

@@ -5,9 +5,6 @@ using System.Linq;
 
 using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 public abstract class StateCtrl : MonoBehaviour
 {
@@ -28,19 +25,18 @@ public abstract class StateCtrl : MonoBehaviour
         //curState = state;
     }
 
-    [SerializeReference]
     protected cState preState = null;
     public cState GetPreState
     {
         get{ return preState; }
     }
-    [SerializeReference]
+
     protected cState curState;
     public cState GetCurState
     {
         get { return curState; }
     }
-    [SerializeReference]
+
     protected cState nextState= null;
     public cState GetNextState
 	{
