@@ -213,7 +213,7 @@ GameObject:
   - component: {fileID: 1188147889}
   m_Layer: 0
   m_Name: Col
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -426,7 +426,7 @@ MonoBehaviour:
     upperHomingSpd: 0
     legHomingSpd: 0
   fsm: {fileID: 8202893202914209688}
-  meshTr: {fileID: 0}
+  meshTr: {fileID: 2602330183642614466}
   animCtrl: {fileID: 3035563464178128940}
   rd: {fileID: 0}
   move: {fileID: 1055566028}
@@ -435,7 +435,8 @@ MonoBehaviour:
   camCtrl: {fileID: 0}
   headBoneTr: {fileID: 612755045067140382}
   spineBoneTr: {fileID: 6519598044952491886}
-  hpBoneTr: {fileID: 0}
+  hipBoneTr: {fileID: 4921229117506710867}
+  resetTime: 0
 --- !u!114 &8202893202914209688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -448,6 +449,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b83daae5f7199f2419fd9b1dee2ed7f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  preState:
+    rid: -2
+  curState:
+    rid: -2
+  nextState:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &1055566028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -461,6 +473,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   distortionOffset: 1.4
+  isRest: 0
+  moveDir: {x: 0, y: 0, z: 1}
+  lastMoveDir: {x: 0, y: 0, z: 1}
 --- !u!114 &6022393457034238963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -485,8 +500,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94f685106fb55fe4397e7b62e53b1da2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lookDir: {x: 0, y: 0, z: 0}
   zoomPixelCam: {fileID: 0}
   zoomCam: {fileID: 0}
+  rayResultPoint: {x: 0, y: 0, z: 0}
   TestCubeOption: 0
 --- !u!54 &2941304899251331658
 Rigidbody:
@@ -887,6 +904,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &4921229117506710867 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7483956943199731834, guid: 462a5e8fa6bd2584684eb21df1394d7b,
+    type: 3}
+  m_PrefabInstance: {fileID: 2564779092083141929}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4934630179305950798 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7488563681496851303, guid: 462a5e8fa6bd2584684eb21df1394d7b,

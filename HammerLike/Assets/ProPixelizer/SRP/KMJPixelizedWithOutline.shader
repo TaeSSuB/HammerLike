@@ -48,7 +48,8 @@ Shader "ProPixelizer/SRP/KMJPixelizedWithOutline"
 
 		SubShader
 		{
-			Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
+			//Tags { "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline"  }
+			Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline"  }
 
 			UsePass "ProPixelizer/Hidden/ProPixelizerBase/UNIVERSAL FORWARD"
 			UsePass "ProPixelizer/Hidden/ProPixelizerBase/SHADOWCASTER"
@@ -67,6 +68,7 @@ Shader "ProPixelizer/SRP/KMJPixelizedWithOutline"
 			ZWrite On
 			Cull Off
 			Blend Off
+			//Blend SrcAlpha OneMinusSrcAlpha
 
 			HLSLPROGRAM
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
