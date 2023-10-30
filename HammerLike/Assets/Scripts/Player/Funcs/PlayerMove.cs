@@ -36,7 +36,7 @@ public class PlayerMove : MonoBehaviour
 
         //preMoveDir = moveDir;
         //Debug.Log("pre : " + preMoveDir);
-        //Debug.Log("Last : " + lastMoveDir);
+        Debug.Log("Last : " + lastMoveDir);
         Vector3 dir = Vector3.forward;
 
         if (horizon != 0f | vert != 0f)
