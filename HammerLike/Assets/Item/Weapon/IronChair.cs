@@ -14,7 +14,7 @@ namespace Assets.Item.Weapon
         {
             if (skill_ == true)
             {
-                showStat();
+                UnityEngine.Debug.Log(itemDesc_);
             }
         }
 

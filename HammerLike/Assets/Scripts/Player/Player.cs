@@ -103,10 +103,7 @@ public class Player : MonoBehaviour
 	[Header("Anim Bones")]
 	public Transform headBoneTr;
 	public Transform spineBoneTr;
-	public Transform hipBoneTr;
-
-	public float resetTime;
-	public Coroutine legResetCor = null;
+	public Transform hpBoneTr;
 
 	//[Tooltip("Temp Test")]
 	//[Space(10f)]
@@ -143,6 +140,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
 		aim.Aiming();
 		move.Move(stat.walkSpd);
 
@@ -153,6 +151,7 @@ public class Player : MonoBehaviour
 
 	private void LateUpdate()
 	{
+
 
 
 
@@ -352,6 +351,11 @@ public class Player : MonoBehaviour
 	//	//Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.moveDir, Vector3.zero);
 	//	legResetCor = null;
 	//}
+
+		Vector3 lookDir = aim.Aiming();
+		Funcs.LookAtSpecificBone(spineBoneTr,eGizmoDir.Foward, lookDir, Vector3.zero);
+		
+	}
 
 	private void FixedUpdate()
 	{

@@ -40,7 +40,6 @@ namespace Assets.Item.Weapon
         {
             Debug.Log(itemNum_);
             Debug.Log(itemDesc_);
-            Debug.Log(dodgeType_);
         }
     }
 }

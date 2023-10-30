@@ -10,8 +10,6 @@ using UnityEngine;
 using ItemInfo;
 using Assets.Item.Weapon;
 using ItemInfo.Eweapon;
-using Assets.Item.Accessories;
-using Assets.Item.Spend;
 
 public class CSVLoader : MonoBehaviour
 {
@@ -96,20 +94,11 @@ public class CSVLoader : MonoBehaviour
                     {
                         readData.skill_ = Value11;
                     }
-                    if (Enum.TryParse(fields[12], out ItemInfo.Eweapon.DodgeType value12))      // M
+                    if (Enum.TryParse(fields[12], out ItemInfo.Eweapon.DodgeType value12))
                     {
                         readData.dodgeType_ = value12;
                     }
-                    /// spend
-                    if (int.TryParse(fields[13], out int Value13))                              // N
-                    {
-                        readData.spendCount_ = Value13;
-                    }
                     /// accesories
-                    if (bool.TryParse(fields[14], out bool Value14))
-                    {
-                        readData.accessories_paasive_ = Value14;
-                    }
 
                     /// add all var
                     _itemDictionary.Add(readData.itemNum_, readData);
@@ -151,45 +140,6 @@ public class CSVLoader : MonoBehaviour
         else
         {
             Debug.Log("CSVLoader::Wrong itemNum : " + itemNumber);
-        }
-    }
-
-    internal void SetData(int itemNumber, Accesories outputAccesories)
-    {
-        if (_itemDictionary.TryGetValue(itemNumber, out Field fieldValue))
-        {
-            if (itemNumber == outputAccesories.itemNum_)
-            {
-                outputAccesories.itemId_ = fieldValue.itemId_;
-                outputAccesories.itemRarity_ = fieldValue.itemRarity;
-                outputAccesories.sell_ = fieldValue.sell_;
-                outputAccesories.itemType_ = fieldValue.itemType_;
-                outputAccesories.itemDesc_ = fieldValue.itemDesc_;
-                /// Accesories
-                outputAccesories.attackPoint_ = fieldValue.attackPoint_;
-                outputAccesories.defensePoint_ = fieldValue.defensePoint_;
-                outputAccesories.attackSpeed_ = fieldValue.attackSpeed_;
-                outputAccesories.konckbackPoint_ = fieldValue.konckbackPoint_;
-
-                outputAccesories.accessories_paasive_ = fieldValue.accessories_paasive_;
-            }
-        }
-    }
-    internal void SetData(int itemNumber, Spend outputSpend)
-    {
-        if (_itemDictionary.TryGetValue(itemNumber, out Field fieldValue))
-        {
-            if(itemNumber == outputSpend.itemNum_)
-            {
-                outputSpend.itemId_ = fieldValue.itemId_;
-                outputSpend.itemRarity_ = fieldValue.itemRarity;
-                outputSpend.sell_ = fieldValue.sell_;
-                outputSpend.itemType_ = fieldValue.itemType_;
-                outputSpend.itemDesc_ = fieldValue.itemDesc_;
-                /// Spend
-                outputSpend.spendCount = fieldValue.spendCount_;
-                
-            }
         }
     }
 
