@@ -168,28 +168,31 @@ public class Player : MonoBehaviour
 		//3. 걸을때는 플레이어의 상체 방향에 따른 하체 각도에 따라서
 		//옆으로 걷는 애니메이션 재생하거나 하체 회전하고나서 걷는 애니메이션 재생하기
 
-		float angle = Mathf.Acos(Vector3.Dot(move.moveDir, aim.lookDir)) * Mathf.Rad2Deg;
+
 		//Debug.Log("플레이어 상하체 차이 각도 : " + angle);
 
 		if (move.isRest)
 		{//이동이 없는 경우
-			//몸 방향은 마우스 방향으로
-			//상체는 마우스 방향으로 바라보기
-			//하체는 마지막 이동 방향으로 고정.
-			
+		 //몸 방향은 마우스 방향으로
+		 //상체는 마우스 방향으로 바라보기
+		 //하체는 마지막 이동 방향으로 고정.
+
 			var temp = aim.rayResultPoint;
 			temp.y = transform.position.y;
 			transform.LookAt(temp);
 
 			Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.lastMoveDir, Vector3.zero);
-			Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
 			Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
+			Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero); //이거 애니메이션 때문에 약간 오차가 발생함.
+			//추후 따로 보정 회전값을 넣어 주던지 계산을 해주던지 해야함.
 
-			if (move.restTime >= 5f)
-			{ //정지하고 일정 시간이 지나면
+			float angle = Mathf.Acos(Vector3.Dot(move.lastMoveDir, aim.lookDir)) * Mathf.Rad2Deg;
+
+			if (move.restTime >= 5f | angle >= 90f)
+			{ //정지하고 일정 시간이 지나거나 상하체 각도가 90도 이상 차이나는 경우
 				//하체가 상체 방향으로 돌기
 				
-				//하체 도는 중간에 움직이면 취소하고 해당 방향으로 움직이기
+				//하체 도는 중간에 움직이면 취소하고 움직일때의 규칙으로 변경하기
 
 			}
 		}
@@ -206,9 +209,73 @@ public class Player : MonoBehaviour
 			temp.y = transform.position.y;
 			transform.LookAt(temp);
 
+			float angle = Mathf.Acos(Vector3.Dot(move.lastMoveDir, transform.forward)) * Mathf.Rad2Deg;
+
+			//if (angle < 80)
+			//{
+			//	Debug.Log("80 미만");
+			//}
+			//else if (angle < 100)
+			//{
+			//	Debug.Log("80~100");
+			//}
+			//else if (angle < 170)
+			//{
+			//	Debug.Log("100~170");
+			//}
+			////내가 원하는 그 느낌 맞음
 
 
-			//move.lastMoveDir
+			//좌우 체크하기
+			//1. 포워드와 direction 외적해서 법선 구하기
+			Vector3 crossVec = Vector3.Cross(move.lastMoveDir, transform.forward);
+
+			//2. 나온 법선이랑 Up벡터 내적하기
+			float dot = Vector3.Dot(crossVec, Vector3.up);
+
+			//3. 나온값은 Cos@ 값임. 이게 음수면 오른쪽, 양수면 왼쪽
+			// cos0 = 1 / cos90 = 0 / cos180 = -1
+			//왜 그렇냐?
+			//Cross는 결과값이 벡터(방향과 크기)로 나오는데
+			//이것이 비교값(현재는 월드UP)과 같은 방향이면 (cos 0 = 1
+			//다른 방향이면 (cos 180 = -1
+			//임.
+			//근데 Cross(외적)은 내적과 다르게 교환법칙이 성립안하는,
+			//즉 순서에 따라 결과값이 다르므로! 이렇게 구별이 가능하다
+			//왼쪽이면 90도 미만이니까(같은 up방향) 양수,
+			//오른쪽이면 90도 초과이니까 음수.
+
+			//if (dot > 0.1f )
+			//{//오른쪽
+			//	Debug.Log("Right");
+			//}
+			//else if (dot < -0.1f)
+			//{//왼쪽
+			//	Debug.Log("Left");
+			//}
+			//else
+			//{ //가운데
+			//	Debug.Log("Middle");
+			//}
+
+
+			if (dot > 0.1f && angle < 90f)
+			{//오른쪽
+				Debug.Log("1사 분면");
+			}
+			else if (dot < -0.1f && angle < 90f)
+			{//왼쪽
+				Debug.Log("2사");
+			}
+			else if (dot > 0.1f && angle >= 90f)
+			{
+				Debug.Log("4사");
+			}
+			else if (dot < -0.1f && angle >= 90f)
+			{
+				Debug.Log("3사");
+			}
+
 
 
 		}
@@ -287,7 +354,7 @@ public class Player : MonoBehaviour
 		//}
 		//else
 		//{ //움직이는 경우
-		
+
 
 		//}
 
@@ -328,16 +395,16 @@ public class Player : MonoBehaviour
 		//{
 		//	Debug.Log("각도 90도 이상 차이");
 		//}
-	
 
-	//public IEnumerator LegRotCorou()
-	//{
-	//	yield return new WaitForSeconds(resetTime);
 
-	//	move.moveDir = aim.lookDir;
-	//	//Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.moveDir, Vector3.zero);
-	//	legResetCor = null;
-	//}
+		//public IEnumerator LegRotCorou()
+		//{
+		//	yield return new WaitForSeconds(resetTime);
+
+		//	move.moveDir = aim.lookDir;
+		//	//Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.moveDir, Vector3.zero);
+		//	legResetCor = null;
+		//}
 
 		Vector3 lookDir = aim.Aiming();
 		Funcs.LookAtSpecificBone(spineBoneTr,eGizmoDir.Foward, lookDir, Vector3.zero);

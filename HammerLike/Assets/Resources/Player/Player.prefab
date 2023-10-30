@@ -421,10 +421,11 @@ MonoBehaviour:
     maxStamina: 0
     curStamina: 0
     staminaRecoverSpd: 0
-    walkSpd: 5
+    walkSpd: 0
     runSpd: 15
     upperHomingSpd: 0
     legHomingSpd: 0
+    legHomingTime: 0
   fsm: {fileID: 8202893202914209688}
   meshTr: {fileID: 2602330183642614466}
   animCtrl: {fileID: 3035563464178128940}
@@ -436,7 +437,6 @@ MonoBehaviour:
   headBoneTr: {fileID: 612755045067140382}
   spineBoneTr: {fileID: 6519598044952491886}
   hipBoneTr: {fileID: 4921229117506710867}
-  resetTime: 0
 --- !u!114 &8202893202914209688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -449,17 +449,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b83daae5f7199f2419fd9b1dee2ed7f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  preState:
-    rid: -2
-  curState:
-    rid: -2
-  nextState:
-    rid: -2
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
 --- !u!114 &1055566028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -474,8 +463,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distortionOffset: 1.4
   isRest: 0
+  restTime: 0
   moveDir: {x: 0, y: 0, z: 1}
   lastMoveDir: {x: 0, y: 0, z: 1}
+  preMoveDir: {x: 0, y: 0, z: 0}
 --- !u!114 &6022393457034238963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -722,7 +713,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3411060205545050232}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 15f2cae7a75dc1d479c03956c57c10a9, type: 3}
   m_Name: 

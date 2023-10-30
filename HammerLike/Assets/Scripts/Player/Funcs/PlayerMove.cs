@@ -36,7 +36,7 @@ public class PlayerMove : MonoBehaviour
 
         //preMoveDir = moveDir;
         //Debug.Log("pre : " + preMoveDir);
-        Debug.Log("Last : " + lastMoveDir);
+        //Debug.Log("Last : " + lastMoveDir);
         Vector3 dir = Vector3.forward;
 
         if (horizon != 0f | vert != 0f)
@@ -76,6 +76,7 @@ public class PlayerMove : MonoBehaviour
 
         /// 2023-10-30 [강명진] **conflict : 이동관련 스크립트에서 42번째 줄부터 74번째줄 , 76번째 줄 부터 89번째 줄 중 상충하는 문제가 있는거 같습니다
         /// 어떤게 맞는건지 잘 몰라서 일단 임의로 수정했는데 나중에 확인 부탁드려요 
+        /// 231030 15시 언저리 : 해겨루 완료루
         //231020 22:30 플레이어 물리 영향 받는거 있다해서 움직이는 코드 수정
         //transform.Translate(dir * moveSpd * Time.deltaTime);
     }
