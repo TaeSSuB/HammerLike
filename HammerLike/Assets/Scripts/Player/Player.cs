@@ -169,27 +169,29 @@ public class Player : MonoBehaviour
 		//3. 걸을때는 플레이어의 상체 방향에 따른 하체 각도에 따라서
 		//옆으로 걷는 애니메이션 재생하거나 하체 회전하고나서 걷는 애니메이션 재생하기
 
-		float angle = Mathf.Acos(Vector3.Dot(move.moveDir, aim.lookDir)) * Mathf.Rad2Deg;
+		//float angle = Mathf.Acos(Vector3.Dot(move.moveDir, aim.lookDir)) * Mathf.Rad2Deg;
 		//Debug.Log("플레이어 상하체 차이 각도 : " + angle);
 
 		if (move.isRest)
 		{//이동이 없는 경우
-			//몸 방향은 마우스 방향으로
-			//상체는 마우스 방향으로 바라보기
-			//하체는 마지막 이동 방향으로 고정.
-			
+		 //몸 방향은 마우스 방향으로
+		 //상체는 마우스 방향으로 바라보기
+		 //하체는 마지막 이동 방향으로 고정.
+
 			var temp = aim.rayResultPoint;
 			temp.y = transform.position.y;
 			transform.LookAt(temp);
 
 			Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.lastMoveDir, Vector3.zero);
-			Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
+			//Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, transform.forward, Vector3.zero);
+			//Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Foward, transform.forward, Vector3.zero)
 			Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
+			Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero); ;//이거 보정 필요함.
 
-			if (move.restTime >= 5f)
+            if (move.restTime >= 5f)
 			{ //정지하고 일정 시간이 지나면
-				//하체가 상체 방향으로 돌기
-				
+			  //하체가 상체 방향으로 돌기
+
 				//하체 도는 중간에 움직이면 취소하고 해당 방향으로 움직이기
 
 			}
@@ -207,129 +209,140 @@ public class Player : MonoBehaviour
 			temp.y = transform.position.y;
 			transform.LookAt(temp);
 
+			float angle = Mathf.Acos(Vector3.Dot(move.lastMoveDir, aim.lookDir)) * Mathf.Rad2Deg;
 
-
-			//move.lastMoveDir
-
-
+			if (angle < 80)
+			{
+				Debug.Log("80 미만");	
+			}
+			else if (angle < 100)
+			{
+                Debug.Log("80~100");
+            }
+			else if (angle < 170)
+			{
+                Debug.Log("100~170");
+            }
+			//내가 원하는 그 느낌 맞음
 		}
 
+        //float angle2 = Mathf.Acos(Vector3.Dot(move.lastMoveDir, transform.forward)) * Mathf.Rad2Deg;
+        //Debug.Log(angle2 + " 미만");
+
+
+        //if (move.isRest)
+        //{//멈춰 있는 경우
+        //	Debug.Log("플레이어 정지 상태");
+        //	//1. 플레이어 방향 = 상체 방향
+        //	//하체 = 마지막 이동방향으로 있기
+
+        //	//Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.lastMoveDir, Vector3.zero);
+        //	//Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
+        //	//Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
+
+        //	if (angle < 90f)
+        //	{ //2. 상하체 각도가 90도 미만인 경우 마지막 이동방향으로 하체 고정하기
+
+        //		//if(animCtrl.GetBool())
+        //		animCtrl.SetBool("bRot", false);
+
+        //		Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.lastMoveDir, Vector3.zero);
+        //		Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
+        //		Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
+        //	}
+        //	else
+        //	{ //2. 상하체 각도가 90도 이상인 경우 하체가 상체쪽으로 돌아가기
+        //	  //2-1. 오른쪽에 있는지 왼쪽에 있는지 파악하기
+        //	  ////1. 포워드와 direction 외적해서 법선 구하기
+        //		Vector3 crossVec = Vector3.Cross(move.lastMoveDir, aim.lookDir);
+
+        //		//2. 나온 법선이랑 Up벡터 내적하기
+        //		float dot = Vector3.Dot(crossVec, Vector3.up);
+
+        //		//3. 나온값은 Cos@ 값임. 이게 음수면 오른쪽, 양수면 왼쪽
+        //		// cos0 = 1 / cos90 = 0 / cos180 = -1
+        //		//왜 그렇냐?
+        //		//Cross는 결과값이 벡터(방향과 크기)로 나오는데
+        //		//이것이 비교값(현재는 월드UP)과 같은 방향이면 (cos 0 = 1
+        //		//다른 방향이면 (cos 180 = -1
+        //		//임.
+        //		//근데 Cross(외적)은 내적과 다르게 교환법칙이 성립안하는,
+        //		//즉 순서에 따라 결과값이 다르므로! 이렇게 구별이 가능하다
+        //		//왼쪽이면 90도 미만이니까(같은 up방향) 양수,
+        //		//오른쪽이면 90도 초과이니까 음수.
+
+        //		if (dot > 0.1f)
+        //		{//오른쪽
+        //			Debug.Log("Right");
+
+        //			animCtrl.SetLayerWeight(2, 1f);
+        //			animCtrl.SetBool("bRot", true);
+        //			animCtrl.SetInteger("iRotDir", Mathf.RoundToInt(dot));
+        //			//hipBoneTr.forward = Vector3.Lerp(hipBoneTr.forward,)
+        //		}
+        //		else if (dot < -0.1f)
+        //		{//왼쪽
+        //			animCtrl.SetLayerWeight(2, 1f);
+        //			animCtrl.SetBool("bRot", true);
+        //			animCtrl.SetInteger("iRotDir", Mathf.RoundToInt(dot));
+        //			Debug.Log("Left");
+        //		}
+        //		else
+        //		{ //가운데
+        //			animCtrl.SetBool("bRot", true);
+        //			//animCtrl.SetInteger("iRotDir", UnityEngine.Random.Range(-1,1));
+
+        //			Debug.Log("Middle");
+        //			//animCtrl.SetLayerWeight((int)eHumanoidAvatarMask.Leg, offsetAngle);
+        //			//return 0;
+        //		}
+        //	}
+
+        //}
+        //else
+        //{ //움직이는 경우
+
+
+        //}
 
 
 
-		//if (move.isRest)
-		//{//멈춰 있는 경우
-		//	Debug.Log("플레이어 정지 상태");
-		//	//1. 플레이어 방향 = 상체 방향
-		//	//하체 = 마지막 이동방향으로 있기
 
-		//	//Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.lastMoveDir, Vector3.zero);
-		//	//Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
-		//	//Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
+        //if (move.isRest)
+        //{//멈춰있는 경우
+        //	Debug.Log("멈춰있음");
+        //	//일정 시간 지나면 하체가 상체 바라보도록
 
-		//	if (angle < 90f)
-		//	{ //2. 상하체 각도가 90도 미만인 경우 마지막 이동방향으로 하체 고정하기
+        //	//상체만 움직이다가 90도 이상 차이나면 하체가 회전.
+        //	if (angle >= 90f)
+        //	{
 
-		//		//if(animCtrl.GetBool())
-		//		animCtrl.SetBool("bRot", false);
+        //	}
+        //}
+        //else
+        //{//이동중인 경우
+        //	Debug.Log("움직이는 중");
+        //	//이동방항에 맞춰 하체 회전
+        //	Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.moveDir, Vector3.zero);
+        //	Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
+        //	if (legResetCor != null)
+        //	{
+        //		legResetCor = null;
+        //	}
 
-		//		Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.lastMoveDir, Vector3.zero);
-		//		Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
-		//		Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
-		//	}
-		//	else
-		//	{ //2. 상하체 각도가 90도 이상인 경우 하체가 상체쪽으로 돌아가기
-		//	  //2-1. 오른쪽에 있는지 왼쪽에 있는지 파악하기
-		//	  ////1. 포워드와 direction 외적해서 법선 구하기
-		//		Vector3 crossVec = Vector3.Cross(move.lastMoveDir, aim.lookDir);
+        //	//마우스 이동값이 없으면 상체가 하체방향으로 가기
 
-		//		//2. 나온 법선이랑 Up벡터 내적하기
-		//		float dot = Vector3.Dot(crossVec, Vector3.up);
+        //}
 
-		//		//3. 나온값은 Cos@ 값임. 이게 음수면 오른쪽, 양수면 왼쪽
-		//		// cos0 = 1 / cos90 = 0 / cos180 = -1
-		//		//왜 그렇냐?
-		//		//Cross는 결과값이 벡터(방향과 크기)로 나오는데
-		//		//이것이 비교값(현재는 월드UP)과 같은 방향이면 (cos 0 = 1
-		//		//다른 방향이면 (cos 180 = -1
-		//		//임.
-		//		//근데 Cross(외적)은 내적과 다르게 교환법칙이 성립안하는,
-		//		//즉 순서에 따라 결과값이 다르므로! 이렇게 구별이 가능하다
-		//		//왼쪽이면 90도 미만이니까(같은 up방향) 양수,
-		//		//오른쪽이면 90도 초과이니까 음수.
-
-		//		if (dot > 0.1f)
-		//		{//오른쪽
-		//			Debug.Log("Right");
-
-		//			animCtrl.SetLayerWeight(2, 1f);
-		//			animCtrl.SetBool("bRot", true);
-		//			animCtrl.SetInteger("iRotDir", Mathf.RoundToInt(dot));
-		//			//hipBoneTr.forward = Vector3.Lerp(hipBoneTr.forward,)
-		//		}
-		//		else if (dot < -0.1f)
-		//		{//왼쪽
-		//			animCtrl.SetLayerWeight(2, 1f);
-		//			animCtrl.SetBool("bRot", true);
-		//			animCtrl.SetInteger("iRotDir", Mathf.RoundToInt(dot));
-		//			Debug.Log("Left");
-		//		}
-		//		else
-		//		{ //가운데
-		//			animCtrl.SetBool("bRot", true);
-		//			//animCtrl.SetInteger("iRotDir", UnityEngine.Random.Range(-1,1));
-
-		//			Debug.Log("Middle");
-		//			//animCtrl.SetLayerWeight((int)eHumanoidAvatarMask.Leg, offsetAngle);
-		//			//return 0;
-		//		}
-		//	}
-
-		//}
-		//else
-		//{ //움직이는 경우
-		
-
-		//}
-
-
-
-
-		//if (move.isRest)
-		//{//멈춰있는 경우
-		//	Debug.Log("멈춰있음");
-		//	//일정 시간 지나면 하체가 상체 바라보도록
-
-		//	//상체만 움직이다가 90도 이상 차이나면 하체가 회전.
-		//	if (angle >= 90f)
-		//	{
-
-		//	}
-		//}
-		//else
-		//{//이동중인 경우
-		//	Debug.Log("움직이는 중");
-		//	//이동방항에 맞춰 하체 회전
-		//	Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.moveDir, Vector3.zero);
-		//	Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
-		//	if (legResetCor != null)
-		//	{
-		//		legResetCor = null;
-		//	}
-
-		//	//마우스 이동값이 없으면 상체가 하체방향으로 가기
-
-		//}
-
-		////Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.moveDir, Vector3.zero);
-		////Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
-		////다 떠나서 상체 방향이랑 하체 방향의 차이가 90도 이상 나는 경우
-		////상체가 하체 방향에 맞게 회전하기
-		//if (angle >= 90f)
-		//{
-		//	Debug.Log("각도 90도 이상 차이");
-		//}
-	}
+        ////Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.moveDir, Vector3.zero);
+        ////Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
+        ////다 떠나서 상체 방향이랑 하체 방향의 차이가 90도 이상 나는 경우
+        ////상체가 하체 방향에 맞게 회전하기
+        //if (angle >= 90f)
+        //{
+        //	Debug.Log("각도 90도 이상 차이");
+        //}
+    }
 
 	//public IEnumerator LegRotCorou()
 	//{

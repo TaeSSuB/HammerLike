@@ -421,10 +421,11 @@ MonoBehaviour:
     maxStamina: 0
     curStamina: 0
     staminaRecoverSpd: 0
-    walkSpd: 5
+    walkSpd: 0
     runSpd: 15
     upperHomingSpd: 0
     legHomingSpd: 0
+    legHomingTime: 0
   fsm: {fileID: 8202893202914209688}
   meshTr: {fileID: 2602330183642614466}
   animCtrl: {fileID: 3035563464178128940}
@@ -474,6 +475,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distortionOffset: 1.4
   isRest: 0
+  restTime: 0
   moveDir: {x: 0, y: 0, z: 1}
   lastMoveDir: {x: 0, y: 0, z: 1}
 --- !u!114 &6022393457034238963
@@ -728,7 +730,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SnapPosition: 1
-  SnapEulerAngles: 1
+  SnapEulerAngles: 0
   SnapAngleStrategy: 1
   angleResolution: 45
   AlignPixelGrid: 1
