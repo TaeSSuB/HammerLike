@@ -151,15 +151,7 @@ public class Player : MonoBehaviour
 
     private void LateUpdate()
     {
-
-
-
-
-
-
-
         //이거보다 회피, 이동기시 그대로
-
 
         //** 마우스 방향대로 플레이어 자체가 회전 / 상체방향 = 플레이어 방향**
         //이동이 없는 경우
@@ -167,7 +159,6 @@ public class Player : MonoBehaviour
         //2. 90도 이상 차이나면 하체가 상체 방향으로 회전
         //3. 걸을때는 플레이어의 상체 방향에 따른 하체 각도에 따라서
         //옆으로 걷는 애니메이션 재생하거나 하체 회전하고나서 걷는 애니메이션 재생하기
-
 
         //Debug.Log("플레이어 상하체 차이 각도 : " + angle);
 
@@ -258,23 +249,61 @@ public class Player : MonoBehaviour
             //	Debug.Log("Middle");
             //}
 
+            float angleOffset = 10f;
 
-            if (dot > 0.1f && angle < 90f)
-            {//오른쪽
-                Debug.Log("1사 분면");
-            }
-            else if (dot < -0.1f && angle < 90f)
-            {//왼쪽
-                Debug.Log("2사");
-            }
-            else if (dot > 0.1f && angle >= 90f)
+            if (angle < 90f - angleOffset)
             {
-                Debug.Log("4사");
+                if (dot > 0.1f)
+                {
+                    Debug.Log("1");
+                }
+                else if (dot < -0.1f)
+                {
+                    Debug.Log("2");
+                }
             }
-            else if (dot < -0.1f && angle >= 90f)
+            else if (angle < 90f + angleOffset)
             {
-                Debug.Log("3사");
+                if (dot > 0.1f)
+                {
+                    Debug.Log("6");
+                }
+                else if (dot < -0.1f)
+                {
+                    Debug.Log("3");
+                }
             }
+            else if (angle <= 180f)
+            {
+                if (dot > 0.1f)
+                {
+                    Debug.Log("5");
+                }
+                else if (dot < -0.1f)
+                {
+                    Debug.Log("4");
+                }
+            }
+
+            //히히 됐다 이제 애니메이션 맞추기 하면 될 듯
+
+
+            //if (dot > 0.1f && angle <= 80f)
+            //{//오른쪽
+            //    Debug.Log("1사 분면");
+            //}
+            //else if (dot < -0.1f && angle <= 80f)
+            //{//왼쪽
+            //    Debug.Log("2사");
+            //}
+            //else if (dot > 0.1f && angle >= 90f)
+            //{
+            //    Debug.Log("4사");
+            //}
+            //else if (dot < -0.1f && angle >= 90f)
+            //{
+            //    Debug.Log("3사");
+            //}
 
 
 
@@ -425,6 +454,21 @@ public class Player : MonoBehaviour
 
     private void OnDestroy()
     {
+
+    }
+
+	private void OnDrawGizmos()
+	{
+        Gizmos.color = Color.blue;
+        //Ray rayF = new Ray(transform.position, transform.forward * 10f);
+        //Gizmos.DrawRay(rayF);
+        Gizmos.DrawRay(transform.position, transform.forward * 50f);
+
+        Gizmos.color = Color.red;
+        //Ray rayR = new Ray(transform.position, transform.right * 10f);
+        Gizmos.DrawRay(transform.position, transform.right * 50f);
+
+
 
     }
 }
