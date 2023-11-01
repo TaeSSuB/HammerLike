@@ -92,7 +92,7 @@ public class Monster : MonoBehaviour
     private void LateUpdate()
     {
         Vector3 lookDir = monsterAim.Aiming();
-        Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, lookDir, Vector3.zero);
+        Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Forward, lookDir, Vector3.zero);
     }
 
     private void FixedUpdate()

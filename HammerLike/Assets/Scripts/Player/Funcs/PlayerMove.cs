@@ -55,13 +55,14 @@ public class PlayerMove : MonoBehaviour
             dir.z *= distortionOffset;
             player.rd.velocity = dir * moveSpd;
 
-            //player.animCtrl.SetLayerWeight(2, 1f);
+            player.animCtrl.SetLayerWeight(1, 1f);
         }
         else
         {
             if (!isRest)
             {
                 lastMoveDir = moveDir;
+                //player.preMoveDir = Johnson.eGizmoDir.End;
             }
             else
             {
@@ -70,7 +71,7 @@ public class PlayerMove : MonoBehaviour
 
 
             isRest = true;
-            //player.animCtrl.SetLayerWeight(2, 0f);
+            player.animCtrl.SetLayerWeight(1, 0f);
         }
 
 

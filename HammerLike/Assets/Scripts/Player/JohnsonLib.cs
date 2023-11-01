@@ -6,7 +6,7 @@ namespace Johnson
 {
     public enum eGizmoDir
     {
-        Foward,
+        Forward,
         Back,
         Right,
         Left,
@@ -56,7 +56,7 @@ namespace Johnson
 
             switch (boneDir)
             {
-                case eGizmoDir.Foward:
+                case eGizmoDir.Forward:
                     {
                         boneTr.forward = lookDir;
                     }
@@ -103,7 +103,7 @@ namespace Johnson
 
             switch (boneDir)
             {
-                case eGizmoDir.Foward:
+                case eGizmoDir.Forward:
                     {
                         boneTr.forward = lookDir;
                     }
@@ -151,7 +151,7 @@ namespace Johnson
 
             switch (boneDir)
             {
-                case eGizmoDir.Foward:
+                case eGizmoDir.Forward:
                     {
                         boneTr.forward = lookDir;
                     }
@@ -199,7 +199,7 @@ namespace Johnson
 
             switch (boneDir)
             {
-                case eGizmoDir.Foward:
+                case eGizmoDir.Forward:
                     {
                         boneTr.forward = lookDir;
                     }
