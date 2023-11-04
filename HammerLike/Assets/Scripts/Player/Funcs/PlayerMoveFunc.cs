@@ -5,7 +5,7 @@ using UnityEngine;
 
 //이동, 회피 등
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMoveFunc : MonoBehaviour
 {
 
     Player player;
@@ -28,15 +28,11 @@ public class PlayerMove : MonoBehaviour
         player = GetComponent<Player>();
     }
 
-	public void Move(float moveSpd)
+	public bool Move(float moveSpd)
     {
         float horizon = Input.GetAxis("Horizontal");
         float vert = Input.GetAxis("Vertical");
 
-
-        //preMoveDir = moveDir;
-        //Debug.Log("pre : " + preMoveDir);
-        //Debug.Log("Last : " + lastMoveDir);
         Vector3 dir = Vector3.forward;
 
         if (horizon != 0f | vert != 0f)
@@ -55,7 +51,7 @@ public class PlayerMove : MonoBehaviour
             dir.z *= distortionOffset;
             player.rd.velocity = dir * moveSpd;
 
-            player.animCtrl.SetLayerWeight(1, 1f);
+            return true;
         }
         else
         {
@@ -71,7 +67,8 @@ public class PlayerMove : MonoBehaviour
 
 
             isRest = true;
-            player.animCtrl.SetLayerWeight(1, 0f);
+
+            return false;
         }
 
 

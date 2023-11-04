@@ -115,6 +115,8 @@ public abstract class StateCtrl : MonoBehaviour
         nextState = state;
     }
 
+    
+
     public void SetNextState(int index)
     {
         nextState = GetState(index);

@@ -11,6 +11,8 @@ public class PlayerFSM : StateCtrl
 	{
 		//throw new System.NotImplementedException();
 		curState = AddState(new Player_Idle(player));
+		AddState(new Player_Rotate(player));
+		AddState(new Player_Move(player));
 		AddState(new Player_Envasion(player));
 		AddState(new Player_Death(player));
 	}

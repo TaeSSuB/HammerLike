@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Johnson
@@ -40,8 +42,49 @@ namespace Johnson
     public static class Funcs
 	{
 
-		#region SpeciticBone Move
-		public static void LookAtSpecificBone(Animator animCtrl, HumanBodyBones boneName, Transform targetTr, Vector3 offsetEulerRotate)
+        public static string GetEnumName<T>(int index) where T : struct, IConvertible
+        {//where 조건 struct, IConvertible => Enum으로 제한
+            return Enum.GetName(typeof(T), index);
+        }
+
+
+
+        public static bool IsAnimationAlmostFinish(Animator animCtrl, string animationName, float ratio = 0.95f)
+        {
+            if (animCtrl.GetCurrentAnimatorStateInfo(0).IsName(animationName))
+            {//여기서 IsName은 애니메이션클립 이름이 아니라 애니메이터 안에 있는 노드이름임
+                if (animCtrl.GetCurrentAnimatorStateInfo(0).normalizedTime >= ratio)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static bool IsAnimationCompletelyFinish(Animator animCtrl, string animationName, float ratio = 1.0f)
+        {
+            if (animCtrl.GetCurrentAnimatorStateInfo(0).IsName(animationName))
+            {//여기서 IsName은 애니메이션클립 이름이 아니라 애니메이터 안에 있는 노드이름임
+                if (animCtrl.GetCurrentAnimatorStateInfo(0).normalizedTime >= ratio)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static bool IsAnimationPlay(Animator animCtrl, string animationName, int animationLayer)
+        {
+            if (animCtrl.GetCurrentAnimatorStateInfo(animationLayer).IsName(animationName))
+            {//여기서 IsName은 애니메이션클립 이름이 아니라 애니메이터 안에 있는 노드이름임
+                return true;
+            }
+            return false;
+        }
+
+
+        #region SpeciticBone Move
+        public static void LookAtSpecificBone(Animator animCtrl, HumanBodyBones boneName, Transform targetTr, Vector3 offsetEulerRotate)
         {
             Transform boneTr = animCtrl.GetBoneTransform(boneName);
             boneTr.LookAt(targetTr);

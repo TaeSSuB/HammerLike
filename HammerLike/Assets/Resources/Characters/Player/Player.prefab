@@ -421,7 +421,7 @@ MonoBehaviour:
     maxStamina: 0
     curStamina: 0
     staminaRecoverSpd: 0
-    walkSpd: 0
+    walkSpd: 2
     runSpd: 15
     upperHomingSpd: 0
     legHomingSpd: 0
@@ -437,7 +437,6 @@ MonoBehaviour:
   headBoneTr: {fileID: 612755045067140382}
   spineBoneTr: {fileID: 6519598044952491886}
   hipBoneTr: {fileID: 4921229117506710867}
-  preMoveDir: 0
 --- !u!114 &8202893202914209688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -480,6 +479,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d937a16cca8e2824ab9435b0bb321537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  curCharging: 0
 --- !u!114 &5125377789792643229
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -79,7 +79,8 @@ public class Player : MonoBehaviour
 
 
     [Header("State Machine")]
-    public PlayerFSM fsm;
+    public PlayerFSM fsm; //정말 큰 애니메이션 기준 
+    //public PlayerMoveFSM moveFsm; 
 
     [Space(10f)]
     [Header("Default Comps")]
@@ -90,7 +91,7 @@ public class Player : MonoBehaviour
 
     [Space(10f)]
     [Header("Action Table")]
-    public PlayerMove move;
+    public PlayerMoveFunc move;
     public PlayerAtk atk;
     public PlayerAim aim;
 
@@ -143,194 +144,135 @@ public class Player : MonoBehaviour
     void Update()
     {
 
-        aim.Aiming();
-        move.Move(stat.walkSpd);
+        //aim.Aiming();
+        //move.Move(stat.walkSpd);
 
 
 
 
     }
 
+
+ //   public void CalcDirectionUpperAndLeg()
+ //   {
+	//	float angle = Mathf.Acos(Vector3.Dot(hipBoneTr.forward, transform.forward)) * Mathf.Rad2Deg;
+
+	//	//좌우 체크하기
+	//	//1. 포워드와 direction 외적해서 법선 구하기
+	//	Vector3 crossVec = Vector3.Cross(hipBoneTr.forward, transform.forward);
+
+	//	//2. 나온 법선이랑 Up벡터 내적하기
+	//	float dot = Vector3.Dot(crossVec, Vector3.up);
+
+ //       if (dot > 0.1f)
+ //       {
+ //           Debug.Log("오른쪽");
+ //           //오른쪽 하체 회전 애니메이션 재생 하기
+ //       }
+ //       else if (dot < -0.1f)
+ //       {
+ //           Debug.Log("왼쪽");
+ //           //왼쪽 하체 회전 애니메이션 재생 하기
+ //       }
+ //       else
+ //       {
+ //           Debug.Log("거의 직선?");
+ //       }
+	//}
+
     private void LateUpdate()
     {
-        //이거보다 회피, 이동기시 그대로
-
-        //** 마우스 방향대로 플레이어 자체가 회전 / 상체방향 = 플레이어 방향**
-        //이동이 없는 경우
-        //플레이어 자체가 회전하면 됨
-        //2. 90도 이상 차이나면 하체가 상체 방향으로 회전
-        //3. 걸을때는 플레이어의 상체 방향에 따른 하체 각도에 따라서
-        //옆으로 걷는 애니메이션 재생하거나 하체 회전하고나서 걷는 애니메이션 재생하기
-
         //Debug.Log("플레이어 상하체 차이 각도 : " + angle);
 
-        if (move.isRest)
-        {//이동이 없는 경우
-         //몸 방향은 마우스 방향으로
-         //상체는 마우스 방향으로 바라보기
-         //하체는 마지막 이동 방향으로 고정.
-
-            var temp = aim.rayResultPoint;
-            temp.y = transform.position.y;
-            transform.LookAt(temp);
-
-            Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Forward, move.lastMoveDir, Vector3.zero);
-            Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Forward, aim.lookDir, Vector3.zero);
-            Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Forward, aim.lookDir, Vector3.zero); //이거 애니메이션 때문에 약간 오차가 발생함.
-                                                                                               //추후 따로 보정 회전값을 넣어 주던지 계산을 해주던지 해야함.
-
-            float angle = Mathf.Acos(Vector3.Dot(move.lastMoveDir, aim.lookDir)) * Mathf.Rad2Deg;
-
-            if (move.restTime >= 5f)
-            { //정지하고 일정 시간이 지난 경우 상하체 각도가 90도 이상 차이나는 경우
-              //하체가 상체 방향으로 돌기
-
-                //하체 도는 중간에 움직이면 취소하고 움직일때의 규칙으로 변경하기
-
-            }
-
-            if (angle >= 90)
-            {
-                //상하체 각도가 90도 이상 차이나는 경우
-                //하체가 상체 방향으로 돌기
-
-                //근데 이것도 이전 각도를 저장해두고
-                //상체가 천천히 움직일 경우에는 간단한 발 재간 애니메이션만 재생하면서 천천히 돌면 되지만,
-
-                //짧은 시간내에 큰 회전이 있는 경우 확 돌려줘야함.
-
-                //하체 도는 중간에 움직이면 취소하고 움직일때의 규칙으로 변경하기
-            }
-        }
-        else
-        { //움직이고 있는 경우
-          //몸 방향은 마우스 방향
-          //상체는 그대로 마우스 방향
-          //하체는
-          //1. 0~80도 정도 까지는 앞으로 걷는 애니메이션 + 움직이는 방향으로
-          //2. 80~100도는 옆으로 걷는 애니메이션 + 상체랑 같은 방향
-          //3. 100~170도는 뒤로걷는 애니메이션 + 상체랑 같은 방향
+        //Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Forward, move.lastMoveDir, Vector3.zero);
+        //Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Forward, aim.lookDir, Vector3.zero);
+        //Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Forward, aim.lookDir, Vector3.zero); //이거 애니메이션 때문에 약간 오차가 발생함.
+        //                                                                                   //추후 따로 보정 회전값을 넣어 주던지 계산을 해주던지 해야함.
 
 
-            var temp = aim.rayResultPoint;
-            temp.y = transform.position.y;
-            transform.LookAt(temp);
+        //231103 2158
+        //기본적으로 그냥 움직임이 있든 없든 몸 자체가 조준 방향으로 돌아가는 방식이 맞는거 같음.
+        //와이?!
+        //움직임이 없을때, 회전 할 경우 하체는 안 움직이고 상체만 움직이다가 일정각도 이상이 되었을 때 돌아가기
+        //이거랑, 현재 몸 각도에서 상대적 움직이는 방향을 체크해서 발 애니메이션을 재생하는거랑 모순이 발생함.
+        //몸 각도에서 상대적 방향 체크 해서 발 애니메이션 재생하는거 자체가 몸이랑 하체 각도가 같을 경우를 상정하는거고
 
-            //231101 이럴필요 없이 걍 블랜드 트리 쓰면 되노;
-            Vector3 relativeDir = Quaternion.Euler(-transform.rotation.eulerAngles) * move.lastMoveDir;
-            animCtrl.SetFloat("MoveX", relativeDir.x);
-            animCtrl.SetFloat("MoveZ", relativeDir.z);
-
-			#region 개흣짓거리
-			//float angle = Mathf.Acos(Vector3.Dot(move.lastMoveDir, transform.forward)) * Mathf.Rad2Deg;
-
-			//         //좌우 체크하기
-			//         //1. 포워드와 direction 외적해서 법선 구하기
-			//         Vector3 crossVec = Vector3.Cross(move.lastMoveDir, transform.forward);
-
-			//         //2. 나온 법선이랑 Up벡터 내적하기
-			//         float dot = Vector3.Dot(crossVec, Vector3.up);
-
-			////3. 나온값은 Cos@ 값임. 이게 음수면 오른쪽, 양수면 왼쪽
-			//// cos0 = 1 / cos90 = 0 / cos180 = -1
-			////왜 그렇냐?
-			////Cross는 결과값이 벡터(방향과 크기)로 나오는데
-			////이것이 비교값(현재는 월드UP)과 같은 방향이면 (cos 0 = 1
-			////다른 방향이면 (cos 180 = -1
-			////임.
-			////근데 Cross(외적)은 내적과 다르게 교환법칙이 성립안하는,
-			////즉 순서에 따라 결과값이 다르므로! 이렇게 구별이 가능하다
-			////왼쪽이면 90도 미만이니까(같은 up방향) 양수,
-			////오른쪽이면 90도 초과이니까 음수.
-
-			////Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Forward, aim.lookDir, Vector3.zero);
-			////Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Forward, aim.lookDir, Vector3.zero);
+        //움직임이 없을때, 회전 할 경우 하체는 안 움직이고 상체만 움직이다가 일정각도 이상이 되었을 때 돌아가기
+        //가 되려면 마지막 발 방향이 있어야 하는데
+        //이제 이동 방향으로 하체 방향이 가는게 아니라 상대적 방향에 맞는 하체 애니메이션을 재생하는 방식임.
 
 
 
 
-			//         //Debug.Log("last : " + move.lastMoveDir);
-			////Debug.Log("relative : " + relativeDir);
+  //      if (move.isRest)
+  //      {
+  //          //이전 회전값과 현재 회전값 비교해서 
+
+  //          if (transform.forward == aim.lookDir)
+		//	{
+  //              return;
+		//	}
+  //          Vector3 preForward = transform.forward;
+
+  //          float angle = Mathf.Acos(Vector3.Dot(transform.forward, aim.lookDir)) * Mathf.Rad2Deg;
+  //          Vector3 crossVec = Vector3.Cross(transform.forward, aim.lookDir);
+  //          float dot = Vector3.Dot(crossVec, Vector3.up);
 
 
-			////그니 메모 폴더에 뭐 어떤건지 그림 그려놨심다
-			//float angleOffset = 10f; //난중에 inspector나 상수로 처리해주심 댈듯
+  //          string animName = string.Empty;
+  //          if (dot > 0.1f)
+  //          {
+  //              animCtrl.SetLayerWeight(1, 1f);
+  //              animName = "Rot_Right";
+  //          }
+  //          if (dot < -0.1f)
+  //          {
+  //              animCtrl.SetLayerWeight(1, 1f);
+  //              animName = "Rot_Left";
+  //          }
+  //          else
+  //          {
+  //          }
 
-			//         if (angle < 90f - angleOffset)
-			//         {
-			//             //이동 방향으로 하체 회전하기 
-			//             //앞으로 걷는 애니메이션 재생
 
-			//             //Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Forward, move.lastMoveDir, Vector3.zero);
+  //          if (!animCtrl.GetCurrentAnimatorStateInfo(1).IsName(animName))
+  //          {
+  //              animCtrl.SetTrigger("tRotate");
+  //              animCtrl.SetInteger("iRot", Mathf.RoundToInt(dot));
+  //          }
 
-			//             //Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Forward, aim.lookDir, Vector3.zero);
-			//             //Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Forward, aim.lookDir, Vector3.zero);
 
-			//             //if (preMoveDir != eGizmoDir.Forward) /*(!animCtrl.GetCurrentAnimatorStateInfo(1).IsName("Walk_Forward") && )*/
-			//             //{
-			//             //    animCtrl.ResetTrigger("tWalk_F");
-			//             //    animCtrl.SetTrigger("tWalk_F");
-			//             //}
+  //          var temp = aim.rayResultPoint;
+  //          temp.y = transform.position.y;
+  //          transform.LookAt(temp);
 
-			//             //preMoveDir = eGizmoDir.Forward;
-			//         }
-			//         else if (angle < 90f + angleOffset)
-			//         {
+  //      }
+  //      else
+  //      { //움직이고 있는 경우
+  //        //몸 방향은 마우스 방향
+  //        //상체는 그대로 마우스 방향
+  //        //하체는
+  //        //1. 0~80도 정도 까지는 앞으로 걷는 애니메이션 + 움직이는 방향으로
+  //        //2. 80~100도는 옆으로 걷는 애니메이션 + 상체랑 같은 방향
+  //        //3. 100~170도는 뒤로걷는 애니메이션 + 상체랑 같은 방향
 
-			//             //if (dot > 0.1f)
-			//             //{
-			//             //    if (preMoveDir != eGizmoDir.Left)/*(!animCtrl.GetCurrentAnimatorStateInfo(1).IsName("Walk_Left"))*/
-			//             //    {
-			//             //        animCtrl.SetTrigger("tWalk_L");
+  //          if (!animCtrl.GetCurrentAnimatorStateInfo(1).IsName("Walk"))
+  //          {
+  //              animCtrl.SetTrigger("tWalk");
+  //          }
 
-			//             //    }
+  //          var temp = aim.rayResultPoint;
+  //          temp.y = transform.position.y;
+  //          transform.LookAt(temp);
 
-			//             //    preMoveDir = eGizmoDir.Left;
-			//             //}
-			//             //else if (dot < -0.1f)
-			//             //{
-			//             //    if (preMoveDir != eGizmoDir.Right)/*(!animCtrl.GetCurrentAnimatorStateInfo(1).IsName("Walk_Right"))*/
-			//             //    {
-			//             //        animCtrl.SetTrigger("tWalk_R");
-			//             //    }
-			//             //    preMoveDir = eGizmoDir.Right;
-			//             //}
-			//         }
-			//         else if (angle <= 180f)
-			//         {
-			//             //하체 움직이는 방향 반대 바라보기
-			//             //뒤로걷는 애니메이션 재생하기
-
-			//             //Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Forward, -1f *  move.lastMoveDir, Vector3.zero);
-
-			//             //Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Forward, aim.lookDir, Vector3.zero);
-			//             //Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Forward, aim.lookDir, Vector3.zero);
-
-			//             //if (preMoveDir != eGizmoDir.Back)/*(!animCtrl.GetCurrentAnimatorStateInfo(1).IsName("Walk_Back"))*/
-			//             //{
-			//             //    animCtrl.SetTrigger("tWalk_B");
-			//             //}
-
-			//             preMoveDir = eGizmoDir.Back;
-			#endregion
-
-		}
+  //          //231101 이럴필요 없이 걍 블랜드 트리 쓰면 되노;
+  //          Vector3 relativeDir = Quaternion.Euler(-transform.rotation.eulerAngles) * move.lastMoveDir;
+  //          animCtrl.SetFloat("MoveX", relativeDir.x);
+  //          animCtrl.SetFloat("MoveZ", relativeDir.z);
+		//}
 
 
 	}
-
-
-
-
-       
-
-        //	//Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Foward, move.lastMoveDir, Vector3.zero);
-        //	//Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
-        //	//Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Foward, aim.lookDir, Vector3.zero);
-
-
-
-    
 
     private void FixedUpdate()
     {

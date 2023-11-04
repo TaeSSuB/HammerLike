@@ -1,13 +1,13 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player_Idle : cState
+public class Player_Move : cState
 {
 
 	public Player player;
 
-	public Player_Idle(Player _player)
+	public Player_Move(Player _player)
 	{
 		player = _player;
 	}
@@ -16,11 +16,10 @@ public class Player_Idle : cState
 	{
 		base.EnterState();
 
-		Debug.Log("Enter Player Idle");
+		Debug.Log("Enter Player Move");
 
-		player.animCtrl.SetLayerWeight(1, 0f);
-
-		player.animCtrl.SetTrigger("tIdle");
+		player.animCtrl.SetLayerWeight(1, 1f);
+		player.animCtrl.SetTrigger("tWalk");
 	}
 	public override void UpdateState()
 	{
@@ -28,18 +27,18 @@ public class Player_Idle : cState
 
 		player.aim.Aiming();
 
+		if (!player.move.Move(player.stat.walkSpd))
+		{
+			player.fsm.SetNextState("Player_Idle");
+		}
+
 		var temp = player.aim.rayResultPoint;
 		temp.y = player.transform.position.y;
 		player.transform.LookAt(temp);
 
-		//움직임 없고 몸 회전할때 발 회전 애니메이션 재생하는거 따로 State로 뺴셔도 되고
-		//아니면 여기서 그냥 LateUpdate에서 잔발 애니메이션만 재생하시면 될듯함니당
-
-		if (player.move.Move(player.stat.walkSpd))
-		{
-			player.fsm.SetNextState("Player_Move");
-		}
-
+		Vector3 relativeDir = Quaternion.Euler(-player.transform.rotation.eulerAngles) * player.move.lastMoveDir;
+		player.animCtrl.SetFloat("MoveX", relativeDir.x);
+		player.animCtrl.SetFloat("MoveZ", relativeDir.z);
 	}
 
 
@@ -51,6 +50,10 @@ public class Player_Idle : cState
 	public override void LateUpdateState()
 	{
 		base.LateUpdateState();
+
+
+
+
 	}
 
 	public override void ExitState()
@@ -58,3 +61,4 @@ public class Player_Idle : cState
 		base.ExitState();
 	}
 }
+
