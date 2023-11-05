@@ -77,10 +77,9 @@ public class Player : MonoBehaviour
 
     public PlayerStat stat;
 
-
     [Header("State Machine")]
     public PlayerFSM fsm; //정말 큰 애니메이션 기준 
-    //public PlayerMoveFSM moveFsm; 
+    //State 들은 Player_AAAA Player_BBBB 이런식으로 클래스 이름이 되어 있음니당.  
 
     [Space(10f)]
     [Header("Default Comps")]
@@ -91,6 +90,8 @@ public class Player : MonoBehaviour
 
     [Space(10f)]
     [Header("Action Table")]
+    //얘들은 그냥 작동하는 함수 Player에 다 놔두면 정신 없어서
+    //따로 빼 놓은 친구들
     public PlayerMoveFunc move;
     public PlayerAtk atk;
     public PlayerAim aim;
@@ -144,133 +145,12 @@ public class Player : MonoBehaviour
     void Update()
     {
 
-        //aim.Aiming();
-        //move.Move(stat.walkSpd);
-
-
-
 
     }
 
-
- //   public void CalcDirectionUpperAndLeg()
- //   {
-	//	float angle = Mathf.Acos(Vector3.Dot(hipBoneTr.forward, transform.forward)) * Mathf.Rad2Deg;
-
-	//	//좌우 체크하기
-	//	//1. 포워드와 direction 외적해서 법선 구하기
-	//	Vector3 crossVec = Vector3.Cross(hipBoneTr.forward, transform.forward);
-
-	//	//2. 나온 법선이랑 Up벡터 내적하기
-	//	float dot = Vector3.Dot(crossVec, Vector3.up);
-
- //       if (dot > 0.1f)
- //       {
- //           Debug.Log("오른쪽");
- //           //오른쪽 하체 회전 애니메이션 재생 하기
- //       }
- //       else if (dot < -0.1f)
- //       {
- //           Debug.Log("왼쪽");
- //           //왼쪽 하체 회전 애니메이션 재생 하기
- //       }
- //       else
- //       {
- //           Debug.Log("거의 직선?");
- //       }
-	//}
-
     private void LateUpdate()
     {
-        //Debug.Log("플레이어 상하체 차이 각도 : " + angle);
-
-        //Funcs.LookAtSpecificBone(hipBoneTr, eGizmoDir.Forward, move.lastMoveDir, Vector3.zero);
-        //Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Forward, aim.lookDir, Vector3.zero);
-        //Funcs.LookAtSpecificBone(headBoneTr, eGizmoDir.Forward, aim.lookDir, Vector3.zero); //이거 애니메이션 때문에 약간 오차가 발생함.
-        //                                                                                   //추후 따로 보정 회전값을 넣어 주던지 계산을 해주던지 해야함.
-
-
-        //231103 2158
-        //기본적으로 그냥 움직임이 있든 없든 몸 자체가 조준 방향으로 돌아가는 방식이 맞는거 같음.
-        //와이?!
-        //움직임이 없을때, 회전 할 경우 하체는 안 움직이고 상체만 움직이다가 일정각도 이상이 되었을 때 돌아가기
-        //이거랑, 현재 몸 각도에서 상대적 움직이는 방향을 체크해서 발 애니메이션을 재생하는거랑 모순이 발생함.
-        //몸 각도에서 상대적 방향 체크 해서 발 애니메이션 재생하는거 자체가 몸이랑 하체 각도가 같을 경우를 상정하는거고
-
-        //움직임이 없을때, 회전 할 경우 하체는 안 움직이고 상체만 움직이다가 일정각도 이상이 되었을 때 돌아가기
-        //가 되려면 마지막 발 방향이 있어야 하는데
-        //이제 이동 방향으로 하체 방향이 가는게 아니라 상대적 방향에 맞는 하체 애니메이션을 재생하는 방식임.
-
-
-
-
-  //      if (move.isRest)
-  //      {
-  //          //이전 회전값과 현재 회전값 비교해서 
-
-  //          if (transform.forward == aim.lookDir)
-		//	{
-  //              return;
-		//	}
-  //          Vector3 preForward = transform.forward;
-
-  //          float angle = Mathf.Acos(Vector3.Dot(transform.forward, aim.lookDir)) * Mathf.Rad2Deg;
-  //          Vector3 crossVec = Vector3.Cross(transform.forward, aim.lookDir);
-  //          float dot = Vector3.Dot(crossVec, Vector3.up);
-
-
-  //          string animName = string.Empty;
-  //          if (dot > 0.1f)
-  //          {
-  //              animCtrl.SetLayerWeight(1, 1f);
-  //              animName = "Rot_Right";
-  //          }
-  //          if (dot < -0.1f)
-  //          {
-  //              animCtrl.SetLayerWeight(1, 1f);
-  //              animName = "Rot_Left";
-  //          }
-  //          else
-  //          {
-  //          }
-
-
-  //          if (!animCtrl.GetCurrentAnimatorStateInfo(1).IsName(animName))
-  //          {
-  //              animCtrl.SetTrigger("tRotate");
-  //              animCtrl.SetInteger("iRot", Mathf.RoundToInt(dot));
-  //          }
-
-
-  //          var temp = aim.rayResultPoint;
-  //          temp.y = transform.position.y;
-  //          transform.LookAt(temp);
-
-  //      }
-  //      else
-  //      { //움직이고 있는 경우
-  //        //몸 방향은 마우스 방향
-  //        //상체는 그대로 마우스 방향
-  //        //하체는
-  //        //1. 0~80도 정도 까지는 앞으로 걷는 애니메이션 + 움직이는 방향으로
-  //        //2. 80~100도는 옆으로 걷는 애니메이션 + 상체랑 같은 방향
-  //        //3. 100~170도는 뒤로걷는 애니메이션 + 상체랑 같은 방향
-
-  //          if (!animCtrl.GetCurrentAnimatorStateInfo(1).IsName("Walk"))
-  //          {
-  //              animCtrl.SetTrigger("tWalk");
-  //          }
-
-  //          var temp = aim.rayResultPoint;
-  //          temp.y = transform.position.y;
-  //          transform.LookAt(temp);
-
-  //          //231101 이럴필요 없이 걍 블랜드 트리 쓰면 되노;
-  //          Vector3 relativeDir = Quaternion.Euler(-transform.rotation.eulerAngles) * move.lastMoveDir;
-  //          animCtrl.SetFloat("MoveX", relativeDir.x);
-  //          animCtrl.SetFloat("MoveZ", relativeDir.z);
-		//}
-
+ 
 
 	}
 

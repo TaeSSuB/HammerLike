@@ -6,7 +6,6 @@ using Johnson;
 
 public class PlayerAim : MonoBehaviour
 {
-
 	Player player;
 	//레이 쏴서 하는 방식
 
@@ -89,13 +88,10 @@ public class PlayerAim : MonoBehaviour
 		//Debug.Log("main ViewPort : " + mouseViewPos_main);
 		//Debug.Log("Result viewPort : " + result);
 
-
 		mouseRay = Camera.main.ViewportPointToRay(result);
 		RaycastHit hit;
 		if (Physics.Raycast(mouseRay, out hit, 500f, LayerMask.GetMask("Ground")))
 		{
-
-			//Debug.Log("dd");
 			mouseWorldPos = hit.point;
 			//mouseWorldPos.y = transform.position.y;
 
