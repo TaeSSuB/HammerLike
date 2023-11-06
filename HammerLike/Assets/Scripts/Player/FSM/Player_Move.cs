@@ -32,6 +32,11 @@ public class Player_Move : cState
 			player.fsm.SetNextState("Player_Idle");
 		}
 
+		if(Input.GetKeyDown(KeyCode.Space))
+		{
+			player.fsm.SetNextState("Player_Envasion");
+		}
+
 		var temp = player.aim.rayResultPoint;
 		temp.y = player.transform.position.y;
 		player.transform.LookAt(temp);

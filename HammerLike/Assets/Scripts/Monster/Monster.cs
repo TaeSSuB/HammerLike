@@ -92,7 +92,7 @@ public class Monster : MonoBehaviour
     private void LateUpdate()
     {
         Vector3 lookDir = monsterAim.Aiming();
-        Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Forward, lookDir, Vector3.zero);
+        //Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Forward, lookDir, Vector3.zero);
     }
 
     private void FixedUpdate()
@@ -122,7 +122,6 @@ public class Monster : MonoBehaviour
         {
             if (hit.CompareTag("Player"))  // Player 태그를 가진 오브젝트를 인식
             {
-                Debug.Log("Player detected!"); // 로그 추가
                 playerTransform = hit.transform;
                 monsterAim.SetTarget(playerTransform);
                 break;

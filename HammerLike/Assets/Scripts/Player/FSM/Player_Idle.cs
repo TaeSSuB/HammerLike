@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Player_Idle : cState
 {
@@ -39,11 +40,42 @@ public class Player_Idle : cState
 		{
 			player.fsm.SetNextState("Player_Move");
 		}
+		///
+		/// 우클릭 시 Charge 공격 curCharging 일 때 
+		///
+		if(Input.GetMouseButtonDown(0))
+		{
+			player.animCtrl.SetTrigger("tAtk");
+		}
 
-	}
+		///
+		/// TODO) 이동중일 때 Charge에 대한 걸 안만들어 놨음
+		///
+        if (Input.GetMouseButton(1))
+        {
+			player.animCtrl.SetBool("tCharge", true);
+
+            player.atk.curCharging += Time.deltaTime;
+            Debug.Log("우측키 누름");
+        }
+        if (Input.GetMouseButtonUp(1) && player.atk.curCharging>=1)
+        {
+			//player.animCtrl.SetTrigger("tAtk");
+			player.animCtrl.SetBool("tCharge", false);
+			player.animCtrl.SetFloat("fAtkVal", 0);
+			player.atk.curCharging = 0;
+            Debug.Log("우측키 땜");
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            player.fsm.SetNextState("Player_Envasion");
+        }
 
 
-	public override void FixedUpdateState()
+    }
+
+
+    public override void FixedUpdateState()
 	{
 		base.FixedUpdateState();
 	}

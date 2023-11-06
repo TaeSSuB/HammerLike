@@ -33,12 +33,14 @@ public class PlayerAtk : MonoBehaviour
 		if (Input.GetMouseButton(1))
 		{
 			curCharging += Time.deltaTime;
+			Debug.Log("우측키 누름");
 		}
 		if (Input.GetMouseButtonUp(1))
 		{
 			player.animCtrl.SetTrigger("tAtk");
 			player.animCtrl.SetFloat("fAtkVal", curCharging);
-		}
+            Debug.Log("우측키 땜");
+        }
 
 		//만약 공격 애니메이션 재생 중이거나 공격속도? 연사력 같은 스텟 있으시면
 		//그거일때는 공격 몬하도록 해주심 될듯

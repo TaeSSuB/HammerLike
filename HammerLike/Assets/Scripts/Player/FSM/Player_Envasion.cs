@@ -21,7 +21,11 @@ public class Player_Envasion : cState
 
 	public string animName;
 
-	public Player_Envasion(Player _player)
+    public float rollSpeed = 5f; // 매 초 구르기 속도
+    public float rollDuration = 1f; // 구르기 지속 시간
+    private float rollTimer; // 구르기 타이머
+
+    public Player_Envasion(Player _player)
 	{
 		player = _player;
 	}
@@ -46,17 +50,50 @@ public class Player_Envasion : cState
 															   //넘기시면 될 듯!
 
 		animName = Funcs.GetEnumName<eEnvasionType>((int)tempType);
-	}
+
+        rollTimer = rollDuration;
+    }
 
 	public override void UpdateState()
 	{
-		base.UpdateState();
+        base.UpdateState();
 
-		if (Funcs.IsAnimationAlmostFinish(player.animCtrl, animName))
-		{
-			player.fsm.SetNextState("Player_Idle");
-		}
-	}
+        if (rollTimer > 0)
+        {
+           
+            Vector3 worldDirection = player.move.lastMoveDir.normalized;
+
+            
+            bool isMovingVertically = Mathf.Abs(worldDirection.z) > Mathf.Abs(worldDirection.x);
+
+            
+            bool isMovingDiagonally = Mathf.Abs(worldDirection.x) > 0 && Mathf.Abs(worldDirection.z) > 0;
+
+            
+            float adjustedSpeed = rollSpeed;
+            if (isMovingVertically)
+            {
+                // 상하 이동에 대해 속도 1.4배로 조정
+                adjustedSpeed *= 1.4f;
+            }
+            else if (isMovingDiagonally)
+            {
+                // 대각선 이동 대해 조정 (상하 이동과 동일하게 1.4배로 적용) /// 근데 아마 좌우는 놔두고 상하만 1.4 해야될듯 ?
+                adjustedSpeed *= 1.4f;
+            }
+
+           
+            player.transform.Translate(worldDirection * adjustedSpeed * Time.deltaTime, Space.World);
+
+            
+            rollTimer -= Time.deltaTime;
+        }
+
+        if (Funcs.IsAnimationAlmostFinish(player.animCtrl, animName) || rollTimer <= 0)
+        {
+            player.fsm.SetNextState("Player_Idle");
+        }
+    }
 
 
 	public override void FixedUpdateState()
