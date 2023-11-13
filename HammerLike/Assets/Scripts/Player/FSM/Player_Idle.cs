@@ -46,6 +46,7 @@ public class Player_Idle : cState
 		if(Input.GetMouseButtonDown(0))
 		{
 			player.animCtrl.SetTrigger("tAtk");
+			player.atk.Attack();
 		}
 
 		///

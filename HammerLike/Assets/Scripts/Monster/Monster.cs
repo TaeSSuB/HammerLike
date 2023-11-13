@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Johnson;
 
 [Serializable]
@@ -34,7 +35,7 @@ public class Monster : MonoBehaviour
     // 불편해도 양해바랍니다!!! 스마미센!!
 
     public MonsterStat stat;
-
+    public Slider healthSlider;
     [Header("State Machine")]
     public MonsterFSM fsm;
 
@@ -60,6 +61,10 @@ public class Monster : MonoBehaviour
     public Transform headBoneTr;
     public Transform spineBoneTr;
     public Transform hpBoneTr;
+    private HashSet<int> processedAttacks = new HashSet<int>();
+
+    private bool isKnockedBack = false;
+    private bool canTakeKnockBackDamage = true;
 
     private void Awake()
     {
@@ -75,11 +80,16 @@ public class Monster : MonoBehaviour
         {
             rd = GetComponent<Rigidbody>();
         }
+        stat.curHp = stat.maxHp;
     }
 
     void Start()
     {
-
+        if (healthSlider != null)
+        {
+            healthSlider.maxValue = stat.maxHp;
+            healthSlider.value = stat.curHp;
+        }
     }
 
     void Update()
@@ -87,6 +97,12 @@ public class Monster : MonoBehaviour
         //move.Move(stat.walkSpd);
         DetectPlayer();
         ChasePlayer();
+
+        if (healthSlider != null)
+        {
+            Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position + new Vector3(-2.7f, 1.2f, 0));
+            healthSlider.transform.position = screenPosition;
+        }
     }
 
     private void LateUpdate()
@@ -114,6 +130,96 @@ public class Monster : MonoBehaviour
 
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("WeaponCollider"))
+        {
+            WeaponCollider weaponCollider = other.GetComponent<WeaponCollider>();
+            if (weaponCollider != null && !processedAttacks.Contains(weaponCollider.CurrentAttackId))
+            {
+                // 데미지 및 넉백 처리
+                PlayerAtk playerAttack = other.GetComponentInParent<PlayerAtk>();
+                if (playerAttack != null)
+                {
+                    TakeDamage(playerAttack.attackDamage);
+                    ApplyKnockback(playerAttack.transform.forward);
+                    processedAttacks.Add(weaponCollider.CurrentAttackId);
+                }
+
+            }
+        }
+        if (other.gameObject.CompareTag("KnockBackable") && isKnockedBack && canTakeKnockBackDamage)
+        {
+            TakeDamage(10f); // KnockBackDamage
+            canTakeKnockBackDamage = false;
+            StartCoroutine(KnockBackDamageCooldown());
+        }
+    }
+
+    private IEnumerator KnockBackDamageCooldown()
+    {
+        yield return new WaitForSeconds(1f); // 넉백 데미지 쿨다운
+        canTakeKnockBackDamage = true;
+    }
+
+    private void TakeDamage(float damage)
+    {
+        if (stat.curHp > 0)  // 몬스터가 살아있을 때만 피격 처리
+        {
+            stat.curHp -= damage;
+            if (healthSlider != null)
+            {
+                healthSlider.value = stat.curHp;
+                ShowHealthSlider();  // 체력 UI 슬라이더 표시
+            }
+
+            if (stat.curHp <= 0)
+            {
+                Die();
+            }
+        }
+    }
+
+    private void ApplyKnockback(Vector3 direction)
+    {
+        float knockbackIntensity = 500f; // 넉백 강도
+        direction.y = 0; // Y축 변화 제거
+        GetComponent<Rigidbody>().AddForce(direction.normalized * knockbackIntensity, ForceMode.Impulse);
+        isKnockedBack = true;
+        StartCoroutine(KnockBackDuration());
+    }
+
+    private IEnumerator KnockBackDuration()
+    {
+        yield return new WaitForSeconds(1f); // 넉백 지속 시간
+        isKnockedBack = false;
+    }
+
+    private void Die()
+    {
+        // 몬스터 사망 처리
+        // 예: gameObject.SetActive(false); 또는 Destroy(gameObject);
+        Destroy(gameObject);
+    }
+    private void ShowHealthSlider()
+    {
+        if (healthSlider != null)
+        {
+            healthSlider.gameObject.SetActive(true);
+            StopCoroutine("HideHealthSlider");  // 이미 진행 중인 코루틴이 있다면 중단
+            StartCoroutine("HideHealthSlider");  // 새 코루틴 시작
+        }
+    }
+
+    private IEnumerator HideHealthSlider()
+    {
+        yield return new WaitForSeconds(2f);
+        if (healthSlider != null && stat.curHp > 0)  // 몬스터가 살아있을 때만 슬라이더 비활성화
+        {
+            healthSlider.gameObject.SetActive(false);
+        }
+    }
+
     private void DetectPlayer()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, stat.detectionRange);
@@ -128,6 +234,8 @@ public class Monster : MonoBehaviour
             }
         }
     }
+
+    
     void ChasePlayer()
     {
         if (playerTransform != null)
