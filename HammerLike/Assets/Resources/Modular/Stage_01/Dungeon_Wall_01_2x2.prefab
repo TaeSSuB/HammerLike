@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2596616789233690561}
   - component: {fileID: 1416050730814007396}
   - component: {fileID: 3765613929414859950}
+  - component: {fileID: -1216688245396483680}
   m_Layer: 0
   m_Name: Dungeon_Wall_01_2x2
   m_TagString: Untagged
@@ -83,3 +84,29 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-1216688245396483680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3405523527026523515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 128e1f06d3b3a4842916aa34628e744b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabsWithProbability:
+  - prefab: {fileID: 8312495959046997843, guid: 778789c53233f7042913919b8c6183aa,
+      type: 3}
+    probability: 0.25
+  - prefab: {fileID: 6458770889358169029, guid: ece64b22798145c499c6424d41ea2069,
+      type: 3}
+    probability: 0.25
+  - prefab: {fileID: 2827652872892788167, guid: f40b94329f077394abba8f87d2b7c6eb,
+      type: 3}
+    probability: 0.25
+  - prefab: {fileID: 7320660109772996869, guid: 08dfc52eeb998b042abcff6e2bdd2eaf,
+      type: 3}
+    probability: 0.25
+  destroyOriginal: 1
