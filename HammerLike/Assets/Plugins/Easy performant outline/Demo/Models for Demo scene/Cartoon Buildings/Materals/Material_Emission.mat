@@ -8,16 +8,16 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Material_Emission
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_ValidKeywords:
-  - _ALPHABLEND_ON
   - _EMISSION
+  - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords:
+  - _ALPHABLEND_ON
   - _DISABLE_SSR_TRANSPARENT
   - _EMISSIVE_COLOR_MAP
   - _ENABLE_FOG_ON_TRANSPARENT
   - _NORMALMAP_TANGENT_SPACE
-  - _SURFACE_TYPE_TRANSPARENT
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -30,6 +30,8 @@ Material:
   - TransparentDepthPostpass
   - TransparentBackface
   - RayTracingPrepass
+  - DepthOnly
+  - SHADOWCASTER
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -351,7 +353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 3
+  version: 5
 --- !u!114 &5719775629763815823
 MonoBehaviour:
   m_ObjectHideFlags: 11
