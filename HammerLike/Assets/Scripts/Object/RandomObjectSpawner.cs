@@ -13,17 +13,16 @@ public class RandomObjectSpawner : MonoBehaviour
     public List<PrefabProbability> prefabsWithProbability;
     public bool destroyOriginal = false;
 
-
     private void Start()
     {
         ReplaceObject();
     }
 
-    // 에디터 버튼에 연결될 메서드
     public void ReplaceObject()
     {
         GameObject selectedPrefab = SelectRandomPrefab();
-        GameObject spawnedObject = Instantiate(selectedPrefab, transform.position, transform.rotation);
+        // 새 오브젝트를 현재 위치와 회전으로 생성하고 부모 오브젝트에 연결
+        GameObject spawnedObject = Instantiate(selectedPrefab, transform.position, transform.rotation, transform.parent);
 
         // 원본 오브젝트 처리
         if (destroyOriginal)
@@ -32,7 +31,7 @@ public class RandomObjectSpawner : MonoBehaviour
         }
         else
         {
-            gameObject.SetActive(false);
+            // 원본 오브젝트를 비활성화하지 않고 그대로 둠
         }
     }
 
