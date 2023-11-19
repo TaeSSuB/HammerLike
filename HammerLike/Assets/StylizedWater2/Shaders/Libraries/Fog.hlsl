@@ -71,7 +71,10 @@ void ApplyFog(inout float3 color, float fogFactor, float4 screenPos, float3 posi
 #endif
 
 #ifdef Buto
-	foggedColor = ButoFogBlend(screenPos.xy / screenPos.w, color.rgb);
+	if (_ButoIsEnabled > 0.0)
+	{
+		foggedColor = ButoFogBlend(screenPos.xy / screenPos.w, color.rgb);
+	}
 #endif
 
 	#ifndef UnityFog

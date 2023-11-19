@@ -1,3 +1,14 @@
+1.5.5
+
+Fixed:
+- Shader error when using Curved World 2022, due to incorrect order of shader library compilation.
+- Water appearing completely black when Buto 2022 is installed (temporary fix until integration is available)
+
+1.5.4
+
+Fixed:
+- Material UI, the Dynamic Effects surface foam texture slot being linked to the regular Foam Mask slot.
+
 1.5.3
 
 Fixed:

@@ -21,7 +21,7 @@
 		_Speed("Animation Speed", Float) = 1
 		
 		_SlopeAngleThreshold("Angle° threshold", Range(0 , 90)) = 15
-		_SlopeAngleFalloff("Angle° falloff", Range(0 , 90)) = 25
+		_SlopeAngleFalloff("Angle° falloff", Range(15 , 90)) = 25
 		_SlopeStretching("Slope UV stretch", Range(0 , 1)) = 0.5
 		_SlopeSpeed("Slope speed multiplier", Float) = 2
 		_SlopeFoam("River slope foam", Range(0 , 3)) = 1
@@ -190,7 +190,6 @@
         //#define CURVEDWORLD_BEND_ID_1
         //#pragma shader_feature_local CURVEDWORLD_DISABLED_ON
         //#pragma shader_feature_local CURVEDWORLD_NORMAL_TRANSFORMATION_ON
-        //#include "Assets/Amazing Assets/Curved World/Shaders/Core/CurvedWorldTransform.cginc"
 
 		ENDHLSL
 		
@@ -252,6 +251,7 @@
 			#endif
 
             #include_library "Libraries/URP.hlsl"
+            //#include "Assets/Amazing Assets/Curved World/Shaders/Core/CurvedWorldTransform.cginc"
 
             //Tying specific features and operations to advanced shading
             #if _ADVANCED_SHADING
@@ -393,6 +393,7 @@
             #define SHADERPASS_DEPTHONLY
 
             #include_library "Libraries/URP.hlsl"
+            //#include "Assets/Amazing Assets/Curved World/Shaders/Core/CurvedWorldTransform.cginc"
 
             #include_library "Libraries/Input.hlsl"
             

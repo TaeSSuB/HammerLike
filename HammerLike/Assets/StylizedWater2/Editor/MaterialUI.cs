@@ -1123,7 +1123,7 @@ namespace StylizedWater2
                     {
                         EditorGUILayout.LabelField("Dynamic Effects", EditorStyles.boldLabel);
                         
-                        DrawTextureSelector(_FoamTex, ref foamTextures);
+                        DrawTextureSelector(_FoamTexDynamic, ref foamTextures);
 
                         UI.Material.DrawFloatTicker(_FoamTilingDynamic, tooltip:"Determines how often the texture repeats over the UV coordinates. Smaller values result in the texture being stretched larger, higher numbers means it becomes smaller");
                         EditorGUI.indentLevel++;

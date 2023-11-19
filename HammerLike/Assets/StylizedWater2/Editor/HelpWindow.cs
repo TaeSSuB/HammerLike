@@ -23,6 +23,7 @@ namespace StylizedWater2
         private Changelog changelog;
         
         private bool underwaterExtensionInstalled;
+        private bool dynamicEffectsInstalled;
         [NonSerialized] private string projectDetails;
         private Vector2 projectDetailsScrollPos;
 
@@ -82,7 +83,8 @@ namespace StylizedWater2
             AssetInfo.VersionChecking.CheckUnityVersion();
             
             underwaterExtensionInstalled = StylizedWaterEditor.UnderwaterRenderingInstalled();
-
+            dynamicEffectsInstalled = StylizedWaterEditor.DynamicEffectsInstalled();
+            
             sections = new List<Section>();
             sections.Add(new Section("Home", DrawHome));
             sections.Add(new Section("Installation", DrawInstallation));
@@ -446,13 +448,12 @@ namespace StylizedWater2
         {
             using (new EditorGUILayout.VerticalScope())
             {
-                /* Not yet available
                 UI.DrawExtension("Dynamic Effects",
-                    "Enables advanced effects to be projected onto the water surface. Such as boat wakes, ripples and shoreline waves.", StylizedWaterEditor.DynamicEffectsInstalled(),
-                    "https://assetstore.unity.com/packages/slug/822256?aid=1011l7Uk8&pubref=sw2editor", UI.AssetIcon);
+                    "Enables advanced effects to be projected onto the water surface. Such as boat wakes, ripples and shoreline waves.", dynamicEffectsInstalled,
+                    "https://assetstore.unity.com/packages/slug/257865?aid=1011l7Uk8&pubref=sw2editor", UI.DynamicEffectsAssetIcon);
                 
                 EditorGUILayout.Separator();
-                */
+
                 UI.DrawExtension("Underwater Rendering",
                     "Extends the Stylized Water 2 shader asset with underwater rendering, by seamlessly blending the water with post processing effects.", underwaterExtensionInstalled,
                     "https://assetstore.unity.com/packages/slug/185030?aid=1011l7Uk8&pubref=sw2editor", UI.UnderwaterAssetIcon);
