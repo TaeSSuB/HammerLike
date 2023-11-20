@@ -372,9 +372,10 @@ GameObject:
   m_Component:
   - component: {fileID: 5970666878913797784}
   - component: {fileID: 1158401849603219523}
+  - component: {fileID: 1528956728}
   m_Layer: 0
   m_Name: TestHammer
-  m_TagString: Untagged
+  m_TagString: WeaponCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -407,6 +408,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1528956728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1446617067513714265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b25193bd92b4d44db3e95a8f4e7390b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2941304899269773953
 GameObject:
   m_ObjectHideFlags: 0
@@ -462,7 +475,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stat:
-    maxHp: 0
+    maxHp: 50
     curHp: 0
     maxStamina: 0
     curStamina: 0
@@ -525,8 +538,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d937a16cca8e2824ab9435b0bb321537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  weaponCollider: {fileID: 0}
+  player: {fileID: 1055566027}
+  weaponCollider: {fileID: 1158401849603219523}
   curCharging: 0
   attackDamage: 10
 --- !u!114 &5125377789792643229
@@ -714,7 +727,7 @@ MonoBehaviour:
   drawingMode: 1
   outlineLayer: 0
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -730,7 +743,7 @@ MonoBehaviour:
     cutoutTextureName: _Albedo
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -746,7 +759,7 @@ MonoBehaviour:
     cutoutTextureName: _Albedo
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -762,7 +775,7 @@ MonoBehaviour:
     cutoutTextureName: _Albedo
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -778,7 +791,7 @@ MonoBehaviour:
     cutoutTextureName: _Albedo
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -794,7 +807,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -810,7 +823,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -1327,7 +1340,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: af87898c4134f034a8a88eb613ee2903, type: 2}
+  - {fileID: 2100000, guid: c0fabd3aeed3ed04991d9d65b529b7b6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1348,7 +1361,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 5
+  m_Time: 1
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -1414,6 +1427,19 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!114 &1314141148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4645708443623106051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc4e788e689132d4db0d3391397b0249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trailRenderer: {fileID: 981156863194733690}
 --- !u!114 &8635943048167103176
 MonoBehaviour:
   m_ObjectHideFlags: 0

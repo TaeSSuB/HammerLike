@@ -32,7 +32,7 @@ public class DeformOnCollision : MonoBehaviour
                 }
             }
         }
-
+        Debug.Log("충돌했음");
         mesh.vertices = currentVertices;
         mesh.RecalculateNormals();  // 노멀 재계산
     }
