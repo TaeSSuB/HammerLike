@@ -21,7 +21,7 @@ namespace StylizedWater2
         public const string ASSET_ID = "170386";
         public const string ASSET_ABRV = "SW2";
 
-        public const string INSTALLED_VERSION = "1.5.3";
+        public const string INSTALLED_VERSION = "1.5.5";
         
         public const int SHADER_GENERATOR_VERSION_MAJOR = 1;
         public const int SHADER_GENERATOR_MINOR = 2; 
