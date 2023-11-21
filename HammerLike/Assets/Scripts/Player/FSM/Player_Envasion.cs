@@ -30,62 +30,67 @@ public class Player_Envasion : cState
 		player = _player;
 	}
 
-	public override void EnterState()
-	{
-		base.EnterState();
+    public override void EnterState()
+    {
+        base.EnterState();
 
-		Debug.Log("Enter Evasion");
+        Debug.Log("Enter Evasion");
 
-		player.animCtrl.SetLayerWeight(1, 0f);
+        player.animCtrl.SetLayerWeight(1, 0f);
 
+        // 이동 중이면 마지막 이동 방향을 사용, 아니면 마우스 커서 방향을 사용
+        Vector3 targetDirection;
+        if (player.move.Move(player.stat.walkSpd)) // 현재 이동하고 있는지 아닌지
+        {
+            targetDirection = player.move.lastMoveDir.normalized;
+        }
+        else
+        {
+            Vector3 directionToMouse = player.lastMousePosition - player.transform.position;
+            targetDirection = directionToMouse.normalized;
+        }
 
-		//var temp = player.aim.rayResultPoint;
-		//temp.y = player.transform.position.y;
-		player.transform.forward = player.move.lastMoveDir;
-		//이거 안될텐데 여튼 마지막 이동 방향쪽으로 바라보게 해주심 될 듯
+        if (targetDirection != Vector3.zero)
+        {
+            player.transform.forward = targetDirection;
+        }
 
+        player.animCtrl.SetTrigger("tEnvasion");
+        player.animCtrl.SetInteger("iEnvasion", (int)tempType);
 
-		player.animCtrl.SetTrigger("tEnvasion");
-		player.animCtrl.SetInteger("iEnvasion", (int)tempType);//Enum 형태 등으로 회피 상태 정해두고
-															   //넘기시면 될 듯!
-
-		animName = Funcs.GetEnumName<eEnvasionType>((int)tempType);
+        animName = Funcs.GetEnumName<eEnvasionType>((int)tempType);
 
         rollTimer = rollDuration;
     }
 
-	public override void UpdateState()
-	{
-        base.UpdateState();
 
+
+
+    public override void UpdateState()
+    {
+        base.UpdateState();
         if (rollTimer > 0)
         {
-           
-            Vector3 worldDirection = player.move.lastMoveDir.normalized;
+            // 플레이어가 마우스 방향으로 구르도록 방향 설정
+            Vector3 rollDirection = player.transform.forward.normalized;
 
-            
-            bool isMovingVertically = Mathf.Abs(worldDirection.z) > Mathf.Abs(worldDirection.x);
+            Debug.Log($"Rolling in direction: {rollDirection}");
 
-            
-            bool isMovingDiagonally = Mathf.Abs(worldDirection.x) > 0 && Mathf.Abs(worldDirection.z) > 0;
+            bool isMovingVertically = Mathf.Abs(rollDirection.z) > Mathf.Abs(rollDirection.x);
+            bool isMovingDiagonally = Mathf.Abs(rollDirection.x) > 0 && Mathf.Abs(rollDirection.z) > 0;
 
-            
             float adjustedSpeed = rollSpeed;
             if (isMovingVertically)
             {
-                // 상하 이동에 대해 속도 1.4배로 조정
                 adjustedSpeed *= 1.4f;
             }
             else if (isMovingDiagonally)
             {
-                // 대각선 이동 대해 조정 (상하 이동과 동일하게 1.4배로 적용) /// 근데 아마 좌우는 놔두고 상하만 1.4 해야될듯 ?
                 adjustedSpeed *= 1.4f;
             }
 
-           
-            player.transform.Translate(worldDirection * adjustedSpeed * Time.deltaTime, Space.World);
+            player.transform.Translate(rollDirection * adjustedSpeed * Time.deltaTime, Space.World);
 
-            
             rollTimer -= Time.deltaTime;
         }
 
@@ -96,7 +101,9 @@ public class Player_Envasion : cState
     }
 
 
-	public override void FixedUpdateState()
+
+
+    public override void FixedUpdateState()
 	{
 		base.FixedUpdateState();
 	}

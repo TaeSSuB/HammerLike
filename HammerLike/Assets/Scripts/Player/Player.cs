@@ -76,7 +76,7 @@ public class Player : MonoBehaviour
     //불편해도 양해바람니다!!! 스마미센!!
 
     public PlayerStat stat;
-
+    public Vector3 lastMousePosition;
     [Header("State Machine")]
     public PlayerFSM fsm; //정말 큰 애니메이션 기준 
     //State 들은 Player_AAAA Player_BBBB 이런식으로 클래스 이름이 되어 있음니당.  

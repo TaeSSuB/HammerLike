@@ -24,55 +24,48 @@ public class Player_Idle : cState
 		player.animCtrl.SetTrigger("tIdle");
 	}
 	public override void UpdateState()
-	{
-		base.UpdateState();
+    {
+        base.UpdateState();
 
-		player.aim.Aiming();
+        player.aim.Aiming();
 
-		var temp = player.aim.rayResultPoint;
-		temp.y = player.transform.position.y;
-		player.transform.LookAt(temp);
+        var temp = player.aim.rayResultPoint;
+        temp.y = player.transform.position.y;
+        player.transform.LookAt(temp);
 
-		//움직임 없고 몸 회전할때 발 회전 애니메이션 재생하는거 따로 State로 뺴셔도 되고
-		//아니면 여기서 그냥 LateUpdate에서 잔발 애니메이션만 재생하시면 될듯함니당
+        // 마우스 커서의 위치 저장
+        player.lastMousePosition = temp;
 
-		if (player.move.Move(player.stat.walkSpd))
-		{
-			player.fsm.SetNextState("Player_Move");
-		}
-		///
-		/// 우클릭 시 Charge 공격 curCharging 일 때 
-		///
-		if(Input.GetMouseButtonDown(0))
-		{
-			player.animCtrl.SetTrigger("tAtk");
-			player.atk.Attack();
-		}
+        if (player.move.Move(player.stat.walkSpd))
+        {
+            player.fsm.SetNextState("Player_Move");
+        }
 
-		///
-		/// TODO) 이동중일 때 Charge에 대한 걸 안만들어 놨음
-		///
+        if (Input.GetMouseButtonDown(0))
+        {
+            player.animCtrl.SetTrigger("tAtk");
+            player.atk.Attack();
+        }
+
         if (Input.GetMouseButton(1))
         {
-			player.animCtrl.SetBool("tCharge", true);
-
+            player.animCtrl.SetBool("tCharge", true);
             player.atk.curCharging += Time.deltaTime;
             Debug.Log("우측키 누름");
         }
-        if (Input.GetMouseButtonUp(1) && player.atk.curCharging>=1)
+
+        if (Input.GetMouseButtonUp(1) && player.atk.curCharging >= 1)
         {
-			//player.animCtrl.SetTrigger("tAtk");
-			player.animCtrl.SetBool("tCharge", false);
-			player.animCtrl.SetFloat("fAtkVal", 0);
-			player.atk.curCharging = 0;
+            player.animCtrl.SetBool("tCharge", false);
+            player.animCtrl.SetFloat("fAtkVal", 0);
+            player.atk.curCharging = 0;
             Debug.Log("우측키 땜");
         }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             player.fsm.SetNextState("Player_Envasion");
         }
-
-
     }
 
 
