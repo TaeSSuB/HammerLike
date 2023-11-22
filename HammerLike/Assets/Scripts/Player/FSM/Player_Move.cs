@@ -37,7 +37,14 @@ public class Player_Move : cState
 			player.fsm.SetNextState("Player_Envasion");
 		}
 
-		var temp = player.aim.rayResultPoint;
+        if (Input.GetMouseButtonDown(0))
+        {
+            player.animCtrl.SetTrigger("tAtk");
+			player.animCtrl.SetBool("bAttack", true);
+            player.atk.Attack();
+        }
+
+        var temp = player.aim.rayResultPoint;
 		temp.y = player.transform.position.y;
 		player.transform.LookAt(temp);
 
