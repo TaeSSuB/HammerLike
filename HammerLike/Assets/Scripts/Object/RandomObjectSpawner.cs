@@ -12,6 +12,8 @@ public class RandomObjectSpawner : MonoBehaviour
 
     public List<PrefabProbability> prefabsWithProbability;
     public bool destroyOriginal = false;
+    public bool useParentScale = true;
+    public bool useParentRotation = true;
 
     private void Start()
     {
@@ -21,8 +23,13 @@ public class RandomObjectSpawner : MonoBehaviour
     public void ReplaceObject()
     {
         GameObject selectedPrefab = SelectRandomPrefab();
+
+        Quaternion rotation = useParentRotation ? transform.rotation : selectedPrefab.transform.rotation;
+        Vector3 scale = useParentScale ? transform.localScale : selectedPrefab.transform.localScale;
+
         // 새 오브젝트를 현재 위치와 회전으로 생성하고 부모 오브젝트에 연결
-        GameObject spawnedObject = Instantiate(selectedPrefab, transform.position, transform.rotation, transform.parent);
+        GameObject spawnedObject = Instantiate(selectedPrefab, transform.position, rotation, transform.parent);
+        spawnedObject.transform.localScale = scale;
 
         // 원본 오브젝트 처리
         if (destroyOriginal)
