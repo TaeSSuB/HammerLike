@@ -27,9 +27,10 @@ Material:
   - _ADVANCED_SHADING
   - _DISTANCE_NORMALS
   - _FOAM
+  - _REFRACTION
   - _SMOOTH_INTERSECTION
-  - _SPECULARHIGHLIGHTS_OFF
   - _TRANSLUCENCY
+  - _UNLIT
   m_InvalidKeywords:
   - _DEPTHEXP_ON
   - _ZCLIP_ON
@@ -149,7 +150,7 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.5
     - _DepthExp: 1
-    - _DepthHorizontal: 8
+    - _DepthHorizontal: 0.01
     - _DepthVertical: 5.41
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
@@ -179,15 +180,15 @@ Material:
     - _GlossyReflections: 0
     - _HorizonDistance: 8
     - _IntersectionClipping: 0.5
-    - _IntersectionFalloff: 0.55
-    - _IntersectionLength: 2.3
+    - _IntersectionFalloff: 0.569
+    - _IntersectionLength: 1.6
     - _IntersectionRippleDist: 32
     - _IntersectionRippleStrength: 0.5
     - _IntersectionSource: 0
     - _IntersectionSpeed: 0.1
     - _IntersectionStyle: 2
-    - _IntersectionTiling: 0.2
-    - _LightingOn: 1
+    - _IntersectionTiling: 0.81000006
+    - _LightingOn: 0
     - _Metallic: 0.5
     - _NormalMapOn: 0
     - _NormalSpeed: 0.2
@@ -209,7 +210,7 @@ Material:
     - _ReflectionLighting: 0
     - _ReflectionStrength: 1
     - _RefractionChromaticAberration: 1
-    - _RefractionOn: 0
+    - _RefractionOn: 1
     - _RefractionStrength: 0.1
     - _RiverModeOn: 0
     - _SampleGI: 0
@@ -225,7 +226,7 @@ Material:
     - _SparkleIntensity: 0
     - _SparkleSize: 0.155
     - _SpecularHighlights: 1
-    - _SpecularReflectionsOn: 0
+    - _SpecularReflectionsOn: 1
     - _Speed: 1
     - _SrcBlend: 1
     - _SunReflectionDistortion: 0
@@ -239,8 +240,8 @@ Material:
     - _TranslucencyExp: 4
     - _TranslucencyOn: 1
     - _TranslucencyReflectionMask: 1
-    - _TranslucencyStrength: 1.05
-    - _TranslucencyStrengthDirect: 0.062
+    - _TranslucencyStrength: 0.68
+    - _TranslucencyStrengthDirect: 0
     - _UnderwaterRefractionOffset: 0.2
     - _UnderwaterSurfaceSmoothness: 0.8
     - _VertexColorDepth: 0
@@ -259,15 +260,15 @@ Material:
     - _ZClip: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0, g: 0.18181798, b: 0.6037736, a: 1}
+    - _BaseColor: {r: 0, g: 0.109922074, b: 0.368, a: 1}
     - _Color: {r: 0, g: 0.20915446, b: 0.6886792, a: 1}
     - _Direction: {r: 0, g: -1, b: 0, a: 0}
     - _DistanceNormalsFadeDist: {r: 100, g: 300, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FoamColor: {r: 1, g: 1, b: 1, a: 0}
+    - _FoamColor: {r: 0.4056604, g: 0.4056604, b: 0.4056604, a: 0}
     - _HorizonColor: {r: 0, g: 0, b: 0, a: 1}
-    - _IntersectionColor: {r: 0, g: 0.5466559, b: 1, a: 0.50980395}
-    - _ShallowColor: {r: 1, g: 1, b: 1, a: 0.4862745}
+    - _IntersectionColor: {r: 0, g: 0.5426712, b: 1, a: 0.39607844}
+    - _ShallowColor: {r: 0, g: 0.04287203, b: 0.21698111, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _WaveDirection: {r: 1, g: 1, b: 1, a: 1}
     - _WaveFadeDistance: {r: 150, g: 300, b: 0, a: 0}
