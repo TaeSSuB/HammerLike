@@ -15,6 +15,20 @@ public enum eBoundary
     End
 }
 
+public enum FollowOption
+{
+    FollowToObject,
+    LimitedInRoom
+}
+
+[System.Serializable]
+public class ResolutionRef
+{
+    public int width;
+    public int height;
+}
+
+
 //231025 1152 카메라 다른 연출이 있어서
 //더 작업 안해도 될 듯.
 
@@ -41,21 +55,38 @@ public class CamCtrl : MonoBehaviour
 
     //순서
     //1. 스테이지 시작 혹은 초기화 시점에 플레이어를 중앙에 두기
-
+    
     [Header("Cams")]
     public Camera mainCam;  //For RenderTex = mainCam
+    public Camera subCam;
+
+
+    [Space(10f)]
+    [Header("Resolution")]
+    public GameObject renderTex; //Only control zoom using Height vari, For Screen Render
+    public ResolutionRef resolutionRef;
+
+    [Space(10f)]
+    [Header("Follow")]
+    public FollowOption followOption;
     public Transform followObjTr;
+    public AnimationCurve followSpdCurve;
     public float followSpd;
     public float followDistOffset;
 
     [Space(10f)]
     [Header("Zoom")]
+    public bool zoomOption;
     public PixelPerfectCamera zoomCam; //Only control zoom using Height vari, For Screen Render
     public float zoomMin;
+    public float zoomMax;
     public float zoomSpd;
-    
+    public AnimationCurve zoomSpdCrv;
+
 
     [Space(10f)]
+    [Header("ETC")]
+    public Vector3 worldScaleCrt;
     //public Vector3[] boundaryDir; //카메라의 모서리+중앙 Direction 
     public float distToGround;
 
@@ -110,22 +141,22 @@ public class CamCtrl : MonoBehaviour
 
     public void Following()
     {
-		//Ray ray = mainCam.ViewportPointToRay(new Vector3(0.5f, 0.5f));
-		//var rayResult = new RaycastHit();
+        //Ray ray = mainCam.ViewportPointToRay(new Vector3(0.5f, 0.5f));
+        //var rayResult = new RaycastHit();
 
-		//Vector3 dir;
-		//if (Physics.Raycast(ray, out rayResult, 100f, LayerMask.GetMask("Ground")))
-		//{
-		//    dir = followObjTr.position - rayResult.point;
-		//    float dist = Vector3.Distance(followObjTr.position, rayResult.point);
-		//    if (dist <= 0.05f)
-		//    {
-		//        return;
-		//    }
-		//    mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, mainCam.transform.position + dir, Time.unscaledDeltaTime * followSpd);
-		//}
-
-		float dist = Vector3.Distance(followObjTr.position, boundaryPosToRay[(int)eBoundary.Center]);
+        //Vector3 dir;
+        //if (Physics.Raycast(ray, out rayResult, 100f, LayerMask.GetMask("Ground")))
+        //{
+        //    dir = followObjTr.position - rayResult.point;
+        //    float dist = Vector3.Distance(followObjTr.position, rayResult.point);
+        //    if (dist <= 0.05f)
+        //    {
+        //        return;
+        //    }
+        //    mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, mainCam.transform.position + dir, Time.unscaledDeltaTime * followSpd);
+        //}
+        float followSpdValue = followSpdCurve.Evaluate(Time.time);
+        float dist = Vector3.Distance(followObjTr.position, boundaryPosToRay[(int)eBoundary.Center]);
         if (dist <= followDistOffset)
         {
             return;
@@ -134,7 +165,7 @@ public class CamCtrl : MonoBehaviour
 		Vector3 dir = (followObjTr.position - boundaryPosToRay[(int)eBoundary.Center]).normalized;
         Vector3 prePos = mainCam.transform.position;
         Vector3 tempPos = mainCam.transform.position + dir;
-        Vector3 goalPos = Vector3.Lerp(mainCam.transform.position, tempPos, Time.unscaledDeltaTime * followSpd);
+        Vector3 goalPos = Vector3.Lerp(mainCam.transform.position, tempPos, Time.unscaledDeltaTime * followSpdValue);
 
         mainCam.transform.position = goalPos;
 
@@ -248,12 +279,37 @@ public class CamCtrl : MonoBehaviour
     {
         //1. 플레이어를 중앙에 두는 위치로 카메라 이동
         CameraCallibration(followObjTr.position);
+
+        resolutionRef.width = Screen.currentResolution.width;
+        resolutionRef.height = Screen.currentResolution.height;
+    }
+
+    private void ManageZoomCamera()
+    {
+        if (zoomOption)
+        {
+            // ZoomOption이 true일 경우, PixelPerfectCamera 컴포넌트 추가
+            if (!zoomCam)
+            {
+                zoomCam = gameObject.AddComponent<PixelPerfectCamera>();
+                // 필요한 경우, zoomCam 변수의 초기 설정을 여기서 수행
+            }
+        }
+        else
+        {
+            // ZoomOption이 false일 경우, PixelPerfectCamera 컴포넌트 제거
+            if (zoomCam)
+            {
+                Destroy(zoomCam);
+                zoomCam = null;
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        ManageZoomCamera();
     }
 
 	private void LateUpdate()
