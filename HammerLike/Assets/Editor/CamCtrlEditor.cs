@@ -62,12 +62,14 @@ public class CamCtrlEditor : Editor
             SerializedProperty followSpdCurve = serializedCamCtrl.FindProperty("followSpdCurve");
             SerializedProperty followSpd = serializedCamCtrl.FindProperty("followSpd");
             SerializedProperty followDistOffset = serializedCamCtrl.FindProperty("followDistOffset");
+            SerializedProperty currentRoom = serializedCamCtrl.FindProperty("currentRoom");
 
             EditorGUILayout.PropertyField(followOption);
             EditorGUILayout.PropertyField(followObjTr);
             EditorGUILayout.PropertyField(followSpdCurve);
             EditorGUILayout.PropertyField(followSpd);
             EditorGUILayout.PropertyField(followDistOffset);
+            EditorGUILayout.PropertyField(currentRoom);
         }
 
         // 'Zoom' ¼½¼Ç

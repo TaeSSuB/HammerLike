@@ -173,5 +173,5 @@ public class MapGenerator : MonoBehaviour
         corridor.SetPosition(1, roomB.position);
         corridors.Add(corridor);
     }
-    // TODO: 기타 메서드들 (통로 생성, Hidden Room 생성 등)을 추가하세요.
+    
 }

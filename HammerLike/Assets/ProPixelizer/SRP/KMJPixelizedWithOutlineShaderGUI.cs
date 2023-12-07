@@ -21,6 +21,16 @@ public class KMJPixelizedWithOutlineShaderGUI : ShaderGUI
     public const string ALPHA_ON = "USE_ALPHA_ON";
     public const string RECEIVE_SHADOWS_ON = "RECEIVE_SHADOWS_ON";
 
+    /// <summary>
+    /// 2023-11-15
+    /// LigthingRamp를 에디터상에서 즉각적으로 만들기 위해서
+    /// GUI 내부에
+    /// Gradient를 제작하고 제작한 Gradient를 png 파일(texture)형태로 저장하고 나서 저장한 텍스쳐를 
+    /// 머터리얼로 활용할 때 texture 를 Lighting Ramp를 활용하자 
+    /// </summary>
+    /// <param name="gradient"></param>
+    /// <param name="width"></param>
+    /// <returns></returns>
     private Texture2D GradientToTexture(Gradient gradient, int width = 256)
     {
         Texture2D texture = new Texture2D(width, 1);
@@ -245,10 +255,7 @@ public class KMJPixelizedWithOutlineShaderGUI : ShaderGUI
         EditorGUILayout.EndFoldoutHeaderGroup();
     }
 
-    /// <summary>
-    /// Checks if the serialized object needs to be updated, e.g. because properties changed between versions.
-    /// </summary>
-    /// <param name="so"></param>
+ 
     public bool CheckForUpdate(SerializedObject so)
     {
         try

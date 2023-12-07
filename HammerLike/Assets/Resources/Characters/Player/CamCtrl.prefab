@@ -62,7 +62,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 45
+  orthographic size: 41.45
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -198,12 +198,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCam: {fileID: 8706781885258435475}
+  subCam: {fileID: 0}
+  renderTex: {fileID: 0}
+  resolutionRef:
+    width: 0
+    height: 0
+  followOption: 0
   followObjTr: {fileID: 0}
+  followSpdCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   followSpd: 5
   followDistOffset: 0.1
+  zoomOption: 0
   zoomCam: {fileID: 8706781883286603709}
   zoomMin: 10
+  zoomMax: 0
   zoomSpd: 2
+  zoomSpdCrv:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  worldScaleCrt: {x: 0, y: 0, z: 0}
   distToGround: 0
   boundaryPosToRay:
   - {x: 0, y: 0, z: 0}

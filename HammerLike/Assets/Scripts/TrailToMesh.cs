@@ -14,7 +14,7 @@ public class TrailToMesh : MonoBehaviour
     {
         trailRenderer = GetComponent<TrailRenderer>();
         mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh; // MeshFilter 컴포넌트에 메쉬 할당
+        GetComponent<MeshFilter>().mesh = mesh; // MeshFilter 컴포넌트에 메쉬 할당 일일이 하기 좀 그래서
     }
 
     void Update()
