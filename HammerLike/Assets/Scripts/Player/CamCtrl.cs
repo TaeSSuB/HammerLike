@@ -163,12 +163,24 @@ public class CamCtrl : MonoBehaviour
 
         if (dist <= followDistOffset)
         {
+            // 카메라가 객체를 따라가지 않을 때 커브 시간을 초기화합니다
+            curveTime = 0f;
             return;
         }
 
+        // 커브 시간을 1초 동안 증가시킵니다 (1초가 지나면 다시 0으로 초기화)
+        curveTime += Time.deltaTime;
+        if (curveTime > 1f)
+        {
+            curveTime = 0f;
+        }
+
+        // 커브를 사용하여 속도를 계산합니다
+        float speed = followSpdCurve.Evaluate(curveTime) * followSpd;
+
         Vector3 dir = (followObjTr.position - boundaryPosToRay[(int)eBoundary.Center]).normalized;
         Vector3 prePos = mainCam.transform.position;
-        Vector3 tempPos = mainCam.transform.position + dir * followSpd * Time.unscaledDeltaTime;
+        Vector3 tempPos = mainCam.transform.position + dir * speed * Time.unscaledDeltaTime;
         mainCam.transform.position = tempPos;
 
         bool isHorizontalBlocked = false;
