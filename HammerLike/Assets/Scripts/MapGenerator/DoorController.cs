@@ -8,6 +8,8 @@ public class DoorController : MonoBehaviour
 
     private GameObject[] Door;
     private GameObject[] Entrance;
+
+
     
     void Start()
     {

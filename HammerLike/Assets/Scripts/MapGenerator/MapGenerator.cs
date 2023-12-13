@@ -6,7 +6,12 @@ public class Room
     public Vector3 position;
     public enum RoomType { Start, End, MiddleBoss, Reward, Normal, Hidden }
     public RoomType roomType;
+    public int roomNumber; // 방 번호
     public List<Room> connectedRooms = new List<Room>();
+
+    // 통로 방향을 나타내는 열거형
+    public enum Direction { North, East, West, South }
+    public List<Direction> corridorDirections = new List<Direction>(); // 연결된 통로의 방향들
 }
 
 public class MapGenerator : MonoBehaviour
@@ -19,7 +24,7 @@ public class MapGenerator : MonoBehaviour
     private LineRenderer lineRendererPrefab;
     private List<Room> rooms = new List<Room>();
     private List<LineRenderer> corridors = new List<LineRenderer>();
-
+    private Dictionary<Room, GameObject> roomObjects = new Dictionary<Room, GameObject>();
     private void Awake()
     {
         lineRendererPrefab = new GameObject("Corridor").AddComponent<LineRenderer>();
@@ -28,34 +33,99 @@ public class MapGenerator : MonoBehaviour
 
     public void GenerateMap()
     {
-        rooms.Clear();
+        bool isOverlapping;
+        int maxAttempts = 1000;
+        int attemptCount = 0;
 
-        // Start Room 생성
-        CreateRoom(startRoomPrefab, Room.RoomType.Start, Vector3.zero);
-
-        // Normal Rooms 생성
-        for (int i = 0; i < numberOfNormalRooms; i++)
+        do
         {
-            Vector3 newPosition = GetRandomNonOverlappingPosition(normalRoomPrefab);
-            CreateRoom(normalRoomPrefab, Room.RoomType.Normal, newPosition);
+            rooms.Clear();
+            isOverlapping = false;
+
+            // Start Room 생성
+            CreateRoom(startRoomPrefab, Room.RoomType.Start, Vector3.zero);
+
+            // Normal Rooms 생성
+            for (int i = 0; i < numberOfNormalRooms; i++)
+            {
+                Vector3 newPosition = GetRandomNonOverlappingPosition(normalRoomPrefab);
+                CreateRoom(normalRoomPrefab, Room.RoomType.Normal, newPosition);
+                if (CheckOverlap(newPosition, normalRoomPrefab))
+                {
+                    isOverlapping = true;
+                    break;
+                }
+            }
+
+            if (!isOverlapping)
+            {
+                // MiddleBossRoom 생성
+                Vector3 middleBossPosition = GetRandomNonOverlappingPosition(middleBossRoomPrefab, true);
+                CreateRoom(middleBossRoomPrefab, Room.RoomType.MiddleBoss, middleBossPosition);
+                if (CheckOverlap(middleBossPosition, middleBossRoomPrefab))
+                {
+                    isOverlapping = true;
+                }
+            }
+
+            if (!isOverlapping)
+            {
+                // RewardRoom 생성
+                Vector3 rewardPosition = GetRandomNonOverlappingPosition(rewardRoomPrefab, true);
+                CreateRoom(rewardRoomPrefab, Room.RoomType.Reward, rewardPosition);
+                if (CheckOverlap(rewardPosition, rewardRoomPrefab))
+                {
+                    isOverlapping = true;
+                }
+            }
+
+            if (!isOverlapping)
+            {
+                // End Room 생성
+                Vector3 endRoomPosition = new Vector3(dungeonMaxSize.x - endRoomPrefab.GetComponent<Renderer>().bounds.size.x,
+                                                      0,
+                                                      dungeonMaxSize.z - endRoomPrefab.GetComponent<Renderer>().bounds.size.z);
+                CreateRoom(endRoomPrefab, Room.RoomType.End, endRoomPosition);
+                if (CheckOverlap(endRoomPosition, endRoomPrefab))
+                {
+                    isOverlapping = true;
+                }
+            }
+
+            attemptCount++;
+        } while (isOverlapping && attemptCount < maxAttempts);
+
+        if (attemptCount == maxAttempts)
+        {
+            Debug.LogError("Failed to generate a non-overlapping map. Consider decreasing the number of rooms.");
         }
-
-        // MiddleBossRoom 생성
-        Vector3 middleBossPosition = GetRandomNonOverlappingPosition(middleBossRoomPrefab, true);
-        CreateRoom(middleBossRoomPrefab, Room.RoomType.MiddleBoss, middleBossPosition);
-
-        // RewardRoom 생성
-        Vector3 rewardPosition = GetRandomNonOverlappingPosition(rewardRoomPrefab, true);
-        CreateRoom(rewardRoomPrefab, Room.RoomType.Reward, rewardPosition);
-
-        // End Room 생성
-        Vector3 endRoomPosition = new Vector3(dungeonMaxSize.x - endRoomPrefab.GetComponent<Renderer>().bounds.size.x,
-                                              0,
-                                              dungeonMaxSize.z - endRoomPrefab.GetComponent<Renderer>().bounds.size.z);
-        CreateRoom(endRoomPrefab, Room.RoomType.End, endRoomPosition);
-
-        CreateCorridors();
+        else
+        {
+            CreateCorridors();
+        }
     }
+
+    private bool CheckOverlap(Vector3 position, GameObject roomPrefab)
+    {
+        Renderer newRoomRenderer = roomPrefab.GetComponent<Renderer>();
+        Vector3 newRoomSize = newRoomRenderer != null ? newRoomRenderer.bounds.size : new Vector3(10, 0, 10);
+
+        foreach (var room in rooms)
+        {
+            Renderer existingRoomRenderer = roomObjects[room].GetComponent<Renderer>();
+            Vector3 existingRoomSize = existingRoomRenderer != null ? existingRoomRenderer.bounds.size : new Vector3(10, 0, 10);
+
+            bool overlapX = position.x < room.position.x + existingRoomSize.x && position.x + newRoomSize.x > room.position.x;
+            bool overlapZ = position.z < room.position.z + existingRoomSize.z && position.z + newRoomSize.z > room.position.z;
+
+            if (overlapX && overlapZ)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private void CreateRoom(GameObject roomPrefab, Room.RoomType roomType, Vector3 position)
     {
@@ -65,59 +135,49 @@ public class MapGenerator : MonoBehaviour
             roomType = roomType
         };
 
-        Instantiate(roomPrefab, room.position, Quaternion.identity);
+        GameObject roomObj = Instantiate(roomPrefab, room.position, Quaternion.identity);
+        roomObjects.Add(room, roomObj); // 생성된 GameObject 저장
         rooms.Add(room);
     }
 
     private Vector3 GetRandomNonOverlappingPosition(GameObject roomPrefab, bool isSpecialRoom = false)
     {
         Vector3 position;
-        bool isOverlapping;
-        int attemptCount = 0;
-        int maxAttempts = 1000;
+        Renderer roomRenderer = roomPrefab.GetComponent<Renderer>();
+        Vector3 roomSize = roomRenderer != null ? roomRenderer.bounds.size : new Vector3(10, 0, 10);
 
-        do
+        int maxAttempts = 100;
+        for (int attempts = 0; attempts < maxAttempts; attempts++)
         {
-            if (isSpecialRoom) // middleBossRoom과 rewardRoom에 대한 로직
+            position = new Vector3(
+                Random.Range(0, dungeonMaxSize.x - roomSize.x),
+                0,
+                Random.Range(0, dungeonMaxSize.z - roomSize.z));
+
+            if (!IsOverlapping(position, roomSize))
             {
-                position = new Vector3(Random.Range(dungeonMaxSize.x * 0.3f, dungeonMaxSize.x * 0.7f),
-                                       0,
-                                       Random.Range(dungeonMaxSize.z * 0.3f, dungeonMaxSize.z * 0.7f));
+                return position;
             }
-            else
-            {
-                position = new Vector3(Random.Range(0, dungeonMaxSize.x), 0, Random.Range(0, dungeonMaxSize.z));
-            }
-            isOverlapping = false;
-
-            foreach (var room in rooms)
-            {
-                float roomWidth = roomPrefab.GetComponent<Renderer>().bounds.size.x;
-                float roomHeight = roomPrefab.GetComponent<Renderer>().bounds.size.z;
-
-                float existingRoomWidth = roomPrefab.GetComponent<Renderer>().bounds.size.x;
-                float existingRoomHeight = roomPrefab.GetComponent<Renderer>().bounds.size.z;
-
-                bool overlapX = position.x < room.position.x + existingRoomWidth && position.x + roomWidth > room.position.x;
-                bool overlapZ = position.z < room.position.z + existingRoomHeight && position.z + roomHeight > room.position.z;
-
-                if (overlapX && overlapZ)
-                {
-                    isOverlapping = true;
-                    break;
-                }
-            }
-
-            attemptCount++;
-
-        } while (isOverlapping && attemptCount < maxAttempts);
-
-        if (attemptCount == maxAttempts)
-        {
-            Debug.LogError("Failed to find non-overlapping position. Consider increasing dungeon size or decreasing number of rooms.");
         }
 
-        return position;
+        throw new System.Exception("Failed to find non-overlapping position. Increase dungeon size or decrease number of rooms.");
+    }
+
+    private bool IsOverlapping(Vector3 position, Vector3 size)
+    {
+        foreach (var room in rooms)
+        {
+            Renderer existingRoomRenderer = roomObjects[room].GetComponent<Renderer>();
+            Vector3 existingRoomSize = existingRoomRenderer != null ? existingRoomRenderer.bounds.size : new Vector3(10, 0, 10);
+            if (position.x + size.x > room.position.x &&
+                position.x < room.position.x + existingRoomSize.x &&
+                position.z + size.z > room.position.z &&
+                position.z < room.position.z + existingRoomSize.z)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void CreateCorridors()
@@ -166,12 +226,114 @@ public class MapGenerator : MonoBehaviour
     }
     public void CreateCorridor(Room roomA, Room roomB)
     {
+        // 통로 생성 로직 수정
         LineRenderer corridor = Instantiate(lineRendererPrefab, transform);
         corridor.gameObject.SetActive(true);
 
+        // roomA와 roomB의 크기와 문 위치 계산
+        Renderer roomARenderer = roomObjects[roomA].GetComponent<Renderer>();
+        Renderer roomBRenderer = roomObjects[roomB].GetComponent<Renderer>();
+
+        // 방의 크기와 문 위치를 기준으로 중간 지점 계산
+        Vector3 doorA = new Vector3(
+            roomA.position.x + roomARenderer.bounds.size.x / 2, // roomA의 우측 문 위치
+            roomA.position.y,
+            roomA.position.z
+        );
+        Vector3 doorB = new Vector3(
+            roomB.position.x,
+            roomB.position.y,
+            roomB.position.z - roomBRenderer.bounds.size.z / 2 // roomB의 아래쪽 문 위치
+        );
+
+        // 통로의 경로 계산
+        Vector3 midPoint = new Vector3(doorB.x, doorA.y, doorA.z);
+
+        corridor.positionCount = 5;
         corridor.SetPosition(0, roomA.position);
-        corridor.SetPosition(1, roomB.position);
+        corridor.SetPosition(1, doorA);
+        corridor.SetPosition(2, midPoint);
+        corridor.SetPosition(3, doorB);
+        corridor.SetPosition(4, roomB.position);
+
         corridors.Add(corridor);
+
+        // roomA에서 통로와 입구 활성화/비활성화
+        ActivatePassage(roomObjects[roomA], doorB - doorA);
+
+        // roomB로 들어오는 통로의 방향 계산
+        Vector3 directionToB;
+        if (midPoint.x == doorB.x) // 수직 방향
+        {
+            directionToB = new Vector3(0, 0, doorB.z > midPoint.z ? -1 : 1);
+        }
+        else // 수평 방향
+        {
+            directionToB = new Vector3(doorB.x > midPoint.x ? -1 : 1, 0, 0);
+        }
+
+        // roomB에서 통로와 입구 활성화/비활성화
+        ActivatePassage(roomObjects[roomB], directionToB);
     }
-    
+
+    private void ActivatePassage(GameObject roomObj, Vector3 direction)
+    {
+        // 모든 방향의 통로 이름 정의
+        string[] allPassages = new string[] { "Passage_N", "Passage_E", "Passage_S", "Passage_W" };
+
+        string activePassageName, activeEntranceName;
+        if (direction.x > 0) // 동쪽
+        {
+            activePassageName = "Passage_W";
+            activeEntranceName = "Entrance_W";
+        }
+        else if (direction.x < 0) // 서쪽
+        {
+            activePassageName = "Passage_E";
+            activeEntranceName = "Entrance_E";
+        }
+        else if (direction.z > 0) // 북쪽
+        {
+            activePassageName = "Passage_S";
+            activeEntranceName = "Entrance_S";
+        }
+        else // 남쪽
+        {
+            activePassageName = "Passage_N";
+            activeEntranceName = "Entrance_N";
+        }
+
+        // 활성화될 통로 설정
+        SetActiveStateForChildren(roomObj, activePassageName, true);
+
+        // 활성화될 입구 비활성화
+        SetActiveStateForChildren(roomObj, activeEntranceName, false);
+
+        // 나머지 모든 통로 비활성화
+        foreach (string passage in allPassages)
+        {
+            if (passage != activePassageName)
+            {
+                SetActiveStateForChildren(roomObj, passage, false);
+            }
+        }
+    }
+
+    private void SetActiveStateForChildren(GameObject parent, string childName, bool state)
+    {
+        foreach (Transform child in parent.transform)
+        {
+            if (child.name == childName)
+            {
+                child.gameObject.SetActive(state);
+            }
+            // 재귀적으로 자식 오브젝트들도 탐색
+            if (child.childCount > 0)
+            {
+                SetActiveStateForChildren(child.gameObject, childName, state);
+            }
+        }
+    }
+
+
 }
