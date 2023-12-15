@@ -249,12 +249,12 @@ public class MapGenerator : MonoBehaviour
         // 통로의 경로 계산
         Vector3 midPoint = new Vector3(doorB.x, doorA.y, doorA.z);
 
-        corridor.positionCount = 5;
-        corridor.SetPosition(0, roomA.position);
-        corridor.SetPosition(1, doorA);
-        corridor.SetPosition(2, midPoint);
-        corridor.SetPosition(3, doorB);
-        corridor.SetPosition(4, roomB.position);
+        corridor.positionCount = 3;
+        //corridor.SetPosition(0, roomA.position);
+        corridor.SetPosition(0, doorA);
+        corridor.SetPosition(1, midPoint);
+        corridor.SetPosition(2, doorB);
+        //corridor.SetPosition(4, roomB.position);
 
         corridors.Add(corridor);
 
@@ -275,6 +275,8 @@ public class MapGenerator : MonoBehaviour
         // roomB에서 통로와 입구 활성화/비활성화
         ActivatePassage(roomObjects[roomB], directionToB);
     }
+
+
 
     private void ActivatePassage(GameObject roomObj, Vector3 direction)
     {
@@ -334,6 +336,4 @@ public class MapGenerator : MonoBehaviour
             }
         }
     }
-
-
 }

@@ -13,13 +13,11 @@ public class MeshDestroy : MonoBehaviour
     public int CutCascades = 1;
     public float ExplodeForce = 0;
 
-    // Start is called before the first frame update
     void Start()
     {
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -110,7 +108,7 @@ public class MeshDestroy : MonoBehaviour
                     continue;
                 }
 
-                //cut points
+                //ÄÆ Æ÷ÀÎÆ®
                 var singleIndex = sideB == sideC ? 0 : sideA == sideC ? 1 : 2;
 
                 ray1.origin = original.Vertices[triangles[j + singleIndex]];
