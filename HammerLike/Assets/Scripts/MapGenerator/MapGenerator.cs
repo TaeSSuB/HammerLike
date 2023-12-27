@@ -25,6 +25,10 @@ public class MapGenerator : MonoBehaviour
     private List<Room> rooms = new List<Room>();
     private List<LineRenderer> corridors = new List<LineRenderer>();
     private Dictionary<Room, GameObject> roomObjects = new Dictionary<Room, GameObject>();
+
+    public float roomSeparationMargin = 2.0f;
+
+
     private void Awake()
     {
         lineRendererPrefab = new GameObject("Corridor").AddComponent<LineRenderer>();
@@ -150,9 +154,9 @@ public class MapGenerator : MonoBehaviour
         for (int attempts = 0; attempts < maxAttempts; attempts++)
         {
             position = new Vector3(
-                Random.Range(0, dungeonMaxSize.x - roomSize.x),
-                0,
-                Random.Range(0, dungeonMaxSize.z - roomSize.z));
+            Random.Range(0, dungeonMaxSize.x - roomSize.x - roomSeparationMargin),
+            0,
+            Random.Range(0, dungeonMaxSize.z - roomSize.z - roomSeparationMargin));
 
             if (!IsOverlapping(position, roomSize))
             {
@@ -169,10 +173,14 @@ public class MapGenerator : MonoBehaviour
         {
             Renderer existingRoomRenderer = roomObjects[room].GetComponent<Renderer>();
             Vector3 existingRoomSize = existingRoomRenderer != null ? existingRoomRenderer.bounds.size : new Vector3(10, 0, 10);
-            if (position.x + size.x > room.position.x &&
-                position.x < room.position.x + existingRoomSize.x &&
-                position.z + size.z > room.position.z &&
-                position.z < room.position.z + existingRoomSize.z)
+
+            // 마진을 고려하여 겹침 여부를 확인
+            bool overlapX = position.x < room.position.x + existingRoomSize.x + roomSeparationMargin &&
+                            position.x + size.x + roomSeparationMargin > room.position.x;
+            bool overlapZ = position.z < room.position.z + existingRoomSize.z + roomSeparationMargin &&
+                            position.z + size.z + roomSeparationMargin > room.position.z;
+
+            if (overlapX && overlapZ)
             {
                 return true;
             }
@@ -337,3 +345,4 @@ public class MapGenerator : MonoBehaviour
         }
     }
 }
+
