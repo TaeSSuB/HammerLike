@@ -25,7 +25,11 @@ public class MeshDestroy : MonoBehaviour
 
     void Update()
     {
-       
+       if(Input.GetKeyDown(KeyCode.T))
+        {
+            DestroyMesh();
+        }
+
         if (meshCol.bounds.Intersects(weaponCollider.bounds) && weaponCollider.enabled)
         {
          

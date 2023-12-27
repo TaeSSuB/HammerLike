@@ -24,7 +24,7 @@ public class WeaponColliderController : MonoBehaviour
     public void EnableWeaponCollider()
     {
         playerAtk.weaponCollider.enabled = true;
-        Debug.Log("enable Weapon");
+        Debug.Log("enable Weaaawwpon");
     }
     public void DisableWeaponCollider()
     {
