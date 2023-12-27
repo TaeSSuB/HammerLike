@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MeshDestroy : MonoBehaviour
@@ -9,10 +10,14 @@ public class MeshDestroy : MonoBehaviour
     private Vector3 edgeVertex = Vector3.zero;
     private Vector2 edgeUV = Vector2.zero;
     private Plane edgePlane = new Plane();
-
+    public Player player;
+    private bool hasBeenDestroyed = false;
     public int CutCascades = 1;
     public float ExplodeForce = 0;
-
+    private HashSet<int> processedAttacks = new HashSet<int>();
+    public Collider meshCol;
+    public Collider weaponCollider;
+    public float deathTime=1.0f;
     void Start()
     {
 
@@ -20,14 +25,34 @@ public class MeshDestroy : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
+       
+        if (meshCol.bounds.Intersects(weaponCollider.bounds) && weaponCollider.enabled)
         {
+         
             DestroyMesh();
         }
     }
+    private void OnTriggerEnter(Collider other)
+    {
+     /*   // weaponCollider와 충돌했는지 확인
+    if (other == weaponCollider && meshCol != null)
+        {
+            // meshCol이 충돌 대상인지 확인
+            if (meshCol.bounds.Intersects(weaponCollider.bounds))
+            {
+                DestroyMesh();
+            }
+        }*/
+    }
+
 
     public void DestroyMesh()
     {
+        if (hasBeenDestroyed) // 이미 DestroyMesh가 호출되었으면 아무 것도 하지 않음
+            return;
+
+        hasBeenDestroyed = true;
+
         var originalMesh = GetComponent<MeshFilter>().mesh;
         originalMesh.RecalculateBounds();
         var parts = new List<PartMesh>();
@@ -65,13 +90,34 @@ public class MeshDestroy : MonoBehaviour
             subParts.Clear();
         }
 
+        Vector3 playerDirection = player.transform.forward; // 플레이어가 바라보는 방향
+
         for (var i = 0; i < parts.Count; i++)
         {
             parts[i].MakeGameobject(this);
-            parts[i].GameObject.GetComponent<Rigidbody>().AddForceAtPosition(parts[i].Bounds.center * ExplodeForce, transform.position);
+            var rigidbody = parts[i].GameObject.GetComponent<Rigidbody>();
+
+            // 플레이어가 바라보는 방향으로 파편에 힘을 가합니다.
+            rigidbody.AddForce(playerDirection * ExplodeForce, ForceMode.Impulse);
+            // 생성된 각 파편을 10초 후에 파괴합니다.
+            Destroy(parts[i].GameObject, deathTime);
         }
 
-        Destroy(gameObject);
+        // 부모 오브젝트의 BoxCollider를 파괴합니다.
+        if (transform.parent != null)
+        {
+            BoxCollider parentBoxCollider = transform.parent.gameObject.GetComponent<BoxCollider>();
+            if (parentBoxCollider != null)
+            {
+                Destroy(parentBoxCollider);
+                Destroy(gameObject);
+            }
+        }
+        else
+        {
+            // 부모 오브젝트가 없으면 이 오브젝트 자체를 파괴합니다.
+            Destroy(gameObject);
+        }
     }
 
     private PartMesh GenerateMesh(PartMesh original, Plane plane, bool left)

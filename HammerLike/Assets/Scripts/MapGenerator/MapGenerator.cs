@@ -254,14 +254,18 @@ public class MapGenerator : MonoBehaviour
             roomB.position.z - roomBRenderer.bounds.size.z / 2 // roomB의 아래쪽 문 위치
         );
 
+        // 각 방의 입구 위치를 찾는 함수 호출 (가정)
+        Vector3 entranceA = FindEntrancePosition(roomA);
+        Vector3 entranceB = FindEntrancePosition(roomB);
+
         // 통로의 경로 계산
         Vector3 midPoint = new Vector3(doorB.x, doorA.y, doorA.z);
 
         corridor.positionCount = 3;
         //corridor.SetPosition(0, roomA.position);
-        corridor.SetPosition(0, doorA);
+        corridor.SetPosition(0, entranceA);
         corridor.SetPosition(1, midPoint);
-        corridor.SetPosition(2, doorB);
+        corridor.SetPosition(2, entranceB);
         //corridor.SetPosition(4, roomB.position);
 
         corridors.Add(corridor);
@@ -283,7 +287,28 @@ public class MapGenerator : MonoBehaviour
         // roomB에서 통로와 입구 활성화/비활성화
         ActivatePassage(roomObjects[roomB], directionToB);
     }
+    private Vector3 FindEntrancePosition(Room room)
+    {
+        // 입구의 이름들
+        string[] entranceNames = new string[] { "Entrance_N", "Entrance_E", "Entrance_S", "Entrance_W" };
 
+        // 방에 대응하는 게임 오브젝트를 찾음
+        GameObject roomObj = roomObjects[room];
+
+        foreach (string entranceName in entranceNames)
+        {
+            Transform entranceTransform = roomObj.transform.Find(entranceName);
+            if (entranceTransform != null && !entranceTransform.gameObject.activeSelf)
+            {
+                // 비활성화된 입구 발견, 위치 반환
+                return entranceTransform.position;
+            }
+        }
+
+        // 기본값 반환, 오류 처리를 위한 로그 출력
+        Debug.LogError("Active entrance not found for room: " + room.roomNumber);
+        return room.position; // 방의 중심 위치를 기본값으로 반환
+    }
 
 
     private void ActivatePassage(GameObject roomObj, Vector3 direction)

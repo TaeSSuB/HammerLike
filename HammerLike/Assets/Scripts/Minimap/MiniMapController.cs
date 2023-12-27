@@ -21,6 +21,14 @@ public class MiniMapController : MonoBehaviour
     {
         foreach (MapObject mo in mapObjects)
         {
+            // 여기서 오브젝트가 null인지 확인
+            if (mo.worldObject == null)
+            {
+                // 오브젝트가 없으면 미니맵 아이콘도 비활성화
+                mo.mapIcon.enabled = false;
+                continue; // 다음 오브젝트로 넘어감
+            }
+
             Vector3 worldPosition = mo.worldObject.transform.position;
             Vector3 mapPosition = (worldPosition - player.position) * mapScale;
 
@@ -29,7 +37,7 @@ public class MiniMapController : MonoBehaviour
             {
                 // 미니맵 경계 내에 있으면 아이콘 표시
                 mo.mapIcon.rectTransform.anchoredPosition = new Vector2(mapPosition.x, mapPosition.z);
-                mo.mapIcon.enabled = true; // 아이콘 활성화
+                mo.mapIcon.enabled = true;
             }
             else
             {
@@ -38,6 +46,7 @@ public class MiniMapController : MonoBehaviour
             }
         }
     }
+
 
 
 
