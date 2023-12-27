@@ -52,10 +52,10 @@ public class PlayerAtk : MonoBehaviour
             Debug.Log("우측키 땜");
 
         }
-        weaponCollider.enabled = true; // 공격 애니메이션이 시작될 때 콜라이더를 활성화합니다.
+       
         attackId++; // 새로운 공격에 대해 ID를 증가시킵니다.
         weaponCollider.gameObject.SendMessage("SetAttackId", attackId);
-        StartCoroutine(DisableWeaponColliderAfterAnimation());
+        //StartCoroutine(DisableWeaponColliderAfterAnimation());
 
 
     }
@@ -68,6 +68,19 @@ public class PlayerAtk : MonoBehaviour
         yield return new WaitForSeconds(attackAnimationTime);
         weaponCollider.enabled = false; // 애니메이션이 끝나면 콜라이더를 비활성화합니다.
     }
+
+    /*public void EnableWeaponCollider()
+    {
+        weaponCollider.enabled = true;
+        Debug.Log("enable Weapon");
+    }
+
+
+    public void DisableWeaponCollider()
+    {
+        weaponCollider.enabled = false;
+        Debug.Log("disable Weapon");
+    }*/
 
 }
 
