@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13e5487577a324bec8e1e97cb1208b45, type: 3}
+  m_Name: Demo_Preset
+  m_EditorClassIdentifier: 
+  roofTiles: []
+  floorTiles:
+  - prefab: {fileID: 1511256856953917859, guid: 43b677ae148c8da439368e6def6a3715,
+      type: 3}
+    positionOffset: {x: -1, y: 0, z: 1}
+    rotationOffset: {x: 0, y: 0, z: 0}
+    weight: 0
+    alignToSurface: 0
+    tileLayer:
+      serializedVersion: 2
+      m_Bits: 0
+    isExpanded: 1
+    allowDecor: 1
+    randomRotation: 0
+  wallTiles:
+  - prefab: {fileID: 3759898980448832609, guid: 0784186604fd8a947a2b45431e2e7bc1,
+      type: 3}
+    positionOffset: {x: -0.5, y: 0, z: 0}
+    rotationOffset: {x: 0, y: 0, z: 0}
+    weight: 0
+    alignToSurface: 0
+    tileLayer:
+      serializedVersion: 2
+      m_Bits: 0
+    isExpanded: 1
+    allowDecor: 1
+  wallCorners: []
+  windowTiles:
+  - prefab: {fileID: 5383809516569400002, guid: 0479fc2ed1c4742e0b979ab2943ba0b2,
+      type: 3}
+    positionOffset: {x: -0.5, y: 0, z: 0.1}
+    rotationOffset: {x: 0, y: 0, z: 0}
+    weight: 0
+    alignToSurface: 0
+    tileLayer:
+      serializedVersion: 2
+      m_Bits: 0
+    isExpanded: 0
+    allowDecor: 0
+  doorTiles: []
+  characters: []
+  roofDecorations: []
+  wallDecorations: []
+  floorDecorations:
+  - prefab: {fileID: 4410480002878228628, guid: 6821b2b0e24deb64793d9483dd2e036f,
+      type: 3}
+    positionOffset: {x: 0, y: 1, z: 0}
+    rotationOffset: {x: 0, y: 0, z: 0}
+    spacingBuffer: 5
+    verticalRange: {x: 0, y: 100}
+    amountRange: {x: 5, y: 10}
+    randomRotation: 30
+    scaleRange: {x: 1, y: 1}
+    isExpanded: 1
+  - prefab: {fileID: 3057628500611423473, guid: 1ce4eddac6af841429a174c8c5f5154f,
+      type: 3}
+    positionOffset: {x: 0, y: 1, z: 0}
+    rotationOffset: {x: 0, y: 0, z: 0}
+    spacingBuffer: 5
+    verticalRange: {x: 0, y: 100}
+    amountRange: {x: 3, y: 5}
+    randomRotation: 30
+    scaleRange: {x: 1, y: 1}
+    isExpanded: 1

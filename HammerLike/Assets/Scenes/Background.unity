@@ -154,7 +154,7 @@ Transform:
   - {fileID: 1239222314}
   - {fileID: 1843063426}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &464188923
 GameObject:
@@ -189,7 +189,7 @@ Transform:
   - {fileID: 2071334559}
   - {fileID: 678870303}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &464188925
 MonoBehaviour:
@@ -204,12 +204,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCam: {fileID: 1573843214}
+  subCam: {fileID: 0}
+  renderTex: {fileID: 0}
+  resolutionRef:
+    width: 0
+    height: 0
+  followOption: 0
   followObjTr: {fileID: 0}
+  followSpdCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   followSpd: 5
   followDistOffset: 0.1
+  currentRoom: {fileID: 0}
+  zoomOption: 0
   zoomCam: {fileID: 678870304}
   zoomMin: 10
+  zoomMax: 0
   zoomSpd: 2
+  zoomSpdCrv:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  worldScaleCrt: {x: 0, y: 0, z: 0}
   distToGround: 0
   boundaryPosToRay:
   - {x: 0, y: 0, z: 0}
@@ -472,7 +494,7 @@ PrefabInstance:
     - target: {fileID: 8160915383364398884, guid: b7d3b7659d3e6a6458435bb3ec8e5c03,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8160915383364398884, guid: b7d3b7659d3e6a6458435bb3ec8e5c03,
         type: 3}
@@ -547,7 +569,7 @@ PrefabInstance:
     - target: {fileID: 8160915383364398885, guid: b7d3b7659d3e6a6458435bb3ec8e5c03,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8160915383721843091, guid: b7d3b7659d3e6a6458435bb3ec8e5c03,
         type: 3}
@@ -1190,7 +1212,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1843063423
 GameObject:
