@@ -2,36 +2,47 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 
-public class SortHierarchyWindow : EditorWindow
+public class SortHierarchyEditor : EditorWindow
 {
+    private int sortOptionIndex = 0;
+    private string[] sortOptions = new string[] { "Sort By Object Name", "Sort By Position" };
+
     [MenuItem("Tools/Sort Hierarchy")]
     public static void ShowWindow()
     {
-        GetWindow<SortHierarchyWindow>("Sort Hierarchy");
+        GetWindow<SortHierarchyEditor>("Sort Hierarchy");
     }
 
-    private void OnGUI()
+    void OnGUI()
     {
-        if (GUILayout.Button("Sort Selected Objects"))
+        sortOptionIndex = EditorGUILayout.Popup("Sort Option", sortOptionIndex, sortOptions);
+
+        if (GUILayout.Button("Sort Hierarchy"))
         {
             SortSelectedObjects();
         }
     }
 
-    private static void SortSelectedObjects()
+    void SortSelectedObjects()
     {
-        foreach (var selectedObject in Selection.gameObjects)
-        {
-            SortChildren(selectedObject.transform);
-        }
-    }
+        string sortOption = sortOptions[sortOptionIndex];
+        GameObject[] selectedObjects = Selection.gameObjects;
 
-    private static void SortChildren(Transform parent)
-    {
-        var children = parent.Cast<Transform>().OrderBy(t => t.name).ToList();
-        for (int i = 0; i < children.Count; i++)
+        if (sortOption == "Sort By Object Name")
         {
-            children[i].SetSiblingIndex(i);
+            selectedObjects = selectedObjects.OrderBy(go => go.name).ToArray();
         }
+        else if (sortOption == "Sort By Position")
+        {
+            GameObject firstObject = selectedObjects[0];
+            selectedObjects = selectedObjects.OrderBy(go => Vector3.Distance(go.transform.position, firstObject.transform.position)).ToArray();
+        }
+
+        for (int i = 0; i < selectedObjects.Length; i++)
+        {
+            selectedObjects[i].transform.SetSiblingIndex(i);
+        }
+
+        Debug.Log("Hierarchy Sorted by " + sortOption);
     }
 }
