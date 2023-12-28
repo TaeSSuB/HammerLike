@@ -182,7 +182,7 @@ public class Monster : MonoBehaviour
 
     private void ApplyKnockback(Vector3 direction)
     {
-        float knockbackIntensity = 500f; // 넉백 강도
+        float knockbackIntensity = 30f; // 넉백 강도
         direction.y = 0; // Y축 변화 제거
         GetComponent<Rigidbody>().AddForce(direction.normalized * knockbackIntensity, ForceMode.Impulse);
         isKnockedBack = true;
@@ -235,13 +235,18 @@ public class Monster : MonoBehaviour
         }
     }
 
-    
+
     void ChasePlayer()
     {
         if (playerTransform != null)
         {
+            // 플레이어를 향해 이동
             Vector3 moveDirection = (playerTransform.position - transform.position).normalized;
             transform.position += moveDirection * stat.walkSpd * Time.deltaTime;
+
+            // 플레이어를 바라보도록 Y축 회전
+            Vector3 lookDirection = new Vector3(playerTransform.position.x, transform.position.y, playerTransform.position.z);
+            transform.LookAt(lookDirection);
 
             animCtrl.SetBool("IsChasing", true);
         }
@@ -250,6 +255,7 @@ public class Monster : MonoBehaviour
             animCtrl.SetBool("IsChasing", false);
         }
     }
+
 
 
 }

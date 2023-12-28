@@ -14,6 +14,7 @@ public class RandomObjectSpawner : MonoBehaviour
     public bool destroyOriginal = false;
     public bool useParentScale = true;
     public bool useParentRotation = true;
+    public bool useParentPosition = true;
 
     private void Start()
     {
@@ -27,8 +28,18 @@ public class RandomObjectSpawner : MonoBehaviour
         Quaternion rotation = useParentRotation ? transform.rotation : selectedPrefab.transform.rotation;
         Vector3 scale = useParentScale ? transform.localScale : selectedPrefab.transform.localScale;
 
-        // 새 오브젝트를 현재 위치와 회전으로 생성하고 부모 오브젝트에 연결
-        GameObject spawnedObject = Instantiate(selectedPrefab, transform.position, rotation, transform.parent);
+        Vector3 position;
+        if (useParentPosition)
+        {
+            position = transform.position;
+        }
+        else
+        {
+            position = transform.position + (selectedPrefab.transform.position);
+        }
+
+        // 새 오브젝트를 생성하고 부모 오브젝트에 연결
+        GameObject spawnedObject = Instantiate(selectedPrefab, position, rotation, transform.parent);
         spawnedObject.transform.localScale = scale;
 
         // 원본 오브젝트 처리
@@ -42,15 +53,16 @@ public class RandomObjectSpawner : MonoBehaviour
         }
     }
 
+
     private GameObject SelectRandomPrefab()
     {
         float total = 0;
         foreach (var item in prefabsWithProbability)
         {
-            total += item.probability;
+            total += item.probability; // 모든 확률의 합을 계산
         }
 
-        float randomPoint = Random.value * total;
+        float randomPoint = Random.value * total; // 0과 total 사이의 무작위 값을 선택
 
         foreach (var item in prefabsWithProbability)
         {
@@ -62,4 +74,5 @@ public class RandomObjectSpawner : MonoBehaviour
 
         return null; // 이 경우는 발생하지 않아야 함
     }
+
 }
