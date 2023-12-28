@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -33,21 +34,22 @@ MonoBehaviour:
   BoxSelectMinusKey: 115
   CapsuleColliderMethod: 1
   CommonScalingMultiplier: 1
+  ConvexMeshReadWriteEnabled: 1
   DefaultScale: 0.01
   ColliderHolder: 0
   CreateFromPreviewKey: 96
   CylinderAsCapsuleOrientation: 0
-  CylinderNumberOfSides: 16
-  CylinderOrientation: 0
+  CylinderNumberOfSides: 10
+  CylinderOrientation: 2
   CylinderRotationOffset: 0
   DisplayTips: 1
-  DisplayAllVertices: 0
+  DisplayAllVertices: 1
   DisplayVerticesColour: {r: 0, g: 0, b: 1, a: 1}
   EnableVertexToolsShortcuts: 1
   GizmoType: 1
   HoverVertColour: {r: 0, g: 1, b: 1, a: 1}
   MergeCollidersRoundnessAccuracy: 10
-  MeshColliderMethod: 0
+  MeshColliderMethod: 1
   OverlapSelectedVertColour: {r: 1, g: 0, b: 0, a: 1}
   PointSelectKeyCode: 98
   PopupDialogOnFinish: 0
@@ -78,7 +80,7 @@ MonoBehaviour:
   ShortcutClear: 99
   ShortcutRing: 114
   ShowSelectedVertexCount: 0
-  SphereColliderMethod: 2
+  SphereColliderMethod: 1
   UseFixedGizmoScale: 1
   UseMouseClickSelection: 1
   VertexNormalOffsetType: 2
@@ -87,4 +89,4 @@ MonoBehaviour:
   VertexSnapMethod: 2
   VertSelectKeyCode: 118
   VHACDPreview: 1
-  CurrentWindowTab: 1
+  CurrentWindowTab: 0

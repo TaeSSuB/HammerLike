@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2753335728324405569}
   - component: {fileID: 3599578831111000767}
   - component: {fileID: 4674002364898026953}
+  - component: {fileID: 6207436626131705277}
   m_Layer: 0
   m_Name: Pot_01
   m_TagString: Untagged
@@ -117,3 +118,21 @@ CapsuleCollider:
   m_Height: 1.7740867
   m_Direction: 1
   m_Center: {x: 0.000000029802322, y: 0.88704336, z: -0.00000017881393}
+--- !u!114 &6207436626131705277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4410480002878228628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8eab486a190a9814fa13b8d5338032cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  CutCascades: 4
+  ExplodeForce: 20
+  meshCol: {fileID: 4674002364898026953}
+  weaponCollider: {fileID: 0}
+  deathTime: 8
