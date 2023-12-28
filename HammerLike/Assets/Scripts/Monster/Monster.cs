@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Johnson;
+using UnityEngine.AI;
 
 [Serializable]
 public struct MonsterStat
@@ -66,6 +67,9 @@ public class Monster : MonoBehaviour
     private bool isKnockedBack = false;
     private bool canTakeKnockBackDamage = true;
 
+    public Transform target;
+    NavMeshAgent nmAgent;
+
     private void Awake()
     {
         if (!fsm)
@@ -85,6 +89,8 @@ public class Monster : MonoBehaviour
 
     void Start()
     {
+        nmAgent = GetComponent<NavMeshAgent>();
+        animCtrl.SetBool("IsChasing", true);
         if (healthSlider != null)
         {
             healthSlider.maxValue = stat.maxHp;
@@ -95,9 +101,9 @@ public class Monster : MonoBehaviour
     void Update()
     {
         //move.Move(stat.walkSpd);
-        DetectPlayer();
-        ChasePlayer();
-
+        //DetectPlayer();
+        //ChasePlayer();
+        nmAgent.SetDestination(target.position);
         if (healthSlider != null)
         {
             Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position + new Vector3(-2.7f, 1.2f, 0));
