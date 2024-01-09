@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7667408993794245062}
   - component: {fileID: 7667408993794245112}
   - component: {fileID: 7667408993794245113}
-  - component: {fileID: 7667408993794245115}
   m_Layer: 0
   m_Name: Dungeon_FloorTile_03_1x1
   m_TagString: Untagged
@@ -62,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1d6d9bb33dcc5524a8b1dc8169c071fc, type: 2}
+  - {fileID: 2100000, guid: 55c3fe92e8453314aa11a6a7ed0c56ac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84,31 +83,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7667408993794245115
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7667408993794245063}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 128e1f06d3b3a4842916aa34628e744b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefabsWithProbability:
-  - prefab: {fileID: -4013700786602246593, guid: 6371ffbb3fac17d40862d34da7e13c20,
-      type: 3}
-    probability: 0
-  - prefab: {fileID: 8527392750921098395, guid: d2af491fa0fcfdc40b4156d4b3f2982d,
-      type: 3}
-    probability: 0.25
-  - prefab: {fileID: -8528209099577275026, guid: 528e0cbc0f870dc45a212aa50c82b50e,
-      type: 3}
-    probability: 0.25
-  - prefab: {fileID: -4680555774297251334, guid: aa0d3e406b5d2084886364a462f0d595,
-      type: 3}
-    probability: 0.25
-  destroyOriginal: 1
-  useParentScale: 1
-  useParentRotation: 1
