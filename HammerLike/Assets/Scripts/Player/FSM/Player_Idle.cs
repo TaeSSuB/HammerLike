@@ -36,7 +36,7 @@ public class Player_Idle : cState
         // 마우스 커서의 위치 저장
         player.lastMousePosition = temp;
 
-        if (player.move.Move(player.stat.walkSpd))
+        if (player.move.Move(player.stat.walkSpd,player.rewiredPlayer))
         {
             player.fsm.SetNextState("Player_Move");
         }

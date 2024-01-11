@@ -40,7 +40,7 @@ public class Player_Envasion : cState
 
         // 이동 중이면 마지막 이동 방향을 사용, 아니면 마우스 커서 방향을 사용
         Vector3 targetDirection;
-        if (player.move.Move(player.stat.walkSpd)) // 현재 이동하고 있는지 아닌지
+        if (player.move.Move(player.stat.walkSpd, player.rewiredPlayer)) // 현재 이동하고 있는지 아닌지
         {
             targetDirection = player.move.lastMoveDir.normalized;
         }

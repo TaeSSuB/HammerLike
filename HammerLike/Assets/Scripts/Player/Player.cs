@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Johnson;
-
+using Rewired;
+using RewiredPlayer = Rewired.Player;
 
 //FSM은 StateController로 관리
 //Idle <-> Envasion <-> Death 정도로 관리 할 예정.
@@ -106,9 +107,10 @@ public class Player : MonoBehaviour
     public Transform headBoneTr;
     public Transform spineBoneTr;
     public Transform hipBoneTr;
+    public RewiredPlayer rewiredPlayer;
 
     //public eGizmoDir preMoveDir;
-    
+
     //[Tooltip("Temp Test")]
     //[Space(10f)]
     //public Inventory inven;
@@ -131,7 +133,7 @@ public class Player : MonoBehaviour
             rd = GetComponent<Rigidbody>();
         }
 
-
+        rewiredPlayer = ReInput.players.GetPlayer(0); // '0'은 첫 번째 플레이어의 ID
 
 
     }
@@ -147,7 +149,7 @@ public class Player : MonoBehaviour
 
 
     }
-
+  
     private void LateUpdate()
     {
  
@@ -188,6 +190,8 @@ public class Player : MonoBehaviour
 
 
     }
-
-
+    public Rewired.Player GetRewiredPlayer()
+    {
+        return rewiredPlayer;
+    }
 }

@@ -25,7 +25,7 @@ public class Player_Move : cState
         player.aim.Aiming();
 
         // 키 입력에 따른 이동 처리
-        bool isMoving = player.move.Move(player.stat.walkSpd);
+        bool isMoving = player.move.Move(player.stat.walkSpd,player.rewiredPlayer);
         if (!isMoving)
         {
             player.fsm.SetNextState("Player_Idle");
