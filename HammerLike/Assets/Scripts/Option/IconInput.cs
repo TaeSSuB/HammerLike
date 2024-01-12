@@ -7,30 +7,31 @@ using Rewired;
 [System.Serializable]
 public class AlphabetIconMapping
 {
-    public char alphabet; // 문자
+    public string keyName; // 키 이름
     public Sprite icon; // 아이콘
 }
 
 public class IconInput : MonoBehaviour
 {
     public TMP_InputField inputField;
-    public Image iconDisplay; // 아이콘을 표시할 Image 컴포넌트
-    public List<AlphabetIconMapping> alphabetIconsMappings; // 문자와 아이콘 매핑 목록
-    public string actionName; // 액션 이름
-    public Pole axisContribution = Pole.Positive; // Positive 또는 Negative
+    public Image iconDisplay;
+    public List<AlphabetIconMapping> keyIconsMappings;
+    public string actionName;
+    public Pole axisContribution = Pole.Positive;
 
-    private Dictionary<char, Sprite> alphabetIcons = new Dictionary<char, Sprite>();
-    private Rewired.Player player; // Rewired Player
+    private Dictionary<string, Sprite> keyIcons = new Dictionary<string, Sprite>();
+    private Rewired.Player player;
 
     void Start()
     {
         player = ReInput.players.GetPlayer(0);
 
-        foreach (var mapping in alphabetIconsMappings)
+        foreach (var mapping in keyIconsMappings)
         {
-            if (!alphabetIcons.ContainsKey(mapping.alphabet))
+            string keyNameUpper = mapping.keyName.ToUpper(); // 키 이름을 대문자로 변환
+            if (!keyIcons.ContainsKey(keyNameUpper))
             {
-                alphabetIcons[mapping.alphabet] = mapping.icon;
+                keyIcons[keyNameUpper] = mapping.icon;
             }
         }
 
@@ -45,10 +46,10 @@ public class IconInput : MonoBehaviour
     {
         if (input.Length > 0)
         {
-            char lastChar = input[input.Length - 1].ToString().ToUpper()[0];
-            if (alphabetIcons.ContainsKey(lastChar))
+            string inputUpper = input.ToUpper(); // 입력을 대문자로 변환
+            if (keyIcons.ContainsKey(inputUpper))
             {
-                iconDisplay.sprite = alphabetIcons[lastChar];
+                iconDisplay.sprite = keyIcons[inputUpper];
             }
         }
     }
@@ -63,10 +64,10 @@ public class IconInput : MonoBehaviour
                 if (element.actionId == actionId && element.axisContribution == axisContribution)
                 {
                     KeyCode currentKey = ReInput.controllers.Keyboard.GetKeyCodeById(element.elementIdentifierId);
-                    char keyChar = currentKey.ToString().ToUpper()[0];
-                    if (alphabetIcons.ContainsKey(keyChar))
+                    string keyNameUpper = currentKey.ToString().ToUpper(); // 키 이름을 대문자로 변환
+                    if (keyIcons.ContainsKey(keyNameUpper))
                     {
-                        iconDisplay.sprite = alphabetIcons[keyChar];
+                        iconDisplay.sprite = keyIcons[keyNameUpper];
                         return;
                     }
                 }
