@@ -78,6 +78,10 @@ public class Player : MonoBehaviour
 
     public PlayerStat stat;
     public Vector3 lastMousePosition;
+
+    [Header("Inventory")]
+    public Inventory inventory; // 인벤토리 참조 추가
+
     [Header("State Machine")]
     public PlayerFSM fsm; //정말 큰 애니메이션 기준 
     //State 들은 Player_AAAA Player_BBBB 이런식으로 클래스 이름이 되어 있음니당.  
