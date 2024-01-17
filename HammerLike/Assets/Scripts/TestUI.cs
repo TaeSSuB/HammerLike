@@ -12,6 +12,14 @@ public class TestUI : MonoBehaviour
         {
             // targetObject의 활성 상태를 반전
             targetObject.SetActive(!targetObject.activeSelf);
+            if(targetObject.activeSelf)
+            {
+                Time.timeScale = 0;
+            }
+            else
+            {
+                Time.timeScale = 1;
+            }
         }
     }
 }
