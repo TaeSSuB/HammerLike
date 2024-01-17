@@ -116,7 +116,7 @@ public class Player : MonoBehaviour
     //public Inventory inven;
 
     //public Weapon curWeapon;
-
+    private SaveDataManager saveDataManager;
     private void Awake()
     {
         if (!fsm)
@@ -134,18 +134,24 @@ public class Player : MonoBehaviour
         }
 
         rewiredPlayer = ReInput.players.GetPlayer(0); // '0'은 첫 번째 플레이어의 ID
-
+        saveDataManager = FindObjectOfType<SaveDataManager>();
 
     }
     // Start is called before the first frame update
     void Start()
     {
-
+        if (ES3.KeyExists("playerStat"))
+        {
+            Debug.Log("playerStat is Exist");
+            stat = ES3.Load<PlayerStat>("playerStat");
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+      
 
 
     }
@@ -176,7 +182,29 @@ public class Player : MonoBehaviour
 
     }
 
-	private void OnDrawGizmos()
+    public void SaveData(int fileIndex)
+    { 
+        if (saveDataManager != null)
+        {
+
+            saveDataManager.SavePlayerData(stat,fileIndex);
+        }
+    }
+
+    public void OverwriteSaveData(int fileIndex)
+    {
+        // 먼저 기존 파일을 삭제합니다.
+        if (saveDataManager != null)
+        {
+            saveDataManager.DeleteSaveFile(fileIndex);
+        }
+
+        // 이후 새로운 데이터로 세이브 파일을 생성합니다.
+        SaveData(fileIndex);
+    }
+
+
+    private void OnDrawGizmos()
 	{
         Gizmos.color = Color.blue;
         //Ray rayF = new Ray(transform.position, transform.forward * 10f);
@@ -194,4 +222,6 @@ public class Player : MonoBehaviour
     {
         return rewiredPlayer;
     }
+
+    
 }

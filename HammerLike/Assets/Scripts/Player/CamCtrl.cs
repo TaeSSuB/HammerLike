@@ -137,7 +137,7 @@ public class CamCtrl : MonoBehaviour
                 CalculateRoomBounds();
             }
         }
-        Debug.Log("현재 방 :" + currentRoom);
+        //Debug.Log("현재 방 :" + currentRoom);
     }
 
     void CalculateRoomBounds()
