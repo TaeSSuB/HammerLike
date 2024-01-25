@@ -17,8 +17,6 @@ public class Player_Idle : cState
 	{
 		base.EnterState();
 
-		Debug.Log("Enter Player Idle");
-
 		player.animCtrl.SetLayerWeight(1, 0f);
 
 		player.animCtrl.SetTrigger("tIdle");

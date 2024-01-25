@@ -14,7 +14,6 @@ public class Player_Move : cState
     public override void EnterState()
     {
         base.EnterState();
-        Debug.Log("Enter Player Move");
         player.animCtrl.SetLayerWeight(1, 1f);
         player.animCtrl.SetTrigger("tWalk");
     }
