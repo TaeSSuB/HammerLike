@@ -18,6 +18,9 @@ public class ItemDB : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+
+
     }
 
     public Item GetItemByID(int id)

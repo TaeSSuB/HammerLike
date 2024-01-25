@@ -53,6 +53,9 @@ public struct PlayerStat
     public float runSpd;
 
     [Space(7.5f)]
+    public float sensitivity; // 민감도 추가
+
+    [Space(7.5f)]
     public EnvasionStat envasionStat;
 
     //public float evasionDist;	//회피 거리
@@ -112,7 +115,7 @@ public class Player : MonoBehaviour
     public Transform spineBoneTr;
     public Transform hipBoneTr;
     public RewiredPlayer rewiredPlayer;
-
+    public bool isAttacking = false; // 공격 상태 플래그
     //public eGizmoDir preMoveDir;
 
     //[Tooltip("Temp Test")]
@@ -146,8 +149,8 @@ public class Player : MonoBehaviour
     {
         if (ES3.KeyExists("playerStat"))
         {
-            Debug.Log("playerStat is Exist");
-            stat = ES3.Load<PlayerStat>("playerStat");
+            //Debug.Log("playerStat is Exist");
+            //stat = ES3.Load<PlayerStat>("playerStat");
         }
     }
 
@@ -227,5 +230,23 @@ public class Player : MonoBehaviour
         return rewiredPlayer;
     }
 
-    
+    public void TakeDamage(float damage)
+    {
+        Debug.Log("take Damage");
+        stat.curHp -= damage;
+        if (stat.curHp <= 0)
+        {
+            // 사망 처리
+        }
+    }
+
+    public void StartAttack() // 공격 시작 시 호출
+    {
+        isAttacking = true;
+    }
+
+    public void EndAttack() // 공격 종료 시 호출
+    {
+        isAttacking = false;
+    }
 }

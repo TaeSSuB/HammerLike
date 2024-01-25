@@ -23,20 +23,29 @@ public class Player_Idle : cState
 
 		player.animCtrl.SetTrigger("tIdle");
 	}
-	public override void UpdateState()
+    public override void UpdateState()
     {
         base.UpdateState();
 
         player.aim.Aiming();
 
-        var temp = player.aim.rayResultPoint;
-        temp.y = player.transform.position.y;
-        player.transform.LookAt(temp);
+        var targetPosition = player.aim.rayResultPoint;
+        targetPosition.y = player.transform.position.y;
 
-        // 마우스 커서의 위치 저장
-        player.lastMousePosition = temp;
+        if (player.isAttacking)
+        {
+            // 공격 중일 때만 민감도 적용
+            float rotationSpeed = (player.stat.sensitivity > 0) ? (1f / player.stat.sensitivity) * Time.deltaTime : float.MaxValue;
+            Quaternion targetRotation = Quaternion.LookRotation(targetPosition - player.transform.position);
+            player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetRotation, rotationSpeed);
+        }
+        else
+        {
+            // 공격 중이 아닐 때는 즉시 회전
+            player.transform.LookAt(targetPosition);
+        }
 
-        if (player.move.Move(player.stat.walkSpd,player.rewiredPlayer))
+        if (player.move.Move(player.stat.walkSpd, player.rewiredPlayer))
         {
             player.fsm.SetNextState("Player_Move");
         }
@@ -67,6 +76,7 @@ public class Player_Idle : cState
             player.fsm.SetNextState("Player_Envasion");
         }
     }
+
 
 
     public override void FixedUpdateState()

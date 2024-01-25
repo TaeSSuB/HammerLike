@@ -10,14 +10,14 @@ public class Item
     public enum ItemType { Equipment, Used, Ingredient, ETC };
     public ItemType itemType;
     public Sprite itemImage; // UI 표시용
-    public GameObject itemPrefab; // 게임 내 표시용
+    public GameObject itemPrefab;
 
-    public Item(string name, int id, ItemType type, Sprite image, GameObject prefab)
+    public Item(string name, int id, ItemType type, Sprite image)
     {
         itemName = name;
         itemID = id;
         itemType = type;
         itemImage = image;
-        itemPrefab = prefab;
+
     }
 }

@@ -11,7 +11,7 @@ public struct MonsterStat
 {
     public float maxHp;
     public float curHp;
-
+    public float attackPoint;
     [Space(7.5f)]
     public float walkSpd;
     public float runSpd;
@@ -26,6 +26,14 @@ public struct MonsterStat
     public float detectionRange;  // 플레이어를 인식할 범위 설정. 원하는 값으로 조절 가능.
 
 }
+
+[System.Serializable]
+public class DropItem
+{
+    public int itemID; // 아이템 ID
+    public float dropChance; // 드랍 확률
+}
+
 
 public class Monster : MonoBehaviour
 {
@@ -57,6 +65,9 @@ public class Monster : MonoBehaviour
     [Header("Cam Controller")]
     public CamCtrl camCtrl; // Note: 몬스터가 카메라를 직접 제어할 필요가 있을지 확인 필요
 
+    [Header("Drop Items")]
+    public List<DropItem> dropItems = new List<DropItem>(); // 드랍 아이템 목록
+
     [Space(10f)]
     [Header("Anim Bones")]
     public Transform headBoneTr;
@@ -69,6 +80,10 @@ public class Monster : MonoBehaviour
 
     public Transform target;
     NavMeshAgent nmAgent;
+    public LineRenderer lineRenderer; // LineRenderer 참조
+
+    public Collider attackCollider;
+    private Player player;
 
     private void Awake()
     {
@@ -96,18 +111,51 @@ public class Monster : MonoBehaviour
             healthSlider.maxValue = stat.maxHp;
             healthSlider.value = stat.curHp;
         }
+
+        // LineRenderer 기본 설정
+        if (lineRenderer != null)
+        {
+            lineRenderer.positionCount = 2; // 시작점과 끝점
+            lineRenderer.widthMultiplier = 0.05f; // 선의 너비
+        }
     }
 
     void Update()
     {
-        //move.Move(stat.walkSpd);
-        //DetectPlayer();
-        //ChasePlayer();
-        nmAgent.SetDestination(target.position);
-        if (healthSlider != null)
+        if (stat.curHp > 0)
         {
-            Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position + new Vector3(-2.7f, 1.2f, 0));
-            healthSlider.transform.position = screenPosition;
+            DetectPlayer();
+
+            if (playerTransform != null)
+            {
+                ChasePlayer();
+            }
+            else
+            {
+                animCtrl.SetBool("IsChasing", false);
+                animCtrl.SetTrigger("tIdle");
+            }
+        }
+        else
+        {
+            animCtrl.SetBool("IsChasing", false);
+        }
+
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            stat.curHp = 0;
+            Die();
+        }
+       
+
+    }
+
+    void DrawDirectionLine()
+    {
+        if (lineRenderer != null)
+        {
+            lineRenderer.SetPosition(0, transform.position); // 선의 시작점: 몬스터의 위치
+            lineRenderer.SetPosition(1, transform.position + transform.forward * 5f); // 선의 끝점: 몬스터가 바라보는 방향
         }
     }
 
@@ -119,6 +167,10 @@ public class Monster : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (playerTransform != null && stat.curHp > 0)
+        {
+            FaceTarget(); // 플레이어를 지속적으로 바라보게 하는 메서드
+        }
 
     }
 
@@ -170,6 +222,8 @@ public class Monster : MonoBehaviour
 
     private void TakeDamage(float damage)
     {
+        if (stat.curHp <= 0) return; // 이미 사망한 경우 데미지를 받지 않음
+
         if (stat.curHp > 0)  // 몬스터가 살아있을 때만 피격 처리
         {
             stat.curHp -= damage;
@@ -205,7 +259,19 @@ public class Monster : MonoBehaviour
     {
         // 몬스터 사망 처리
         // 예: gameObject.SetActive(false); 또는 Destroy(gameObject);
-        Destroy(gameObject);
+        animCtrl.SetBool("IsChasing", false);
+        animCtrl.SetTrigger("tDead");
+
+        // NavMeshAgent 비활성화
+        if (nmAgent != null && nmAgent.isActiveAndEnabled)
+        {
+            nmAgent.isStopped = true;
+            nmAgent.enabled = false;
+        }
+
+
+        DropItems();
+        //Destroy(gameObject);
     }
     private void ShowHealthSlider()
     {
@@ -225,42 +291,116 @@ public class Monster : MonoBehaviour
             healthSlider.gameObject.SetActive(false);
         }
     }
-
+    public Player Player
+    {
+        get { return player; }
+    }
     private void DetectPlayer()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, stat.detectionRange);
-
-        foreach (var hit in hits)
+        if (stat.curHp <= 0) return; // 체력이 0 이하면 감지 중지
+        if (Vector3.Distance(transform.position, target.position) <= stat.detectionRange)
         {
-            if (hit.CompareTag("Player"))  // Player 태그를 가진 오브젝트를 인식
+            playerTransform = target; // 기존 로직을 유지
+            player = target.GetComponent<Player>(); // target에서 Player 컴포넌트를 가져옴
+
+            if (player != null)
             {
-                playerTransform = hit.transform;
-                monsterAim.SetTarget(playerTransform);
-                break;
+                monsterAim.SetTarget(target); // MonsterAim 스크립트에도 타겟 설정
             }
+        }
+        else
+        {
+            playerTransform = null;
+            player = null; // Player 참조도 해제
+            monsterAim.SetTarget(null); // MonsterAim 스크립트의 타겟도 해제
         }
     }
 
 
     void ChasePlayer()
     {
-        if (playerTransform != null)
+        if (stat.curHp <= 0) return; // 체력이 0 이하면 추격 중지
+        float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
+
+        if (distanceToTarget <= stat.detectionRange)
         {
-            // 플레이어를 향해 이동
-            Vector3 moveDirection = (playerTransform.position - transform.position).normalized;
-            transform.position += moveDirection * stat.walkSpd * Time.deltaTime;
-
-            // 플레이어를 바라보도록 Y축 회전
-            Vector3 lookDirection = new Vector3(playerTransform.position.x, transform.position.y, playerTransform.position.z);
-            transform.LookAt(lookDirection);
-
-            animCtrl.SetBool("IsChasing", true);
+            if (distanceToTarget > nmAgent.stoppingDistance)
+            {
+                nmAgent.SetDestination(playerTransform.position);
+                animCtrl.SetBool("IsChasing", true);
+            }
+            else
+            {
+                animCtrl.SetBool("IsChasing", false);
+                Attack();
+            }
         }
         else
         {
             animCtrl.SetBool("IsChasing", false);
+            animCtrl.SetTrigger("tIdle");
         }
     }
+
+    // 플레이어를 바라보게 하는 메서드
+    private void FaceTarget()
+    {
+        Vector3 direction = (playerTransform.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * stat.legHomingSpd);
+    }
+
+
+
+    void Attack()
+    {
+        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking")) return; // 체력이 0 이하거나 이미 공격 중이면 공격 중지
+        if (!animCtrl.GetBool("IsAttacking"))
+        {
+            FaceTarget();
+            StartAttack();
+            animCtrl.SetTrigger("tAttack");
+        }
+    }
+
+    void DropItems()
+    {
+        ItemManager itemManager = FindObjectOfType<ItemManager>();
+        foreach (DropItem dropItem in dropItems)
+        {
+            if (UnityEngine.Random.Range(0f, 100f) < dropItem.dropChance)
+            {
+                // 아이템 생성 및 드랍
+                itemManager.DropItem(dropItem.itemID, transform.position);
+            }
+        }
+    }
+
+    void StartAttack()
+    {
+        animCtrl.SetBool("IsAttacking", true);
+    }
+
+    public void EndAttack()
+    {
+        animCtrl.SetBool("IsAttacking", false);
+        if (stat.curHp > 0)  // 체력이 0 이상일 때만 tIdle 트리거를 설정
+        {
+            animCtrl.SetTrigger("tIdle");
+        }
+    }
+
+    public void EnableAttackCollider()
+    {
+        attackCollider.enabled = true;
+    }
+
+    // 공격용 Collider 비활성화
+    public void DisableAttackCollider()
+    {
+        attackCollider.enabled = false;
+    }
+
 
 
 

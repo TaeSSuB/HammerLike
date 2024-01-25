@@ -58,7 +58,7 @@ public class KMJPixelizedWithOutlineShaderGUI : ShaderGUI
         useAlpha = Material.IsKeywordEnabled(ALPHA_ON);
         useShadows = Material.IsKeywordEnabled(RECEIVE_SHADOWS_ON);
 
-        string materialPath = AssetDatabase.GetAssetPath(Material);
+    string materialPath = AssetDatabase.GetAssetPath(Material);
     string directory = System.IO.Path.GetDirectoryName(materialPath);
     string materialName = System.IO.Path.GetFileNameWithoutExtension(materialPath);
     string gradientTexturePath = System.IO.Path.Combine(directory, materialName + "_GradientTexture.asset");

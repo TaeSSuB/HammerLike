@@ -4,15 +4,33 @@ using UnityEngine;
 
 public class MonsterAtk : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Monster monster; // Monster 컴포넌트에 대한 참조
+
+    void Awake()
     {
-        
+        monster = GetComponentInParent<Monster>(); // Monster 컴포넌트를 찾아 할당
+        if (monster == null)
+        {
+            Debug.LogError("Monster component not found in parent");
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        
+        if (monster == null)
+        {
+            Debug.Log("monster is null");
+            return; // monster가 null이면 함수 종료
+        }
+
+        if (other.gameObject.CompareTag("Player") && monster.attackCollider.enabled)
+        {
+            Player player = monster.Player; // getter를 사용하여 player에 접근
+            if (player != null)
+            {
+                player.TakeDamage(monster.stat.attackPoint);
+            }
+        }
     }
 }
+

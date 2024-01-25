@@ -67,6 +67,7 @@ Shader "ProPixelizer/SRP/KMJPixelizedWithOutline"
 			ZWrite On	// 추후에 반투명 ( 논 디더링) 형태에서 Zwrite를 off 하고 Blend 는 On 해야되는거 아닐까?
 			Cull Off
 			Blend Off	//
+			//ZWrite Off
 			//Blend SrcAlpha OneMinusSrcAlpha
 
 			HLSLPROGRAM
