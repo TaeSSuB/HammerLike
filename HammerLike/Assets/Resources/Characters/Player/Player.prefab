@@ -482,10 +482,13 @@ MonoBehaviour:
     staminaRecoverSpd: 0
     walkSpd: 2
     runSpd: 15
+    sensitivity: 0
     upperHomingSpd: 0
     legHomingSpd: 0
     legHomingTime: 0
   lastMousePosition: {x: 0, y: 0, z: 0}
+  isRotationEnabled: 1
+  inventory: {fileID: 0}
   fsm: {fileID: 8202893202914209688}
   meshTr: {fileID: 2602330183642614466}
   animCtrl: {fileID: 3035563464178128940}
@@ -497,6 +500,7 @@ MonoBehaviour:
   headBoneTr: {fileID: 612755045067140382}
   spineBoneTr: {fileID: 6519598044952491886}
   hipBoneTr: {fileID: 4921229117506710867}
+  isAttacking: 0
 --- !u!114 &8202893202914209688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -646,7 +650,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: d620eb5b8df2bc94f98c89f8c6aeefb0,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d620eb5b8df2bc94f98c89f8c6aeefb0, type: 3}
@@ -728,7 +732,7 @@ MonoBehaviour:
   drawingMode: 1
   outlineLayer: 0
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -744,7 +748,7 @@ MonoBehaviour:
     cutoutTextureName: _Albedo
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -760,7 +764,7 @@ MonoBehaviour:
     cutoutTextureName: _Albedo
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -776,7 +780,7 @@ MonoBehaviour:
     cutoutTextureName: _Albedo
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -792,7 +796,7 @@ MonoBehaviour:
     cutoutTextureName: _Albedo
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -808,7 +812,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -824,7 +828,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -1055,6 +1059,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.15
       objectReference: {fileID: 0}
+    - target: {fileID: -2022340765010179286, guid: 462a5e8fa6bd2584684eb21df1394d7b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 462a5e8fa6bd2584684eb21df1394d7b,
         type: 3}
       propertyPath: m_Name
@@ -1063,7 +1072,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 462a5e8fa6bd2584684eb21df1394d7b,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3104982943911166007, guid: 462a5e8fa6bd2584684eb21df1394d7b,
         type: 3}
@@ -1171,7 +1180,7 @@ MonoBehaviour:
   drawingMode: 1
   outlineLayer: 0
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -1187,7 +1196,7 @@ MonoBehaviour:
     cutoutTextureName: _Albedo
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -1203,7 +1212,7 @@ MonoBehaviour:
     cutoutTextureName: _Albedo
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -1219,7 +1228,7 @@ MonoBehaviour:
     cutoutTextureName: _Albedo
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -1235,7 +1244,7 @@ MonoBehaviour:
     cutoutTextureName: _Albedo
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -1251,7 +1260,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -1267,7 +1276,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5

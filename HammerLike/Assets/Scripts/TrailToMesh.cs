@@ -7,61 +7,126 @@ public class TrailToMesh : MonoBehaviour
 {
     private TrailRenderer trailRenderer;
     private Mesh mesh;
-    private Vector3[] vertices;
-    private int[] triangles;
+    private List<Vector3> vertices;
+    private List<int> triangles;
+    private float trailLifeTime;
+    private List<float> segmentLifetimes;
 
     void Start()
     {
         trailRenderer = GetComponent<TrailRenderer>();
         mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh; // MeshFilter 컴포넌트에 메쉬 할당 일일이 하기 좀 그래서
+        GetComponent<MeshFilter>().mesh = mesh;
+        trailLifeTime = trailRenderer.time;
+        segmentLifetimes = new List<float>();
+        vertices = new List<Vector3>();
+        triangles = new List<int>();
     }
 
     void Update()
     {
         UpdateTrailMesh();
+        RemoveOldSegments();
     }
 
     void UpdateTrailMesh()
     {
         int segments = trailRenderer.positionCount;
-        segments = Mathf.Min(segments, 10000); // 예시로 10000으로 제한
+        segments = Mathf.Min(segments, 10000);
 
-        if (segments < 2) return; // 적어도 2개의 세그먼트가 필요
+        if (segments < 2) return;
 
-        vertices = new Vector3[segments * 2];
-        triangles = new int[(segments - 1) * 6];
+        vertices.Clear();
+        triangles.Clear();
+        segmentLifetimes.Add(trailLifeTime);
 
         Vector3 trailPosition = transform.position;
         for (int i = 0; i < segments; i++)
         {
             Vector3 position = trailRenderer.GetPosition(i) - trailPosition;
-            vertices[i * 2] = position + Vector3.left * trailRenderer.startWidth * 0.5f;
-            vertices[i * 2 + 1] = position + Vector3.right * trailRenderer.startWidth * 0.5f;
+            vertices.Add(position + Vector3.left * trailRenderer.startWidth * 0.5f);
+            vertices.Add(position + Vector3.right * trailRenderer.startWidth * 0.5f);
 
             if (i < segments - 1)
             {
-                int index = i * 6;
-                if (index + 5 < triangles.Length) // 인덱스 검증
-                {
-                    triangles[index] = i * 2;
-                    triangles[index + 1] = triangles[index + 4] = i * 2 + 1;
-                    triangles[index + 2] = triangles[index + 3] = (i + 1) * 2;
-                    triangles[index + 5] = (i + 1) * 2 + 1;
-                }
+                int startIndex = i * 2;
+                triangles.Add(startIndex);
+                triangles.Add(startIndex + 1);
+                triangles.Add(startIndex + 2);
+
+                triangles.Add(startIndex + 2);
+                triangles.Add(startIndex + 1);
+                triangles.Add(startIndex + 3);
             }
         }
 
         mesh.Clear();
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
+        mesh.SetVertices(vertices);
+        mesh.SetTriangles(triangles, 0);
         mesh.RecalculateNormals();
 
         MeshCollider meshCollider = GetComponent<MeshCollider>();
         if (meshCollider != null)
         {
-            meshCollider.sharedMesh = null;
             meshCollider.sharedMesh = mesh;
         }
     }
+
+    void RemoveOldSegments()
+    {
+        if (segmentLifetimes.Count == 0) return;
+
+        for (int i = segmentLifetimes.Count - 1; i >= 0; i--)
+        {
+            segmentLifetimes[i] -= Time.deltaTime;
+            if (segmentLifetimes[i] <= 0)
+            {
+                segmentLifetimes.RemoveAt(i);
+                RemoveSegmentMeshData(i);
+            }
+        }
+    }
+
+    void RemoveSegmentMeshData(int segmentIndex)
+    {
+        int vertexIndex = segmentIndex * 2;
+        if (vertexIndex < vertices.Count - 2)
+        {
+            // 세그먼트에 해당하는 두 개의 버텍스를 제거
+            vertices.RemoveAt(vertexIndex);
+            vertices.RemoveAt(vertexIndex);
+        }
+        else if (vertexIndex <= vertices.Count - 2)
+        {
+            // 마지막 두 버텍스를 제거 (마지막 세그먼트)
+            vertices.RemoveAt(vertices.Count - 1);
+            vertices.RemoveAt(vertices.Count - 1);
+        }
+
+        UpdateTriangleIndices(); // 삼각형 인덱스를 업데이트
+
+        mesh.SetVertices(vertices);
+        mesh.SetTriangles(triangles, 0);
+        mesh.RecalculateNormals();
+    }
+
+    void UpdateTriangleIndices()
+    {
+        triangles.Clear();
+
+        // 버텍스 배열에 따라 삼각형 배열을 재구성
+        for (int i = 0; i < vertices.Count / 2 - 1; i++)
+        {
+            int startIndex = i * 2;
+            triangles.Add(startIndex);
+            triangles.Add(startIndex + 1);
+            triangles.Add(startIndex + 2);
+
+            triangles.Add(startIndex + 2);
+            triangles.Add(startIndex + 1);
+            triangles.Add(startIndex + 3);
+        }
+    }
+
+
 }

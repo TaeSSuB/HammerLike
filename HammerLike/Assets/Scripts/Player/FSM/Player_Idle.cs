@@ -6,41 +6,43 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 public class Player_Idle : cState
 {
 
-	public Player player;
+    public Player player;
 
-	public Player_Idle(Player _player)
-	{
-		player = _player;
-	}
+    public Player_Idle(Player _player)
+    {
+        player = _player;
+    }
 
-	public override void EnterState()
-	{
-		base.EnterState();
+    public override void EnterState()
+    {
+        base.EnterState();
 
-		player.animCtrl.SetLayerWeight(1, 0f);
+        player.animCtrl.SetLayerWeight(1, 0f);
 
-		player.animCtrl.SetTrigger("tIdle");
-	}
+        player.animCtrl.SetTrigger("tIdle");
+    }
     public override void UpdateState()
     {
         base.UpdateState();
 
         player.aim.Aiming();
 
-        var targetPosition = player.aim.rayResultPoint;
-        targetPosition.y = player.transform.position.y;
-
-        if (player.isAttacking)
+        if (player.isRotationEnabled)
         {
-            // 공격 중일 때만 민감도 적용
-            float rotationSpeed = (player.stat.sensitivity > 0) ? (1f / player.stat.sensitivity) * Time.deltaTime : float.MaxValue;
-            Quaternion targetRotation = Quaternion.LookRotation(targetPosition - player.transform.position);
-            player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetRotation, rotationSpeed);
-        }
-        else
-        {
-            // 공격 중이 아닐 때는 즉시 회전
-            player.transform.LookAt(targetPosition);
+            var targetPosition = player.aim.rayResultPoint;
+            targetPosition.y = player.transform.position.y;
+            if (player.isAttacking)
+            {
+                // 공격 중일 때만 민감도 적용
+                float rotationSpeed = (player.stat.sensitivity > 0) ? (1f / player.stat.sensitivity) * Time.deltaTime : float.MaxValue;
+                Quaternion targetRotation = Quaternion.LookRotation(targetPosition - player.transform.position);
+                player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetRotation, rotationSpeed);
+            }
+            else
+            {
+                // 공격 중이 아닐 때는 즉시 회전
+                player.transform.LookAt(targetPosition);
+            }
         }
 
         if (player.move.Move(player.stat.walkSpd, player.rewiredPlayer))
@@ -50,9 +52,47 @@ public class Player_Idle : cState
 
         if (Input.GetMouseButtonDown(0))
         {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                // 목표 지점 결정
+                Vector3 targetPosition = hit.point;
+                targetPosition.y = player.transform.position.y; /// TODO) 현재 플레이어의 포워드에서 결정 다만 추후엔 무기가 어느 손에
+                                                                /// 있는지 파악
+
+                Vector3 currentDirection = player.transform.forward;
+                Vector3 targetDirection = (targetPosition - player.transform.position).normalized;
+
+                // 각도 계산
+                float angle = Vector3.Angle(currentDirection, targetDirection);
+
+                // 회전 방향 결정 (시계방향 또는 반시계방향)
+                Vector3 cross = Vector3.Cross(currentDirection, targetDirection);
+                if (cross.y > 0)  // 시계 방향
+                {
+                    Debug.Log(" 시계방향");
+                    player.animCtrl.SetTrigger("tAtk");
+                    player.atk.Attack();
+                }
+                else  // 반 시계방향 회전
+                {
+                    Debug.Log("반 시계 방향");
+                    player.animCtrl.SetTrigger("tAtk");
+                    player.atk.Attack();
+                }
+
+
+
+            }
+        }
+
+        /*if (Input.GetMouseButtonDown(0))
+        {
             player.animCtrl.SetTrigger("tAtk");
             player.atk.Attack();
-        }
+        }*/
 
         if (Input.GetMouseButton(1))
         {
@@ -78,17 +118,19 @@ public class Player_Idle : cState
 
 
     public override void FixedUpdateState()
-	{
-		base.FixedUpdateState();
-	}
+    {
+        base.FixedUpdateState();
+    }
 
-	public override void LateUpdateState()
-	{
-		base.LateUpdateState();
-	}
+    public override void LateUpdateState()
+    {
+        base.LateUpdateState();
+    }
 
-	public override void ExitState()
-	{
-		base.ExitState();
-	}
+    public override void ExitState()
+    {
+        base.ExitState();
+    }
+
+ 
 }

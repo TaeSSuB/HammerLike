@@ -60,7 +60,7 @@ public struct PlayerStat
 
     //public float evasionDist;	//회피 거리
     //public float evasionCost;	//회피 스테미너 사용량
-
+   
     [Space(7.5f)]
     public float upperHomingSpd; //상체 회전 속도
     public float legHomingSpd; //하체 회전 속도
@@ -81,7 +81,7 @@ public class Player : MonoBehaviour
 
     public PlayerStat stat;
     public Vector3 lastMousePosition;
-
+    public bool isRotationEnabled = true;
     [Header("Inventory")]
     public Inventory inventory; // 인벤토리 참조 추가
 
@@ -157,8 +157,11 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-      
+
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            isRotationEnabled = !isRotationEnabled;
+        }
 
 
     }
