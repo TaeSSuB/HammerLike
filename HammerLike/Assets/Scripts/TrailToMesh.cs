@@ -2,131 +2,84 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(TrailRenderer))]
+[RequireComponent(typeof(TrailRenderer), typeof(MeshFilter), typeof(MeshCollider))]
 public class TrailToMesh : MonoBehaviour
 {
     private TrailRenderer trailRenderer;
     private Mesh mesh;
-    private List<Vector3> vertices;
-    private List<int> triangles;
-    private float trailLifeTime;
-    private List<float> segmentLifetimes;
+    private MeshCollider meshCollider;
 
     void Start()
     {
         trailRenderer = GetComponent<TrailRenderer>();
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        trailLifeTime = trailRenderer.time;
-        segmentLifetimes = new List<float>();
-        vertices = new List<Vector3>();
-        triangles = new List<int>();
+        meshCollider = GetComponent<MeshCollider>();
+        meshCollider.convex = false; // 볼록 메쉬 설정 해제
     }
 
     void Update()
     {
-        UpdateTrailMesh();
-        RemoveOldSegments();
+        if (trailRenderer.enabled)
+        {
+            UpdateTrailMesh();
+        }
+        else
+        {
+            ClearMesh();
+        }
     }
 
     void UpdateTrailMesh()
     {
         int segments = trailRenderer.positionCount;
-        segments = Mathf.Min(segments, 10000);
+        segments = Mathf.Min(segments, 10000); // 성능을 위해 세그먼트 제한
 
         if (segments < 2) return;
 
-        vertices.Clear();
-        triangles.Clear();
-        segmentLifetimes.Add(trailLifeTime);
+        Vector3[] vertices = new Vector3[segments * 2];
+        int[] triangles = new int[(segments - 1) * 6];
+        Vector2[] uv = new Vector2[vertices.Length];
 
-        Vector3 trailPosition = transform.position;
         for (int i = 0; i < segments; i++)
         {
-            Vector3 position = trailRenderer.GetPosition(i) - trailPosition;
-            vertices.Add(position + Vector3.left * trailRenderer.startWidth * 0.5f);
-            vertices.Add(position + Vector3.right * trailRenderer.startWidth * 0.5f);
+            float width = Mathf.Lerp(trailRenderer.startWidth, trailRenderer.endWidth, i / (float)(segments - 1)) * 0.5f;
+            Vector3 position = trailRenderer.GetPosition(i);
+            Vector3 right = Vector3.Cross(position - transform.position, Vector3.up).normalized; // 오른쪽 방향 계산
+
+            vertices[i * 2] = position - right * width;
+            vertices[i * 2 + 1] = position + right * width;
+
+            // UV 매핑
+            float uvProgress = i / (float)(segments - 1);
+            uv[i * 2] = new Vector2(0, uvProgress);
+            uv[i * 2 + 1] = new Vector2(1, uvProgress);
 
             if (i < segments - 1)
             {
-                int startIndex = i * 2;
-                triangles.Add(startIndex);
-                triangles.Add(startIndex + 1);
-                triangles.Add(startIndex + 2);
+                int index = i * 6;
+                triangles[index] = i * 2;
+                triangles[index + 1] = (i + 1) * 2;
+                triangles[index + 2] = i * 2 + 1;
 
-                triangles.Add(startIndex + 2);
-                triangles.Add(startIndex + 1);
-                triangles.Add(startIndex + 3);
+                triangles[index + 3] = i * 2 + 1;
+                triangles[index + 4] = (i + 1) * 2;
+                triangles[index + 5] = (i + 1) * 2 + 1;
             }
         }
 
         mesh.Clear();
-        mesh.SetVertices(vertices);
-        mesh.SetTriangles(triangles, 0);
+        mesh.vertices = vertices;
+        mesh.uv = uv; // UV 할당
+        mesh.triangles = triangles;
         mesh.RecalculateNormals();
 
-        MeshCollider meshCollider = GetComponent<MeshCollider>();
-        if (meshCollider != null)
-        {
-            meshCollider.sharedMesh = mesh;
-        }
+        meshCollider.sharedMesh = mesh;
     }
 
-    void RemoveOldSegments()
+    void ClearMesh()
     {
-        if (segmentLifetimes.Count == 0) return;
-
-        for (int i = segmentLifetimes.Count - 1; i >= 0; i--)
-        {
-            segmentLifetimes[i] -= Time.deltaTime;
-            if (segmentLifetimes[i] <= 0)
-            {
-                segmentLifetimes.RemoveAt(i);
-                RemoveSegmentMeshData(i);
-            }
-        }
+        mesh.Clear();
+        meshCollider.sharedMesh = null;
     }
-
-    void RemoveSegmentMeshData(int segmentIndex)
-    {
-        int vertexIndex = segmentIndex * 2;
-        if (vertexIndex < vertices.Count - 2)
-        {
-            // 세그먼트에 해당하는 두 개의 버텍스를 제거
-            vertices.RemoveAt(vertexIndex);
-            vertices.RemoveAt(vertexIndex);
-        }
-        else if (vertexIndex <= vertices.Count - 2)
-        {
-            // 마지막 두 버텍스를 제거 (마지막 세그먼트)
-            vertices.RemoveAt(vertices.Count - 1);
-            vertices.RemoveAt(vertices.Count - 1);
-        }
-
-        UpdateTriangleIndices(); // 삼각형 인덱스를 업데이트
-
-        mesh.SetVertices(vertices);
-        mesh.SetTriangles(triangles, 0);
-        mesh.RecalculateNormals();
-    }
-
-    void UpdateTriangleIndices()
-    {
-        triangles.Clear();
-
-        // 버텍스 배열에 따라 삼각형 배열을 재구성
-        for (int i = 0; i < vertices.Count / 2 - 1; i++)
-        {
-            int startIndex = i * 2;
-            triangles.Add(startIndex);
-            triangles.Add(startIndex + 1);
-            triangles.Add(startIndex + 2);
-
-            triangles.Add(startIndex + 2);
-            triangles.Add(startIndex + 1);
-            triangles.Add(startIndex + 3);
-        }
-    }
-
-
 }

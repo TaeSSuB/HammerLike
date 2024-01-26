@@ -30,23 +30,15 @@ public class MeshDestroy : MonoBehaviour
             DestroyMesh();
         }
 
-        if (meshCol.bounds.Intersects(weaponCollider.bounds) && weaponCollider.enabled)
+        if (meshCol != null && weaponCollider != null && weaponCollider.enabled && meshCol.bounds.Intersects(weaponCollider.bounds))
         {
-         
             DestroyMesh();
         }
     }
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision other)
     {
-     /*   // weaponCollider와 충돌했는지 확인
-    if (other == weaponCollider && meshCol != null)
-        {
-            // meshCol이 충돌 대상인지 확인
-            if (meshCol.bounds.Intersects(weaponCollider.bounds))
-            {
-                DestroyMesh();
-            }
-        }*/
+        DestroyMesh();
+
     }
 
 
@@ -56,6 +48,13 @@ public class MeshDestroy : MonoBehaviour
             return;
 
         hasBeenDestroyed = true;
+
+        // 여기서 null 체크를 추가합니다.
+        if (GetComponent<MeshFilter>() == null || player == null)
+        {
+            Debug.LogError("MeshFilter 또는 Player가 null입니다.");
+            return;
+        }
 
         var originalMesh = GetComponent<MeshFilter>().mesh;
         originalMesh.RecalculateBounds();
