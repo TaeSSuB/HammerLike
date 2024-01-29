@@ -1,32 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class Inventory : MonoBehaviour
 {
-    public GameObject invenUI; // SetActive를 반전시킬 대상 오브젝트
-    public List<Item> items = new List<Item>(16); // 인벤토리 아이템들
-    public List<ItemSlot> itemSlots;
+    public static Inventory Instance;
+
+    public GameObject invenUI; // 인벤토리 UI 오브젝트
+    public List<Item> items = new List<Item>(16); // 인벤토리 아이템 리스트
+    public List<ItemSlot> itemSlots; // 아이템 슬롯 리스트
+    public TMP_Text goldText; // 골드 수량을 표시할 Text Mesh Pro UI 컴포넌트
+    public int goldItemId; // 골드 아이템의 ID
+
     private int selectedSlotIndex = -1; // 현재 선택된 슬롯 인덱스
     private Item selectedItem; // 현재 선택된 아이템
 
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+
+        // 필요한 초기화 코드 추가
+    }
+
     void Start()
     {
-        // 빈 아이템으로 초기화하거나 미리 정의된 아이템으로 채움
         for (int i = 0; i < 16; i++)
         {
             items.Add(null);
         }
     }
 
-
-    // Update is called once per frame
     void Update()
     {
-        // ESC 키가 눌렸는지 확인
         if (Input.GetKeyDown(KeyCode.I))
         {
-            // targetObject의 활성 상태를 반전
             invenUI.SetActive(!invenUI.activeSelf);
             if (invenUI.activeSelf)
             {
@@ -38,35 +53,89 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        if(invenUI.activeSelf)
+        if (invenUI.activeSelf)
         {
             HandleInput();
         }
     }
 
-    public void AddItem(Item item)
+    public void AddItem(int itemId)
     {
-        bool isAdded = false;
+        Item itemToAdd = ItemDB.Instance.GetItemByID(itemId);
+
+        if (itemToAdd == null)
+        {
+            Debug.LogError("Item not found in ItemDB!");
+            return;
+        }
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i] != null && items[i].itemID == itemToAdd.itemID)
+            {
+                if (items[i].quantity < itemToAdd.limitNumber)
+                {
+                    items[i].quantity++;
+                    UpdateInventoryUI();
+                    return;
+                }
+            }
+        }
+
         for (int i = 0; i < items.Count; i++)
         {
             if (items[i] == null)
             {
-                items[i] = item;
-                UpdateInventoryUI(); // 인벤토리 UI 업데이트
-                isAdded = true;
-                //Debug.Log("아이템이 인벤토리 슬롯 " + i + "에 추가되었습니다.");
-                break;
+                Item newItem = new Item(itemToAdd.itemName, itemToAdd.itemID, itemToAdd.itemType, itemToAdd.itemImage, itemToAdd.limitNumber, 1);
+                items[i] = newItem;
+                UpdateInventoryUI();
+                return;
             }
         }
 
-        if (!isAdded)
-        {
-            Debug.Log("인벤토리가 가득 찼습니다.");
-        }
+        Debug.Log("Inventory is full!");
     }
 
+    public void UpdateInventoryUI()
+    {
+        for (int i = 0; i < itemSlots.Count; i++)
+        {
+            if (itemSlots[i] != null)
+            {
+                if (i < items.Count && items[i] != null)
+                {
+                    itemSlots[i].SetItem(items[i]);
+                }
+                else
+                {
+                    itemSlots[i].SetItem(null);
+                }
+            }
+        }
 
-        public bool AddItem(int itemId)
+        UpdateGoldUI();
+    }
+
+    public void UpdateGoldUI()
+    {
+        int totalGold = GetTotalGoldAmount(goldItemId);
+        goldText.text = totalGold.ToString() + "G";
+    }
+
+    private int GetTotalGoldAmount(int goldItemId)
+    {
+        int totalGold = 0;
+        foreach (Item item in items)
+        {
+            if (item != null && item.itemID == goldItemId)
+            {
+                totalGold += item.quantity;
+            }
+        }
+        return totalGold;
+    }
+
+    /*public bool AddItem(int itemId)
     {
         // ItemDB에서 아이템 찾기
         Item itemToAdd = ItemDB.Instance.GetItemByID(itemId);
@@ -92,17 +161,8 @@ public class Inventory : MonoBehaviour
         // 인벤토리에 공간이 없는 경우
         Debug.Log("Inventory is full!");
         return false;
-    }
+    }*/
 
-    public void UpdateInventoryUI()
-    {
-        for (int i = 0; i < itemSlots.Count; i++)
-        {
-            Sprite sprite = (i < items.Count && items[i] != null) ? items[i].itemImage : null;
-            itemSlots[i].SetItemSprite(sprite);
-            //Debug.Log("슬롯 " + i + " 업데이트: " + (sprite != null ? sprite.name : "빈 슬롯"));
-        }
-    }
 
     public void SwapItems(int index1, int index2)
     {

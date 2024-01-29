@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
+using TMPro;
 public class ItemSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler
 {
 
@@ -12,6 +12,7 @@ public class ItemSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IEndDr
     public Item currentItem; // 현재 슬롯의 아이템
     private Inventory inventory; // 부모 인벤토리 참조
     private Vector2 originalPosition; // 드래그 시작 위치
+    public TMP_Text quantityText;
     private int slotIndex;
     public void SetItemSprite(Sprite sprite)
     {
@@ -102,7 +103,21 @@ public class ItemSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IEndDr
         currentItem = item;
         itemImage.sprite = item != null ? item.itemImage : null;
         itemImage.enabled = (item != null);
+
+        if (quantityText != null) // Null 체크 추가
+        {
+            if (item != null && item.quantity > 1)
+            {
+                quantityText.text = item.quantity.ToString();
+                quantityText.enabled = true;
+            }
+            else
+            {
+                quantityText.enabled = false;
+            }
+        }
     }
+
 
     // Update is called once per frame
     void Update()

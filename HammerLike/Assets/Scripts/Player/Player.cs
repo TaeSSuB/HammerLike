@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
-
+using UnityEngine.UI;
 using Johnson;
 using Rewired;
 using RewiredPlayer = Rewired.Player;
+using MoreMountains.Tools;
+using PixelCrushers.DialogueSystem.Demo;
+using TMPro;
 
 //FSM은 StateController로 관리
 //Idle <-> Envasion <-> Death 정도로 관리 할 예정.
@@ -43,6 +46,8 @@ public struct PlayerStat
     public float maxHp;
     public float curHp;
 
+
+
     [Space(7.5f)]
     public float maxStamina;
     public float curStamina;
@@ -78,6 +83,14 @@ public class Player : MonoBehaviour
     //기능 구현 할 때는 접근지정자 크게 신경 안쓰고 작업함.
     //차후 기능 작업 끝나고 나면 추가적으로 정리 예정!!
     //불편해도 양해바람니다!!! 스마미센!!
+    [Header("Health UI")]
+    public RectTransform healthBar; // HP 바의 RectTransform
+    public TextMeshProUGUI currentHealthText; 
+    public TextMeshProUGUI maxHealthText;
+    private float originalAnchorMaxX; //HP 바의 원래 anchorMax x 값
+    private float displayedHp;
+    public float recoverySpeed = 5f;
+
 
     public PlayerStat stat;
     public Vector3 lastMousePosition;
@@ -152,6 +165,9 @@ public class Player : MonoBehaviour
             //Debug.Log("playerStat is Exist");
             //stat = ES3.Load<PlayerStat>("playerStat");
         }
+        originalAnchorMaxX = healthBar.anchorMax.x;
+        displayedHp = stat.curHp; // 초기화
+        UpdateHealthBar();
     }
 
     // Update is called once per frame
@@ -162,7 +178,7 @@ public class Player : MonoBehaviour
         {
             isRotationEnabled = !isRotationEnabled;
         }
-
+        UpdateHealthBar();
 
     }
   
@@ -236,11 +252,17 @@ public class Player : MonoBehaviour
     public void TakeDamage(float damage)
     {
         Debug.Log("take Damage");
-        stat.curHp -= damage;
+        if(stat.curHp > 0)
+        {
+            stat.curHp -= damage;
+            UpdateHealthBar();
+        }
+
         if (stat.curHp <= 0)
         {
-            // 사망 처리
+            
         }
+
     }
 
     public void StartAttack() // 공격 시작 시 호출
@@ -251,5 +273,24 @@ public class Player : MonoBehaviour
     public void EndAttack() // 공격 종료 시 호출
     {
         isAttacking = false;
+    }
+
+    void UpdateHealthUI()
+    {
+        currentHealthText.text = stat.curHp.ToString(); // 현재 체력을 문자열로 변환하여 UI에 표시
+        maxHealthText.text = stat.maxHp.ToString();     // 최대 체력을 문자열로 변환하여 UI에 표시
+    }
+
+    void UpdateHealthBar()
+    {
+        if (healthBar != null)
+        {
+            // 서서히 displayedHp를 curHp에 가까워지게 함
+            displayedHp = Mathf.Lerp(displayedHp, stat.curHp, Time.deltaTime * recoverySpeed);
+
+            float healthRatio = displayedHp / stat.maxHp; // 화면에 표시되는 체력 비율 계산
+            healthBar.anchorMax = new Vector2(originalAnchorMaxX * healthRatio, healthBar.anchorMax.y); // 너비 업데이트
+            UpdateHealthUI();
+        }
     }
 }

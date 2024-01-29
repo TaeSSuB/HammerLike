@@ -19,7 +19,6 @@ public class ItemManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Insert))
         {
-            GiveItemToPlayer(1);
             GiveItemToPlayer(0);
         }
         
@@ -44,16 +43,7 @@ public class ItemManager : MonoBehaviour
 
     public void GiveItemToPlayer(int itemId)
     {
-        // AddItem 메소드를 한 번만 호출
-        bool isAdded = player.inventory.AddItem(itemId);
-        if (isAdded)
-        {
-            Debug.Log("아이템이 성공적으로 추가되었습니다.");
-        }
-        else
-        {
-            Debug.LogError("아이템을 추가하지 못했습니다.");
-        }
+        player.inventory.AddItem(itemId);
     }
 
 }

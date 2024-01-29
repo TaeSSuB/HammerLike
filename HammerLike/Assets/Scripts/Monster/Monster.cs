@@ -6,12 +6,20 @@ using UnityEngine.UI;
 using Johnson;
 using UnityEngine.AI;
 
+public enum MonsterType
+{
+    Melee,
+    Ranged,
+    Special
+}
+
 [Serializable]
 public struct MonsterStat
 {
     public float maxHp;
     public float curHp;
     public float attackPoint;
+    public float attackRange; // 공격 사정거리
     [Space(7.5f)]
     public float walkSpd;
     public float runSpd;
@@ -44,9 +52,15 @@ public class Monster : MonoBehaviour
     // 불편해도 양해바랍니다!!! 스마미센!!
 
     public MonsterStat stat;
+    public MonsterType monsterType;
     public Slider healthSlider;
     [Header("State Machine")]
     public MonsterFSM fsm;
+
+    [Header("Ranged Attack Settings")]
+    public GameObject ProjectilePrefab; // 원거리 공격을 위한 투사체 프리팹
+    public float ProjectileSpeed; // 투사체 속도
+    private GameObject currentProjectile;
 
     [Space(10f)]
     [Header("Default Comps")]
@@ -146,7 +160,7 @@ public class Monster : MonoBehaviour
             stat.curHp = 0;
             Die();
         }
-       
+
 
     }
 
@@ -319,15 +333,16 @@ public class Monster : MonoBehaviour
 
     void ChasePlayer()
     {
-        if (stat.curHp <= 0) return; // 체력이 0 이하면 추격 중지
+        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking")) return; // 체력이 0 이하거나 공격 중이면 추격 중지
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
 
         if (distanceToTarget <= stat.detectionRange)
         {
-            if (distanceToTarget > nmAgent.stoppingDistance)
+            if (distanceToTarget > stat.attackRange)
             {
                 nmAgent.SetDestination(playerTransform.position);
                 animCtrl.SetBool("IsChasing", true);
+                animCtrl.SetBool("IsAttacking", false);
             }
             else
             {
@@ -354,13 +369,23 @@ public class Monster : MonoBehaviour
 
     void Attack()
     {
-        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking")) return; // 체력이 0 이하거나 이미 공격 중이면 공격 중지
-        if (!animCtrl.GetBool("IsAttacking"))
+        float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
+        if (stat.curHp <= 0 || distanceToTarget > stat.attackRange) return; // 체력이 0 이하거나 사정거리 밖이면 공격 중지
+        if (monsterType==MonsterType.Melee)
         {
             FaceTarget();
             StartAttack();
             animCtrl.SetTrigger("tAttack");
         }
+        else if(monsterType == MonsterType.Ranged)
+        {
+            HandleRangedAttack();
+        }
+        else
+        {
+            // 추후에 특수형 제작
+        }
+       
     }
 
     void DropItems()
@@ -379,16 +404,78 @@ public class Monster : MonoBehaviour
     void StartAttack()
     {
         animCtrl.SetBool("IsAttacking", true);
+        // 추적을 멈추기 위해 NavMeshAgent를 비활성화합니다.
+        if (nmAgent != null && nmAgent.enabled)
+        {
+            nmAgent.isStopped = true;
+        }
     }
 
     public void EndAttack()
     {
         animCtrl.SetBool("IsAttacking", false);
+        float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
         if (stat.curHp > 0)  // 체력이 0 이상일 때만 tIdle 트리거를 설정
         {
             animCtrl.SetTrigger("tIdle");
         }
+        // 추적을 재개하기 위해 NavMeshAgent를 활성화합니다.
+        if (nmAgent != null && nmAgent.enabled && distanceToTarget <= stat.detectionRange)
+        {
+            nmAgent.isStopped = false;
+            if (playerTransform != null&& distanceToTarget > nmAgent.stoppingDistance)
+            {
+                nmAgent.SetDestination(playerTransform.position);
+                animCtrl.SetBool("IsChasing", true);
+            }
+            else if(playerTransform != null && distanceToTarget <= nmAgent.stoppingDistance)
+            {
+                Attack();
+            }
+        }
+        
     }
+
+    private void HandleRangedAttack()
+    {
+        if (playerTransform != null && Vector3.Distance(transform.position, playerTransform.position) <= stat.attackRange)
+        {
+            FaceTarget();
+            FireProjectile(); // 원거리 투사체 발사 메서드
+        }
+    }
+
+    private void FireProjectile()
+    {
+        // 이미 투사체가 발사된 경우 더 이상 발사하지 않음
+        if (currentProjectile != null || ProjectilePrefab == null) return;
+
+        // 투사체 인스턴스 생성
+        currentProjectile = Instantiate(ProjectilePrefab, transform.position, Quaternion.identity);
+
+        // 플레이어 방향 계산
+        Vector3 direction = (playerTransform.position - transform.position).normalized;
+
+        // 투사체에 속도 적용
+        Rigidbody rb = currentProjectile.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.velocity = direction * ProjectileSpeed;
+        }
+
+        Projectile projectileComponent = currentProjectile.GetComponent<Projectile>();
+        if (projectileComponent != null)
+        {
+            projectileComponent.SetShooter(this);
+        }
+    }
+
+    // 투사체가 파괴되었을 때 호출하는 메서드
+    public void ProjectileDestroyed()
+    {
+        currentProjectile = null;
+    }
+
 
     public void EnableAttackCollider()
     {
@@ -405,3 +492,4 @@ public class Monster : MonoBehaviour
 
 
 }
+
