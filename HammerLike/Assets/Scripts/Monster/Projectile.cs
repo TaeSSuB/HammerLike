@@ -25,13 +25,20 @@ public class Projectile : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // 플레이어에게 데미지를 주는 로직
-            other.GetComponent<Player>().TakeDamage(shooter.stat.attackPoint);
+            // 부모 오브젝트에 있는 Player 컴포넌트에 접근
+            Player playerComponent = other.GetComponentInParent<Player>();
+
+            if (playerComponent != null)
+            {
+                // 플레이어에게 데미지를 주는 로직
+                playerComponent.TakeDamage(shooter.stat.attackPoint);
+            }
 
             // 투사체 파괴
             DestroyProjectile();
         }
     }
+
 
     private void DestroyProjectile()
     {

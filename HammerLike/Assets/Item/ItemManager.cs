@@ -19,9 +19,13 @@ public class ItemManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Insert))
         {
+            GiveItemToPlayer(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Delete))
+        {
             GiveItemToPlayer(0);
         }
-        
+
     }
 
     public void DropItem(int itemId, Vector3 position)
