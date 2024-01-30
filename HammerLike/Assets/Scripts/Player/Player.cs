@@ -248,6 +248,11 @@ public class Player : MonoBehaviour
     {
         return rewiredPlayer;
     }
+    public void RecoverHp(float amount)
+    {
+        stat.curHp = Mathf.Min(stat.curHp + amount, stat.maxHp);
+        UpdateHealthBar();
+    }
 
     public void TakeDamage(float damage)
     {

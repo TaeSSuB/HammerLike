@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 public class Inventory : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class Inventory : MonoBehaviour
     private int selectedSlotIndex = -1; // 현재 선택된 슬롯 인덱스
     private Item selectedItem; // 현재 선택된 아이템
 
+    [Header("Quick Slot UI")]
+    public Image[] quickSlotUIImages;
     void Awake()
     {
         if (Instance == null)
@@ -32,10 +35,11 @@ public class Inventory : MonoBehaviour
 
     void Start()
     {
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 20; i++)
         {
             items.Add(null);
         }
+        UpdateQuickSlotUI();
     }
 
     void Update()
@@ -57,44 +61,120 @@ public class Inventory : MonoBehaviour
         {
             HandleInput();
         }
+
+        // 아이템 사용 키 입력 감지
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            UseItem(0); // 0번 슬롯 아이템 사용
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            UseItem(1); // 1번 슬롯 아이템 사용
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            UseItem(2); // 2번 슬롯 아이템 사용
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            UseItem(3); // 3번 슬롯 아이템 사용
+        }
+    }
+
+
+    private void UseItem(int slotIndex)
+    {
+        if (slotIndex >= 0 && slotIndex < items.Count)
+        {
+            Item itemToUse = items[slotIndex];
+            if (itemToUse != null && itemToUse.itemID == 1) // Item ID가 1인 경우
+            {
+                Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+                if (player != null)
+                {
+                    player.RecoverHp(30); // HP 30 회복
+                    RemoveItem(slotIndex); // 아이템 사용 후 제거
+                }
+            }
+        }
+    }
+
+    // 아이템 제거 메서드
+    private void RemoveItem(int slotIndex)
+    {
+        if (slotIndex >= 0 && slotIndex < items.Count)
+        {
+            items[slotIndex] = null;
+            UpdateInventoryUI();
+            UpdateQuickSlotUI();
+        }
     }
 
     public void AddItem(int itemId)
     {
         Item itemToAdd = ItemDB.Instance.GetItemByID(itemId);
-
         if (itemToAdd == null)
         {
             Debug.LogError("Item not found in ItemDB!");
             return;
         }
 
-        for (int i = 0; i < items.Count; i++)
+        // Check for empty QuickSlot (0-3) for Used items
+        if (itemToAdd.itemType == Item.ItemType.Used)
         {
-            if (items[i] != null && items[i].itemID == itemToAdd.itemID)
+            for (int i = 0; i < 4; i++)
             {
-                if (items[i].quantity < itemToAdd.limitNumber)
+                if (items[i] == null)
                 {
-                    items[i].quantity++;
+                    items[i] = new Item(itemToAdd.itemName, itemToAdd.itemID, itemToAdd.itemType, itemToAdd.itemImage, itemToAdd.limitNumber, 1);
                     UpdateInventoryUI();
+                    UpdateQuickSlotUI();
                     return;
                 }
             }
+           
         }
 
-        for (int i = 0; i < items.Count; i++)
+
+
+        // Check for stackable items or empty slot from slot 4
+        for (int i = 4; i < items.Count; i++)
         {
-            if (items[i] == null)
+            if (items[i] != null && items[i].itemID == itemToAdd.itemID && items[i].quantity < itemToAdd.limitNumber)
             {
-                Item newItem = new Item(itemToAdd.itemName, itemToAdd.itemID, itemToAdd.itemType, itemToAdd.itemImage, itemToAdd.limitNumber, 1);
-                items[i] = newItem;
+                items[i].quantity++;
+                UpdateInventoryUI();
+                return;
+            }
+            else if (items[i] == null)
+            {
+                items[i] = new Item(itemToAdd.itemName, itemToAdd.itemID, itemToAdd.itemType, itemToAdd.itemImage, itemToAdd.limitNumber, 1);
                 UpdateInventoryUI();
                 return;
             }
         }
 
-        Debug.Log("Inventory is full!");
+        Debug.Log("Inventory is full or no appropriate slot found!");
     }
+
+    private void UpdateQuickSlotUI()
+    {
+        for (int i = 0; i < 4; i++) // 첫 4개의 슬롯만 확인
+        {
+            if (items[i] != null)
+            {
+                quickSlotUIImages[i].sprite = items[i].itemImage;
+                quickSlotUIImages[i].color = new Color(1f, 1f, 1f, 1f); // 풀 알파 값으로 설정 (불투명)
+                quickSlotUIImages[i].enabled = true;
+            }
+            else
+            {
+                quickSlotUIImages[i].color = new Color(1f, 1f, 1f, 0f); // 알파 값을 0으로 설정 (투명)
+                quickSlotUIImages[i].enabled = false;
+            }
+        }
+    }
+
 
     public void UpdateInventoryUI()
     {
