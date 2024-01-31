@@ -98,6 +98,7 @@ public class Monster : MonoBehaviour
     public LineRenderer lineRenderer; // LineRenderer ÂüÁ¶
 
     public Collider attackCollider;
+    public MeshRenderer attackMeshRenderer;
     private Player player;
 
     private void Awake()
@@ -508,6 +509,14 @@ public class Monster : MonoBehaviour
     public void ProjectileDestroyed()
     {
         currentProjectile = null;
+    }
+    public void EnableAttackMeshRenderer()
+    {
+        attackMeshRenderer.enabled = true;
+    }
+    public void DisableAttackMeshRenderer()
+    {
+        attackMeshRenderer.enabled = false;
     }
 
 

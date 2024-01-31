@@ -18,6 +18,7 @@ public class Inventory : MonoBehaviour
 
     [Header("Quick Slot UI")]
     public Image[] quickSlotUIImages;
+    public TMP_Text[] quickSlotQuantityTexts;
     void Awake()
     {
         if (Instance == null)
@@ -102,9 +103,17 @@ public class Inventory : MonoBehaviour
     // 아이템 제거 메서드
     private void RemoveItem(int slotIndex)
     {
-        if (slotIndex >= 0 && slotIndex < items.Count)
+        if (slotIndex >= 0 && slotIndex < items.Count && items[slotIndex] != null)
         {
-            items[slotIndex] = null;
+            // 아이템 수량 감소
+            items[slotIndex].quantity--;
+
+            // 수량이 0이하가 되면 슬롯을 null로 설정
+            if (items[slotIndex].quantity <= 0)
+            {
+                items[slotIndex] = null;
+            }
+
             UpdateInventoryUI();
             UpdateQuickSlotUI();
         }
@@ -119,12 +128,19 @@ public class Inventory : MonoBehaviour
             return;
         }
 
-        // Check for empty QuickSlot (0-3) for Used items
+        // Check for existing or empty QuickSlot (0-3) for Used items
         if (itemToAdd.itemType == Item.ItemType.Used)
         {
             for (int i = 0; i < 4; i++)
             {
-                if (items[i] == null)
+                if (items[i] != null && items[i].itemID == itemToAdd.itemID && items[i].quantity < itemToAdd.limitNumber)
+                {
+                    items[i].quantity++;
+                    UpdateInventoryUI();
+                    UpdateQuickSlotUI();
+                    return;
+                }
+                else if (items[i] == null)
                 {
                     items[i] = new Item(itemToAdd.itemName, itemToAdd.itemID, itemToAdd.itemType, itemToAdd.itemImage, itemToAdd.limitNumber, 1);
                     UpdateInventoryUI();
@@ -132,10 +148,7 @@ public class Inventory : MonoBehaviour
                     return;
                 }
             }
-           
         }
-
-
 
         // Check for stackable items or empty slot from slot 4
         for (int i = 4; i < items.Count; i++)
@@ -166,11 +179,22 @@ public class Inventory : MonoBehaviour
                 quickSlotUIImages[i].sprite = items[i].itemImage;
                 quickSlotUIImages[i].color = new Color(1f, 1f, 1f, 1f); // 풀 알파 값으로 설정 (불투명)
                 quickSlotUIImages[i].enabled = true;
+
+                if (items[i].quantity > 1) // 수량이 1보다 클 경우에만 수량 표시
+                {
+                    quickSlotQuantityTexts[i].text = items[i].quantity.ToString();
+                    quickSlotQuantityTexts[i].enabled = true;
+                }
+                else
+                {
+                    quickSlotQuantityTexts[i].enabled = false;
+                }
             }
             else
             {
                 quickSlotUIImages[i].color = new Color(1f, 1f, 1f, 0f); // 알파 값을 0으로 설정 (투명)
                 quickSlotUIImages[i].enabled = false;
+                quickSlotQuantityTexts[i].enabled = false;
             }
         }
     }
@@ -214,34 +238,6 @@ public class Inventory : MonoBehaviour
         }
         return totalGold;
     }
-
-    /*public bool AddItem(int itemId)
-    {
-        // ItemDB에서 아이템 찾기
-        Item itemToAdd = ItemDB.Instance.GetItemByID(itemId);
-
-        if (itemToAdd == null)
-        {
-            Debug.LogError("Item not found in ItemDB!");
-            return false;
-        }
-
-        // 인벤토리에 빈 공간 찾아 아이템 추가
-        for (int i = 0; i < items.Count; i++)
-        {
-            if (items[i] == null)
-            {
-                items[i] = itemToAdd;
-                // UI 업데이트나 기타 처리
-                UpdateInventoryUI();
-                return true;
-            }
-        }
-
-        // 인벤토리에 공간이 없는 경우
-        Debug.Log("Inventory is full!");
-        return false;
-    }*/
 
 
     public void SwapItems(int index1, int index2)

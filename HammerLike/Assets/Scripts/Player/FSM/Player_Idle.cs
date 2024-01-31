@@ -52,6 +52,21 @@ public class Player_Idle : cState
 
         if (Input.GetMouseButtonDown(0))
         {
+            player.StartCharge();
+        }
+
+        // Charge 중
+        if (Input.GetMouseButton(0))
+        {
+            player.UpdateCharge();
+        }
+
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            player.PerformAttack();
+
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
@@ -73,14 +88,18 @@ public class Player_Idle : cState
                 if (cross.y > 0)  // 시계 방향
                 {
                     Debug.Log(" 시계방향");
-                    player.animCtrl.SetTrigger("tAtk");
+                    //player.animCtrl.SetTrigger("tAtk");
                     player.atk.Attack();
+                    player.atk.curCharging = 0;
+                    //player.animCtrl.SetTrigger("tIdle");
                 }
                 else  // 반 시계방향 회전
                 {
                     Debug.Log("반 시계 방향");
-                    player.animCtrl.SetTrigger("tAtk");
+                    //player.animCtrl.SetTrigger("tAtk");
                     player.atk.Attack();
+                    player.atk.curCharging = 0;
+                    //player.animCtrl.SetTrigger("tIdle");
                 }
 
 
@@ -94,7 +113,7 @@ public class Player_Idle : cState
             player.atk.Attack();
         }*/
 
-        if (Input.GetMouseButton(1))
+        /*if (Input.GetMouseButton(1))
         {
             player.animCtrl.SetBool("tCharge", true);
             player.atk.curCharging += Time.deltaTime;
@@ -107,7 +126,7 @@ public class Player_Idle : cState
             player.animCtrl.SetFloat("fAtkVal", 0);
             player.atk.curCharging = 0;
             Debug.Log("우측키 땜");
-        }
+        }*/
 
         if (Input.GetKeyDown(KeyCode.Space))
         {

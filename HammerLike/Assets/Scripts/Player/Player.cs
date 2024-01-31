@@ -70,6 +70,8 @@ public struct PlayerStat
     public float upperHomingSpd; //상체 회전 속도
     public float legHomingSpd; //하체 회전 속도
     public float legHomingTime; //하체 회전 시간
+
+ 
 }
 
 public struct EnvasionStat
@@ -129,13 +131,13 @@ public class Player : MonoBehaviour
     public Transform hipBoneTr;
     public RewiredPlayer rewiredPlayer;
     public bool isAttacking = false; // 공격 상태 플래그
-    //public eGizmoDir preMoveDir;
+                                     //public eGizmoDir preMoveDir;
 
     //[Tooltip("Temp Test")]
     //[Space(10f)]
     //public Inventory inven;
 
-    //public Weapon curWeapon;
+    public float chargeStartTime; // Charge 시작 시간
     private SaveDataManager saveDataManager;
     private void Awake()
     {
@@ -269,6 +271,26 @@ public class Player : MonoBehaviour
         }
 
     }
+
+    public void StartCharge()
+    {
+        chargeStartTime = Time.time;
+        animCtrl.SetBool("IsCharge", true); // Charge 애니메이션 활성화
+    }
+
+    public void UpdateCharge()
+    {
+        atk.curCharging = Time.time - chargeStartTime;
+    }
+
+    public void PerformAttack()
+    {
+        animCtrl.SetBool("IsCharge", false); // Charge 애니메이션 비활성화
+        animCtrl.SetTrigger("tAtk"); // Attack 애니메이션 활성화
+        //atk.Attack(); // 공격 실행
+        //atk.curCharging = 0f; // Charge 시간 초기화
+    }
+
 
     public void StartAttack() // 공격 시작 시 호출
     {
