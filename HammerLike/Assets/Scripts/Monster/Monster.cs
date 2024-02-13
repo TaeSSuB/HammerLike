@@ -145,7 +145,6 @@ public class Monster : MonoBehaviour
             if (playerTransform != null)
             {
                 ChasePlayer();
-       
             }
             else
             {
@@ -217,7 +216,7 @@ public class Monster : MonoBehaviour
                 if (playerAttack != null)
                 {
                     TakeDamage(playerAttack.attackDamage);
-                  ApplyKnockback(playerAttack.transform.forward);
+                    ApplyKnockback(playerAttack.transform.forward);
                     processedAttacks.Add(weaponCollider.CurrentAttackId);
                 }
 
@@ -259,7 +258,7 @@ public class Monster : MonoBehaviour
 
     private void ApplyKnockback(Vector3 direction)
     {
-        float knockbackIntensity = 300f; // 넉백 강도
+        float knockbackIntensity = 30f; // 넉백 강도
         direction.y = 0; // Y축 변화 제거
         GetComponent<Rigidbody>().AddForce(direction.normalized * knockbackIntensity, ForceMode.Impulse);
         isKnockedBack = true;
@@ -278,8 +277,7 @@ public class Monster : MonoBehaviour
         // 예: gameObject.SetActive(false); 또는 Destroy(gameObject);
         animCtrl.SetBool("IsChasing", false);
         animCtrl.SetTrigger("tDead");
-        DisableAttackCollider();
-        DisableAttackMeshRenderer();
+
         // NavMeshAgent 비활성화
         if (nmAgent != null && nmAgent.isActiveAndEnabled)
         {
@@ -287,7 +285,7 @@ public class Monster : MonoBehaviour
             nmAgent.enabled = false;
         }
 
-        playerTransform = null;
+
         DropItems();
         //Destroy(gameObject);
     }
@@ -345,7 +343,6 @@ public class Monster : MonoBehaviour
             if (distanceToTarget > stat.attackRange)
             {
                 nmAgent.SetDestination(playerTransform.position);
-                DisableAttackCollider();
                 animCtrl.SetBool("IsChasing", true);
                 animCtrl.SetBool("IsAttacking", false);
             }
@@ -359,7 +356,6 @@ public class Monster : MonoBehaviour
         {
             animCtrl.SetBool("IsChasing", false);
             animCtrl.SetTrigger("tIdle");
-            DisableAttackCollider();
         }
     }
 
@@ -516,7 +512,6 @@ public class Monster : MonoBehaviour
     }
     public void EnableAttackMeshRenderer()
     {
-        if(stat.curHp > 0)
         attackMeshRenderer.enabled = true;
     }
     public void DisableAttackMeshRenderer()
@@ -527,8 +522,7 @@ public class Monster : MonoBehaviour
 
     public void EnableAttackCollider()
     {
-        if (stat.curHp > 0)
-            attackCollider.enabled = true;
+        attackCollider.enabled = true;
     }
 
     // 공격용 Collider 비활성화

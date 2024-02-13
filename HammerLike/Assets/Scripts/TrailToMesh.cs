@@ -15,7 +15,7 @@ public class TrailToMesh : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         meshCollider = GetComponent<MeshCollider>();
-        //meshCollider.convex = false; // 볼록 메쉬 설정 해제
+        meshCollider.convex = false; // 볼록 메쉬 설정 해제
     }
 
     void Update()
@@ -43,12 +43,9 @@ public class TrailToMesh : MonoBehaviour
 
         for (int i = 0; i < segments; i++)
         {
-            float width = trailRenderer.widthMultiplier * trailRenderer.widthCurve.Evaluate(i / (float)(segments - 1)); // 너비 조정
-            Vector3 position = transform.InverseTransformPoint(trailRenderer.GetPosition(i)); // 로컬 좌표 변환
-            Vector3 direction = (i > 0) ? position - transform.InverseTransformPoint(trailRenderer.GetPosition(i - 1)) : Vector3.forward;
-
-            // 카메라 방향 대신 고정된 방향 사용
-            Vector3 right = Vector3.Cross(direction, Vector3.up).normalized;
+            float width = Mathf.Lerp(trailRenderer.startWidth, trailRenderer.endWidth, i / (float)(segments - 1)) * 0.5f;
+            Vector3 position = trailRenderer.GetPosition(i);
+            Vector3 right = Vector3.Cross(position - transform.position, Vector3.up).normalized; // 오른쪽 방향 계산
 
             vertices[i * 2] = position - right * width;
             vertices[i * 2 + 1] = position + right * width;

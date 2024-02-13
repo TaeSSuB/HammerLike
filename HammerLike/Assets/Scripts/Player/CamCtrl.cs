@@ -180,10 +180,8 @@ public class CamCtrl : MonoBehaviour
 
         Vector3 dir = (followObjTr.position - boundaryPosToRay[(int)eBoundary.Center]).normalized;
         Vector3 prePos = mainCam.transform.position;
-        Vector3 targetPosition = mainCam.transform.position + dir * speed * Time.unscaledDeltaTime;
-
-
-        mainCam.transform.position = targetPosition;
+        Vector3 tempPos = mainCam.transform.position + dir * speed * Time.unscaledDeltaTime;
+        mainCam.transform.position = tempPos;
 
         bool isHorizontalBlocked = false;
         bool isVerticalBlocked = false;
@@ -220,7 +218,6 @@ public class CamCtrl : MonoBehaviour
             mainCam.transform.position = new Vector3(mainCam.transform.position.x, prePos.y, mainCam.transform.position.z);
         }
     }
-
 
 
 
