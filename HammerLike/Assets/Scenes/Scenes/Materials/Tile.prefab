@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3696216365482091258
+--- !u!1 &6679134971060752317
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,49 +8,47 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4035306217386276928}
-  - component: {fileID: 1130282605979432933}
-  - component: {fileID: 2903525724334064431}
-  - component: {fileID: 4578736827306967391}
-  - component: {fileID: 4578736827306967387}
-  - component: {fileID: 4578736827306967386}
+  - component: {fileID: 6339622910499968263}
+  - component: {fileID: 6941461992020925090}
+  - component: {fileID: 5166175978981469800}
+  - component: {fileID: 5796242739448775506}
   m_Layer: 0
-  m_Name: Arrow_Projectile
+  m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4035306217386276928
+--- !u!4 &6339622910499968263
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3696216365482091258}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_GameObject: {fileID: 6679134971060752317}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 30, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1130282605979432933
+--- !u!33 &6941461992020925090
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3696216365482091258}
-  m_Mesh: {fileID: 2712855412390923281, guid: ac20a1152f9360043b4f5c1a510a049a, type: 3}
---- !u!23 &2903525724334064431
+  m_GameObject: {fileID: 6679134971060752317}
+  m_Mesh: {fileID: -8259417878425161692, guid: 6e16327773ba4d948a75831a3ddc154d, type: 3}
+--- !u!23 &5166175978981469800
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3696216365482091258}
+  m_GameObject: {fileID: 6679134971060752317}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -64,9 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6b81f562e85e9fb4aabc8fe933efb522, type: 2}
-  - {fileID: 2100000, guid: a157854660fb5e943b9db2d3787fd585, type: 2}
-  - {fileID: 2100000, guid: e5c26d980eb60884e95afda886cdf54d, type: 2}
+  - {fileID: 2100000, guid: f6e37abe71c7d2f49853bcbf11e1aad8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -88,45 +84,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!54 &4578736827306967391
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3696216365482091258}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 4
-  m_CollisionDetection: 0
---- !u!65 &4578736827306967387
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3696216365482091258}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.2629791, y: 0.2277466, z: 1.2500573}
-  m_Center: {x: 0.0000022351742, y: -0.037957694, z: 0.025762796}
---- !u!114 &4578736827306967386
+--- !u!114 &5796242739448775506
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3696216365482091258}
+  m_GameObject: {fileID: 6679134971060752317}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50240f422f04ec940b27a49e4372cf3f, type: 3}
+  m_Script: {fileID: 11500000, guid: 840fc650ca4f77b45b311cf4c83c496e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifetime: 6
+  materialsData:
+  - material: {fileID: 2100000, guid: f6e37abe71c7d2f49853bcbf11e1aad8, type: 2}
+    tilesX: 2
+    tilesY: 2
