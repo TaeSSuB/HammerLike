@@ -182,6 +182,8 @@ public class CamCtrl : MonoBehaviour
         Vector3 prePos = mainCam.transform.position;
         Vector3 targetPosition = mainCam.transform.position + dir * speed * Time.unscaledDeltaTime;
 
+        // Y축의 위치를 고정합니다.
+        targetPosition.y = prePos.y;
 
         mainCam.transform.position = targetPosition;
 
@@ -208,22 +210,14 @@ public class CamCtrl : MonoBehaviour
             }
         }
 
-        // 수평 방향이 막혔을 경우
+        // 수평 방향이 막혔을 경우, X와 Z축 위치를 조정합니다.
         if (isHorizontalBlocked)
         {
             mainCam.transform.position = new Vector3(prePos.x, mainCam.transform.position.y, mainCam.transform.position.z);
         }
 
-        // 수직 방향이 막혔을 경우
-        if (isVerticalBlocked)
-        {
-            mainCam.transform.position = new Vector3(mainCam.transform.position.x, prePos.y, mainCam.transform.position.z);
-        }
+        // 수직 방향이 막혔을 경우, 이미 Y축은 고정되어 있으므로 추가 조치는 필요 없습니다.
     }
-
-
-
-
 
     public void Zoom()
     {
@@ -300,8 +294,8 @@ public class CamCtrl : MonoBehaviour
     void Start()
     {
         //1. 플레이어를 중앙에 두는 위치로 카메라 이동
-        if (followOption == FollowOption.FollowToObject)
-            CameraCallibration(followObjTr.position);
+        /*if (followOption == FollowOption.FollowToObject)
+            CameraCallibration(followObjTr.position);*/
 
         resolutionRef.width = renderTex.width;
         resolutionRef.height = renderTex.height;

@@ -215,7 +215,7 @@ public class Player : MonoBehaviour
         // 회전 방향을 판단합니다.
         if (yRotationDifference > 0) // 시계 방향 회전
         {
-            Debug.Log("시계방향");
+            //Debug.Log("시계방향");
             // HammerDirection과 LookDirection 사이의 현재 각도 차이를 계산합니다.
             float angleBetweenDirections = Vector3.Angle(hammerDirection, currentLookDirection);
 
@@ -285,7 +285,18 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // 플레이어의 위치를 저장
+        Vector3 newPosition = transform.position;
 
+        // 플레이어의 y값이 0보다 작을 경우
+        if (newPosition.y != 0)
+        {
+            // y값을 0으로 설정
+            newPosition.y = 0;
+        }
+
+        // 새로운 위치로 플레이어를 이동
+        transform.position = newPosition;
     }
 
 

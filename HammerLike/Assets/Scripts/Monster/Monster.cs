@@ -19,7 +19,7 @@ public struct MonsterStat
     public float maxHp;
     public float curHp;
     public float attackPoint;
-    public float attackRange; // 공격 사정거리
+    public float attackRange; // °ø°? ???¤°?¸®
     [Space(7.5f)]
     public float walkSpd;
     public float runSpd;
@@ -28,18 +28,18 @@ public struct MonsterStat
     public EnvasionStat envasionStat;
 
     [Space(7.5f)]
-    public float upperHomingSpd; //상체 회전 속도
-    public float legHomingSpd; //하체 회전 속도
+    public float upperHomingSpd; //???¼ ?¸?? ¼???
+    public float legHomingSpd; //???¼ ?¸?? ¼???
 
-    public float detectionRange;  // 플레이어를 인식할 범위 설정. 원하는 값으로 조절 가능.
+    public float detectionRange;  // ??·¹??¾?¸? ??½??? ¹??§ ¼³?¤. ¿ø??´? °ª?¸·? ?¶?? °¡´?.
 
 }
 
 [System.Serializable]
 public class DropItem
 {
-    public int itemID; // 아이템 ID
-    public float dropChance; // 드랍 확률
+    public int itemID; // ¾Æ???? ID
+    public float dropChance; // ??¶ø ?®·?
 }
 
 
@@ -47,9 +47,9 @@ public class Monster : MonoBehaviour
 {
 
     private Transform playerTransform;
-    // Note: 기능 구현 할 때는 접근지정자 크게 신경 안쓰고 작업함.
-    // 차후 기능 작업 끝나고 나면 추가적으로 정리 예정!!
-    // 불편해도 양해바랍니다!!! 스마미센!!
+    // Note: ±?´? ±¸?? ?? ¶§´? ??±????¤?? ??°? ½?°æ ¾?¾²°? ??¾÷??.
+    // ?÷?? ±?´? ??¾÷ ³¡³ª°? ³ª¸? ?ß°¡???¸·? ?¤¸® ¿¹?¤!!
+    // º?Æ??Ø?? ¾??Ø¹?¶ø´?´?!!! ½º¸¶¹?¼¾!!
 
     public MonsterStat stat;
     public MonsterType monsterType;
@@ -58,9 +58,9 @@ public class Monster : MonoBehaviour
     public MonsterFSM fsm;
 
     [Header("Ranged Attack Settings")]
-    public GameObject ProjectilePrefab; // 원거리 공격을 위한 투사체 프리팹
-    public float ProjectileSpeed; // 투사체 속도
-    public Transform ProjectileSpawnPoint; // 발사체 생성 위치
+    public GameObject ProjectilePrefab; // ¿ø°?¸® °ø°??? ?§?? ?????¼ ??¸®Æ?
+    public float ProjectileSpeed; // ?????¼ ¼???
+    public Transform ProjectileSpawnPoint; // ¹ß???¼ ??¼º ?§?¡
     private GameObject currentProjectile;
 
     [Space(10f)]
@@ -71,17 +71,17 @@ public class Monster : MonoBehaviour
 
     [Space(10f)]
     [Header("Action Table")]
-    // Note: 해당 부분은 몬스터에 맞는 액션으로 수정 필요
+    // Note: ?Ø´? º?ºÐ?º ¸?½º??¿¡ ¸?´? ¾×¼??¸·? ¼??¤ ??¿?
     public MonsterMove move;
     public MonsterAtk atk;
     public MonsterAim monsterAim;
 
     [Space(10f)]
     [Header("Cam Controller")]
-    public CamCtrl camCtrl; // Note: 몬스터가 카메라를 직접 제어할 필요가 있을지 확인 필요
+    public CamCtrl camCtrl; // Note: ¸?½º??°¡ ??¸Þ¶?¸? ?÷?? ??¾??? ??¿?°¡ ?????? ?®?? ??¿?
 
     [Header("Drop Items")]
-    public List<DropItem> dropItems = new List<DropItem>(); // 드랍 아이템 목록
+    public List<DropItem> dropItems = new List<DropItem>(); // ??¶ø ¾Æ???? ¸?·?
 
     [Space(10f)]
     [Header("Anim Bones")]
@@ -95,12 +95,19 @@ public class Monster : MonoBehaviour
 
     public Transform target;
     NavMeshAgent nmAgent;
-    public LineRenderer lineRenderer; // LineRenderer 참조
+    public LineRenderer lineRenderer; // LineRenderer ???¶
 
     public Collider attackCollider;
     public MeshRenderer attackMeshRenderer;
     private Player player;
 
+    private LineRenderer leftLineRenderer;
+    private LineRenderer frontLineRenderer;
+    private LineRenderer rightLineRenderer;
+    private Vector3 frontKnockbackDirection;
+    private Vector3 leftKnockbackDirection;
+    private Vector3 rightKnockbackDirection;
+    public int debugData = 0;
     private void Awake()
     {
         if (!fsm)
@@ -122,18 +129,23 @@ public class Monster : MonoBehaviour
     {
         nmAgent = GetComponent<NavMeshAgent>();
         animCtrl.SetBool("IsChasing", true);
+        //animCtrl.SetTrigger("tIdle");
         if (healthSlider != null)
         {
             healthSlider.maxValue = stat.maxHp;
             healthSlider.value = stat.curHp;
         }
 
-        // LineRenderer 기본 설정
+        // LineRenderer ±?º? ¼³?¤
         if (lineRenderer != null)
         {
-            lineRenderer.positionCount = 2; // 시작점과 끝점
-            lineRenderer.widthMultiplier = 0.05f; // 선의 너비
+            lineRenderer.positionCount = 2; // ½????¡°? ³¡?¡
+            lineRenderer.widthMultiplier = 0.05f; // ¼±?? ³?º?
         }
+
+        leftLineRenderer = CreateLineRenderer(Color.red);
+        frontLineRenderer = CreateLineRenderer(Color.green);
+        rightLineRenderer = CreateLineRenderer(Color.blue);
     }
 
     void Update()
@@ -145,7 +157,7 @@ public class Monster : MonoBehaviour
             if (playerTransform != null)
             {
                 ChasePlayer();
-       
+
             }
             else
             {
@@ -163,16 +175,61 @@ public class Monster : MonoBehaviour
             stat.curHp = 0;
             Die();
         }
+        // 플레이어 방향 기반 라인 렌더링 업데이트
+        UpdateDirectionLines();
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            ApplyKnockback(frontKnockbackDirection);
+        }
+
+    }
+    void UpdateDirectionLines()
+    {
+        if (player != null)
+        {
+            Vector3 playerForward = player.transform.forward;
+            Vector3 playerPosition = player.transform.position + Vector3.up * 0.5f;
+
+            // 정면 방향
+            Vector3 frontDirection = playerForward;
+            // 좌측 대각선 방향
+            Vector3 leftDirection = Quaternion.Euler(0, -45, 0) * playerForward;
+            // 우측 대각선 방향
+            Vector3 rightDirection = Quaternion.Euler(0, 45, 0) * playerForward;
+
+            // 방향 저장
+            frontKnockbackDirection = frontDirection;
+            leftKnockbackDirection = leftDirection;
+            rightKnockbackDirection = rightDirection;
+
+            // 각 방향에 대한 라인 렌더러 설정
+            SetLineRenderer(leftLineRenderer, playerPosition, playerPosition + leftDirection * 5); // 5는 라인의 길이
+            SetLineRenderer(frontLineRenderer, playerPosition, playerPosition + frontDirection * 5);
+            SetLineRenderer(rightLineRenderer, playerPosition, playerPosition + rightDirection * 5);
+        }
+    }
+
+    private void SetLineRenderer(LineRenderer lineRenderer, Vector3 start, Vector3 end)
+    {
+        lineRenderer.SetPosition(0, start);
+        lineRenderer.SetPosition(1, end);
+    }
 
 
+    Vector3 CalculateKnockbackDirectionBasedOnContext()
+    {
+        // 여기서는 예시를 위해 단순화된 로직을 사용합니다.
+        // 실제 구현에서는 몬스터의 상태, 위치, 플레이어와의 관계 등을 고려하여 넉백 방향을 계산해야 합니다.
+        // 예를 들어, 몬스터가 플레이어를 향하고 있다면, 플레이어와 반대 방향으로 넉백 방향을 설정할 수 있습니다.
+        return transform.forward; // 현재는 몬스터가 바라보는 방향으로 설정
     }
 
     void DrawDirectionLine()
     {
         if (lineRenderer != null)
         {
-            lineRenderer.SetPosition(0, transform.position); // 선의 시작점: 몬스터의 위치
-            lineRenderer.SetPosition(1, transform.position + transform.forward * 5f); // 선의 끝점: 몬스터가 바라보는 방향
+            lineRenderer.SetPosition(0, transform.position); // ¼±?? ½????¡: ¸?½º???? ?§?¡
+            lineRenderer.SetPosition(1, transform.position + transform.forward * 5f); // ¼±?? ³¡?¡: ¸?½º??°¡ ¹?¶?º¸´? ¹æ??
         }
     }
 
@@ -186,10 +243,27 @@ public class Monster : MonoBehaviour
     {
         if (playerTransform != null && stat.curHp > 0)
         {
-            FaceTarget(); // 플레이어를 지속적으로 바라보게 하는 메서드
+            FaceTarget(); // ??·¹??¾?¸? ??¼????¸·? ¹?¶?º¸°? ??´? ¸Þ¼­??
         }
 
     }
+
+    private LineRenderer CreateLineRenderer(Color lineColor)
+    {
+        GameObject lineRendererObject = new GameObject("LineRenderer");
+        lineRendererObject.transform.SetParent(transform);
+        LineRenderer lineRenderer = lineRendererObject.AddComponent<LineRenderer>();
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        lineRenderer.startColor = lineColor;
+        lineRenderer.endColor = lineColor;
+        lineRenderer.startWidth = 0.05f;
+        lineRenderer.endWidth = 0.05f;
+        lineRenderer.positionCount = 2;
+
+        return lineRenderer;
+    }
+
+
 
     private void OnEnable()
     {
@@ -210,17 +284,34 @@ public class Monster : MonoBehaviour
         if (other.CompareTag("WeaponCollider"))
         {
             WeaponCollider weaponCollider = other.GetComponent<WeaponCollider>();
-            if (weaponCollider != null && !processedAttacks.Contains(weaponCollider.CurrentAttackId))
+            if (weaponCollider != null)
             {
-                // 데미지 및 넉백 처리
-                PlayerAtk playerAttack = other.GetComponentInParent<PlayerAtk>();
-                if (playerAttack != null)
-                {
-                    TakeDamage(playerAttack.attackDamage);
-                  ApplyKnockback(playerAttack.transform.forward);
-                    processedAttacks.Add(weaponCollider.CurrentAttackId);
-                }
+                // Debug 로그로 현재 공격 ID를 출력합니다.
+                Debug.Log($"[Monster] Attack ID: {weaponCollider.CurrentAttackId}");
 
+                if (!processedAttacks.Contains(weaponCollider.CurrentAttackId))
+                {
+                    // 공격 처리 전 해시셋에 해당 공격 ID가 없다는 것을 로그로 기록합니다.
+                    Debug.Log($"[Monster] Processing new attack ID: {weaponCollider.CurrentAttackId}");
+
+                    PlayerAtk playerAttack = other.GetComponentInParent<PlayerAtk>();
+                    if (playerAttack != null)
+                    {
+                        TakeDamage(playerAttack.attackDamage);
+                        Vector3 hitPoint = other.ClosestPointOnBounds(transform.position);
+                        Vector3 knockbackDirection = DetermineKnockbackDirection(hitPoint, other.transform);
+                        ApplyKnockback(knockbackDirection);
+
+                        // 공격 처리 후 해당 공격 ID를 해시셋에 추가합니다.
+                        processedAttacks.Add(weaponCollider.CurrentAttackId);
+                        Debug.Log($"[Monster] Added attack ID to processedAttacks: {weaponCollider.CurrentAttackId}");
+                    }
+                }
+                else
+                {
+                    // 중복된 공격이 들어왔을 때 해당 공격 ID를 로그로 출력합니다.
+                    Debug.Log($"[Monster] Duplicate attack ID encountered: {weaponCollider.CurrentAttackId}");
+                }
             }
         }
         if (other.gameObject.CompareTag("KnockBackable") && isKnockedBack && canTakeKnockBackDamage)
@@ -231,23 +322,77 @@ public class Monster : MonoBehaviour
         }
     }
 
+    private Vector3 DetermineKnockbackDirection(Vector3 hitPoint, Transform trailMeshTransform)
+    {
+        // 트레일 메쉬의 길이 계산 (예시 코드, 실제 구현 필요)
+        float trailMeshLength = Vector3.Distance(trailMeshTransform.position, trailMeshTransform.position + trailMeshTransform.forward * 10); // 메쉬 길이 예시
+        float hitPositionRelative = Vector3.Distance(trailMeshTransform.position, hitPoint); // 피격 지점까지의 거리
+
+        // 피격 위치가 트레일 메쉬의 어느 1/3 구간에 있는지 결정
+        // 대각선 넉밴
+        float sectionLength = trailMeshLength / 3;
+        if (hitPositionRelative <= sectionLength)
+        {
+            // 우측 대각선 넉백
+            return rightKnockbackDirection;
+        }
+        else if (hitPositionRelative > sectionLength && hitPositionRelative <= sectionLength * 2)
+        {
+            // 정면 넉백
+            return frontKnockbackDirection;
+        }
+        else
+        {
+            // 좌측 대각선 넉백
+            return leftKnockbackDirection;
+        }
+    }
+
+
+
+
+    private void ApplyKnockback(Vector3 direction)
+    {
+        if (isKnockedBack) return; // 이미 넉백 중인 경우 넉백을 적용하지 않음
+
+        float knockbackIntensity = 300f; // 넉백 강도
+        direction.y = 0; // Y축 방향을 0으로 설정하여 수평 넉백을 보장
+        Vector3 force = direction.normalized * knockbackIntensity;
+
+        // 넉백 적용 전 Velocity 로깅
+        Debug.Log($"[Monster] Pre-Knockback Velocity: {rd.velocity}");
+
+        // 넉백 방향과 힘 로깅
+        Debug.Log($"[Monster] Applying Knockback. Direction: {direction}, Force: {force}");
+
+        // 넉백 힘 적용
+        rd.AddForce(force, ForceMode.Impulse);
+        isKnockedBack = true;
+
+        // 넉백 적용 후 예상 Velocity 로깅 (실제 적용 후의 Velocity는 다음 프레임에서 확인 가능)
+        Debug.Log($"[Monster] Expected Post-Knockback Velocity: {rd.velocity + force}");
+
+        StartCoroutine(KnockBackDuration());
+    }
+
+
     private IEnumerator KnockBackDamageCooldown()
     {
-        yield return new WaitForSeconds(1f); // 넉백 데미지 쿨다운
+        yield return new WaitForSeconds(1f); // ³?¹? ??¹??? ?ð´?¿?
         canTakeKnockBackDamage = true;
     }
 
     private void TakeDamage(float damage)
     {
-        if (stat.curHp <= 0) return; // 이미 사망한 경우 데미지를 받지 않음
+        if (stat.curHp <= 0) return; // ??¹? ??¸??? °æ¿? ??¹???¸? ¹Þ?? ¾??½
 
-        if (stat.curHp > 0)  // 몬스터가 살아있을 때만 피격 처리
+        if (stat.curHp > 0)  // ¸?½º??°¡ ??¾Æ???? ¶§¸¸ ??°? ?³¸®
         {
             stat.curHp -= damage;
             if (healthSlider != null)
             {
                 healthSlider.value = stat.curHp;
-                ShowHealthSlider();  // 체력 UI 슬라이더 표시
+                ShowHealthSlider();  // ?¼·? UI ½½¶???´? ??½?
             }
 
             if (stat.curHp <= 0)
@@ -257,30 +402,30 @@ public class Monster : MonoBehaviour
         }
     }
 
-    private void ApplyKnockback(Vector3 direction)
+    /*private void ApplyKnockback(Vector3 direction)
     {
-        float knockbackIntensity = 300f; // 넉백 강도
-        direction.y = 0; // Y축 변화 제거
+        float knockbackIntensity = 300f; // ³?¹? °­??
+        direction.y = 0; // Y?? º??­ ??°?
         GetComponent<Rigidbody>().AddForce(direction.normalized * knockbackIntensity, ForceMode.Impulse);
         isKnockedBack = true;
         StartCoroutine(KnockBackDuration());
-    }
+    }*/
 
     private IEnumerator KnockBackDuration()
     {
-        yield return new WaitForSeconds(1f); // 넉백 지속 시간
+        yield return new WaitForSeconds(1.5f); // ³?¹? ??¼? ½?°?
         isKnockedBack = false;
     }
 
     private void Die()
     {
-        // 몬스터 사망 처리
-        // 예: gameObject.SetActive(false); 또는 Destroy(gameObject);
+        // ¸?½º?? ??¸? ?³¸®
+        // ¿¹: gameObject.SetActive(false); ¶?´? Destroy(gameObject);
         animCtrl.SetBool("IsChasing", false);
         animCtrl.SetTrigger("tDead");
         DisableAttackCollider();
         DisableAttackMeshRenderer();
-        // NavMeshAgent 비활성화
+        // NavMeshAgent º??°¼º?­
         if (nmAgent != null && nmAgent.isActiveAndEnabled)
         {
             nmAgent.isStopped = true;
@@ -296,15 +441,15 @@ public class Monster : MonoBehaviour
         if (healthSlider != null)
         {
             healthSlider.gameObject.SetActive(true);
-            StopCoroutine("HideHealthSlider");  // 이미 진행 중인 코루틴이 있다면 중단
-            StartCoroutine("HideHealthSlider");  // 새 코루틴 시작
+            StopCoroutine("HideHealthSlider");  // ??¹? ?ø?? ?ß?? ??·?Æ¾?? ??´?¸? ?ß´?
+            StartCoroutine("HideHealthSlider");  // ?? ??·?Æ¾ ½???
         }
     }
 
     private IEnumerator HideHealthSlider()
     {
         yield return new WaitForSeconds(2f);
-        if (healthSlider != null && stat.curHp > 0)  // 몬스터가 살아있을 때만 슬라이더 비활성화
+        if (healthSlider != null && stat.curHp > 0)  // ¸?½º??°¡ ??¾Æ???? ¶§¸¸ ½½¶???´? º??°¼º?­
         {
             healthSlider.gameObject.SetActive(false);
         }
@@ -315,29 +460,29 @@ public class Monster : MonoBehaviour
     }
     private void DetectPlayer()
     {
-        if (stat.curHp <= 0) return; // 체력이 0 이하면 감지 중지
+        if (stat.curHp <= 0) return; // ?¼·??? 0 ????¸? °¨?? ?ß??
         if (Vector3.Distance(transform.position, target.position) <= stat.detectionRange)
         {
-            playerTransform = target; // 기존 로직을 유지
-            player = target.GetComponent<Player>(); // target에서 Player 컴포넌트를 가져옴
+            playerTransform = target; // ±??¸ ·??÷?? ????
+            player = target.GetComponent<Player>(); // target¿¡¼­ Player ??Æ÷³?Æ®¸? °¡?®¿?
 
             if (player != null)
             {
-                monsterAim.SetTarget(target); // MonsterAim 스크립트에도 타겟 설정
+                monsterAim.SetTarget(target); // MonsterAim ½º??¸³Æ®¿¡?? ?¸°? ¼³?¤
             }
         }
         else
         {
             playerTransform = null;
-            player = null; // Player 참조도 해제
-            monsterAim.SetTarget(null); // MonsterAim 스크립트의 타겟도 해제
+            player = null; // Player ???¶?? ?Ø??
+            monsterAim.SetTarget(null); // MonsterAim ½º??¸³Æ®?? ?¸°??? ?Ø??
         }
     }
 
 
     void ChasePlayer()
     {
-        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking") || animCtrl.GetBool("IsAiming")) return; // 체력이 0 이하거나 공격 중이면 추격 중지
+        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking") || animCtrl.GetBool("IsAiming")) return; // ?¼·??? 0 ????°?³ª °ø°? ?ß??¸? ?ß°? ?ß??
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
 
         if (distanceToTarget <= stat.detectionRange)
@@ -363,7 +508,7 @@ public class Monster : MonoBehaviour
         }
     }
 
-    // 플레이어를 바라보게 하는 메서드
+    // ??·¹??¾?¸? ¹?¶?º¸°? ??´? ¸Þ¼­??
     private void FaceTarget()
     {
         Vector3 direction = (playerTransform.position - transform.position).normalized;
@@ -376,14 +521,14 @@ public class Monster : MonoBehaviour
     void Attack()
     {
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
-        if (stat.curHp <= 0 || distanceToTarget > stat.attackRange) return; // 체력이 0 이하거나 사정거리 밖이면 공격 중지
-        if (monsterType==MonsterType.Melee)
+        if (stat.curHp <= 0 || distanceToTarget > stat.attackRange) return; // ?¼·??? 0 ????°?³ª ???¤°?¸® ¹???¸? °ø°? ?ß??
+        if (monsterType == MonsterType.Melee)
         {
             FaceTarget();
             StartAttack();
             animCtrl.SetTrigger("tAttack");
         }
-        else if(monsterType == MonsterType.Ranged)
+        else if (monsterType == MonsterType.Ranged)
         {
             FaceTarget();
             animCtrl.SetBool("IsAiming", true);
@@ -391,9 +536,9 @@ public class Monster : MonoBehaviour
         }
         else
         {
-            // 추후에 특수형 제작
+            // ?ß??¿¡ Æ?¼??? ????
         }
-       
+
     }
 
     void DropItems()
@@ -403,7 +548,7 @@ public class Monster : MonoBehaviour
         {
             if (UnityEngine.Random.Range(0f, 100f) < dropItem.dropChance)
             {
-                // 아이템 생성 및 드랍
+                // ¾Æ???? ??¼º ¹× ??¶ø
                 itemManager.DropItem(dropItem.itemID, transform.position);
             }
         }
@@ -419,8 +564,8 @@ public class Monster : MonoBehaviour
         {
             animCtrl.SetBool("IsAiming", true);
         }
-        
-        // 추적을 멈추기 위해 NavMeshAgent를 비활성화합니다.
+
+        // ?ß???? ¸Ø?ß±? ?§?Ø NavMeshAgent¸? º??°¼º?­??´?´?.
         if (nmAgent != null && nmAgent.enabled)
         {
             nmAgent.isStopped = true;
@@ -438,33 +583,35 @@ public class Monster : MonoBehaviour
             animCtrl.SetBool("IsAiming", false);
         }
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
-        if (stat.curHp > 0)  // 체력이 0 이상일 때만 tIdle 트리거를 설정
+        if (stat.curHp > 0)  // ?¼·??? 0 ?????? ¶§¸¸ tIdle Æ®¸®°?¸? ¼³?¤
         {
-            
 
-                // 추적을 재개하기 위해 NavMeshAgent를 활성화합니다.
-                if (nmAgent != null && nmAgent.enabled && distanceToTarget <= stat.detectionRange)
+
+            // ?ß???? ??°³??±? ?§?Ø NavMeshAgent¸? ?°¼º?­??´?´?.
+            if (nmAgent != null && nmAgent.enabled && distanceToTarget <= stat.detectionRange)
+            {
+                nmAgent.isStopped = false;
+                if (playerTransform != null && distanceToTarget > nmAgent.stoppingDistance)
                 {
-                    nmAgent.isStopped = false;
-                    if (playerTransform != null && distanceToTarget > nmAgent.stoppingDistance)
-                    {
-                        nmAgent.SetDestination(playerTransform.position);
-                        animCtrl.SetBool("IsChasing", true);
-                    }
-                    else if (playerTransform != null && distanceToTarget <= nmAgent.stoppingDistance)
-                    {
-                        Attack();
-                    }
+                    nmAgent.SetDestination(playerTransform.position);
+                    animCtrl.SetBool("IsChasing", true);
                 }
-                else
+                else if (playerTransform != null && distanceToTarget <= nmAgent.stoppingDistance)
                 {
+                    Attack();
+                }
+            }
+            else
+            {
                 animCtrl.SetTrigger("tIdle");
-                }
-            
-            
+            }
+
+
         }
-        
+
     }
+
+    
 
     private void HandleRangedAttack()
     {
@@ -472,7 +619,7 @@ public class Monster : MonoBehaviour
         {
             FaceTarget();
             animCtrl.SetTrigger("tShot");
-            FireProjectile(); // 원거리 투사체 발사 메서드
+            FireProjectile(); // ¿ø°?¸® ?????¼ ¹ß?? ¸Þ¼­??
         }
     }
 
@@ -484,20 +631,20 @@ public class Monster : MonoBehaviour
         Vector3 targetDirection = (playerTransform.position - spawnPosition).normalized;
         Quaternion spawnRotation = Quaternion.LookRotation(targetDirection);
 
-        // 투사체 인스턴스 생성
+        // ?????¼ ??½º??½º ??¼º
         currentProjectile = Instantiate(ProjectilePrefab, spawnPosition, spawnRotation);
 
-        // 투사체에 Rigidbody 컴포넌트를 가져오거나 추가
+        // ?????¼¿¡ Rigidbody ??Æ÷³?Æ®¸? °¡?®¿?°?³ª ?ß°¡
         Rigidbody rb = currentProjectile.GetComponent<Rigidbody>();
         if (rb == null)
         {
             rb = currentProjectile.AddComponent<Rigidbody>();
         }
 
-        // 중력 영향을 받지 않도록 설정
+        // ?ß·? ¿????? ¹Þ?? ¾???·? ¼³?¤
         rb.useGravity = false;
 
-        // 투사체에 속도 적용
+        // ?????¼¿¡ ¼??? ??¿?
         rb.velocity = targetDirection * ProjectileSpeed;
 
         Projectile projectileComponent = currentProjectile.GetComponent<Projectile>();
@@ -505,19 +652,19 @@ public class Monster : MonoBehaviour
         {
             projectileComponent.SetShooter(this);
         }
-        // 투사체 파괴 로직은 해당 투사체 스크립트에 구현
+        // ?????¼ Æ?±? ·??÷?º ?Ø´? ?????¼ ½º??¸³Æ®¿¡ ±¸??
     }
 
 
-    // 투사체가 파괴되었을 때 호출하는 메서드
+    // ?????¼°¡ Æ?±???¾??? ¶§ ??????´? ¸Þ¼­??
     public void ProjectileDestroyed()
     {
         currentProjectile = null;
     }
     public void EnableAttackMeshRenderer()
     {
-        if(stat.curHp > 0)
-        attackMeshRenderer.enabled = true;
+        if (stat.curHp > 0)
+            attackMeshRenderer.enabled = true;
     }
     public void DisableAttackMeshRenderer()
     {
@@ -531,7 +678,7 @@ public class Monster : MonoBehaviour
             attackCollider.enabled = true;
     }
 
-    // 공격용 Collider 비활성화
+    // °ø°?¿? Collider º??°¼º?­
     public void DisableAttackCollider()
     {
         attackCollider.enabled = false;
@@ -541,4 +688,3 @@ public class Monster : MonoBehaviour
 
 
 }
-

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(TrailRenderer), typeof(MeshFilter), typeof(MeshCollider))]
@@ -15,7 +13,6 @@ public class TrailToMesh : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         meshCollider = GetComponent<MeshCollider>();
-        //meshCollider.convex = false; // 볼록 메쉬 설정 해제
     }
 
     void Update()
@@ -33,7 +30,7 @@ public class TrailToMesh : MonoBehaviour
     void UpdateTrailMesh()
     {
         int segments = trailRenderer.positionCount;
-        segments = Mathf.Min(segments, 10000); // 성능을 위해 세그먼트 제한
+        segments = Mathf.Min(segments, 10000); // 성능상의 이유로 세그먼트 수 제한
 
         if (segments < 2) return;
 
@@ -43,37 +40,50 @@ public class TrailToMesh : MonoBehaviour
 
         for (int i = 0; i < segments; i++)
         {
-            float width = trailRenderer.widthMultiplier * trailRenderer.widthCurve.Evaluate(i / (float)(segments - 1)); // 너비 조정
-            Vector3 position = transform.InverseTransformPoint(trailRenderer.GetPosition(i)); // 로컬 좌표 변환
-            Vector3 direction = (i > 0) ? position - transform.InverseTransformPoint(trailRenderer.GetPosition(i - 1)) : Vector3.forward;
+            float width = trailRenderer.widthMultiplier * trailRenderer.widthCurve.Evaluate(i / (float)(segments - 1));
+            Vector3 position = transform.InverseTransformPoint(trailRenderer.GetPosition(i));
+            Vector3 direction;
 
-            // 카메라 방향 대신 고정된 방향 사용
-            Vector3 right = Vector3.Cross(direction, Vector3.up).normalized;
+            // 각 구간에 따른 방향 벡터 계산
+            if (i < segments / 3)
+            {
+                // 우측 대각선 방향
+                direction = Quaternion.Euler(0, 45, 0) * Vector3.forward;
+            }
+            else if (i < 2 * segments / 3)
+            {
+                // 정면 방향
+                direction = Vector3.forward;
+            }
+            else
+            {
+                // 좌측 대각선 방향
+                direction = Quaternion.Euler(0, -45, 0) * Vector3.forward;
+            }
 
-            vertices[i * 2] = position - right * width;
-            vertices[i * 2 + 1] = position + right * width;
+            Vector3 right = Vector3.Cross(direction.normalized, Vector3.up).normalized * width;
 
-            // UV 매핑
-            float uvProgress = i / (float)(segments - 1);
-            uv[i * 2] = new Vector2(0, uvProgress);
-            uv[i * 2 + 1] = new Vector2(1, uvProgress);
+            vertices[i * 2] = position + right;
+            vertices[i * 2 + 1] = position - right;
+
+            uv[i * 2] = new Vector2(0, i / (float)segments);
+            uv[i * 2 + 1] = new Vector2(1, i / (float)segments);
 
             if (i < segments - 1)
             {
-                int index = i * 6;
-                triangles[index] = i * 2;
-                triangles[index + 1] = (i + 1) * 2;
-                triangles[index + 2] = i * 2 + 1;
-
-                triangles[index + 3] = i * 2 + 1;
-                triangles[index + 4] = (i + 1) * 2;
-                triangles[index + 5] = (i + 1) * 2 + 1;
+                int baseIndex = i * 6;
+                triangles[baseIndex] = i * 2;
+                triangles[baseIndex + 1] = i * 2 + 1;
+                triangles[baseIndex + 2] = i * 2 + 2;
+                triangles[baseIndex + 3] = i * 2 + 2;
+                triangles[baseIndex + 4] = i * 2 + 1;
+                triangles[baseIndex + 5] = i * 2 + 3;
             }
         }
 
         mesh.Clear();
         mesh.vertices = vertices;
-        mesh.uv = uv; // UV 할당
+        mesh.uv = uv;
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
 

@@ -42,14 +42,14 @@ public class PlayerAtk : MonoBehaviour
         if (Input.GetMouseButton(1))
         {
             curCharging += Time.deltaTime;
-            Debug.Log("우측키 누름");
+            //Debug.Log("우측키 누름");
         }
         if (Input.GetMouseButtonUp(1))
         {
             player.animCtrl.SetTrigger("tAtk");
             player.animCtrl.SetFloat("fAtkVal", curCharging);
 
-            Debug.Log("우측키 땜");
+            //Debug.Log("우측키 땜");
 
         }
        
