@@ -10,6 +10,7 @@ public class PlayerAtk : MonoBehaviour
     public float curCharging;
     public float attackDamage = 10f;
     private int attackId = 0;
+    public float forceMagnitude = 500f; // AddForce에 사용할 힘의 크기
     private void Awake()
     {
         player = GetComponent<Player>();
@@ -59,7 +60,19 @@ public class PlayerAtk : MonoBehaviour
 
 
     }
-
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Monster")) // "Enemy"는 충돌 대상 태그, 필요에 따라 수정
+        {
+            Rigidbody enemyRb = other.GetComponent<Rigidbody>();
+            if (enemyRb != null)
+            {
+                // Player가 바라보는 방향으로 힘을 가함
+                Vector3 forceDirection = player.transform.forward;
+                enemyRb.AddForce(forceDirection.normalized * forceMagnitude, ForceMode.Impulse);
+            }
+        }
+    }
     private IEnumerator DisableWeaponColliderAfterAnimation()
     {
         // 공격 애니메이션의 길이를 가져오기 위해 현재 재생 중인 애니메이션 클립의 정보가 필요합니다.
