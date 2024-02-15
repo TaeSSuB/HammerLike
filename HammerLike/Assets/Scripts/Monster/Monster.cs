@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Johnson;
 using UnityEngine.AI;
-
+using RootMotion.Dynamics; // RootMotion 라이브러리 참조 추가
 public enum MonsterType
 {
     Melee,
@@ -109,6 +109,7 @@ public class Monster : MonoBehaviour
     private Vector3 rightKnockbackDirection;
     public int debugData = 0;
     private int knockbackData = 0;
+    public BehaviourPuppet puppet;
     private void Awake()
     {
         if (!fsm)
@@ -177,10 +178,10 @@ public class Monster : MonoBehaviour
         }
         // 플레이어 방향 기반 라인 렌더링 업데이트
         UpdateDirectionLines();
-        if (Input.GetKeyDown(KeyCode.K))
+        /*if (Input.GetKeyDown(KeyCode.K))
         {
             ApplyKnockback(frontKnockbackDirection);
-        }
+        }*/
 
     }
     void UpdateDirectionLines()
@@ -403,12 +404,28 @@ public class Monster : MonoBehaviour
         {
             nmAgent.isStopped = true;
             nmAgent.enabled = false;
+            
         }
 
         playerTransform = null;
         DropItems();
+        DisconnectMusclesRecursive();
         //Destroy(gameObject);
     }
+    private void DisconnectMusclesRecursive()
+    {
+        // BehaviourPuppet 컴포넌트가 있는지 확인하고 해당 작업 수행
+
+        if (puppet != null && puppet.puppetMaster != null)
+        {
+            // 모든 근육을 순회하며 재귀적으로 연결 해제
+            for (int i = 0; i < puppet.puppetMaster.muscles.Length; i++)
+            {
+                puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Explode);
+            }
+        }
+    }
+
     private void ShowHealthSlider()
     {
         if (healthSlider != null)

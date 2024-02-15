@@ -23,6 +23,15 @@ namespace RootMotion.Demos
         void Update()
         {
             // Switching modes
+            if (Input.GetKeyDown(KeyCode.V))
+            {
+                // Loop through all muscles to disconnect them recursively
+                for (int i = 0; i < puppet.puppetMaster.muscles.Length; i++)
+                {
+                    puppet.puppetMaster.DisconnectMuscleRecursive(i, disconnectMuscleMode);
+                }
+            }
+
             if (Input.GetKeyDown(KeyCode.M))
             {
                 if (disconnectMuscleMode == MuscleDisconnectMode.Sever) disconnectMuscleMode = MuscleDisconnectMode.Explode;
