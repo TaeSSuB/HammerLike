@@ -174,14 +174,15 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        originalAnchorMaxX = healthBar.anchorMax.x;
+        displayedHp = stat.curHp; // 초기화
+        UpdateHealthBar();
         if (ES3.KeyExists("playerStat"))
         {
             //Debug.Log("playerStat is Exist");
             //stat = ES3.Load<PlayerStat>("playerStat");
         }
-        originalAnchorMaxX = healthBar.anchorMax.x;
-        displayedHp = stat.curHp; // 초기화
-        UpdateHealthBar();
+        
         lookDirectionRenderer.startColor = Color.red;
         lookDirectionRenderer.endColor = Color.red;
         lookDirectionRenderer.startWidth = 0.05f;
@@ -214,29 +215,52 @@ public class Player : MonoBehaviour
         // 회전 방향을 판단합니다.
         if (yRotationDifference > 0) // 시계 방향 회전
         {
-            Debug.Log("시계방향");
+            //Debug.Log("시계방향");
+            // HammerDirection과 LookDirection 사이의 현재 각도 차이를 계산합니다.
+            float angleBetweenDirections = Vector3.Angle(hammerDirection, currentLookDirection);
+
+            // HammerDirection이 LookDirection과의 각도 차이가 일정 범위 내에 있을 때만 추가 각도를 적용합니다.
+            float targetAngle;
+            if (angleBetweenDirections <= Mathf.Abs(additionalAngle))
+            {
+                targetAngle = currentYRotation + (yRotationDifference > 0 ? additionalAngle : -additionalAngle);
+                //Debug.Log("targetAngle1:" + targetAngle);
+            }
+            else
+            {
+                targetAngle = currentYRotation;
+                //Debug.Log("targetAngle2:" + targetAngle);
+            }
+
+            Vector3 targetDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
+            hammerDirection = Vector3.Lerp(hammerDirection, targetDirection, hammerFollowSpeed * Time.deltaTime);
+            //Debug.Log("targetDirection: " + targetDirection + " hammerDirection: " + hammerDirection);
         }
         else if (yRotationDifference < 0) // 반시계 방향 회전
         {
-            Debug.Log("반시계방향");
+            //Debug.Log("반시계방향");
+            // HammerDirection과 LookDirection 사이의 현재 각도 차이를 계산합니다.
+            float angleBetweenDirections = Vector3.Angle(hammerDirection, currentLookDirection);
+
+            // HammerDirection이 LookDirection과의 각도 차이가 일정 범위 내에 있을 때만 추가 각도를 적용합니다.
+            float targetAngle;
+            if (angleBetweenDirections <= Mathf.Abs(additionalAngle))
+            {
+                targetAngle = currentYRotation + (yRotationDifference > 0 ? additionalAngle : -additionalAngle);
+                //Debug.Log("targetAngle1:" + targetAngle);
+            }
+            else
+            {
+                targetAngle = currentYRotation;
+                //Debug.Log("targetAngle2:" + targetAngle);
+            }
+
+            Vector3 targetDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
+            hammerDirection = Vector3.Lerp(hammerDirection, targetDirection, hammerFollowSpeed * Time.deltaTime);
+            //Debug.Log("targetDirection: " + targetDirection + " hammerDirection: " + hammerDirection);
         }
 
-        // HammerDirection과 LookDirection 사이의 현재 각도 차이를 계산합니다.
-        float angleBetweenDirections = Vector3.Angle(hammerDirection, currentLookDirection);
-
-        // HammerDirection이 LookDirection과의 각도 차이가 일정 범위 내에 있을 때만 추가 각도를 적용합니다.
-        float targetAngle;
-        if (angleBetweenDirections <= Mathf.Abs(additionalAngle))
-        {
-            targetAngle = currentYRotation + (yRotationDifference > 0 ? additionalAngle : -additionalAngle);
-        }
-        else
-        {
-            targetAngle = currentYRotation;
-        }
-
-        Vector3 targetDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
-        hammerDirection = Vector3.Lerp(hammerDirection, targetDirection, hammerFollowSpeed * Time.deltaTime);
+        
 
 
 
@@ -261,7 +285,18 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // 플레이어의 위치를 저장
+        Vector3 newPosition = transform.position;
 
+        // 플레이어의 y값이 0보다 작을 경우
+        if (newPosition.y != 0)
+        {
+            // y값을 0으로 설정
+            newPosition.y = 0;
+        }
+
+        // 새로운 위치로 플레이어를 이동
+        transform.position = newPosition;
     }
 
 
@@ -369,6 +404,7 @@ public class Player : MonoBehaviour
     public void EndAttack() // 공격 종료 시 호출
     {
         isAttacking = false;
+        animCtrl.SetTrigger("tIdle");
     }
 
     void UpdateHealthUI()

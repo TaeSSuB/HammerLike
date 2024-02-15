@@ -1,11 +1,11 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Johnson;
 using UnityEngine.AI;
-
+using RootMotion.Dynamics; // RootMotion ë¼ì´ë¸ŒëŸ¬ë¦¬ ì°¸ì¡° ì¶”ê°€
 public enum MonsterType
 {
     Melee,
@@ -19,7 +19,7 @@ public struct MonsterStat
     public float maxHp;
     public float curHp;
     public float attackPoint;
-    public float attackRange; // °ø°İ »çÁ¤°Å¸®
+    public float attackRange; // Â°Ã¸Â°Ã Â»Ã§ÃÂ¤Â°Ã…Â¸Â®
     [Space(7.5f)]
     public float walkSpd;
     public float runSpd;
@@ -28,18 +28,18 @@ public struct MonsterStat
     public EnvasionStat envasionStat;
 
     [Space(7.5f)]
-    public float upperHomingSpd; //»óÃ¼ È¸Àü ¼Óµµ
-    public float legHomingSpd; //ÇÏÃ¼ È¸Àü ¼Óµµ
+    public float upperHomingSpd; //Â»Ã³ÃƒÂ¼ ÃˆÂ¸Ã€Ã¼ Â¼Ã“ÂµÂµ
+    public float legHomingSpd; //Ã‡ÃÃƒÂ¼ ÃˆÂ¸Ã€Ã¼ Â¼Ã“ÂµÂµ
 
-    public float detectionRange;  // ÇÃ·¹ÀÌ¾î¸¦ ÀÎ½ÄÇÒ ¹üÀ§ ¼³Á¤. ¿øÇÏ´Â °ªÀ¸·Î Á¶Àı °¡´É.
+    public float detectionRange;  // Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â¸Â¦ Ã€ÃÂ½Ã„Ã‡Ã’ Â¹Ã¼Ã€Â§ Â¼Â³ÃÂ¤. Â¿Ã¸Ã‡ÃÂ´Ã‚ Â°ÂªÃ€Â¸Â·Ã ÃÂ¶Ã€Ã½ Â°Â¡Â´Ã‰.
 
 }
 
 [System.Serializable]
 public class DropItem
 {
-    public int itemID; // ¾ÆÀÌÅÛ ID
-    public float dropChance; // µå¶ø È®·ü
+    public int itemID; // Â¾Ã†Ã€ÃŒÃ…Ã› ID
+    public float dropChance; // ÂµÃ¥Â¶Ã¸ ÃˆÂ®Â·Ã¼
 }
 
 
@@ -47,9 +47,9 @@ public class Monster : MonoBehaviour
 {
 
     private Transform playerTransform;
-    // Note: ±â´É ±¸Çö ÇÒ ¶§´Â Á¢±ÙÁöÁ¤ÀÚ Å©°Ô ½Å°æ ¾È¾²°í ÀÛ¾÷ÇÔ.
-    // Â÷ÈÄ ±â´É ÀÛ¾÷ ³¡³ª°í ³ª¸é Ãß°¡ÀûÀ¸·Î Á¤¸® ¿¹Á¤!!
-    // ºÒÆíÇØµµ ¾çÇØ¹Ù¶ø´Ï´Ù!!! ½º¸¶¹Ì¼¾!!
+    // Note: Â±Ã¢Â´Ã‰ Â±Â¸Ã‡Ã¶ Ã‡Ã’ Â¶Â§Â´Ã‚ ÃÂ¢Â±Ã™ÃÃ¶ÃÂ¤Ã€Ãš Ã…Â©Â°Ã” Â½Ã…Â°Ã¦ Â¾ÃˆÂ¾Â²Â°Ã­ Ã€Ã›Â¾Ã·Ã‡Ã”.
+    // Ã‚Ã·ÃˆÃ„ Â±Ã¢Â´Ã‰ Ã€Ã›Â¾Ã· Â³Â¡Â³ÂªÂ°Ã­ Â³ÂªÂ¸Ã© ÃƒÃŸÂ°Â¡Ã€Ã»Ã€Â¸Â·Ã ÃÂ¤Â¸Â® Â¿Â¹ÃÂ¤!!
+    // ÂºÃ’Ã†Ã­Ã‡Ã˜ÂµÂµ Â¾Ã§Ã‡Ã˜Â¹Ã™Â¶Ã¸Â´ÃÂ´Ã™!!! Â½ÂºÂ¸Â¶Â¹ÃŒÂ¼Â¾!!
 
     public MonsterStat stat;
     public MonsterType monsterType;
@@ -58,9 +58,9 @@ public class Monster : MonoBehaviour
     public MonsterFSM fsm;
 
     [Header("Ranged Attack Settings")]
-    public GameObject ProjectilePrefab; // ¿ø°Å¸® °ø°İÀ» À§ÇÑ Åõ»çÃ¼ ÇÁ¸®ÆÕ
-    public float ProjectileSpeed; // Åõ»çÃ¼ ¼Óµµ
-    public Transform ProjectileSpawnPoint; // ¹ß»çÃ¼ »ı¼º À§Ä¡
+    public GameObject ProjectilePrefab; // Â¿Ã¸Â°Ã…Â¸Â® Â°Ã¸Â°ÃÃ€Â» Ã€Â§Ã‡Ã‘ Ã…ÃµÂ»Ã§ÃƒÂ¼ Ã‡ÃÂ¸Â®Ã†Ã•
+    public float ProjectileSpeed; // Ã…ÃµÂ»Ã§ÃƒÂ¼ Â¼Ã“ÂµÂµ
+    public Transform ProjectileSpawnPoint; // Â¹ÃŸÂ»Ã§ÃƒÂ¼ Â»Ã½Â¼Âº Ã€Â§Ã„Â¡
     private GameObject currentProjectile;
 
     [Space(10f)]
@@ -71,17 +71,17 @@ public class Monster : MonoBehaviour
 
     [Space(10f)]
     [Header("Action Table")]
-    // Note: ÇØ´ç ºÎºĞÀº ¸ó½ºÅÍ¿¡ ¸Â´Â ¾×¼ÇÀ¸·Î ¼öÁ¤ ÇÊ¿ä
+    // Note: Ã‡Ã˜Â´Ã§ ÂºÃÂºÃÃ€Âº Â¸Ã³Â½ÂºÃ…ÃÂ¿Â¡ Â¸Ã‚Â´Ã‚ Â¾Ã—Â¼Ã‡Ã€Â¸Â·Ã Â¼Ã¶ÃÂ¤ Ã‡ÃŠÂ¿Ã¤
     public MonsterMove move;
     public MonsterAtk atk;
     public MonsterAim monsterAim;
 
     [Space(10f)]
     [Header("Cam Controller")]
-    public CamCtrl camCtrl; // Note: ¸ó½ºÅÍ°¡ Ä«¸Ş¶ó¸¦ Á÷Á¢ Á¦¾îÇÒ ÇÊ¿ä°¡ ÀÖÀ»Áö È®ÀÎ ÇÊ¿ä
+    public CamCtrl camCtrl; // Note: Â¸Ã³Â½ÂºÃ…ÃÂ°Â¡ Ã„Â«Â¸ÃÂ¶Ã³Â¸Â¦ ÃÃ·ÃÂ¢ ÃÂ¦Â¾Ã®Ã‡Ã’ Ã‡ÃŠÂ¿Ã¤Â°Â¡ Ã€Ã–Ã€Â»ÃÃ¶ ÃˆÂ®Ã€Ã Ã‡ÃŠÂ¿Ã¤
 
     [Header("Drop Items")]
-    public List<DropItem> dropItems = new List<DropItem>(); // µå¶ø ¾ÆÀÌÅÛ ¸ñ·Ï
+    public List<DropItem> dropItems = new List<DropItem>(); // ÂµÃ¥Â¶Ã¸ Â¾Ã†Ã€ÃŒÃ…Ã› Â¸Ã±Â·Ã
 
     [Space(10f)]
     [Header("Anim Bones")]
@@ -95,12 +95,21 @@ public class Monster : MonoBehaviour
 
     public Transform target;
     NavMeshAgent nmAgent;
-    public LineRenderer lineRenderer; // LineRenderer ÂüÁ¶
+    public LineRenderer lineRenderer; // LineRenderer Ã‚Ã¼ÃÂ¶
 
     public Collider attackCollider;
     public MeshRenderer attackMeshRenderer;
     private Player player;
 
+    private LineRenderer leftLineRenderer;
+    private LineRenderer frontLineRenderer;
+    private LineRenderer rightLineRenderer;
+    private Vector3 frontKnockbackDirection;
+    private Vector3 leftKnockbackDirection;
+    private Vector3 rightKnockbackDirection;
+    public int debugData = 0;
+    private int knockbackData = 0;
+    public BehaviourPuppet puppet;
     private void Awake()
     {
         if (!fsm)
@@ -128,12 +137,16 @@ public class Monster : MonoBehaviour
             healthSlider.value = stat.curHp;
         }
 
-        // LineRenderer ±âº» ¼³Á¤
+        // LineRenderer Â±Ã¢ÂºÂ» Â¼Â³ÃÂ¤
         if (lineRenderer != null)
         {
-            lineRenderer.positionCount = 2; // ½ÃÀÛÁ¡°ú ³¡Á¡
-            lineRenderer.widthMultiplier = 0.05f; // ¼±ÀÇ ³Êºñ
+            lineRenderer.positionCount = 2; // Â½ÃƒÃ€Ã›ÃÂ¡Â°Ãº Â³Â¡ÃÂ¡
+            lineRenderer.widthMultiplier = 0.05f; // Â¼Â±Ã€Ã‡ Â³ÃŠÂºÃ±
         }
+
+        leftLineRenderer = CreateLineRenderer(Color.red);
+        frontLineRenderer = CreateLineRenderer(Color.green);
+        rightLineRenderer = CreateLineRenderer(Color.blue);
     }
 
     void Update()
@@ -145,6 +158,7 @@ public class Monster : MonoBehaviour
             if (playerTransform != null)
             {
                 ChasePlayer();
+
             }
             else
             {
@@ -162,16 +176,61 @@ public class Monster : MonoBehaviour
             stat.curHp = 0;
             Die();
         }
+        // í”Œë ˆì´ì–´ ë°©í–¥ ê¸°ë°˜ ë¼ì¸ ë Œë”ë§ ì—…ë°ì´íŠ¸
+        UpdateDirectionLines();
+        /*if (Input.GetKeyDown(KeyCode.K))
+        {
+            ApplyKnockback(frontKnockbackDirection);
+        }*/
+
+    }
+    void UpdateDirectionLines()
+    {
+        if (player != null)
+        {
+            Vector3 playerForward = player.transform.forward;
+            Vector3 playerPosition = player.transform.position + Vector3.up * 0.5f;
+
+            // ì •ë©´ ë°©í–¥
+            Vector3 frontDirection = playerForward;
+            // ì¢Œì¸¡ ëŒ€ê°ì„  ë°©í–¥
+            Vector3 leftDirection = Quaternion.Euler(0, -45, 0) * playerForward;
+            // ìš°ì¸¡ ëŒ€ê°ì„  ë°©í–¥
+            Vector3 rightDirection = Quaternion.Euler(0, 45, 0) * playerForward;
+
+            // ë°©í–¥ ì €ì¥
+            frontKnockbackDirection = frontDirection;
+            leftKnockbackDirection = leftDirection;
+            rightKnockbackDirection = rightDirection;
+
+            // ê° ë°©í–¥ì— ëŒ€í•œ ë¼ì¸ ë Œë”ëŸ¬ ì„¤ì •
+            SetLineRenderer(leftLineRenderer, playerPosition, playerPosition + leftDirection * 5); // 5ëŠ” ë¼ì¸ì˜ ê¸¸ì´
+            SetLineRenderer(frontLineRenderer, playerPosition, playerPosition + frontDirection * 5);
+            SetLineRenderer(rightLineRenderer, playerPosition, playerPosition + rightDirection * 5);
+        }
+    }
+
+    private void SetLineRenderer(LineRenderer lineRenderer, Vector3 start, Vector3 end)
+    {
+        lineRenderer.SetPosition(0, start);
+        lineRenderer.SetPosition(1, end);
+    }
 
 
+    Vector3 CalculateKnockbackDirectionBasedOnContext()
+    {
+        // ì—¬ê¸°ì„œëŠ” ì˜ˆì‹œë¥¼ ìœ„í•´ ë‹¨ìˆœí™”ëœ ë¡œì§ì„ ì‚¬ìš©í•©ë‹ˆë‹¤.
+        // ì‹¤ì œ êµ¬í˜„ì—ì„œëŠ” ëª¬ìŠ¤í„°ì˜ ìƒíƒœ, ìœ„ì¹˜, í”Œë ˆì´ì–´ì™€ì˜ ê´€ê³„ ë“±ì„ ê³ ë ¤í•˜ì—¬ ë„‰ë°± ë°©í–¥ì„ ê³„ì‚°í•´ì•¼ í•©ë‹ˆë‹¤.
+        // ì˜ˆë¥¼ ë“¤ì–´, ëª¬ìŠ¤í„°ê°€ í”Œë ˆì´ì–´ë¥¼ í–¥í•˜ê³  ìˆë‹¤ë©´, í”Œë ˆì´ì–´ì™€ ë°˜ëŒ€ ë°©í–¥ìœ¼ë¡œ ë„‰ë°± ë°©í–¥ì„ ì„¤ì •í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+        return transform.forward; // í˜„ì¬ëŠ” ëª¬ìŠ¤í„°ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ ì„¤ì •
     }
 
     void DrawDirectionLine()
     {
         if (lineRenderer != null)
         {
-            lineRenderer.SetPosition(0, transform.position); // ¼±ÀÇ ½ÃÀÛÁ¡: ¸ó½ºÅÍÀÇ À§Ä¡
-            lineRenderer.SetPosition(1, transform.position + transform.forward * 5f); // ¼±ÀÇ ³¡Á¡: ¸ó½ºÅÍ°¡ ¹Ù¶óº¸´Â ¹æÇâ
+            lineRenderer.SetPosition(0, transform.position); // Â¼Â±Ã€Ã‡ Â½ÃƒÃ€Ã›ÃÂ¡: Â¸Ã³Â½ÂºÃ…ÃÃ€Ã‡ Ã€Â§Ã„Â¡
+            lineRenderer.SetPosition(1, transform.position + transform.forward * 5f); // Â¼Â±Ã€Ã‡ Â³Â¡ÃÂ¡: Â¸Ã³Â½ÂºÃ…ÃÂ°Â¡ Â¹Ã™Â¶Ã³ÂºÂ¸Â´Ã‚ Â¹Ã¦Ã‡Ã¢
         }
     }
 
@@ -185,10 +244,27 @@ public class Monster : MonoBehaviour
     {
         if (playerTransform != null && stat.curHp > 0)
         {
-            FaceTarget(); // ÇÃ·¹ÀÌ¾î¸¦ Áö¼ÓÀûÀ¸·Î ¹Ù¶óº¸°Ô ÇÏ´Â ¸Ş¼­µå
+            FaceTarget(); // Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â¸Â¦ ÃÃ¶Â¼Ã“Ã€Ã»Ã€Â¸Â·Ã Â¹Ã™Â¶Ã³ÂºÂ¸Â°Ã” Ã‡ÃÂ´Ã‚ Â¸ÃÂ¼Â­ÂµÃ¥
         }
 
     }
+
+    private LineRenderer CreateLineRenderer(Color lineColor)
+    {
+        GameObject lineRendererObject = new GameObject("LineRenderer");
+        lineRendererObject.transform.SetParent(transform);
+        LineRenderer lineRenderer = lineRendererObject.AddComponent<LineRenderer>();
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        lineRenderer.startColor = lineColor;
+        lineRenderer.endColor = lineColor;
+        lineRenderer.startWidth = 0.05f;
+        lineRenderer.endWidth = 0.05f;
+        lineRenderer.positionCount = 2;
+
+        return lineRenderer;
+    }
+
+
 
     private void OnEnable()
     {
@@ -211,12 +287,14 @@ public class Monster : MonoBehaviour
             WeaponCollider weaponCollider = other.GetComponent<WeaponCollider>();
             if (weaponCollider != null && !processedAttacks.Contains(weaponCollider.CurrentAttackId))
             {
-                // µ¥¹ÌÁö ¹× ³Ë¹é Ã³¸®
+                // ÂµÂ¥Â¹ÃŒÃÃ¶ Â¹Ã— Â³Ã‹Â¹Ã© ÃƒÂ³Â¸Â®
                 PlayerAtk playerAttack = other.GetComponentInParent<PlayerAtk>();
                 if (playerAttack != null)
                 {
                     TakeDamage(playerAttack.attackDamage);
-                    ApplyKnockback(playerAttack.transform.forward);
+                    Vector3 hitPoint = other.ClosestPointOnBounds(transform.position); // ì¶©ëŒ ì§€ì 
+                    Vector3 knockbackDirection = DetermineKnockbackDirection(hitPoint, other.transform);
+                    ApplyKnockback(knockbackDirection);
                     processedAttacks.Add(weaponCollider.CurrentAttackId);
                 }
 
@@ -230,23 +308,65 @@ public class Monster : MonoBehaviour
         }
     }
 
+    private Vector3 DetermineKnockbackDirection(Vector3 hitPoint, Transform trailMeshTransform)
+    {
+        // íŠ¸ë ˆì¼ ë©”ì‰¬ì˜ ê¸¸ì´ ê³„ì‚° (ì˜ˆì‹œ ì½”ë“œ, ì‹¤ì œ êµ¬í˜„ í•„ìš”)
+        float trailMeshLength = Vector3.Distance(trailMeshTransform.position, trailMeshTransform.position + trailMeshTransform.forward * 10); // ë©”ì‰¬ ê¸¸ì´ ì˜ˆì‹œ
+        float hitPositionRelative = Vector3.Distance(trailMeshTransform.position, hitPoint); // í”¼ê²© ì§€ì ê¹Œì§€ì˜ ê±°ë¦¬
+
+        // í”¼ê²© ìœ„ì¹˜ê°€ íŠ¸ë ˆì¼ ë©”ì‰¬ì˜ ì–´ëŠ 1/3 êµ¬ê°„ì— ìˆëŠ”ì§€ ê²°ì •
+        // ëŒ€ê°ì„  ë„‰ë°´
+        float sectionLength = trailMeshLength / 3;
+        if (hitPositionRelative <= sectionLength)
+        {
+            // ìš°ì¸¡ ëŒ€ê°ì„  ë„‰ë°±
+            return rightKnockbackDirection;
+        }
+        else if (hitPositionRelative > sectionLength && hitPositionRelative <= sectionLength * 2)
+        {
+            // ì •ë©´ ë„‰ë°±
+            return frontKnockbackDirection;
+        }
+        else
+        {
+            // ì¢Œì¸¡ ëŒ€ê°ì„  ë„‰ë°±
+            return leftKnockbackDirection;
+        }
+    }
+
+
+
+
+    private void ApplyKnockback(Vector3 direction)
+    {
+        
+
+        float knockbackIntensity = 300f; // ë„‰ë°± ê°•ë„
+        direction.y = 0; // Yì¶• ë°©í–¥ì„ 0ìœ¼ë¡œ ì„¤ì •í•˜ì—¬ ìˆ˜í‰ ë„‰ë°±ì„ ë³´ì¥
+        GetComponent<Rigidbody>().AddForce(direction.normalized * knockbackIntensity, ForceMode.Impulse);
+        isKnockedBack = true;
+        StartCoroutine(KnockBackDuration());
+        knockbackData++;
+        Debug.Log(knockbackData);
+    }
+
     private IEnumerator KnockBackDamageCooldown()
     {
-        yield return new WaitForSeconds(1f); // ³Ë¹é µ¥¹ÌÁö Äğ´Ù¿î
+        yield return new WaitForSeconds(1f); // Â³Ã‹Â¹Ã© ÂµÂ¥Â¹ÃŒÃÃ¶ Ã„Ã°Â´Ã™Â¿Ã®
         canTakeKnockBackDamage = true;
     }
 
     private void TakeDamage(float damage)
     {
-        if (stat.curHp <= 0) return; // ÀÌ¹Ì »ç¸ÁÇÑ °æ¿ì µ¥¹ÌÁö¸¦ ¹ŞÁö ¾ÊÀ½
+        if (stat.curHp <= 0) return; // Ã€ÃŒÂ¹ÃŒ Â»Ã§Â¸ÃÃ‡Ã‘ Â°Ã¦Â¿Ã¬ ÂµÂ¥Â¹ÃŒÃÃ¶Â¸Â¦ Â¹ÃÃÃ¶ Â¾ÃŠÃ€Â½
 
-        if (stat.curHp > 0)  // ¸ó½ºÅÍ°¡ »ì¾ÆÀÖÀ» ¶§¸¸ ÇÇ°İ Ã³¸®
+        if (stat.curHp > 0)  // Â¸Ã³Â½ÂºÃ…ÃÂ°Â¡ Â»Ã¬Â¾Ã†Ã€Ã–Ã€Â» Â¶Â§Â¸Â¸ Ã‡Ã‡Â°Ã ÃƒÂ³Â¸Â®
         {
             stat.curHp -= damage;
             if (healthSlider != null)
             {
                 healthSlider.value = stat.curHp;
-                ShowHealthSlider();  // Ã¼·Â UI ½½¶óÀÌ´õ Ç¥½Ã
+                ShowHealthSlider();  // ÃƒÂ¼Â·Ã‚ UI Â½Â½Â¶Ã³Ã€ÃŒÂ´Ãµ Ã‡Â¥Â½Ãƒ
             }
 
             if (stat.curHp <= 0)
@@ -256,53 +376,70 @@ public class Monster : MonoBehaviour
         }
     }
 
-    private void ApplyKnockback(Vector3 direction)
+    /*private void ApplyKnockback(Vector3 direction)
     {
-        float knockbackIntensity = 30f; // ³Ë¹é °­µµ
-        direction.y = 0; // YÃà º¯È­ Á¦°Å
+        float knockbackIntensity = 300f; // Â³Ã‹Â¹Ã© Â°Â­ÂµÂµ
+        direction.y = 0; // YÃƒÃ  ÂºÂ¯ÃˆÂ­ ÃÂ¦Â°Ã…
         GetComponent<Rigidbody>().AddForce(direction.normalized * knockbackIntensity, ForceMode.Impulse);
         isKnockedBack = true;
         StartCoroutine(KnockBackDuration());
-    }
+    }*/
 
     private IEnumerator KnockBackDuration()
     {
-        yield return new WaitForSeconds(1f); // ³Ë¹é Áö¼Ó ½Ã°£
+        yield return new WaitForSeconds(1f); // Â³Ã‹Â¹Ã© ÃÃ¶Â¼Ã“ Â½ÃƒÂ°Â£
         isKnockedBack = false;
     }
 
     private void Die()
     {
-        // ¸ó½ºÅÍ »ç¸Á Ã³¸®
-        // ¿¹: gameObject.SetActive(false); ¶Ç´Â Destroy(gameObject);
+        // Â¸Ã³Â½ÂºÃ…Ã Â»Ã§Â¸Ã ÃƒÂ³Â¸Â®
+        // Â¿Â¹: gameObject.SetActive(false); Â¶Ã‡Â´Ã‚ Destroy(gameObject);
         animCtrl.SetBool("IsChasing", false);
         animCtrl.SetTrigger("tDead");
-
-        // NavMeshAgent ºñÈ°¼ºÈ­
+        DisableAttackCollider();
+        DisableAttackMeshRenderer();
+        // NavMeshAgent ÂºÃ±ÃˆÂ°Â¼ÂºÃˆÂ­
         if (nmAgent != null && nmAgent.isActiveAndEnabled)
         {
             nmAgent.isStopped = true;
             nmAgent.enabled = false;
+            
         }
 
-
+        playerTransform = null;
         DropItems();
+        DisconnectMusclesRecursive();
         //Destroy(gameObject);
     }
+    private void DisconnectMusclesRecursive()
+    {
+        // BehaviourPuppet ì»´í¬ë„ŒíŠ¸ê°€ ìˆëŠ”ì§€ í™•ì¸í•˜ê³  í•´ë‹¹ ì‘ì—… ìˆ˜í–‰
+
+        if (puppet != null && puppet.puppetMaster != null)
+        {
+            // ëª¨ë“  ê·¼ìœ¡ì„ ìˆœíšŒí•˜ë©° ì¬ê·€ì ìœ¼ë¡œ ì—°ê²° í•´ì œ
+            for (int i = 0; i < puppet.puppetMaster.muscles.Length; i++)
+            {
+                puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Explode);
+            }
+        }
+    }
+
     private void ShowHealthSlider()
     {
         if (healthSlider != null)
         {
             healthSlider.gameObject.SetActive(true);
-            StopCoroutine("HideHealthSlider");  // ÀÌ¹Ì ÁøÇà ÁßÀÎ ÄÚ·çÆ¾ÀÌ ÀÖ´Ù¸é Áß´Ü
-            StartCoroutine("HideHealthSlider");  // »õ ÄÚ·çÆ¾ ½ÃÀÛ
+            StopCoroutine("HideHealthSlider");  // Ã€ÃŒÂ¹ÃŒ ÃÃ¸Ã‡Ã  ÃÃŸÃ€Ã Ã„ÃšÂ·Ã§Ã†Â¾Ã€ÃŒ Ã€Ã–Â´Ã™Â¸Ã© ÃÃŸÂ´Ãœ
+            StartCoroutine("HideHealthSlider");  // Â»Ãµ Ã„ÃšÂ·Ã§Ã†Â¾ Â½ÃƒÃ€Ã›
         }
     }
 
     private IEnumerator HideHealthSlider()
     {
         yield return new WaitForSeconds(2f);
-        if (healthSlider != null && stat.curHp > 0)  // ¸ó½ºÅÍ°¡ »ì¾ÆÀÖÀ» ¶§¸¸ ½½¶óÀÌ´õ ºñÈ°¼ºÈ­
+        if (healthSlider != null && stat.curHp > 0)  // Â¸Ã³Â½ÂºÃ…ÃÂ°Â¡ Â»Ã¬Â¾Ã†Ã€Ã–Ã€Â» Â¶Â§Â¸Â¸ Â½Â½Â¶Ã³Ã€ÃŒÂ´Ãµ ÂºÃ±ÃˆÂ°Â¼ÂºÃˆÂ­
         {
             healthSlider.gameObject.SetActive(false);
         }
@@ -313,29 +450,29 @@ public class Monster : MonoBehaviour
     }
     private void DetectPlayer()
     {
-        if (stat.curHp <= 0) return; // Ã¼·ÂÀÌ 0 ÀÌÇÏ¸é °¨Áö ÁßÁö
+        if (stat.curHp <= 0) return; // ÃƒÂ¼Â·Ã‚Ã€ÃŒ 0 Ã€ÃŒÃ‡ÃÂ¸Ã© Â°Â¨ÃÃ¶ ÃÃŸÃÃ¶
         if (Vector3.Distance(transform.position, target.position) <= stat.detectionRange)
         {
-            playerTransform = target; // ±âÁ¸ ·ÎÁ÷À» À¯Áö
-            player = target.GetComponent<Player>(); // target¿¡¼­ Player ÄÄÆ÷³ÍÆ®¸¦ °¡Á®¿È
+            playerTransform = target; // Â±Ã¢ÃÂ¸ Â·ÃÃÃ·Ã€Â» Ã€Â¯ÃÃ¶
+            player = target.GetComponent<Player>(); // targetÂ¿Â¡Â¼Â­ Player Ã„Ã„Ã†Ã·Â³ÃÃ†Â®Â¸Â¦ Â°Â¡ÃÂ®Â¿Ãˆ
 
             if (player != null)
             {
-                monsterAim.SetTarget(target); // MonsterAim ½ºÅ©¸³Æ®¿¡µµ Å¸°Ù ¼³Á¤
+                monsterAim.SetTarget(target); // MonsterAim Â½ÂºÃ…Â©Â¸Â³Ã†Â®Â¿Â¡ÂµÂµ Ã…Â¸Â°Ã™ Â¼Â³ÃÂ¤
             }
         }
         else
         {
             playerTransform = null;
-            player = null; // Player ÂüÁ¶µµ ÇØÁ¦
-            monsterAim.SetTarget(null); // MonsterAim ½ºÅ©¸³Æ®ÀÇ Å¸°Ùµµ ÇØÁ¦
+            player = null; // Player Ã‚Ã¼ÃÂ¶ÂµÂµ Ã‡Ã˜ÃÂ¦
+            monsterAim.SetTarget(null); // MonsterAim Â½ÂºÃ…Â©Â¸Â³Ã†Â®Ã€Ã‡ Ã…Â¸Â°Ã™ÂµÂµ Ã‡Ã˜ÃÂ¦
         }
     }
 
 
     void ChasePlayer()
     {
-        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking") || animCtrl.GetBool("IsAiming")) return; // Ã¼·ÂÀÌ 0 ÀÌÇÏ°Å³ª °ø°İ ÁßÀÌ¸é Ãß°İ ÁßÁö
+        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking") || animCtrl.GetBool("IsAiming")) return; // ÃƒÂ¼Â·Ã‚Ã€ÃŒ 0 Ã€ÃŒÃ‡ÃÂ°Ã…Â³Âª Â°Ã¸Â°Ã ÃÃŸÃ€ÃŒÂ¸Ã© ÃƒÃŸÂ°Ã ÃÃŸÃÃ¶
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
 
         if (distanceToTarget <= stat.detectionRange)
@@ -343,6 +480,7 @@ public class Monster : MonoBehaviour
             if (distanceToTarget > stat.attackRange)
             {
                 nmAgent.SetDestination(playerTransform.position);
+                DisableAttackCollider();
                 animCtrl.SetBool("IsChasing", true);
                 animCtrl.SetBool("IsAttacking", false);
             }
@@ -356,10 +494,11 @@ public class Monster : MonoBehaviour
         {
             animCtrl.SetBool("IsChasing", false);
             animCtrl.SetTrigger("tIdle");
+            DisableAttackCollider();
         }
     }
 
-    // ÇÃ·¹ÀÌ¾î¸¦ ¹Ù¶óº¸°Ô ÇÏ´Â ¸Ş¼­µå
+    // Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â¸Â¦ Â¹Ã™Â¶Ã³ÂºÂ¸Â°Ã” Ã‡ÃÂ´Ã‚ Â¸ÃÂ¼Â­ÂµÃ¥
     private void FaceTarget()
     {
         Vector3 direction = (playerTransform.position - transform.position).normalized;
@@ -372,14 +511,14 @@ public class Monster : MonoBehaviour
     void Attack()
     {
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
-        if (stat.curHp <= 0 || distanceToTarget > stat.attackRange) return; // Ã¼·ÂÀÌ 0 ÀÌÇÏ°Å³ª »çÁ¤°Å¸® ¹ÛÀÌ¸é °ø°İ ÁßÁö
-        if (monsterType==MonsterType.Melee)
+        if (stat.curHp <= 0 || distanceToTarget > stat.attackRange) return; // ÃƒÂ¼Â·Ã‚Ã€ÃŒ 0 Ã€ÃŒÃ‡ÃÂ°Ã…Â³Âª Â»Ã§ÃÂ¤Â°Ã…Â¸Â® Â¹Ã›Ã€ÃŒÂ¸Ã© Â°Ã¸Â°Ã ÃÃŸÃÃ¶
+        if (monsterType == MonsterType.Melee)
         {
             FaceTarget();
             StartAttack();
             animCtrl.SetTrigger("tAttack");
         }
-        else if(monsterType == MonsterType.Ranged)
+        else if (monsterType == MonsterType.Ranged)
         {
             FaceTarget();
             animCtrl.SetBool("IsAiming", true);
@@ -387,9 +526,9 @@ public class Monster : MonoBehaviour
         }
         else
         {
-            // ÃßÈÄ¿¡ Æ¯¼öÇü Á¦ÀÛ
+            // ÃƒÃŸÃˆÃ„Â¿Â¡ Ã†Â¯Â¼Ã¶Ã‡Ã¼ ÃÂ¦Ã€Ã›
         }
-       
+
     }
 
     void DropItems()
@@ -399,7 +538,7 @@ public class Monster : MonoBehaviour
         {
             if (UnityEngine.Random.Range(0f, 100f) < dropItem.dropChance)
             {
-                // ¾ÆÀÌÅÛ »ı¼º ¹× µå¶ø
+                // Â¾Ã†Ã€ÃŒÃ…Ã› Â»Ã½Â¼Âº Â¹Ã— ÂµÃ¥Â¶Ã¸
                 itemManager.DropItem(dropItem.itemID, transform.position);
             }
         }
@@ -415,8 +554,8 @@ public class Monster : MonoBehaviour
         {
             animCtrl.SetBool("IsAiming", true);
         }
-        
-        // ÃßÀûÀ» ¸ØÃß±â À§ÇØ NavMeshAgent¸¦ ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
+
+        // ÃƒÃŸÃ€Ã»Ã€Â» Â¸Ã˜ÃƒÃŸÂ±Ã¢ Ã€Â§Ã‡Ã˜ NavMeshAgentÂ¸Â¦ ÂºÃ±ÃˆÂ°Â¼ÂºÃˆÂ­Ã‡Ã•Â´ÃÂ´Ã™.
         if (nmAgent != null && nmAgent.enabled)
         {
             nmAgent.isStopped = true;
@@ -434,33 +573,35 @@ public class Monster : MonoBehaviour
             animCtrl.SetBool("IsAiming", false);
         }
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
-        if (stat.curHp > 0)  // Ã¼·ÂÀÌ 0 ÀÌ»óÀÏ ¶§¸¸ tIdle Æ®¸®°Å¸¦ ¼³Á¤
+        if (stat.curHp > 0)  // ÃƒÂ¼Â·Ã‚Ã€ÃŒ 0 Ã€ÃŒÂ»Ã³Ã€Ã Â¶Â§Â¸Â¸ tIdle Ã†Â®Â¸Â®Â°Ã…Â¸Â¦ Â¼Â³ÃÂ¤
         {
-            
 
-                // ÃßÀûÀ» Àç°³ÇÏ±â À§ÇØ NavMeshAgent¸¦ È°¼ºÈ­ÇÕ´Ï´Ù.
-                if (nmAgent != null && nmAgent.enabled && distanceToTarget <= stat.detectionRange)
+
+            // ÃƒÃŸÃ€Ã»Ã€Â» Ã€Ã§Â°Â³Ã‡ÃÂ±Ã¢ Ã€Â§Ã‡Ã˜ NavMeshAgentÂ¸Â¦ ÃˆÂ°Â¼ÂºÃˆÂ­Ã‡Ã•Â´ÃÂ´Ã™.
+            if (nmAgent != null && nmAgent.enabled && distanceToTarget <= stat.detectionRange)
+            {
+                nmAgent.isStopped = false;
+                if (playerTransform != null && distanceToTarget > nmAgent.stoppingDistance)
                 {
-                    nmAgent.isStopped = false;
-                    if (playerTransform != null && distanceToTarget > nmAgent.stoppingDistance)
-                    {
-                        nmAgent.SetDestination(playerTransform.position);
-                        animCtrl.SetBool("IsChasing", true);
-                    }
-                    else if (playerTransform != null && distanceToTarget <= nmAgent.stoppingDistance)
-                    {
-                        Attack();
-                    }
+                    nmAgent.SetDestination(playerTransform.position);
+                    animCtrl.SetBool("IsChasing", true);
                 }
-                else
+                else if (playerTransform != null && distanceToTarget <= nmAgent.stoppingDistance)
                 {
+                    Attack();
+                }
+            }
+            else
+            {
                 animCtrl.SetTrigger("tIdle");
-                }
-            
-            
+            }
+
+
         }
-        
+
     }
+
+
 
     private void HandleRangedAttack()
     {
@@ -468,7 +609,7 @@ public class Monster : MonoBehaviour
         {
             FaceTarget();
             animCtrl.SetTrigger("tShot");
-            FireProjectile(); // ¿ø°Å¸® Åõ»çÃ¼ ¹ß»ç ¸Ş¼­µå
+            FireProjectile(); // Â¿Ã¸Â°Ã…Â¸Â® Ã…ÃµÂ»Ã§ÃƒÂ¼ Â¹ÃŸÂ»Ã§ Â¸ÃÂ¼Â­ÂµÃ¥
         }
     }
 
@@ -480,20 +621,20 @@ public class Monster : MonoBehaviour
         Vector3 targetDirection = (playerTransform.position - spawnPosition).normalized;
         Quaternion spawnRotation = Quaternion.LookRotation(targetDirection);
 
-        // Åõ»çÃ¼ ÀÎ½ºÅÏ½º »ı¼º
+        // Ã…ÃµÂ»Ã§ÃƒÂ¼ Ã€ÃÂ½ÂºÃ…ÃÂ½Âº Â»Ã½Â¼Âº
         currentProjectile = Instantiate(ProjectilePrefab, spawnPosition, spawnRotation);
 
-        // Åõ»çÃ¼¿¡ Rigidbody ÄÄÆ÷³ÍÆ®¸¦ °¡Á®¿À°Å³ª Ãß°¡
+        // Ã…ÃµÂ»Ã§ÃƒÂ¼Â¿Â¡ Rigidbody Ã„Ã„Ã†Ã·Â³ÃÃ†Â®Â¸Â¦ Â°Â¡ÃÂ®Â¿Ã€Â°Ã…Â³Âª ÃƒÃŸÂ°Â¡
         Rigidbody rb = currentProjectile.GetComponent<Rigidbody>();
         if (rb == null)
         {
             rb = currentProjectile.AddComponent<Rigidbody>();
         }
 
-        // Áß·Â ¿µÇâÀ» ¹ŞÁö ¾Êµµ·Ï ¼³Á¤
+        // ÃÃŸÂ·Ã‚ Â¿ÂµÃ‡Ã¢Ã€Â» Â¹ÃÃÃ¶ Â¾ÃŠÂµÂµÂ·Ã Â¼Â³ÃÂ¤
         rb.useGravity = false;
 
-        // Åõ»çÃ¼¿¡ ¼Óµµ Àû¿ë
+        // Ã…ÃµÂ»Ã§ÃƒÂ¼Â¿Â¡ Â¼Ã“ÂµÂµ Ã€Ã»Â¿Ã«
         rb.velocity = targetDirection * ProjectileSpeed;
 
         Projectile projectileComponent = currentProjectile.GetComponent<Projectile>();
@@ -501,18 +642,19 @@ public class Monster : MonoBehaviour
         {
             projectileComponent.SetShooter(this);
         }
-        // Åõ»çÃ¼ ÆÄ±« ·ÎÁ÷Àº ÇØ´ç Åõ»çÃ¼ ½ºÅ©¸³Æ®¿¡ ±¸Çö
+        // Ã…ÃµÂ»Ã§ÃƒÂ¼ Ã†Ã„Â±Â« Â·ÃÃÃ·Ã€Âº Ã‡Ã˜Â´Ã§ Ã…ÃµÂ»Ã§ÃƒÂ¼ Â½ÂºÃ…Â©Â¸Â³Ã†Â®Â¿Â¡ Â±Â¸Ã‡Ã¶
     }
 
 
-    // Åõ»çÃ¼°¡ ÆÄ±«µÇ¾úÀ» ¶§ È£ÃâÇÏ´Â ¸Ş¼­µå
+    // Ã…ÃµÂ»Ã§ÃƒÂ¼Â°Â¡ Ã†Ã„Â±Â«ÂµÃ‡Â¾ÃºÃ€Â» Â¶Â§ ÃˆÂ£ÃƒÃ¢Ã‡ÃÂ´Ã‚ Â¸ÃÂ¼Â­ÂµÃ¥
     public void ProjectileDestroyed()
     {
         currentProjectile = null;
     }
     public void EnableAttackMeshRenderer()
     {
-        attackMeshRenderer.enabled = true;
+        if (stat.curHp > 0)
+            attackMeshRenderer.enabled = true;
     }
     public void DisableAttackMeshRenderer()
     {
@@ -522,10 +664,11 @@ public class Monster : MonoBehaviour
 
     public void EnableAttackCollider()
     {
-        attackCollider.enabled = true;
+        if (stat.curHp > 0)
+            attackCollider.enabled = true;
     }
 
-    // °ø°İ¿ë Collider ºñÈ°¼ºÈ­
+    // Â°Ã¸Â°ÃÂ¿Ã« Collider ÂºÃ±ÃˆÂ°Â¼ÂºÃˆÂ­
     public void DisableAttackCollider()
     {
         attackCollider.enabled = false;
@@ -535,4 +678,3 @@ public class Monster : MonoBehaviour
 
 
 }
-
