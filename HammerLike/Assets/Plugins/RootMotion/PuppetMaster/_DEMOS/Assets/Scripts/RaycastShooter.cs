@@ -32,5 +32,23 @@ namespace RootMotion.Demos {
 				}
 			}
 		}
-	}
+        private void OnTriggerEnter(Collider other)
+        {
+            // Check if the object is in the layer mask
+            if (layers == (layers | (1 << other.gameObject.layer)))
+            {
+                var broadcaster = other.attachedRigidbody.GetComponent<MuscleCollisionBroadcaster>();
+
+                if (broadcaster != null)
+                {
+                    Vector3 hitDirection = (other.transform.position - transform.position).normalized;
+                    broadcaster.Hit(unpin, hitDirection * force, other.ClosestPoint(transform.position));
+
+                    blood.transform.position = other.ClosestPoint(transform.position);
+                    blood.transform.rotation = Quaternion.LookRotation(-hitDirection);
+                    blood.Emit(5);
+                }
+            }
+        }
+    }
 }

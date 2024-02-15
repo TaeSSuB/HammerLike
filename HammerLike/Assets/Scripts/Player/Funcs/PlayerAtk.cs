@@ -14,12 +14,16 @@ public class PlayerAtk : MonoBehaviour
     private void Awake()
     {
         player = GetComponent<Player>();
-        // 무기 오브젝트에 붙어있는 Collider 컴포넌트를 찾아서 할당합니다.
-        // 이 예제에서는 무기 오브젝트가 "Weapon"이라는 태그를 사용한다고 가정합니다.
         GameObject weaponObject = GameObject.FindGameObjectWithTag("WeaponCollider");
         if (weaponObject != null)
         {
             weaponCollider = weaponObject.GetComponent<Collider>();
+            WeaponColliderScript weaponScript = weaponObject.GetComponent<WeaponColliderScript>();
+            if (weaponScript == null) // WeaponColliderScript가 없다면 추가
+            {
+                weaponScript = weaponObject.AddComponent<WeaponColliderScript>();
+            }
+            weaponScript.playerAtk = this; // 현재 스크립트의 참조를 전달
         }
         else
         {
@@ -60,7 +64,7 @@ public class PlayerAtk : MonoBehaviour
 
 
     }
-    private void OnTriggerEnter(Collider other)
+    /*private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Monster")) // "Enemy"는 충돌 대상 태그, 필요에 따라 수정
         {
@@ -72,7 +76,7 @@ public class PlayerAtk : MonoBehaviour
                 enemyRb.AddForce(forceDirection.normalized * forceMagnitude, ForceMode.Impulse);
             }
         }
-    }
+    }*/
     private IEnumerator DisableWeaponColliderAfterAnimation()
     {
         // 공격 애니메이션의 길이를 가져오기 위해 현재 재생 중인 애니메이션 클립의 정보가 필요합니다.
