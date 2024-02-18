@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using Johnson;
 using UnityEngine.AI;
 using RootMotion.Dynamics; // RootMotion 라이브러리 참조 추가
+using RootMotion.Demos;
+
 public enum MonsterType
 {
     Melee,
@@ -110,6 +112,10 @@ public class Monster : MonoBehaviour
     public int debugData = 0;
     private int knockbackData = 0;
     public BehaviourPuppet puppet;
+    private int lastProcessedAttackId = -1;
+
+    public RaycastShooter raycastShooter;
+    public GameObject[] targetBones;
     private void Awake()
     {
         if (!fsm)
@@ -165,6 +171,10 @@ public class Monster : MonoBehaviour
                 animCtrl.SetBool("IsChasing", false);
                 animCtrl.SetTrigger("tIdle");
             }
+            if(Input.GetKeyDown(KeyCode.L))
+            {
+                
+            }
         }
         else
         {
@@ -178,10 +188,11 @@ public class Monster : MonoBehaviour
         }
         // 플레이어 방향 기반 라인 렌더링 업데이트
         UpdateDirectionLines();
-        /*if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K))
         {
-            ApplyKnockback(frontKnockbackDirection);
-        }*/
+            raycastShooter.IndexRay();
+        }
+        
 
     }
     void UpdateDirectionLines()
@@ -285,21 +296,35 @@ public class Monster : MonoBehaviour
         if (other.CompareTag("WeaponCollider"))
         {
             WeaponCollider weaponCollider = other.GetComponent<WeaponCollider>();
-            if (weaponCollider != null && !processedAttacks.Contains(weaponCollider.CurrentAttackId))
+            if (weaponCollider != null && lastProcessedAttackId != weaponCollider.CurrentAttackId)
             {
                 // µ¥¹ÌÁö ¹× ³Ë¹é Ã³¸®
                 PlayerAtk playerAttack = other.GetComponentInParent<PlayerAtk>();
                 if (playerAttack != null)
                 {
-                    TakeDamage(playerAttack.attackDamage);
-                    Vector3 hitPoint = other.ClosestPointOnBounds(transform.position); // 충돌 지점
+                    //TakeDamage(playerAttack.attackDamage);
+                    //raycastShooter.ShootAtBone(targetBones[0]);
+                    /*Vector3 hitPoint = other.ClosestPointOnBounds(transform.position); // 충돌 지점
                     Vector3 knockbackDirection = DetermineKnockbackDirection(hitPoint, other.transform);
-                    ApplyKnockback(knockbackDirection);
-                    processedAttacks.Add(weaponCollider.CurrentAttackId);
+                    ApplyKnockback(knockbackDirection);*/
+                    //lastProcessedAttackId = weaponCollider.CurrentAttackId;
+                    //processedAttacks.Add(weaponCollider.CurrentAttackId);
+
+                    TakeDamage(playerAttack.attackDamage);
+                    raycastShooter.ShootAtBone(targetBones[0]);
+                    lastProcessedAttackId = weaponCollider.CurrentAttackId;
+                    weaponCollider.hasProcessedAttack = true; // 공격 처리 표시
                 }
 
             }
         }
+
+        if(other.CompareTag("KnockBackable"))
+        {
+            stat.curHp = 0;
+            Die();
+        }
+
         if (other.gameObject.CompareTag("KnockBackable") && isKnockedBack && canTakeKnockBackDamage)
         {
             TakeDamage(10f); // KnockBackDamage

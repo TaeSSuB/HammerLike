@@ -40,6 +40,13 @@ public class MeshDestroy : MonoBehaviour
         DestroyMesh();
 
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        /*if(other.tag =="Skeleton_Prisoner")
+        {
+            DestroyMesh();
+        }*/
+    }
 
 
     public void DestroyMesh()
@@ -105,7 +112,7 @@ public class MeshDestroy : MonoBehaviour
             // 생성된 각 파편을 10초 후에 파괴합니다.
             Destroy(parts[i].GameObject, deathTime);
         }
-
+        Destroy(gameObject);
         // 부모 오브젝트의 BoxCollider를 파괴합니다.
         if (transform.parent != null)
         {

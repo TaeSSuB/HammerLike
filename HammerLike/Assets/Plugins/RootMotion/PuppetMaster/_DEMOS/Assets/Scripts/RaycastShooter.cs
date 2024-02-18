@@ -1,38 +1,44 @@
 ﻿using UnityEngine;
 using System.Collections;
 using RootMotion.Dynamics;
+using System.Threading;
 
 namespace RootMotion.Demos {
 
-	public class RaycastShooter : MonoBehaviour {
+    public class RaycastShooter : MonoBehaviour
+    {
 
-		public LayerMask layers;
-		public float unpin = 10f;
-		public float force = 10f;
-		public ParticleSystem blood;
+        public LayerMask layers;
+        public float unpin = 10f;
+        public float force = 10f;
+        //public ParticleSystem blood;
         public GameObject[] targetBones;
-
+        public int indexRay=0;
         // Update is called once per frame
-        void Update () {
-			if (Input.GetMouseButtonDown(0)) {
-				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        void Update()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-				// Raycast to find a ragdoll collider
-				RaycastHit hit = new RaycastHit();
-				if (Physics.Raycast(ray, out hit, 100f, layers)) {
-					var broadcaster = hit.collider.attachedRigidbody.GetComponent<MuscleCollisionBroadcaster>();
+                // Raycast to find a ragdoll collider
+                RaycastHit hit = new RaycastHit();
+                if (Physics.Raycast(ray, out hit, 100f, layers))
+                {
+                    var broadcaster = hit.collider.attachedRigidbody.GetComponent<MuscleCollisionBroadcaster>();
 
-					if (broadcaster != null) {
-						broadcaster.Hit(unpin, ray.direction * force, hit.point);
-                        
+                    if (broadcaster != null)
+                    {
+                        broadcaster.Hit(unpin, ray.direction * force, hit.point);
 
-						blood.transform.position = hit.point;
-						blood.transform.rotation = Quaternion.LookRotation(-ray.direction);
-						blood.Emit(5);
-					}
-				}
-			}
-            if(Input.GetKeyDown(KeyCode.P))
+
+                        //blood.transform.position = hit.point;
+                        //blood.transform.rotation = Quaternion.LookRotation(-ray.direction);
+                        //blood.Emit(5);
+                    }
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.P))
             {
                 if (targetBones.Length > 0)
                 {
@@ -72,29 +78,37 @@ namespace RootMotion.Demos {
                     blood.Emit(5);
                 }
             }*/
-            ShootAtBone(targetBones[0]);
+            //ShootAtBone(targetBones[0]);
         }
 
-        void ShootAtBone(GameObject targetBone)
+        public void ShootAtBone(GameObject targetBone)
         {
-            // Calculate a ray from this object to the target bone
-            Vector3 direction = (targetBone.transform.position - transform.position).normalized;
-            Ray ray = new Ray(transform.position, direction);
-            RaycastHit hit;
+            
+                Vector3 direction = (targetBone.transform.position - transform.position).normalized;
+                Ray ray = new Ray(transform.position, direction);
+                RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, 100f, layers))
-            {
-                var broadcaster = hit.collider.attachedRigidbody.GetComponent<MuscleCollisionBroadcaster>();
-
-                if (broadcaster != null)
+                if (Physics.Raycast(ray, out hit, 100f, layers))
                 {
-                    broadcaster.Hit(unpin, direction * force, hit.point);
+                    var broadcaster = hit.collider.attachedRigidbody.GetComponent<MuscleCollisionBroadcaster>();
 
-                    blood.transform.position = hit.point;
-                    blood.transform.rotation = Quaternion.LookRotation(-direction);
-                    blood.Emit(5);
+                    if (broadcaster != null)
+                    {
+                        broadcaster.Hit(unpin, direction * force, hit.point);
+                        indexRay++;
+                        //blood.transform.position = hit.point;
+                        //blood.transform.rotation = Quaternion.LookRotation(-direction);
+                        //blood.Emit(5);
+                    }
                 }
-            }
+            
         }
+        public void IndexRay()
+        {
+            Debug.Log(indexRay);
+        }
+
+
+
     }
 }
