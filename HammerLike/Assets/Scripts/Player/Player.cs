@@ -184,17 +184,17 @@ public class Player : MonoBehaviour
             //stat = ES3.Load<PlayerStat>("playerStat");
         }
         
-        lookDirectionRenderer.startColor = Color.red;
-        lookDirectionRenderer.endColor = Color.red;
-        lookDirectionRenderer.startWidth = 0.05f;
-        lookDirectionRenderer.endWidth = 0.05f;
-
-        hammerDirectionRenderer.startColor = Color.green;
-        hammerDirectionRenderer.endColor = Color.green;
-        hammerDirectionRenderer.startWidth = 0.05f;
-        hammerDirectionRenderer.endWidth = 0.05f;
-
-        hammerDirection = transform.forward;
+        //lookDirectionRenderer.startColor = Color.red;
+        //lookDirectionRenderer.endColor = Color.red;
+        //lookDirectionRenderer.startWidth = 0.05f;
+        //lookDirectionRenderer.endWidth = 0.05f;
+        //
+        //hammerDirectionRenderer.startColor = Color.green;
+        //hammerDirectionRenderer.endColor = Color.green;
+        //hammerDirectionRenderer.startWidth = 0.05f;
+        //hammerDirectionRenderer.endWidth = 0.05f;
+        //
+        //hammerDirection = transform.forward;
 
         previousLookDirection = transform.forward;
         currentHammerAngle = 0f;

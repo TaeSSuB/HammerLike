@@ -15,7 +15,7 @@ public class DeltaTimeManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.H))
+        if(Input.GetKeyUp(KeyCode.C))
         {
             SlowDownGame();
         }
