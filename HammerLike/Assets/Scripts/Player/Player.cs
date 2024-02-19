@@ -11,7 +11,7 @@ using MoreMountains.Tools;
 using PixelCrushers.DialogueSystem.Demo;
 using TMPro;
 using HutongGames.PlayMaker.Actions;
-using Opsive.Shared.Editor.UIElements;
+//using Opsive.Shared.Editor.UIElements;
 
 //FSM은 StateController로 관리
 //Idle <-> Envasion <-> Death 정도로 관리 할 예정.

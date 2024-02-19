@@ -11,6 +11,6 @@ public class SceneLoader : MonoBehaviour
     public void ChangeScene()
     {
         // sceneToLoad에 설정된 씬으로 이동합니다.
-        SceneManager.LoadScene(sceneToLoad);
+        LoadingSceneController.LoadScene(sceneToLoad);
     }
 }

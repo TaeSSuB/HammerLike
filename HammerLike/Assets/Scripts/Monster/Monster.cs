@@ -153,9 +153,9 @@ public class Monster : MonoBehaviour
             lineRenderer.widthMultiplier = 0.05f; // ¼±ÀÇ ³Êºñ
         }
 
-        //leftLineRenderer = CreateLineRenderer(Color.red);
-        //frontLineRenderer = CreateLineRenderer(Color.green);
-        //rightLineRenderer = CreateLineRenderer(Color.blue);
+        leftLineRenderer = CreateLineRenderer(Color.red);
+        frontLineRenderer = CreateLineRenderer(Color.green);
+        rightLineRenderer = CreateLineRenderer(Color.blue);
     }
 
     void Update()
