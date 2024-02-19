@@ -92,9 +92,10 @@ public class Monster : MonoBehaviour
     public Transform hpBoneTr;
     private HashSet<int> processedAttacks = new HashSet<int>();
 
-    private bool isKnockedBack = false;
+    public bool isKnockedBack = false;
+    public float knockbackDamage = 10f;
     private bool canTakeKnockBackDamage = true;
-
+    
     public Transform target;
     NavMeshAgent nmAgent;
     public LineRenderer lineRenderer; // LineRenderer ÂüÁ¶
@@ -116,6 +117,8 @@ public class Monster : MonoBehaviour
 
     public RaycastShooter raycastShooter;
     public GameObject[] targetBones;
+
+    private float customForce;
     private void Awake()
     {
         if (!fsm)
@@ -171,9 +174,9 @@ public class Monster : MonoBehaviour
                 animCtrl.SetBool("IsChasing", false);
                 animCtrl.SetTrigger("tIdle");
             }
-            if(Input.GetKeyDown(KeyCode.L))
+            if (Input.GetKeyDown(KeyCode.L))
             {
-                
+
             }
         }
         else
@@ -192,7 +195,7 @@ public class Monster : MonoBehaviour
         {
             raycastShooter.IndexRay();
         }
-        
+
 
     }
     void UpdateDirectionLines()
@@ -309,9 +312,26 @@ public class Monster : MonoBehaviour
                     ApplyKnockback(knockbackDirection);*/
                     //lastProcessedAttackId = weaponCollider.CurrentAttackId;
                     //processedAttacks.Add(weaponCollider.CurrentAttackId);
-
-                    TakeDamage(playerAttack.attackDamage);
-                    raycastShooter.ShootAtBone(targetBones[0]);
+                    float customDamage=0f;
+                    
+                    if (player.atk.curCharging >= 0 && player.atk.curCharging < 2)
+                    {
+                        customForce = raycastShooter.force; // 원본 크기
+                        customDamage = playerAttack.attackDamage;
+                    }
+                    else if (player.atk.curCharging >= 2 && player.atk.curCharging < 4)
+                    {
+                        customForce = raycastShooter.force * 1.5f; // 1.5배 크기
+                        customDamage = playerAttack.attackDamage*1.5f;
+                    }
+                    else // player.curCharging >= 4
+                    {
+                        customForce = raycastShooter.force * 2f; // 2배 크기
+                        customDamage = playerAttack.attackDamage*2f;
+                    }
+                    TakeDamage(customDamage);
+                    raycastShooter.ShootAtBoneWithForce(targetBones[0], customForce);
+                    //raycastShooter.ShootAtBone(targetBones[0]);
                     lastProcessedAttackId = weaponCollider.CurrentAttackId;
                     weaponCollider.hasProcessedAttack = true; // 공격 처리 표시
                 }
@@ -319,15 +339,15 @@ public class Monster : MonoBehaviour
             }
         }
 
-        if(other.CompareTag("KnockBackable"))
+        /*if(other.CompareTag("KnockBackable"))
         {
-            stat.curHp = 0;
-            Die();
-        }
+            //stat.curHp = 0;
+            //Die();
+        }*/
 
         if (other.gameObject.CompareTag("KnockBackable") && isKnockedBack && canTakeKnockBackDamage)
         {
-            TakeDamage(10f); // KnockBackDamage
+            TakeDamage(knockbackDamage); // KnockBackDamage
             canTakeKnockBackDamage = false;
             StartCoroutine(KnockBackDamageCooldown());
         }
@@ -364,7 +384,7 @@ public class Monster : MonoBehaviour
 
     private void ApplyKnockback(Vector3 direction)
     {
-        
+
 
         float knockbackIntensity = 300f; // 넉백 강도
         direction.y = 0; // Y축 방향을 0으로 설정하여 수평 넉백을 보장
@@ -429,7 +449,7 @@ public class Monster : MonoBehaviour
         {
             nmAgent.isStopped = true;
             nmAgent.enabled = false;
-            
+
         }
 
         playerTransform = null;
@@ -484,6 +504,7 @@ public class Monster : MonoBehaviour
             if (player != null)
             {
                 monsterAim.SetTarget(target); // MonsterAim ½ºÅ©¸³Æ®¿¡µµ Å¸°Ù ¼³Á¤
+                animCtrl.SetBool("IsChasing", true);
             }
         }
         else
@@ -497,7 +518,7 @@ public class Monster : MonoBehaviour
 
     void ChasePlayer()
     {
-        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking") || animCtrl.GetBool("IsAiming")) return; // Ã¼·ÂÀÌ 0 ÀÌÇÏ°Å³ª °ø°Ý ÁßÀÌ¸é Ãß°Ý ÁßÁö
+        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking") ) return; // Ã¼·ÂÀÌ 0 ÀÌÇÏ°Å³ª °ø°Ý ÁßÀÌ¸é Ãß°Ý ÁßÁö
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
 
         if (distanceToTarget <= stat.detectionRange)
@@ -546,7 +567,15 @@ public class Monster : MonoBehaviour
         else if (monsterType == MonsterType.Ranged)
         {
             FaceTarget();
+            nmAgent.isStopped=true;
+            if (currentProjectile != null)
+            {
+                animCtrl.SetBool("IsAimIdle", true);
+            }
+            else
+            {
             animCtrl.SetBool("IsAiming", true);
+            }
             HandleRangedAttack();
         }
         else
@@ -578,6 +607,7 @@ public class Monster : MonoBehaviour
         else if (monsterType == MonsterType.Ranged)
         {
             animCtrl.SetBool("IsAiming", true);
+            nmAgent.isStopped = true;
         }
 
         // ÃßÀûÀ» ¸ØÃß±â À§ÇØ NavMeshAgent¸¦ ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
@@ -595,7 +625,7 @@ public class Monster : MonoBehaviour
         }
         else if (monsterType == MonsterType.Ranged)
         {
-            animCtrl.SetBool("IsAiming", false);
+            animCtrl.SetBool("IsAimIdle", false);
         }
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
         if (stat.curHp > 0)  // Ã¼·ÂÀÌ 0 ÀÌ»óÀÏ ¶§¸¸ tIdle Æ®¸®°Å¸¦ ¼³Á¤
@@ -633,6 +663,7 @@ public class Monster : MonoBehaviour
         if (playerTransform != null && Vector3.Distance(transform.position, playerTransform.position) <= stat.attackRange)
         {
             FaceTarget();
+            if (currentProjectile != null) return;
             animCtrl.SetTrigger("tShot");
             FireProjectile(); // ¿ø°Å¸® Åõ»çÃ¼ ¹ß»ç ¸Þ¼­µå
         }
@@ -641,6 +672,10 @@ public class Monster : MonoBehaviour
     private void FireProjectile()
     {
         if (currentProjectile != null || ProjectilePrefab == null) return;
+        /*if(currentProjectile != null)
+        {
+            Destroy(currentProjectile);
+        }*/
 
         Vector3 spawnPosition = ProjectileSpawnPoint != null ? ProjectileSpawnPoint.position : transform.position;
         Vector3 targetDirection = (playerTransform.position - spawnPosition).normalized;
@@ -697,6 +732,15 @@ public class Monster : MonoBehaviour
     public void DisableAttackCollider()
     {
         attackCollider.enabled = false;
+    }
+
+    public void startKnockback()
+    {
+        isKnockedBack = true;
+    }
+    public void endKnockback()
+    {
+        isKnockedBack=false;
     }
 
 

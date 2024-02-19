@@ -1,3 +1,4 @@
+using RootMotion.Demos;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,12 +16,34 @@ public class MeshDestroy : MonoBehaviour
     public int CutCascades = 1;
     public float ExplodeForce = 0;
     private HashSet<int> processedAttacks = new HashSet<int>();
-    public Collider meshCol;
-    public Collider weaponCollider;
-    public float deathTime=1.0f;
+    //public Collider meshCol;
+    //public Collider weaponCollider;
+    public float deathTime = 1.0f;
+    public float maxHp = 50f;
+    public float curHp;
+    private int lastProcessedAttackId = -1;
+    private Collider collider;
     void Start()
     {
-
+        curHp = maxHp;
+        // player가 null인 경우 Player 이름을 가진 오브젝트에서 Player 스크립트를 찾아 할당
+        if (player == null)
+        {
+            GameObject playerObject = GameObject.Find("Player");
+            if (playerObject != null) // Player 오브젝트가 존재하는 경우
+            {
+                player = playerObject.GetComponent<Player>();
+                if (player == null) // Player 스크립트가 해당 오브젝트에 없는 경우
+                {
+                    Debug.LogError("Player 오브젝트에서 Player 스크립트를 찾을 수 없습니다.");
+                }
+            }
+            else
+            {
+                Debug.LogError("Scene 내에 Player 이름을 가진 오브젝트가 존재하지 않습니다.");
+            }
+        }
+       
     }
 
     void Update()
@@ -30,14 +53,14 @@ public class MeshDestroy : MonoBehaviour
             DestroyMesh();
         }
 
-        if (meshCol != null && weaponCollider != null && weaponCollider.enabled && meshCol.bounds.Intersects(weaponCollider.bounds))
+        /*if (meshCol != null && weaponCollider != null && weaponCollider.enabled && meshCol.bounds.Intersects(weaponCollider.bounds))
         {
             DestroyMesh();
-        }
+        }*/
     }
     private void OnCollisionEnter(Collision other)
     {
-        DestroyMesh();
+        //DestroyMesh();
 
     }
     private void OnTriggerEnter(Collider other)
@@ -46,8 +69,71 @@ public class MeshDestroy : MonoBehaviour
         {
             DestroyMesh();
         }*/
+
+        if (other.CompareTag("WeaponCollider"))
+        {
+            WeaponCollider weaponCollider = other.GetComponent<WeaponCollider>();
+            if (weaponCollider != null && lastProcessedAttackId != weaponCollider.CurrentAttackId)
+            {
+                // ??¹??? ¹× ³?¹? ?³¸®
+                PlayerAtk playerAttack = other.GetComponentInParent<PlayerAtk>();
+                if (playerAttack != null)
+                {
+                    //TakeDamage(playerAttack.attackDamage);
+                    //raycastShooter.ShootAtBone(targetBones[0]);
+                    /*Vector3 hitPoint = other.ClosestPointOnBounds(transform.position); // 충돌 지점
+                    Vector3 knockbackDirection = DetermineKnockbackDirection(hitPoint, other.transform);
+                    ApplyKnockback(knockbackDirection);*/
+                    //lastProcessedAttackId = weaponCollider.CurrentAttackId;
+                    //processedAttacks.Add(weaponCollider.CurrentAttackId);
+                    float customDamage = 0f;
+
+                    if (player.atk.curCharging >= 0 && player.atk.curCharging < 2)
+                    {
+                        customDamage = playerAttack.attackDamage;
+                    }
+                    else if (player.atk.curCharging >= 2 && player.atk.curCharging < 4)
+                    {
+                        customDamage = playerAttack.attackDamage * 1.5f;
+                    }
+                    else // player.curCharging >= 4
+                    {
+                        customDamage = playerAttack.attackDamage * 2f;
+                    }
+                    TakeDamage(customDamage);
+                    //raycastShooter.ShootAtBoneWithForce(targetBones[0], customForce);
+                    //raycastShooter.ShootAtBone(targetBones[0]);
+                    lastProcessedAttackId = weaponCollider.CurrentAttackId;
+                    weaponCollider.hasProcessedAttack = true; // 공격 처리 표시
+                }
+
+            }
+        }
+        if(other.CompareTag("Skeleton_Prisoner") || other.CompareTag("Skeleton_Archer"))
+        {
+            Monster monster = other.GetComponent<Monster>();
+            if(monster.isKnockedBack)
+            {
+                TakeDamage(monster.knockbackDamage);
+            }
+        }
     }
 
+    private void TakeDamage(float damage)
+    {
+        if (curHp <= 0) return; // ??¹? ??¸??? °æ¿? ??¹???¸? ¹Þ?? ¾??½
+
+        if (curHp > 0)  // ¸?½º??°¡ ??¾Æ???? ¶§¸¸ ??°? ?³¸®
+        {
+            curHp -= damage;
+            
+
+            if (curHp <= 0)
+            {
+                DestroyMesh();
+            }
+        }
+    }
 
     public void DestroyMesh()
     {

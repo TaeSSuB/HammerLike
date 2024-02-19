@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class MonsterAtk : MonoBehaviour
 {
-    private Monster monster; // Monster 컴포넌트에 대한 참조
+    public Monster monster; // Monster 컴포넌트에 대한 참조
 
     void Awake()
     {
-        monster = GetComponentInParent<Monster>(); // Monster 컴포넌트를 찾아 할당
+        //monster = GetComponentInParent<Monster>(); // Monster 컴포넌트를 찾아 할당
         if (monster == null)
         {
             Debug.LogError("Monster component not found in parent");

@@ -151,6 +151,7 @@ public class Player : MonoBehaviour
 
     public float chargeStartTime; // Charge 시작 시간
     private SaveDataManager saveDataManager;
+    public CameraShake camerashake;
     private void Awake()
     {
         if (!fsm)
@@ -207,6 +208,11 @@ public class Player : MonoBehaviour
             isRotationEnabled = !isRotationEnabled;
         }
         UpdateHealthBar();
+
+        if (Input.GetKey(KeyCode.L))
+        {
+            camerashake.ShakeCamera();
+        }
 
         Vector3 currentLookDirection = transform.forward;
         float currentYRotation = transform.eulerAngles.y;
@@ -367,6 +373,7 @@ public class Player : MonoBehaviour
         {
             stat.curHp -= damage;
             UpdateHealthBar();
+            camerashake.ShakeCamera();
         }
 
         if (stat.curHp <= 0)

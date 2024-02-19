@@ -103,6 +103,28 @@ namespace RootMotion.Demos {
                 }
             
         }
+        public void ShootAtBoneWithForce(GameObject targetBone, float customForce)
+        {
+
+            Vector3 direction = (targetBone.transform.position - transform.position).normalized;
+            Ray ray = new Ray(transform.position, direction);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, 100f, layers))
+            {
+                var broadcaster = hit.collider.attachedRigidbody.GetComponent<MuscleCollisionBroadcaster>();
+
+                if (broadcaster != null)
+                {
+                    broadcaster.Hit(unpin, direction * customForce, hit.point);
+                    indexRay++;
+                    //blood.transform.position = hit.point;
+                    //blood.transform.rotation = Quaternion.LookRotation(-direction);
+                    //blood.Emit(5);
+                }
+            }
+
+        }
         public void IndexRay()
         {
             Debug.Log(indexRay);
