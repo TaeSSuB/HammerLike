@@ -47,6 +47,11 @@ public class ItemManager : MonoBehaviour
 
     public void GiveItemToPlayer(int itemId)
     {
+        if(itemId==0)
+        {
+            SoundManager soundManager = SoundManager.Instance;
+            soundManager.PlaySFX(soundManager.audioClip[1]);
+        }
         player.inventory.AddItem(itemId);
     }
 

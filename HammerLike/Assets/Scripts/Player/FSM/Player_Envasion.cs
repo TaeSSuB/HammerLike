@@ -33,21 +33,22 @@ public class Player_Envasion : cState
     public override void EnterState()
     {
         base.EnterState();
+        player.isEvading = true; // 회피 상태 시작
 
         Debug.Log("Enter Evasion");
 
         player.animCtrl.SetLayerWeight(1, 0f);
 
-        // 이동 중이면 마지막 이동 방향을 사용, 아니면 마우스 커서 방향을 사용
-        Vector3 targetDirection;
-        if (player.move.Move(player.stat.walkSpd, player.rewiredPlayer)) // 현재 이동하고 있는지 아닌지
+        // 이동 중이면 마지막 이동 방향을 사용, 아니면 플레이어가 현재 바라보는 방향을 사용
+        Vector3 targetDirection = Vector3.zero;
+        if (player.move.Move(player.stat.walkSpd, player.rewiredPlayer)) // 현재 이동하고 있는지 확인
         {
             targetDirection = player.move.lastMoveDir.normalized;
         }
         else
         {
-            Vector3 directionToMouse = player.lastMousePosition - player.transform.position;
-            targetDirection = directionToMouse.normalized;
+            // 플레이어가 이동 중이 아닐 경우, 현재 플레이어가 바라보는 방향을 회피 방향으로 사용
+            targetDirection = player.transform.forward.normalized;
         }
 
         if (targetDirection != Vector3.zero)
@@ -62,6 +63,7 @@ public class Player_Envasion : cState
 
         rollTimer = rollDuration;
     }
+
 
 
 
@@ -115,6 +117,7 @@ public class Player_Envasion : cState
 
 	public override void ExitState()
 	{
-		base.ExitState();
+        player.isEvading = false;
+        base.ExitState();
 	}
 }

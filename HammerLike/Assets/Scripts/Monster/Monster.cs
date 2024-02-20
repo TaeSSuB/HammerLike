@@ -117,7 +117,7 @@ public class Monster : MonoBehaviour
 
     public RaycastShooter raycastShooter;
     public GameObject[] targetBones;
-
+    public ChangeMaterial[] changeMaterials;
     private float customForce;
     private void Awake()
     {
@@ -273,6 +273,8 @@ public class Monster : MonoBehaviour
     private void LateUpdate()
     {
         Vector3 lookDir = monsterAim.Aiming();
+        if(stat.curHp>0)
+        SyncMeshWithPuppetMaster();
         //Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Forward, lookDir, Vector3.zero);
     }
 
@@ -338,24 +340,28 @@ public class Monster : MonoBehaviour
                     
                     if (player.atk.curCharging >= 0 && player.atk.curCharging < 2)
                     {
-                        customForce = raycastShooter.force; // 원본 크기
+                        //customForce = raycastShooter.force; // 원본 크기
                         customDamage = playerAttack.attackDamage;
                     }
                     else if (player.atk.curCharging >= 2 && player.atk.curCharging < 4)
                     {
-                        customForce = raycastShooter.force * 1.5f; // 1.5배 크기
+                        //customForce = raycastShooter.force * 1.5f; // 1.5배 크기
                         customDamage = playerAttack.attackDamage*1.5f;
                     }
                     else // player.curCharging >= 4
                     {
-                        customForce = raycastShooter.force * 2f; // 2배 크기
+                        //customForce = raycastShooter.force * 2f; // 2배 크기
                         customDamage = playerAttack.attackDamage*2f;
                     }
+                    
+                    puppet.puppetMaster.pinWeight = 0f;
+                    ApplyKnockback(player.transform.forward);
                     TakeDamage(customDamage);
-                    raycastShooter.ShootAtBoneWithForce(targetBones[0], customForce);
+                    //raycastShooter.ShootAtBoneWithForce(targetBones[0], customForce);
                     //raycastShooter.ShootAtBone(targetBones[0]);
                     lastProcessedAttackId = weaponCollider.CurrentAttackId;
                     weaponCollider.hasProcessedAttack = true; // 공격 처리 표시
+                    
                 }
 
             }
@@ -407,10 +413,10 @@ public class Monster : MonoBehaviour
     private void ApplyKnockback(Vector3 direction)
     {
 
-
-        float knockbackIntensity = 300f; // 넉백 강도
+        Debug.Log(direction);
+           float knockbackIntensity = 60f; // 넉백 강도
         direction.y = 0; // Y축 방향을 0으로 설정하여 수평 넉백을 보장
-        GetComponent<Rigidbody>().AddForce(direction.normalized * knockbackIntensity, ForceMode.Impulse);
+        GetComponent<Rigidbody>().AddForce(direction.normalized * knockbackIntensity, ForceMode.VelocityChange);
         isKnockedBack = true;
         StartCoroutine(KnockBackDuration());
         knockbackData++;
@@ -426,6 +432,23 @@ public class Monster : MonoBehaviour
     private void TakeDamage(float damage)
     {
         if (stat.curHp <= 0) return; // ÀÌ¹Ì »ç¸ÁÇÑ °æ¿ì µ¥¹ÌÁö¸¦ ¹ÞÁö ¾ÊÀ½
+        SoundManager soundManager = SoundManager.Instance;
+        soundManager.PlaySFX(soundManager.audioClip[3]);
+        
+        if(monsterType==MonsterType.Melee)
+        {
+            for(int i=0; i<1; i++)
+            {
+                changeMaterials[i].OnHit();
+            }
+        }
+        else if (monsterType == MonsterType.Ranged)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                changeMaterials[i].OnHit();
+            }
+        }
 
         if (stat.curHp > 0)  // ¸ó½ºÅÍ°¡ »ì¾ÆÀÖÀ» ¶§¸¸ ÇÇ°Ý Ã³¸®
         {
@@ -454,8 +477,9 @@ public class Monster : MonoBehaviour
 
     private IEnumerator KnockBackDuration()
     {
-        yield return new WaitForSeconds(1f); // ³Ë¹é Áö¼Ó ½Ã°£
+        yield return new WaitForSeconds(0.2f); // ³Ë¹é Áö¼Ó ½Ã°£
         isKnockedBack = false;
+        puppet.puppetMaster.pinWeight = 1;
     }
 
     private void Die()
@@ -473,7 +497,8 @@ public class Monster : MonoBehaviour
             nmAgent.enabled = false;
 
         }
-
+        SoundManager soundManager = SoundManager.Instance;
+        soundManager.PlaySFX(soundManager.audioClip[2]);
         playerTransform = null;
         DropItems();
         DisconnectMusclesRecursive();
@@ -489,6 +514,8 @@ public class Monster : MonoBehaviour
             for (int i = 0; i < puppet.puppetMaster.muscles.Length; i++)
             {
                 puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Explode);
+                CapsuleCollider cap = GetComponent<CapsuleCollider>();
+                cap.GetComponent<CapsuleCollider>().isTrigger = true;
             }
         }
     }
@@ -527,6 +554,8 @@ public class Monster : MonoBehaviour
             {
                 monsterAim.SetTarget(target); // MonsterAim ½ºÅ©¸³Æ®¿¡µµ Å¸°Ù ¼³Á¤
                 animCtrl.SetBool("IsChasing", true);
+                SoundManager soundManager = SoundManager.Instance;
+                //soundManager.PlaySFX(soundManager.audioClip[4]);
             }
         }
         else
@@ -574,7 +603,24 @@ public class Monster : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * stat.legHomingSpd);
     }
 
+    private void SyncMeshWithPuppetMaster()
+    {
+        if (puppet != null && puppet.isActiveAndEnabled)
+        {
+            // 각 뼈대에 대해 Mesh의 위치와 회전을 PuppetMaster의 상태에 맞춥니다.
+            foreach (var muscle in puppet.puppetMaster.muscles)
+            {
+                var boneTransform = muscle.transform;
+                var targetTransform = muscle.target;
 
+                if (boneTransform != null && targetTransform != null)
+                {
+                    boneTransform.position = targetTransform.position;
+                    boneTransform.rotation = targetTransform.rotation;
+                }
+            }
+        }
+    }
 
     void Attack()
     {
@@ -585,6 +631,8 @@ public class Monster : MonoBehaviour
             FaceTarget();
             StartAttack();
             animCtrl.SetTrigger("tAttack");
+            SoundManager soundManager = SoundManager.Instance;
+            soundManager.PlaySFX(soundManager.audioClip[6]);
         }
         else if (monsterType == MonsterType.Ranged)
         {
@@ -614,7 +662,11 @@ public class Monster : MonoBehaviour
         {
             if (UnityEngine.Random.Range(0f, 100f) < dropItem.dropChance)
             {
-                // ¾ÆÀÌÅÛ »ý¼º ¹× µå¶ø
+                if(dropItem.itemID == 0) 
+                {
+                   SoundManager soundManager = SoundManager.Instance;
+                   soundManager.PlaySFX(soundManager.audioClip[0]);
+                }
                 itemManager.DropItem(dropItem.itemID, transform.position);
             }
         }
@@ -687,6 +739,8 @@ public class Monster : MonoBehaviour
             FaceTarget();
             if (currentProjectile != null) return;
             animCtrl.SetTrigger("tShot");
+            SoundManager soundManager = SoundManager.Instance;
+            soundManager.PlaySFX(soundManager.audioClip[5]);
             FireProjectile(); // ¿ø°Å¸® Åõ»çÃ¼ ¹ß»ç ¸Þ¼­µå
         }
     }
