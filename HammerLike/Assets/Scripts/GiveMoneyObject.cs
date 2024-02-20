@@ -4,21 +4,46 @@ using UnityEngine;
 
 public class GiveMoneyObject : MonoBehaviour
 {
-    public ItemManager item;
-    public MeshDestroy mesh;
+    private ItemManager item;
+    private MeshDestroy mesh;
     private bool isGiven = false;
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(!isGiven&&mesh.curHp<=0)
+        GameObject itemDB = GameObject.Find("ItemDB");
+        if (itemDB != null)
         {
-            item.DropItem(0, transform.position);
-            isGiven = true;
+            item = itemDB.GetComponent<ItemManager>();
+            if (item == null)
+            {
+                Debug.LogWarning("ItemManager component not found on 'itemDB' GameObject.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("GameObject 'itemDB' not found in the scene.");
+        }
+
+        mesh = GetComponent<MeshDestroy>();
+        if (mesh == null)
+        {
+            Debug.LogWarning("MeshDestroy component not found on the GameObject.");
         }
     }
+
+    void Update()
+    {
+        if (!isGiven && mesh != null && mesh.curHp <= 0)
+        {
+            if (item != null)
+            {
+                item.DropItem(0, transform.position);
+                isGiven = true;
+            }
+            else
+            {
+                Debug.LogWarning("Cannot drop item because ItemManager is null.");
+            }
+        }
+    }
+
 }

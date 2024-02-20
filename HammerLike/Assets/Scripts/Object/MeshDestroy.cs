@@ -23,8 +23,11 @@ public class MeshDestroy : MonoBehaviour
     public float curHp;
     private int lastProcessedAttackId = -1;
     private Collider collider;
+    private ItemManager itemManager;
     void Start()
     {
+        GameObject itemDB = GameObject.Find("ItemDB");
+        itemManager = itemDB.GetComponent<ItemManager>();
         curHp = maxHp;
         // player가 null인 경우 Player 이름을 가진 오브젝트에서 Player 스크립트를 찾아 할당
         if (player == null)
@@ -141,7 +144,8 @@ public class MeshDestroy : MonoBehaviour
             return;
 
         hasBeenDestroyed = true;
-
+        if (CompareTag("Pot"))
+            itemManager.DropItem(0,transform.position);
         // 여기서 null 체크를 추가합니다.
         if (GetComponent<MeshFilter>() == null || player == null)
         {

@@ -28,14 +28,18 @@ public class Projectile : MonoBehaviour
             // 부모 오브젝트에 있는 Player 컴포넌트에 접근
             Player playerComponent = other.GetComponentInParent<Player>();
 
-            if (playerComponent != null)
+            if (playerComponent != null&&!playerComponent.isEvading)
             {
                 // 플레이어에게 데미지를 주는 로직
                 playerComponent.TakeDamage(shooter.stat.attackPoint);
+                 
+                    SoundManager soundManager = SoundManager.Instance;
+                    soundManager.PlaySFX(soundManager.audioClip[8]);
+                
+                // 투사체 파괴
+                DestroyProjectile();
             }
 
-            // 투사체 파괴
-            DestroyProjectile();
         }
     }
 

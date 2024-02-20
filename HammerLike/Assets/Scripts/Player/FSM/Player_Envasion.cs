@@ -20,7 +20,7 @@ public class Player_Envasion : cState
 								   //이거 대신 player에서 장착중인 무기 타입 받아오셔도 될듯
 
 	public string animName;
-
+    private Vector3 evasionDirection; // 클래스 레벨 변수로 선언
     public float rollSpeed = 5f; // 매 초 구르기 속도
     public float rollDuration = 1f; // 구르기 지속 시간
     private float rollTimer; // 구르기 타이머
@@ -62,6 +62,7 @@ public class Player_Envasion : cState
         animName = Funcs.GetEnumName<eEnvasionType>((int)tempType);
 
         rollTimer = rollDuration;
+        evasionDirection = targetDirection;
     }
 
 
@@ -91,9 +92,9 @@ public class Player_Envasion : cState
                 adjustedSpeed *= 1.4f;
             }
 
-            player.transform.Translate(rollDirection * adjustedSpeed * Time.deltaTime, Space.World);
-
+            player.transform.Translate(evasionDirection * adjustedSpeed * Time.deltaTime, Space.World);
             rollTimer -= Time.deltaTime;
+    
         }
 
         if (Funcs.IsAnimationAlmostFinish(player.animCtrl, animName) || rollTimer <= 0)

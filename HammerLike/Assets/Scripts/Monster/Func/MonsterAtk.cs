@@ -29,6 +29,12 @@ public class MonsterAtk : MonoBehaviour
             if (player != null&&!player.isEvading)
             {
                 player.TakeDamage(monster.stat.attackPoint);
+                if(monster.monsterType==MonsterType.Melee)
+                {
+                    SoundManager soundManager = SoundManager.Instance;
+                    soundManager.PlaySFX(soundManager.audioClip[7]);
+                }
+               
             }
         }
     }

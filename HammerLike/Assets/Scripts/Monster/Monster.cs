@@ -119,6 +119,7 @@ public class Monster : MonoBehaviour
     public GameObject[] targetBones;
     public ChangeMaterial[] changeMaterials;
     private float customForce;
+    private bool canShot = true;
     private void Awake()
     {
         if (!fsm)
@@ -175,9 +176,9 @@ public class Monster : MonoBehaviour
             }
         }
 
-        leftLineRenderer = CreateLineRenderer(Color.red);
-        frontLineRenderer = CreateLineRenderer(Color.green);
-        rightLineRenderer = CreateLineRenderer(Color.blue);
+        //leftLineRenderer = CreateLineRenderer(Color.red);
+        //frontLineRenderer = CreateLineRenderer(Color.green);
+        //rightLineRenderer = CreateLineRenderer(Color.blue);
     }
 
     void Update()
@@ -356,7 +357,7 @@ public class Monster : MonoBehaviour
                     
                     puppet.puppetMaster.pinWeight = 0f;
                     ApplyKnockback(player.transform.forward);
-                    TakeDamage(customDamage);
+                    TakeDamage(customDamage);                
                     //raycastShooter.ShootAtBoneWithForce(targetBones[0], customForce);
                     //raycastShooter.ShootAtBone(targetBones[0]);
                     lastProcessedAttackId = weaponCollider.CurrentAttackId;
@@ -434,8 +435,18 @@ public class Monster : MonoBehaviour
         if (stat.curHp <= 0) return; // ÀÌ¹Ì »ç¸ÁÇÑ °æ¿ì µ¥¹ÌÁö¸¦ ¹ÞÁö ¾ÊÀ½
         SoundManager soundManager = SoundManager.Instance;
         soundManager.PlaySFX(soundManager.audioClip[3]);
-        
-        if(monsterType==MonsterType.Melee)
+        if (attackCollider.enabled)
+        {
+            attackCollider.enabled = false;
+        }
+
+        if(attackMeshRenderer.enabled)
+        {
+            attackMeshRenderer.enabled = false;
+
+        }
+
+        if (monsterType==MonsterType.Melee)
         {
             for(int i=0; i<1; i++)
             {
@@ -737,12 +748,20 @@ public class Monster : MonoBehaviour
         if (playerTransform != null && Vector3.Distance(transform.position, playerTransform.position) <= stat.attackRange)
         {
             FaceTarget();
-            if (currentProjectile != null) return;
+            if (currentProjectile != null || !canShot) return;
             animCtrl.SetTrigger("tShot");
             SoundManager soundManager = SoundManager.Instance;
             soundManager.PlaySFX(soundManager.audioClip[5]);
             FireProjectile(); // ¿ø°Å¸® Åõ»çÃ¼ ¹ß»ç ¸Þ¼­µå
+            StartCoroutine(ShotTime());
         }
+    }
+
+    private IEnumerator ShotTime()
+    {
+        canShot = false;
+        yield return new WaitForSeconds(6f); // ³Ë¹é µ¥¹ÌÁö Äð´Ù¿î
+        canShot = true;
     }
 
     private void FireProjectile()
