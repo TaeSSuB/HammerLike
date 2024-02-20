@@ -9,7 +9,7 @@ public class LoadingSceneController : MonoBehaviour
     static string nextScene;
 
     [SerializeField]
-    Image progressBar;
+    Slider progressBar;
 
     public static void LoadScene(string sceneName)
     {
@@ -28,21 +28,21 @@ public class LoadingSceneController : MonoBehaviour
         op.allowSceneActivation = false;
 
         float timer = 0f;
-        while(!op.isDone)
+        while (!op.isDone)
         {
             yield return null;
 
-            if(op.progress < 0.9f)
+            if (op.progress < 0.9f)
             {
-                progressBar.fillAmount = op.progress;
+                progressBar.value = op.progress;
             }
             else
             {
                 timer += Time.unscaledDeltaTime;
-                progressBar.fillAmount = Mathf.Lerp(0.9f, 1f, timer);
-                if(progressBar.fillAmount>=1f)
+                progressBar.value = Mathf.Lerp(0.9f, 1f, timer / 3f); // 3초 동안 부드럽게 채우기
+                if (timer > 3f) // 최소 3초 대기
                 {
-                    op.allowSceneActivation=true;
+                    op.allowSceneActivation = true;
                     yield break;
                 }
             }
