@@ -148,10 +148,11 @@ public class Player : MonoBehaviour
     //[Tooltip("Temp Test")]
     //[Space(10f)]
     //public Inventory inven;
-
+    public bool isEvading = false;
     public float chargeStartTime; // Charge 시작 시간
     private SaveDataManager saveDataManager;
     public CameraShake camerashake;
+    public ChangeMaterial[] changeMaterials;
     private void Awake()
     {
         if (!fsm)
@@ -374,6 +375,10 @@ public class Player : MonoBehaviour
             stat.curHp -= damage;
             UpdateHealthBar();
             camerashake.ShakeCamera();
+            for (int i = 0; i < 3; i++)
+            {
+                changeMaterials[i].OnHit();
+            }
         }
 
         if (stat.curHp <= 0)

@@ -7,6 +7,7 @@ public class SoundManager : MonoBehaviour
 
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private List<AudioSource> sfxSources = new List<AudioSource>();
+    public AudioClip[] audioClip;
 
     private float bgmVolume = 1f;
     private float sfxVolume = 1f;

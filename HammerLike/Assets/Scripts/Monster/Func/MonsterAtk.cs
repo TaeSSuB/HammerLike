@@ -26,7 +26,7 @@ public class MonsterAtk : MonoBehaviour
         if (other.gameObject.CompareTag("Player") && monster.attackCollider.enabled)
         {
             Player player = monster.Player; // getter를 사용하여 player에 접근
-            if (player != null)
+            if (player != null&&!player.isEvading)
             {
                 player.TakeDamage(monster.stat.attackPoint);
             }
