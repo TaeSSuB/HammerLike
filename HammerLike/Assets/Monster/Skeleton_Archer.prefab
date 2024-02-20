@@ -1399,6 +1399,7 @@ GameObject:
   - component: {fileID: 3936982727965330030}
   - component: {fileID: 3936982727965330018}
   - component: {fileID: 3936982727965330031}
+  - component: {fileID: 2689656878203894878}
   m_Layer: 8
   m_Name: Skeleton_Archer
   m_TagString: Skeleton_Archer
@@ -1420,6 +1421,7 @@ Transform:
   m_Children:
   - {fileID: 3936982728376849397}
   - {fileID: 8284816798692467145}
+  - {fileID: 3936982729173520330}
   - {fileID: 1374669854067466391}
   m_Father: {fileID: 2576583825903048189}
   m_RootOrder: 0
@@ -1620,6 +1622,255 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ada3c5b7b78662b429904c2607e24121, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2689656878203894878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3936982727965330027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fe91dc294731a9428c0941ea7579110, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  complexMaskingMode: 0
+  drawingMode: 1
+  outlineLayer: 0
+  outlineTargets:
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982729610083518}
+    SubmeshIndex: 0
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982729200540684}
+    SubmeshIndex: 0
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982729200540684}
+    SubmeshIndex: 1
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982729200540684}
+    SubmeshIndex: 2
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982729082113265}
+    SubmeshIndex: 0
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982729158780066}
+    SubmeshIndex: 0
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982729216276177}
+    SubmeshIndex: 0
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982728629655823}
+    SubmeshIndex: 0
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982728629655823}
+    SubmeshIndex: 1
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982728629655823}
+    SubmeshIndex: 2
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982728629655823}
+    SubmeshIndex: 3
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982728629655823}
+    SubmeshIndex: 4
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 0
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 3936982728629655823}
+    SubmeshIndex: 5
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  renderStyle: 1
+  outlineParameters:
+    enabled: 1
+    color: {r: 0, g: 0, b: 0, a: 0.7490196}
+    dilateShift: 1
+    blurShift: 1
+    fillPass:
+      shader: {fileID: 0}
+      serializedProperties: []
+  backParameters:
+    enabled: 1
+    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    dilateShift: 1
+    blurShift: 1
+    fillPass:
+      shader: {fileID: 0}
+      serializedProperties: []
+  frontParameters:
+    enabled: 1
+    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    dilateShift: 1
+    blurShift: 1
+    fillPass:
+      shader: {fileID: 0}
+      serializedProperties: []
 --- !u!1 &3936982727988488049
 GameObject:
   m_ObjectHideFlags: 0
@@ -2492,6 +2743,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3936982728629655822}
   - component: {fileID: 3936982728629655823}
+  - component: {fileID: 2592105933307090529}
   m_Layer: 8
   m_Name: Skeleton_Quiver
   m_TagString: Untagged
@@ -2627,6 +2879,18 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.12831408, y: 0.24498284, z: -0.48464894}
     m_Extent: {x: 0.56963325, y: 0.7005501, z: 0.5343864}
   m_DirtyAABB: 0
+--- !u!114 &2592105933307090529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3936982728629655817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3936982728633864287
 GameObject:
   m_ObjectHideFlags: 0
@@ -2669,6 +2933,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3936982728666358704}
   - component: {fileID: 3936982728666358705}
+  - component: {fileID: 7590375658397873202}
   m_Layer: 8
   m_Name: Skeleton_Sword
   m_TagString: Untagged
@@ -2800,6 +3065,18 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.88605523, y: 0.47609705, z: 0.43110487}
     m_Extent: {x: 0.23247263, y: 0.24910343, z: 0.6973591}
   m_DirtyAABB: 0
+--- !u!114 &7590375658397873202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3936982728666358707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3936982728707960858
 GameObject:
   m_ObjectHideFlags: 0
@@ -4516,6 +4793,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3936982729082113264}
   - component: {fileID: 3936982729082113265}
+  - component: {fileID: 4941041096052394056}
   m_Layer: 8
   m_Name: Skeleton_Eye_Glow
   m_TagString: Untagged
@@ -4646,6 +4924,18 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0000002682209, y: 0.8541821, z: 0.034124523}
     m_Extent: {x: 0.18775104, y: 0.08269, z: 0.08268996}
   m_DirtyAABB: 0
+--- !u!114 &4941041096052394056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3936982729082113267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3936982729099843338
 GameObject:
   m_ObjectHideFlags: 0
@@ -4688,6 +4978,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3936982729158780077}
   - component: {fileID: 3936982729158780066}
+  - component: {fileID: 388484826154164085}
   m_Layer: 8
   m_Name: Skeleton_Eyes
   m_TagString: Untagged
@@ -4818,6 +5109,18 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0000002682209, y: 0.8541821, z: 0.03412451}
     m_Extent: {x: 0.16816667, y: 0.057323754, z: 0.05732383}
   m_DirtyAABB: 0
+--- !u!114 &388484826154164085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3936982729158780076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3936982729165037941
 GameObject:
   m_ObjectHideFlags: 0
@@ -4877,8 +5180,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2576583825903048189}
-  m_RootOrder: 3
+  m_Father: {fileID: 3936982727965330024}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3936982729188345807
 GameObject:
@@ -4955,6 +5258,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3936982729200540687}
   - component: {fileID: 3936982729200540684}
+  - component: {fileID: 5984178480084644140}
   m_Layer: 8
   m_Name: Skeleton_Bow
   m_TagString: Untagged
@@ -5087,6 +5391,18 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.639853, y: 0.33937025, z: -0.0013256073}
     m_Extent: {x: 0.42311308, y: 0.3077463, z: 0.7159265}
   m_DirtyAABB: 0
+--- !u!114 &5984178480084644140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3936982729200540686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3936982729204065189
 GameObject:
   m_ObjectHideFlags: 0
@@ -5129,6 +5445,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3936982729216276176}
   - component: {fileID: 3936982729216276177}
+  - component: {fileID: 5413205513886109087}
   m_Layer: 8
   m_Name: Skeleton_Hood
   m_TagString: Untagged
@@ -5259,6 +5576,18 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0024436414, y: 0.6452203, z: -0.16773993}
     m_Extent: {x: 0.3954755, y: 0.69928026, z: 0.5382659}
   m_DirtyAABB: 0
+--- !u!114 &5413205513886109087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3936982729216276179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3936982729252374920
 GameObject:
   m_ObjectHideFlags: 0
@@ -6379,6 +6708,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3936982729610083513}
   - component: {fileID: 3936982729610083518}
+  - component: {fileID: 1049760577385340317}
   m_Layer: 8
   m_Name: Skeleton
   m_TagString: Untagged
@@ -6509,6 +6839,18 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.00000044703484, y: 0.20773482, z: -0.09609093}
     m_Extent: {x: 0.9751799, y: 1.0409522, z: 0.48389202}
   m_DirtyAABB: 0
+--- !u!114 &1049760577385340317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3936982729610083512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3936982729623366264
 GameObject:
   m_ObjectHideFlags: 0
@@ -6604,7 +6946,6 @@ Transform:
   - {fileID: 3936982727965330024}
   - {fileID: 3936982727766499941}
   - {fileID: 3936982728790429296}
-  - {fileID: 3936982729173520330}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6618,7 +6959,7 @@ PrefabInstance:
     - target: {fileID: 2716011545075135056, guid: f1be4878ab4224a4b8d657aa440d1675,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2716011545075135056, guid: f1be4878ab4224a4b8d657aa440d1675,
         type: 3}
