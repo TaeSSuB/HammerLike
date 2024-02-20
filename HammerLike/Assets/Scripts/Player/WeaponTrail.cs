@@ -9,16 +9,17 @@ public class WeaponTrail : MonoBehaviour
     void Start()
     {
         trailRenderer = GetComponent<TrailRenderer>();
-        trailRenderer.enabled = false;
+        //trailRenderer.enabled = false;
     }
 
     public void EnableTrail()
     {
         trailRenderer.enabled = true;
+        trailRenderer.emitting = true;
     }
 
     public void DisableTrail()
     {
-        trailRenderer.enabled = false;
+        trailRenderer.emitting = false;
     }
 }
