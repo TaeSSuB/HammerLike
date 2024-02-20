@@ -153,6 +153,28 @@ public class Monster : MonoBehaviour
             lineRenderer.widthMultiplier = 0.05f; // ¼±ÀÇ ³Êºñ
         }
 
+        if(target==null)
+        {
+            GameObject player = GameObject.Find("Player"); // "Player"라는 이름을 가진 GameObject를 찾습니다.
+            if (player != null) // GameObject가 존재하는지 확인합니다.
+            {
+                target = player.transform; // 찾은 GameObject의 Transform 컴포넌트를 target에 할당합니다.
+            }
+            else
+            {
+                Debug.LogError("Player 오브젝트를 찾을 수 없습니다. 'Player'라는 이름의 오브젝트가 씬에 존재하는지 확인해주세요.");
+            }
+        }
+        if(raycastShooter == null)
+        {
+            GameObject playerWeapon = GameObject.Find("mixamorig:RightWeapon");
+            if(playerWeapon != null)
+            {
+                raycastShooter = playerWeapon.GetComponent<RaycastShooter>();
+                
+            }
+        }
+
         leftLineRenderer = CreateLineRenderer(Color.red);
         frontLineRenderer = CreateLineRenderer(Color.green);
         rightLineRenderer = CreateLineRenderer(Color.blue);
