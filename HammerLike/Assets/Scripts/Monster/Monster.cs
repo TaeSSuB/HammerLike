@@ -521,8 +521,6 @@ public class Monster : MonoBehaviour
     }
     private void DisconnectMusclesRecursive()
     {
-        // BehaviourPuppet 컴포넌트가 있는지 확인하고 해당 작업 수행
-
         if (puppet != null && puppet.puppetMaster != null)
         {
             // 모든 근육을 순회하며 재귀적으로 연결 해제
@@ -531,9 +529,43 @@ public class Monster : MonoBehaviour
                 puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Explode);
                 CapsuleCollider cap = GetComponent<CapsuleCollider>();
                 cap.GetComponent<CapsuleCollider>().isTrigger = true;
+                
+                StartCoroutine(FreezeRigidbodiesAfterDelay(3f)); // 1초 대기 후 실행
+                // 근육에 연결된 Rigidbody 컴포넌트를 찾아 이동 및 회전 제한 설정
+                /*Rigidbody muscleRigidbody = puppet.puppetMaster.muscles[i].rigidbody;
+                if (muscleRigidbody != null)
+                {
+                    // 모든 축에 대한 이동 및 회전을 제한
+                    muscleRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+                }*/
             }
         }
     }
+    private IEnumerator FreezeRigidbodiesAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay); // 지정된 시간(초) 동안 대기
+
+        if (puppet != null && puppet.puppetMaster != null)
+        {
+            for (int i = 0; i < puppet.puppetMaster.muscles.Length; i++)
+            {
+                Rigidbody muscleRigidbody = puppet.puppetMaster.muscles[i].rigidbody;
+                if (muscleRigidbody != null)
+                {
+                    muscleRigidbody.isKinematic = true; // Rigidbody를 Kinematic 상태로 설정
+                }
+
+                // 해당 근육에 붙어 있는 모든 콜라이더의 isTrigger를 true로 설정
+                Collider[] muscleColliders = puppet.puppetMaster.muscles[i].transform.gameObject.GetComponentsInChildren<Collider>();
+                foreach (var collider in muscleColliders)
+                {
+                    collider.isTrigger = true;
+                }
+            }
+        }
+    }
+
+
 
     private void ShowHealthSlider()
     {

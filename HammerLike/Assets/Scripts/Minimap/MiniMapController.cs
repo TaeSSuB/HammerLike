@@ -31,7 +31,6 @@ public class MiniMapController : MonoBehaviour
     {
         foreach (MapObject mo in mapObjects)
         {
-            // 해당 태그를 가진 모든 오브젝트 찾기
             GameObject[] worldObjects = GameObject.FindGameObjectsWithTag(mo.objectTag);
 
             // 필요한 만큼 아이콘 생성 또는 재사용
@@ -47,22 +46,33 @@ public class MiniMapController : MonoBehaviour
                 GameObject worldObject = worldObjects[i];
                 Image mapIcon = mapIcons[mo.objectTag][i];
 
-                Vector3 worldPosition = worldObject.transform.position;
-                Vector3 mapPosition = (worldPosition - player.position) * mapScale;
-
-                // 미니맵 경계 내에 있는지 확인
-                if (Mathf.Abs(mapPosition.x) <= miniMapRect.sizeDelta.x / 2 && Mathf.Abs(mapPosition.z) <= miniMapRect.sizeDelta.y / 2)
+                // Monster 컴포넌트가 있고, curHp가 0보다 큰 경우에만 아이콘을 표시
+                Monster monster = worldObject.GetComponent<Monster>();
+                if (monster != null && monster.stat.curHp > 0)
                 {
-                    // 미니맵 경계 내에 있으면 아이콘 표시
-                    mapIcon.rectTransform.anchoredPosition = new Vector2(mapPosition.x, mapPosition.z);
-                    mapIcon.enabled = true;
+                    Vector3 worldPosition = worldObject.transform.position;
+                    Vector3 mapPosition = (worldPosition - player.position) * mapScale;
+
+                    // 미니맵 경계 내에 있는지 확인
+                    if (Mathf.Abs(mapPosition.x) <= miniMapRect.sizeDelta.x / 2 && Mathf.Abs(mapPosition.z) <= miniMapRect.sizeDelta.y / 2)
+                    {
+                        // 미니맵 경계 내에 있으면 아이콘 표시
+                        mapIcon.rectTransform.anchoredPosition = new Vector2(mapPosition.x, mapPosition.z);
+                        mapIcon.enabled = true;
+                    }
+                    else
+                    {
+                        // 미니맵 경계를 벗어나면 아이콘 비활성화
+                        mapIcon.enabled = false;
+                    }
                 }
                 else
                 {
-                    // 미니맵 경계를 벗어나면 아이콘 비활성화
+                    // Monster 컴포넌트가 없거나 curHp가 0 이하이면 아이콘을 비활성화
                     mapIcon.enabled = false;
                 }
             }
         }
     }
+
 }

@@ -223,6 +223,8 @@ public class Inventory : MonoBehaviour
     public void UpdateGoldUI()
     {
         int totalGold = GetTotalGoldAmount(goldItemId);
+        if(goldText.text=="VALUE")
+            goldText.text = "0G";
         goldText.text = totalGold.ToString() + "G";
     }
 
