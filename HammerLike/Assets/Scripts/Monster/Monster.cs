@@ -120,6 +120,7 @@ public class Monster : MonoBehaviour
     public ChangeMaterial[] changeMaterials;
     private float customForce;
     private bool canShot = true;
+    private bool canDamage = true;
     private void Awake()
     {
         if (!fsm)
@@ -328,7 +329,7 @@ public class Monster : MonoBehaviour
             {
                 // µ¥¹ÌÁö ¹× ³Ë¹é Ã³¸®
                 PlayerAtk playerAttack = other.GetComponentInParent<PlayerAtk>();
-                if (playerAttack != null)
+                if (playerAttack != null&&canDamage)
                 {
                     //TakeDamage(playerAttack.attackDamage);
                     //raycastShooter.ShootAtBone(targetBones[0]);
@@ -357,7 +358,9 @@ public class Monster : MonoBehaviour
                     
                     puppet.puppetMaster.pinWeight = 0f;
                     ApplyKnockback(player.transform.forward);
-                    TakeDamage(customDamage);                
+                    TakeDamage(customDamage);
+                    canDamage = false;
+                    StartCoroutine(CanDamage());
                     //raycastShooter.ShootAtBoneWithForce(targetBones[0], customForce);
                     //raycastShooter.ShootAtBone(targetBones[0]);
                     lastProcessedAttackId = weaponCollider.CurrentAttackId;
@@ -428,6 +431,13 @@ public class Monster : MonoBehaviour
     {
         yield return new WaitForSeconds(1f); // ³Ë¹é µ¥¹ÌÁö Äð´Ù¿î
         canTakeKnockBackDamage = true;
+    }
+
+
+    private IEnumerator CanDamage()
+    {
+        yield return new WaitForSeconds(2f); // ³Ë¹é µ¥¹ÌÁö Äð´Ù¿î
+        canDamage = true;
     }
 
     private void TakeDamage(float damage)
@@ -516,8 +526,8 @@ public class Monster : MonoBehaviour
         soundManager.PlaySFX(soundManager.audioClip[2]);
         playerTransform = null;
         DropItems();
-        DisconnectMusclesRecursive();
-        //Destroy(gameObject);
+        //DisconnectMusclesRecursive();
+        Destroy(gameObject);
     }
     private void DisconnectMusclesRecursive()
     {
@@ -530,7 +540,7 @@ public class Monster : MonoBehaviour
                 CapsuleCollider cap = GetComponent<CapsuleCollider>();
                 cap.GetComponent<CapsuleCollider>().isTrigger = true;
                 
-                StartCoroutine(FreezeRigidbodiesAfterDelay(3f)); // 1초 대기 후 실행
+                StartCoroutine(FreezeRigidbodiesAfterDelay(1f)); // 1초 대기 후 실행
                 // 근육에 연결된 Rigidbody 컴포넌트를 찾아 이동 및 회전 제한 설정
                 /*Rigidbody muscleRigidbody = puppet.puppetMaster.muscles[i].rigidbody;
                 if (muscleRigidbody != null)
@@ -552,16 +562,16 @@ public class Monster : MonoBehaviour
                 Rigidbody muscleRigidbody = puppet.puppetMaster.muscles[i].rigidbody;
                 if (muscleRigidbody != null)
                 {
-                    muscleRigidbody.isKinematic = true; // Rigidbody를 Kinematic 상태로 설정
+                    //muscleRigidbody.isKinematic = true; // Rigidbody를 Kinematic 상태로 설정
                     muscleRigidbody.constraints = RigidbodyConstraints.FreezeAll;
                 }
-
-                // 해당 근육에 붙어 있는 모든 콜라이더의 isTrigger를 true로 설정
+                Destroy(gameObject);
+                /*// 해당 근육에 붙어 있는 모든 콜라이더의 isTrigger를 true로 설정
                 Collider[] muscleColliders = puppet.puppetMaster.muscles[i].transform.gameObject.GetComponentsInChildren<Collider>();
                 foreach (var collider in muscleColliders)
                 {
                     collider.isTrigger = true;
-                }
+                }*/
             }
         }
     }
