@@ -60,7 +60,7 @@ public class PlayerAtk : MonoBehaviour
        
         attackId++; // 새로운 공격에 대해 ID를 증가시킵니다.
         weaponCollider.gameObject.SendMessage("SetAttackId", attackId);
-        //StartCoroutine(DisableWeaponColliderAfterAnimation());
+        StartCoroutine(DisableWeaponColliderAfterAnimation(attackId));
 
 
     }
@@ -77,13 +77,17 @@ public class PlayerAtk : MonoBehaviour
             }
         }
     }*/
-    private IEnumerator DisableWeaponColliderAfterAnimation()
+    private IEnumerator DisableWeaponColliderAfterAnimation(int currentAttackId)
     {
-        // 공격 애니메이션의 길이를 가져오기 위해 현재 재생 중인 애니메이션 클립의 정보가 필요합니다.
-        // 이 값은 애니메이션 클립에 따라 다를 수 있으므로 적절히 조정해야 합니다.
-        float attackAnimationTime = 1.0f; // 예를 들어 공격 애니메이션이 1초간 지속된다고 가정합니다.
+        float attackAnimationTime = 1.0f; // 공격 애니메이션 시간
         yield return new WaitForSeconds(attackAnimationTime);
-        weaponCollider.enabled = false; // 애니메이션이 끝나면 콜라이더를 비활성화합니다.
+
+        // 현재 공격 ID와 저장된 공격 ID가 같고, weaponCollider가 여전히 활성화되어 있다면 비활성화
+        WeaponCollider weaponColliderScript = weaponCollider.GetComponent<WeaponCollider>();
+        if (weaponColliderScript != null && weaponColliderScript.CurrentAttackId == currentAttackId && weaponCollider.enabled)
+        {
+            weaponCollider.enabled = false;
+        }
     }
 
     /*public void EnableWeaponCollider()
