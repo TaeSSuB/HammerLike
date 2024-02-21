@@ -36,6 +36,8 @@ public class Inventory : MonoBehaviour
 
     void Start()
     {
+        if (goldText.text == "(VALUE)")
+            goldText.text = "0G";
         for (int i = 0; i < 20; i++)
         {
             items.Add(null);
@@ -223,8 +225,7 @@ public class Inventory : MonoBehaviour
     public void UpdateGoldUI()
     {
         int totalGold = GetTotalGoldAmount(goldItemId);
-        if(goldText.text=="VALUE")
-            goldText.text = "0G";
+        
         goldText.text = totalGold.ToString() + "G";
     }
 
