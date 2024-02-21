@@ -418,7 +418,7 @@ public class Monster : MonoBehaviour
     {
 
         Debug.Log(direction);
-           float knockbackIntensity = 150f; // 넉백 강도
+           float knockbackIntensity = 100f; // 넉백 강도
         direction.y = 0; // Y축 방향을 0으로 설정하여 수평 넉백을 보장
         GetComponent<Rigidbody>().AddForce(direction.normalized * knockbackIntensity, ForceMode.VelocityChange);
         isKnockedBack = true;
@@ -526,8 +526,8 @@ public class Monster : MonoBehaviour
         soundManager.PlaySFX(soundManager.audioClip[2]);
         playerTransform = null;
         DropItems();
-        //DisconnectMusclesRecursive();
-        Destroy(gameObject);
+        DisconnectMusclesRecursive();
+        //Destroy(gameObject);
     }
     private void DisconnectMusclesRecursive()
     {
@@ -540,7 +540,7 @@ public class Monster : MonoBehaviour
                 CapsuleCollider cap = GetComponent<CapsuleCollider>();
                 cap.GetComponent<CapsuleCollider>().isTrigger = true;
                 
-                StartCoroutine(FreezeRigidbodiesAfterDelay(1f)); // 1초 대기 후 실행
+                StartCoroutine(FreezeRigidbodiesAfterDelay(2f)); // 1초 대기 후 실행
                 // 근육에 연결된 Rigidbody 컴포넌트를 찾아 이동 및 회전 제한 설정
                 /*Rigidbody muscleRigidbody = puppet.puppetMaster.muscles[i].rigidbody;
                 if (muscleRigidbody != null)
@@ -562,16 +562,16 @@ public class Monster : MonoBehaviour
                 Rigidbody muscleRigidbody = puppet.puppetMaster.muscles[i].rigidbody;
                 if (muscleRigidbody != null)
                 {
-                    //muscleRigidbody.isKinematic = true; // Rigidbody를 Kinematic 상태로 설정
+                    muscleRigidbody.isKinematic = true; // Rigidbody를 Kinematic 상태로 설정
                     muscleRigidbody.constraints = RigidbodyConstraints.FreezeAll;
                 }
-                Destroy(gameObject);
-                /*// 해당 근육에 붙어 있는 모든 콜라이더의 isTrigger를 true로 설정
+                //Destroy(gameObject);
+                // 해당 근육에 붙어 있는 모든 콜라이더의 isTrigger를 true로 설정
                 Collider[] muscleColliders = puppet.puppetMaster.muscles[i].transform.gameObject.GetComponentsInChildren<Collider>();
                 foreach (var collider in muscleColliders)
                 {
                     collider.isTrigger = true;
-                }*/
+                }
             }
         }
     }
