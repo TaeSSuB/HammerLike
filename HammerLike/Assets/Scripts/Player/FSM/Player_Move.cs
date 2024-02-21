@@ -39,7 +39,8 @@ public class Player_Move : cState
         if (Input.GetMouseButtonUp(0))
         {
             player.PerformAttack();
-
+            SoundManager soundManager = SoundManager.Instance;
+            soundManager.PlaySFX(soundManager.audioClip[9]);
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -85,7 +86,8 @@ public class Player_Move : cState
         if (Input.GetMouseButtonDown(1))
         {
             player.PerformAttack();
-
+            SoundManager soundManager = SoundManager.Instance;
+            soundManager.PlaySFX(soundManager.audioClip[9]);
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;

@@ -553,6 +553,7 @@ public class Monster : MonoBehaviour
                 if (muscleRigidbody != null)
                 {
                     muscleRigidbody.isKinematic = true; // Rigidbody를 Kinematic 상태로 설정
+                    muscleRigidbody.constraints = RigidbodyConstraints.FreezeAll;
                 }
 
                 // 해당 근육에 붙어 있는 모든 콜라이더의 isTrigger를 true로 설정

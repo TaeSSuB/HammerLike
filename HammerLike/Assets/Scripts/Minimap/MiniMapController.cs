@@ -20,12 +20,30 @@ public class MiniMapController : MonoBehaviour
 
     void Start()
     {
-        // 각 태그에 대해 아이콘 리스트 초기화
+        // "Monster" 태그를 가진 모든 오브젝트에 Monster 컴포넌트 추가
+        GameObject[] monsters = GameObject.FindGameObjectsWithTag("Monster");
+        foreach (GameObject monster in monsters)
+        {
+            if (monster.GetComponent<Monster>() == null) // 이미 Monster 컴포넌트가 있는지 확인
+            {
+                monster.AddComponent<Monster>(); // Monster 컴포넌트 추가
+            }
+        }
+
+        // "Player" 태그를 가진 오브젝트에 Player 컴포넌트 추가
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null && playerObject.GetComponent<Player>() == null) // 이미 Player 컴포넌트가 있는지 확인
+        {
+            playerObject.AddComponent<Player>(); // Player 컴포넌트 추가
+        }
+
+        // 기존 미니맵 로직...
         foreach (var mapObject in mapObjects)
         {
             mapIcons[mapObject.objectTag] = new List<Image>();
         }
     }
+
 
     public void Update()
     {
@@ -69,7 +87,7 @@ public class MiniMapController : MonoBehaviour
                 else
                 {
                     // Monster 컴포넌트가 없거나 curHp가 0 이하이면 아이콘을 비활성화
-                    mapIcon.enabled = false;
+                    mapIcon.enabled = true;
                 }
             }
         }
