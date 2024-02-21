@@ -418,7 +418,7 @@ public class Monster : MonoBehaviour
     {
 
         Debug.Log(direction);
-           float knockbackIntensity = 60f; // 넉백 강도
+           float knockbackIntensity = 150f; // 넉백 강도
         direction.y = 0; // Y축 방향을 0으로 설정하여 수평 넉백을 보장
         GetComponent<Rigidbody>().AddForce(direction.normalized * knockbackIntensity, ForceMode.VelocityChange);
         isKnockedBack = true;
