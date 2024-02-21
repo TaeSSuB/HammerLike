@@ -40,7 +40,7 @@ public class SaveDataManager : MonoBehaviour
         DateTime now = DateTime.Now;
         string timestamp = now.ToString("yyyyMMddHHmm");
         string fileName = "save" + saveFileIndex + "_" + timestamp + ".es3";
-        string path = "E:/HammerLike_Git/HammerLike/HammerLike/" + fileName;
+        string path = "D:/HammerLike_Git/HammerLike/HammerLike/" + fileName;
 
         ES3.Save("playerStat", stat, path);
         Debug.Log(fileName + "에 성공적으로 저장됨");
@@ -73,7 +73,7 @@ public class SaveDataManager : MonoBehaviour
 
     public void DeleteSaveFile(int saveFileIndex)
     {
-        string directoryPath = "E:/HammerLike_Git/HammerLike/HammerLike/";
+        string directoryPath = "D:/HammerLike_Git/HammerLike/HammerLike/";
         string searchPattern = "save" + saveFileIndex + "_*.es3";
         string[] files = Directory.GetFiles(directoryPath, searchPattern);
 
@@ -88,7 +88,7 @@ public class SaveDataManager : MonoBehaviour
     }
     private void CheckSaveFiles()
     {
-        string directoryPath = "E:/HammerLike_Git/HammerLike/HammerLike/";
+        string directoryPath = "D:/HammerLike_Git/HammerLike/HammerLike/";
 
         // 각 세이브 파일에 대해 검사하고 해당하는 입력 필드에 정보를 업데이트
         CheckSaveFile(1, directoryPath, save1FileExistsUI, noSave1FileUI, save1Text);

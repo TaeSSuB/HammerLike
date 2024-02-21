@@ -241,9 +241,9 @@ public class Monster : MonoBehaviour
             rightKnockbackDirection = rightDirection;
 
             // 각 방향에 대한 라인 렌더러 설정
-            SetLineRenderer(leftLineRenderer, playerPosition, playerPosition + leftDirection * 5); // 5는 라인의 길이
-            SetLineRenderer(frontLineRenderer, playerPosition, playerPosition + frontDirection * 5);
-            SetLineRenderer(rightLineRenderer, playerPosition, playerPosition + rightDirection * 5);
+            //SetLineRenderer(leftLineRenderer, playerPosition, playerPosition + leftDirection * 5); // 5는 라인의 길이
+            //SetLineRenderer(frontLineRenderer, playerPosition, playerPosition + frontDirection * 5);
+            //SetLineRenderer(rightLineRenderer, playerPosition, playerPosition + rightDirection * 5);
         }
     }
 
@@ -435,20 +435,11 @@ public class Monster : MonoBehaviour
         if (stat.curHp <= 0) return; // ÀÌ¹Ì »ç¸ÁÇÑ °æ¿ì µ¥¹ÌÁö¸¦ ¹ÞÁö ¾ÊÀ½
         SoundManager soundManager = SoundManager.Instance;
         soundManager.PlaySFX(soundManager.audioClip[3]);
-        if (attackCollider.enabled)
-        {
-            attackCollider.enabled = false;
-        }
-
-        if(attackMeshRenderer.enabled)
-        {
-            attackMeshRenderer.enabled = false;
-
-        }
+        
 
         if (monsterType==MonsterType.Melee)
         {
-            for(int i=0; i<1; i++)
+            for(int i=0; i<2; i++)
             {
                 changeMaterials[i].OnHit();
             }
@@ -475,6 +466,17 @@ public class Monster : MonoBehaviour
                 Die();
             }
         }
+
+        if (monsterType == MonsterType.Melee&&attackCollider.enabled )
+        {
+            attackCollider.enabled = false;
+        }
+
+        if (monsterType == MonsterType.Melee&&attackMeshRenderer.enabled)
+        {
+            attackMeshRenderer.enabled = false;
+
+        }
     }
 
     /*private void ApplyKnockback(Vector3 direction)
@@ -499,7 +501,9 @@ public class Monster : MonoBehaviour
         // ¿¹: gameObject.SetActive(false); ¶Ç´Â Destroy(gameObject);
         animCtrl.SetBool("IsChasing", false);
         animCtrl.SetTrigger("tDead");
+        if(attackCollider != null)
         DisableAttackCollider();
+        if(attackMeshRenderer!=null)
         DisableAttackMeshRenderer();
         // NavMeshAgent ºñÈ°¼ºÈ­
         if (nmAgent != null && nmAgent.isActiveAndEnabled)
@@ -588,9 +592,27 @@ public class Monster : MonoBehaviour
             if (distanceToTarget > stat.attackRange)
             {
                 nmAgent.SetDestination(playerTransform.position);
+                if(attackCollider!=null)
                 DisableAttackCollider();
                 animCtrl.SetBool("IsChasing", true);
                 animCtrl.SetBool("IsAttacking", false);
+                if(attackCollider != null)
+                {
+                    if (attackCollider.enabled)
+                    {
+                        attackCollider.enabled = false;
+                    }
+
+                }
+                if(attackMeshRenderer!=null)
+                {
+
+                    if (attackMeshRenderer.enabled)
+                    {
+                        attackMeshRenderer.enabled = false;
+
+                    }
+                }
             }
             else
             {
@@ -602,6 +624,7 @@ public class Monster : MonoBehaviour
         {
             animCtrl.SetBool("IsChasing", false);
             animCtrl.SetTrigger("tIdle");
+            if(attackCollider != null)
             DisableAttackCollider();
         }
     }
