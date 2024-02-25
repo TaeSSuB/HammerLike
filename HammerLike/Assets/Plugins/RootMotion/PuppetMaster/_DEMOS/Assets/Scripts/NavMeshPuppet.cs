@@ -10,7 +10,7 @@ namespace RootMotion.Demos
         public UnityEngine.AI.NavMeshAgent agent;
         public Transform target;
         public Animator animator;
-
+        public bool isActive=true;
         private void Start()
         {
             if (target == null)

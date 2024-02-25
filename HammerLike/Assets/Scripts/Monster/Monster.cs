@@ -114,7 +114,7 @@ public class Monster : MonoBehaviour
     private int knockbackData = 0;
     public BehaviourPuppet puppet;
     private int lastProcessedAttackId = -1;
-
+    private NavMeshPuppet navMeshPuppet;
     public RaycastShooter raycastShooter;
     public GameObject[] targetBones;
     public ChangeMaterial[] changeMaterials;
@@ -176,7 +176,7 @@ public class Monster : MonoBehaviour
                 
             }
         }
-
+        navMeshPuppet = GetComponent<NavMeshPuppet>();
         //leftLineRenderer = CreateLineRenderer(Color.red);
         //frontLineRenderer = CreateLineRenderer(Color.green);
         //rightLineRenderer = CreateLineRenderer(Color.blue);
@@ -520,8 +520,10 @@ public class Monster : MonoBehaviour
         {
             nmAgent.isStopped = true;
             nmAgent.enabled = false;
+           
 
         }
+        navMeshPuppet.enabled = false;
         SoundManager soundManager = SoundManager.Instance;
         soundManager.PlaySFX(soundManager.audioClip[2]);
         playerTransform = null;
@@ -537,10 +539,11 @@ public class Monster : MonoBehaviour
             for (int i = 0; i < puppet.puppetMaster.muscles.Length; i++)
             {
                 puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Explode);
-                CapsuleCollider cap = GetComponent<CapsuleCollider>();
-                cap.GetComponent<CapsuleCollider>().isTrigger = true;
+                rd.isKinematic = true;
+                //CapsuleCollider cap = GetComponent<CapsuleCollider>();
+                //cap.GetComponent<CapsuleCollider>().isTrigger = true;
                 
-                StartCoroutine(FreezeRigidbodiesAfterDelay(2f)); // 1초 대기 후 실행
+                //StartCoroutine(FreezeRigidbodiesAfterDelay(2f)); // 1초 대기 후 실행
                 // 근육에 연결된 Rigidbody 컴포넌트를 찾아 이동 및 회전 제한 설정
                 /*Rigidbody muscleRigidbody = puppet.puppetMaster.muscles[i].rigidbody;
                 if (muscleRigidbody != null)
