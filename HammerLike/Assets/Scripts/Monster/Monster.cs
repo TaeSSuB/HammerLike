@@ -248,30 +248,6 @@ public class Monster : MonoBehaviour
         }
     }
 
-    private void SetLineRenderer(LineRenderer lineRenderer, Vector3 start, Vector3 end)
-    {
-        lineRenderer.SetPosition(0, start);
-        lineRenderer.SetPosition(1, end);
-    }
-
-
-    Vector3 CalculateKnockbackDirectionBasedOnContext()
-    {
-        // 여기서는 예시를 위해 단순화된 로직을 사용합니다.
-        // 실제 구현에서는 몬스터의 상태, 위치, 플레이어와의 관계 등을 고려하여 넉백 방향을 계산해야 합니다.
-        // 예를 들어, 몬스터가 플레이어를 향하고 있다면, 플레이어와 반대 방향으로 넉백 방향을 설정할 수 있습니다.
-        return transform.forward; // 현재는 몬스터가 바라보는 방향으로 설정
-    }
-
-    void DrawDirectionLine()
-    {
-        if (lineRenderer != null)
-        {
-            lineRenderer.SetPosition(0, transform.position); // ¼±ÀÇ ½ÃÀÛÁ¡: ¸ó½ºÅÍÀÇ À§Ä¡
-            lineRenderer.SetPosition(1, transform.position + transform.forward * 5f); // ¼±ÀÇ ³¡Á¡: ¸ó½ºÅÍ°¡ ¹Ù¶óº¸´Â ¹æÇâ
-        }
-    }
-
     private void LateUpdate()
     {
         Vector3 lookDir = monsterAim.Aiming();
@@ -289,20 +265,6 @@ public class Monster : MonoBehaviour
 
     }
 
-    private LineRenderer CreateLineRenderer(Color lineColor)
-    {
-        GameObject lineRendererObject = new GameObject("LineRenderer");
-        lineRendererObject.transform.SetParent(transform);
-        LineRenderer lineRenderer = lineRendererObject.AddComponent<LineRenderer>();
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        lineRenderer.startColor = lineColor;
-        lineRenderer.endColor = lineColor;
-        lineRenderer.startWidth = 0.05f;
-        lineRenderer.endWidth = 0.05f;
-        lineRenderer.positionCount = 2;
-
-        return lineRenderer;
-    }
 
 
 
