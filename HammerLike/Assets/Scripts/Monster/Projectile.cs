@@ -46,13 +46,13 @@ public class Projectile : MonoBehaviour
 
     private void DestroyProjectile()
     {
-        // 투사체를 파괴하기 전에 몬스터에게 알림
+        // 투사체를 파괴하는 대신 풀로 반환
         if (shooter != null)
         {
             shooter.ProjectileDestroyed();
         }
 
-        // 투사체 파괴
-        Destroy(gameObject);
+        ProjectilePool.Instance.ReturnProjectile(gameObject);
     }
+
 }

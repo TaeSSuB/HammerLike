@@ -321,8 +321,8 @@ public class Monster : MonoBehaviour
                     puppet.puppetMaster.pinWeight = 0f;
                     ApplyKnockback(player.transform.forward);
                     TakeDamage(customDamage);
-                    canDamage = false;
-                    StartCoroutine(CanDamage());
+                    //canDamage = false;
+                    //StartCoroutine(CanDamage());
                     //raycastShooter.ShootAtBoneWithForce(targetBones[0], customForce);
                     //raycastShooter.ShootAtBone(targetBones[0]);
                     lastProcessedAttackId = weaponCollider.CurrentAttackId;
@@ -795,13 +795,13 @@ public class Monster : MonoBehaviour
         canShot = true;
     }
 
-    private void FireProjectile()
+    /*private void FireProjectile()
     {
         if (currentProjectile != null || ProjectilePrefab == null) return;
-        /*if(currentProjectile != null)
+        *//*if(currentProjectile != null)
         {
             Destroy(currentProjectile);
-        }*/
+        }*//*
 
         Vector3 spawnPosition = ProjectileSpawnPoint != null ? ProjectileSpawnPoint.position : transform.position;
         Vector3 targetDirection = (playerTransform.position - spawnPosition).normalized;
@@ -829,7 +829,34 @@ public class Monster : MonoBehaviour
             projectileComponent.SetShooter(this);
         }
         // Åõ»çÃ¼ ÆÄ±« ·ÎÁ÷Àº ÇØ´ç Åõ»çÃ¼ ½ºÅ©¸³Æ®¿¡ ±¸Çö
+    }*/
+
+    private void FireProjectile()
+    {
+        if (currentProjectile != null || ProjectilePrefab == null) return;
+
+        Vector3 spawnPosition = ProjectileSpawnPoint != null ? ProjectileSpawnPoint.position : transform.position;
+        Vector3 targetDirection = (playerTransform.position - spawnPosition).normalized;
+        Quaternion spawnRotation = Quaternion.LookRotation(targetDirection);
+
+        // 새로 생성하는 대신 풀에서 투사체를 가져옴
+        currentProjectile = ProjectilePool.Instance.GetProjectile();
+        currentProjectile.transform.position = spawnPosition;
+        currentProjectile.transform.rotation = spawnRotation;
+        currentProjectile.SetActive(true);
+
+        // 투사체의 속도 설정
+        Rigidbody rb = currentProjectile.GetComponent<Rigidbody>();
+        rb.velocity = targetDirection * ProjectileSpeed;
+
+        // 투사체가 발사한 몬스터 설정
+        Projectile projectileComponent = currentProjectile.GetComponent<Projectile>();
+        if (projectileComponent != null)
+        {
+            projectileComponent.SetShooter(this);
+        }
     }
+
 
 
     // Åõ»çÃ¼°¡ ÆÄ±«µÇ¾úÀ» ¶§ È£ÃâÇÏ´Â ¸Þ¼­µå
