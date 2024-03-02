@@ -104,12 +104,6 @@ public class Monster : MonoBehaviour
     public MeshRenderer attackMeshRenderer;
     private Player player;
 
-    private LineRenderer leftLineRenderer;
-    private LineRenderer frontLineRenderer;
-    private LineRenderer rightLineRenderer;
-    private Vector3 frontKnockbackDirection;
-    private Vector3 leftKnockbackDirection;
-    private Vector3 rightKnockbackDirection;
     public int debugData = 0;
     private int knockbackData = 0;
     public BehaviourPuppet puppet;
@@ -121,6 +115,7 @@ public class Monster : MonoBehaviour
     private float customForce;
     private bool canShot = true;
     private bool canDamage = true;
+    private bool isRising = false;
     private void Awake()
     {
         if (!fsm)
@@ -177,9 +172,7 @@ public class Monster : MonoBehaviour
             }
         }
         navMeshPuppet = GetComponent<NavMeshPuppet>();
-        //leftLineRenderer = CreateLineRenderer(Color.red);
-        //frontLineRenderer = CreateLineRenderer(Color.green);
-        //rightLineRenderer = CreateLineRenderer(Color.blue);
+
     }
 
     void Update()
@@ -237,23 +230,16 @@ public class Monster : MonoBehaviour
             Vector3 rightDirection = Quaternion.Euler(0, 45, 0) * playerForward;
 
             // 방향 저장
-            frontKnockbackDirection = frontDirection;
-            leftKnockbackDirection = leftDirection;
-            rightKnockbackDirection = rightDirection;
 
-            // 각 방향에 대한 라인 렌더러 설정
-            //SetLineRenderer(leftLineRenderer, playerPosition, playerPosition + leftDirection * 5); // 5는 라인의 길이
-            //SetLineRenderer(frontLineRenderer, playerPosition, playerPosition + frontDirection * 5);
-            //SetLineRenderer(rightLineRenderer, playerPosition, playerPosition + rightDirection * 5);
         }
     }
 
     private void LateUpdate()
     {
         Vector3 lookDir = monsterAim.Aiming();
-        if(stat.curHp>0)
+        if(stat.curHp>0&&isRising)
         SyncMeshWithPuppetMaster();
-        //Funcs.LookAtSpecificBone(spineBoneTr, eGizmoDir.Forward, lookDir, Vector3.zero);
+       
     }
 
     private void FixedUpdate()
@@ -319,12 +305,10 @@ public class Monster : MonoBehaviour
                     }
                     
                     puppet.puppetMaster.pinWeight = 0f;
+                    isRising = true;
                     ApplyKnockback(player.transform.forward);
                     TakeDamage(customDamage);
-                    //canDamage = false;
-                    //StartCoroutine(CanDamage());
-                    //raycastShooter.ShootAtBoneWithForce(targetBones[0], customForce);
-                    //raycastShooter.ShootAtBone(targetBones[0]);
+           
                     lastProcessedAttackId = weaponCollider.CurrentAttackId;
                     weaponCollider.hasProcessedAttack = true; // 공격 처리 표시
                     
@@ -333,11 +317,6 @@ public class Monster : MonoBehaviour
             }
         }
 
-        /*if(other.CompareTag("KnockBackable"))
-        {
-            //stat.curHp = 0;
-            //Die();
-        }*/
 
         if (other.gameObject.CompareTag("KnockBackable") && isKnockedBack && canTakeKnockBackDamage)
         {
@@ -346,35 +325,6 @@ public class Monster : MonoBehaviour
             StartCoroutine(KnockBackDamageCooldown());
         }
     }
-
-    private Vector3 DetermineKnockbackDirection(Vector3 hitPoint, Transform trailMeshTransform)
-    {
-        // 트레일 메쉬의 길이 계산 (예시 코드, 실제 구현 필요)
-        float trailMeshLength = Vector3.Distance(trailMeshTransform.position, trailMeshTransform.position + trailMeshTransform.forward * 10); // 메쉬 길이 예시
-        float hitPositionRelative = Vector3.Distance(trailMeshTransform.position, hitPoint); // 피격 지점까지의 거리
-
-        // 피격 위치가 트레일 메쉬의 어느 1/3 구간에 있는지 결정
-        // 대각선 넉밴
-        float sectionLength = trailMeshLength / 3;
-        if (hitPositionRelative <= sectionLength)
-        {
-            // 우측 대각선 넉백
-            return rightKnockbackDirection;
-        }
-        else if (hitPositionRelative > sectionLength && hitPositionRelative <= sectionLength * 2)
-        {
-            // 정면 넉백
-            return frontKnockbackDirection;
-        }
-        else
-        {
-            // 좌측 대각선 넉백
-            return leftKnockbackDirection;
-        }
-    }
-
-
-
 
     private void ApplyKnockback(Vector3 direction)
     {
@@ -451,19 +401,11 @@ public class Monster : MonoBehaviour
         }
     }
 
-    /*private void ApplyKnockback(Vector3 direction)
-    {
-        float knockbackIntensity = 300f; // ³Ë¹é °­µµ
-        direction.y = 0; // YÃà º¯È­ Á¦°Å
-        GetComponent<Rigidbody>().AddForce(direction.normalized * knockbackIntensity, ForceMode.Impulse);
-        isKnockedBack = true;
-        StartCoroutine(KnockBackDuration());
-    }*/
-
     private IEnumerator KnockBackDuration()
     {
         yield return new WaitForSeconds(0.2f); // ³Ë¹é Áö¼Ó ½Ã°£
         isKnockedBack = false;
+        isRising = false;
         puppet.puppetMaster.pinWeight = 1;
     }
 
@@ -794,42 +736,6 @@ public class Monster : MonoBehaviour
         yield return new WaitForSeconds(6f); // ³Ë¹é µ¥¹ÌÁö Äð´Ù¿î
         canShot = true;
     }
-
-    /*private void FireProjectile()
-    {
-        if (currentProjectile != null || ProjectilePrefab == null) return;
-        *//*if(currentProjectile != null)
-        {
-            Destroy(currentProjectile);
-        }*//*
-
-        Vector3 spawnPosition = ProjectileSpawnPoint != null ? ProjectileSpawnPoint.position : transform.position;
-        Vector3 targetDirection = (playerTransform.position - spawnPosition).normalized;
-        Quaternion spawnRotation = Quaternion.LookRotation(targetDirection);
-
-        // Åõ»çÃ¼ ÀÎ½ºÅÏ½º »ý¼º
-        currentProjectile = Instantiate(ProjectilePrefab, spawnPosition, spawnRotation);
-
-        // Åõ»çÃ¼¿¡ Rigidbody ÄÄÆ÷³ÍÆ®¸¦ °¡Á®¿À°Å³ª Ãß°¡
-        Rigidbody rb = currentProjectile.GetComponent<Rigidbody>();
-        if (rb == null)
-        {
-            rb = currentProjectile.AddComponent<Rigidbody>();
-        }
-
-        // Áß·Â ¿µÇâÀ» ¹ÞÁö ¾Êµµ·Ï ¼³Á¤
-        rb.useGravity = false;
-
-        // Åõ»çÃ¼¿¡ ¼Óµµ Àû¿ë
-        rb.velocity = targetDirection * ProjectileSpeed;
-
-        Projectile projectileComponent = currentProjectile.GetComponent<Projectile>();
-        if (projectileComponent != null)
-        {
-            projectileComponent.SetShooter(this);
-        }
-        // Åõ»çÃ¼ ÆÄ±« ·ÎÁ÷Àº ÇØ´ç Åõ»çÃ¼ ½ºÅ©¸³Æ®¿¡ ±¸Çö
-    }*/
 
     private void FireProjectile()
     {
