@@ -57,7 +57,7 @@ public class PlayerMoveFunc : MonoBehaviour
         {
             // 키보드 입력이 떼어졌을 때의 처리
             isRest = true;
-            restTime = 0.3f; // 미끄러짐 지속 시간
+            restTime = 0f; // 미끄러짐 지속 시간
         }
 
         if (isRest)
