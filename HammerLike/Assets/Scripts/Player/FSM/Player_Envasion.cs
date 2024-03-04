@@ -33,8 +33,11 @@ public class Player_Envasion : cState
     public override void EnterState()
     {
         base.EnterState();
+        player.animCtrl.speed = 1f;
+
         player.isEvading = true; // 회피 상태 시작
         SoundManager soundManager = SoundManager.Instance;
+
         soundManager.PlaySFX(soundManager.audioClip[10]);
         Debug.Log("Enter Evasion");
 

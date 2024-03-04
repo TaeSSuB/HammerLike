@@ -15,7 +15,9 @@ public class Player_Move : cState
     {
         base.EnterState();
         player.animCtrl.SetLayerWeight(1, 1f);
+        player.animCtrl.speed = 1f;
         player.animCtrl.SetTrigger("tWalk");
+
     }
 
     public override void UpdateState()
@@ -63,7 +65,8 @@ public class Player_Move : cState
                 if (cross.y > 0)  // 시계 방향
                 {
                     //Debug.Log(" 시계방향");
-                    player.animCtrl.SetTrigger("tOutWardAttack");
+                    player.animCtrl.Play("OutWardAttack", 0, 0f);
+                    player.animCtrl.speed = player.stat.attackSpd;
                     player.atk.Attack();
                     player.atk.curCharging = 0;
                     //player.animCtrl.SetTrigger("tIdle");
@@ -71,7 +74,8 @@ public class Player_Move : cState
                 else  // 반 시계방향 회전
                 {
                     //Debug.Log("반 시계 방향");
-                    player.animCtrl.SetTrigger("tInWardAttack");
+                    player.animCtrl.Play("InWardAttack", 0, 0f);
+                    player.animCtrl.speed = player.stat.attackSpd;
                     //player.animCtrl.SetTrigger("tAtk");
                     player.atk.Attack();
                     player.atk.curCharging = 0;
@@ -110,7 +114,8 @@ public class Player_Move : cState
                 if (cross.y > 0)  // 시계 방향
                 {
                     //Debug.Log(" 시계방향");
-                    player.animCtrl.SetTrigger("tOutWardAttack");
+                    player.animCtrl.Play("OutWardAttack 0", 0, 0f);
+                    player.animCtrl.speed = player.stat.attackSpd;
                     player.atk.Attack();
                     player.atk.curCharging = 0;
                     //player.animCtrl.SetTrigger("tIdle");
@@ -118,7 +123,8 @@ public class Player_Move : cState
                 else  // 반 시계방향 회전
                 {
                     //Debug.Log("반 시계 방향");
-                    player.animCtrl.SetTrigger("tInWardAttack");
+                    player.animCtrl.Play("InWardAttack 0", 0, 0f);
+                    player.animCtrl.speed = player.stat.attackSpd;
                     //player.animCtrl.SetTrigger("tAtk");
                     player.atk.Attack();
                     player.atk.curCharging = 0;

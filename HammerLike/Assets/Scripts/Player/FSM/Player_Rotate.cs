@@ -15,7 +15,9 @@ public class Player_Rotate : cState
 	public override void EnterState()
 	{
 		base.EnterState();
-	}
+
+        player.animCtrl.speed = 1f;
+    }
 	public override void UpdateState()
 	{
 		base.UpdateState();

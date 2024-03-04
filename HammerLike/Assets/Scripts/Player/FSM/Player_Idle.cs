@@ -18,6 +18,7 @@ public class Player_Idle : cState
         base.EnterState();
 
         player.animCtrl.SetLayerWeight(1, 0f);
+        player.animCtrl.speed = 1f;
 
         player.animCtrl.SetTrigger("tIdle");
     }
@@ -89,7 +90,8 @@ public class Player_Idle : cState
                 if (cross.y > 0)  // 시계 방향
                 {
                     //Debug.Log(" 시계방향");
-                    player.animCtrl.SetTrigger("tOutWardAttack");
+                    player.animCtrl.Play("OutWardAttack", 0, 0f);
+                    player.animCtrl.speed = player.stat.attackSpd;
                     player.atk.Attack();
                     player.atk.curCharging = 0;
                     //player.animCtrl.SetTrigger("tIdle");
@@ -97,8 +99,8 @@ public class Player_Idle : cState
                 else  // 반 시계방향 회전
                 {
                     //Debug.Log("반 시계 방향");
-                    player.animCtrl.SetTrigger("tInWardAttack");
-                    //player.animCtrl.SetTrigger("tAtk");
+                    player.animCtrl.Play("InWardAttack", 0, 0f);
+                    player.animCtrl.speed = player.stat.attackSpd;
                     player.atk.Attack();
                     player.atk.curCharging = 0;
                     //player.animCtrl.SetTrigger("tIdle");
@@ -108,12 +110,6 @@ public class Player_Idle : cState
 
             }
         }
-
-        /*if (Input.GetMouseButtonDown(0))
-        {
-            player.animCtrl.SetTrigger("tAtk");
-            player.atk.Attack();
-        }*/
 
         if (Input.GetMouseButtonDown(1))
         {
@@ -142,7 +138,9 @@ public class Player_Idle : cState
                 if (cross.y > 0)  // 시계 방향
                 {
                     //Debug.Log(" 시계방향");
-                    player.animCtrl.SetTrigger("tOutWardAttack");
+                    //player.animCtrl.SetTrigger("tOutWardAttack");
+                    player.animCtrl.Play("OutWardAttack 0", 0, 0f);
+                    player.animCtrl.speed = player.stat.attackSpd;
                     player.atk.Attack();
                     player.atk.curCharging = 0;
                     //player.animCtrl.SetTrigger("tIdle");
@@ -150,8 +148,10 @@ public class Player_Idle : cState
                 else  // 반 시계방향 회전
                 {
                     //Debug.Log("반 시계 방향");
-                    player.animCtrl.SetTrigger("tInWardAttack");
+                    //player.animCtrl.SetTrigger("tInWardAttack");
                     //player.animCtrl.SetTrigger("tAtk");
+                    player.animCtrl.Play("InWardAttack 0", 0, 0f);
+                    player.animCtrl.speed = player.stat.attackSpd;
                     player.atk.Attack();
                     player.atk.curCharging = 0;
                     //player.animCtrl.SetTrigger("tIdle");
