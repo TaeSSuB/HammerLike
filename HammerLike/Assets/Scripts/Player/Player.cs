@@ -352,8 +352,10 @@ public class Player : MonoBehaviour
 
     public void PerformAttack()
     {
+     
         animCtrl.SetBool("IsCharge", false); // Charge 애니메이션 비활성화
         animCtrl.SetTrigger("tAtk"); // Attack 애니메이션 활성화
+
         //atk.Attack(); // 공격 실행
         //atk.curCharging = 0f; // Charge 시간 초기화
     }
@@ -362,13 +364,26 @@ public class Player : MonoBehaviour
     public void StartAttack() // 공격 시작 시 호출
     {
         isAttacking = true;
+        CancelInvoke("ResetAttackState"); // 이전에 설정된 Invoke가 있다면 취소
+        Invoke("ResetAttackState", 1.5f); // 1.5초 후에 ResetAttackState 메서드를 호출
     }
 
-    public void EndAttack() // 공격 종료 시 호출
+    void ResetAttackState()
+    {
+        // 공격 상태가 여전히 true인 경우 false로 리셋
+        if (isAttacking)
+        {
+            isAttacking = false;
+        }
+    }
+
+    public void EndAttack() // 애니메이션 이벤트로 호출
     {
         isAttacking = false;
+        CancelInvoke("ResetAttackState"); // EndAttack이 정상적으로 호출되면 ResetAttackState 호출 취소
         animCtrl.SetTrigger("tIdle");
     }
+
 
     void UpdateHealthUI()
     {

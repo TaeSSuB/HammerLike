@@ -34,7 +34,7 @@ public class Player_Envasion : cState
     {
         base.EnterState();
         player.animCtrl.speed = 1f;
-
+        player.isAttacking = false;
         player.isEvading = true; // 회피 상태 시작
         SoundManager soundManager = SoundManager.Instance;
 

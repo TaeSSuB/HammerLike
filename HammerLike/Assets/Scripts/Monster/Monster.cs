@@ -377,6 +377,16 @@ public class Monster : MonoBehaviour
         if (stat.curHp > 0)  // ¸ó½ºÅÍ°¡ »ì¾ÆÀÖÀ» ¶§¸¸ ÇÇ°Ý Ã³¸®
         {
             stat.curHp -= damage;
+            if(attackCollider.enabled==true)
+            {
+                attackCollider.enabled = false;
+            }
+
+            if(attackMeshRenderer.enabled==true)
+            {
+                attackMeshRenderer.enabled = false;
+            }
+
             if (healthSlider != null)
             {
                 healthSlider.value = stat.curHp;

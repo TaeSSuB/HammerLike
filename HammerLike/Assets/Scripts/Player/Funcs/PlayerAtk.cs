@@ -64,19 +64,7 @@ public class PlayerAtk : MonoBehaviour
 
 
     }
-    /*private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("Monster")) // "Enemy"는 충돌 대상 태그, 필요에 따라 수정
-        {
-            Rigidbody enemyRb = other.GetComponent<Rigidbody>();
-            if (enemyRb != null)
-            {
-                // Player가 바라보는 방향으로 힘을 가함
-                Vector3 forceDirection = player.transform.forward;
-                enemyRb.AddForce(forceDirection.normalized * forceMagnitude, ForceMode.Impulse);
-            }
-        }
-    }*/
+
     private IEnumerator DisableWeaponColliderAfterAnimation(int currentAttackId)
     {
         float attackAnimationTime = 1.0f; // 공격 애니메이션 시간

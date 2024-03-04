@@ -3,12 +3,22 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.SceneManagement;
+
+[System.Serializable] 
+public class SceneAudioSource
+{
+    public string sceneName;
+    public AudioSource audioSource;
+}
 
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; private set; }
 
-    [SerializeField] private AudioSource bgmSource;
+    [SerializeField] private List<SceneAudioSource> bgmSourcesList = new List<SceneAudioSource>();
+
+    private Dictionary<string, AudioSource> bgmSources = new Dictionary<string, AudioSource>();
     [SerializeField] private List<AudioSource> sfxSources = new List<AudioSource>();
     public AudioClip[] audioClip;
     public TMP_InputField masterVolumeTextInput;
@@ -37,8 +47,79 @@ public class SoundManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        foreach(var item in bgmSourcesList)
+        {
+            if(!bgmSources.ContainsKey(item.sceneName))
+            {
+                bgmSources.Add(item.sceneName, item.audioSource);
+            }
+        }
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
         LoadVolumeSettings();
     }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (!bgmSources.ContainsKey(scene.name))
+        {
+            AudioSource newSource = gameObject.AddComponent<AudioSource>();
+            // Configure your AudioSource here if needed (loop, playOnAwake, etc.)
+            bgmSources.Add(scene.name, newSource);
+        }
+
+        PlayBGMForCurrentScene();
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void PlayBGMForCurrentScene()
+    {
+        // 새 씬이 로드될 때 모든 현재 재생 중인 BGM을 정지합니다.
+        StopAllBGM();
+
+        // 현재 씬 이름을 가져옵니다.
+        string currentSceneName = SceneManager.GetActiveScene().name;
+
+        // 새 씬에 해당하는 BGM을 찾아 재생합니다.
+        if (bgmSources.TryGetValue(currentSceneName, out AudioSource currentBGM))
+        {
+            if (currentBGM.clip != null)
+            {
+                currentBGM.Play();
+            }
+        }
+    }
+
+    // 모든 BGM을 정지하는 메서드입니다.
+    private void StopAllBGM()
+    {
+        foreach (var bgmSource in bgmSources.Values)
+        {
+            if (bgmSource.isPlaying)
+            {
+                bgmSource.Stop();
+            }
+        }
+    }
+
+    private void Start()
+    {
+        // 현재 볼륨 값에 100을 곱하여 문자열로 변환 후, 각 TMP_InputField에 설정
+        masterVolumeTextInput.text = (masterVolume * 100).ToString("0");
+        bgmVolumeTextInput.text = (bgmVolume * 100).ToString("0");
+        sfxVolumeTextInput.text = (sfxVolume * 100).ToString("0");
+
+        // 슬라이더의 값도 현재 볼륨에 맞춰 설정
+        masterVolumeSlider.value = masterVolume;
+        bgmVolumeSlider.value = bgmVolume;
+        sfxVolumeSlider.value = sfxVolume;
+    }
+
+
 
     // 문자열 입력을 받아 마스터 볼륨 설정
     public void SetMasterValue(string value)
@@ -70,14 +151,6 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void PlayBGM(AudioClip clip)
-    {
-        if (bgmSource.clip != clip)
-        {
-            bgmSource.clip = clip;
-            bgmSource.Play();
-        }
-    }
 
     public void PlaySFX(AudioClip clip)
     {
@@ -117,7 +190,10 @@ public class SoundManager : MonoBehaviour
 
     private void UpdateAllVolumes()
     {
-        bgmSource.volume = isMuted ? 0 : bgmVolume * masterVolume;
+        foreach (var bgmSource in bgmSources.Values)
+        {
+            bgmSource.volume = isMuted ? 0 : bgmVolume * masterVolume;
+        }
         sfxSources.ForEach(source => source.volume = isMuted ? 0 : sfxVolume * masterVolume);
     }
 
@@ -164,4 +240,6 @@ public class SoundManager : MonoBehaviour
         ToggleMute(false);
         SaveVolumeSettings();
     }
+
+    
 }

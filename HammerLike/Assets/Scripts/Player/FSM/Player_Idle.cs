@@ -65,6 +65,7 @@ public class Player_Idle : cState
 
         if (Input.GetMouseButtonUp(0))
         {
+            
             player.PerformAttack();
             SoundManager soundManager = SoundManager.Instance;
             soundManager.PlaySFX(soundManager.audioClip[9]);
@@ -87,23 +88,27 @@ public class Player_Idle : cState
 
                 // 회전 방향 결정 (시계방향 또는 반시계방향)
                 Vector3 cross = Vector3.Cross(currentDirection, targetDirection);
-                if (cross.y > 0)  // 시계 방향
+                if (player.isAttacking == false)
                 {
-                    //Debug.Log(" 시계방향");
-                    player.animCtrl.Play("OutWardAttack", 0, 0f);
-                    player.animCtrl.speed = player.stat.attackSpd;
-                    player.atk.Attack();
-                    player.atk.curCharging = 0;
-                    //player.animCtrl.SetTrigger("tIdle");
-                }
-                else  // 반 시계방향 회전
-                {
-                    //Debug.Log("반 시계 방향");
-                    player.animCtrl.Play("InWardAttack", 0, 0f);
-                    player.animCtrl.speed = player.stat.attackSpd;
-                    player.atk.Attack();
-                    player.atk.curCharging = 0;
-                    //player.animCtrl.SetTrigger("tIdle");
+
+                    if (cross.y > 0)  // 시계 방향
+                    {
+                        //Debug.Log(" 시계방향");
+                        player.animCtrl.Play("OutWardAttack", 0, 0f);
+                        player.animCtrl.speed = player.stat.attackSpd;
+                        player.atk.Attack();
+                        player.atk.curCharging = 0;
+                        //player.animCtrl.SetTrigger("tIdle");
+                    }
+                    else  // 반 시계방향 회전
+                    {
+                        //Debug.Log("반 시계 방향");
+                        player.animCtrl.Play("InWardAttack", 0, 0f);
+                        player.animCtrl.speed = player.stat.attackSpd;
+                        player.atk.Attack();
+                        player.atk.curCharging = 0;
+                        //player.animCtrl.SetTrigger("tIdle");
+                    }
                 }
 
 
@@ -135,26 +140,26 @@ public class Player_Idle : cState
 
                 // 회전 방향 결정 (시계방향 또는 반시계방향)
                 Vector3 cross = Vector3.Cross(currentDirection, targetDirection);
-                if (cross.y > 0)  // 시계 방향
+                if(player.isAttacking==false)
                 {
-                    //Debug.Log(" 시계방향");
-                    //player.animCtrl.SetTrigger("tOutWardAttack");
-                    player.animCtrl.Play("OutWardAttack 0", 0, 0f);
-                    player.animCtrl.speed = player.stat.attackSpd;
-                    player.atk.Attack();
-                    player.atk.curCharging = 0;
-                    //player.animCtrl.SetTrigger("tIdle");
-                }
-                else  // 반 시계방향 회전
-                {
-                    //Debug.Log("반 시계 방향");
-                    //player.animCtrl.SetTrigger("tInWardAttack");
-                    //player.animCtrl.SetTrigger("tAtk");
-                    player.animCtrl.Play("InWardAttack 0", 0, 0f);
-                    player.animCtrl.speed = player.stat.attackSpd;
-                    player.atk.Attack();
-                    player.atk.curCharging = 0;
-                    //player.animCtrl.SetTrigger("tIdle");
+
+                    if (cross.y > 0)  // 시계 방향
+                    {
+                    
+                        player.animCtrl.Play("OutWardAttack 0", 0, 0f);
+                        player.animCtrl.speed = player.stat.attackSpd;
+                        player.atk.Attack();
+                        player.atk.curCharging = 0;
+                    }
+                    else  // 반 시계방향 회전
+                    {
+                    
+                        player.animCtrl.Play("InWardAttack 0", 0, 0f);
+                        player.animCtrl.speed = player.stat.attackSpd;
+                        player.atk.Attack();
+                        player.atk.curCharging = 0;
+
+                    }
                 }
 
 

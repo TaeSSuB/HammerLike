@@ -17,6 +17,7 @@ public class Player_Death :  cState
 	{
 	base.EnterState();
         player.animCtrl.speed = 1f;
+        player.isAttacking = false;
     }
 public override void UpdateState()
 {
