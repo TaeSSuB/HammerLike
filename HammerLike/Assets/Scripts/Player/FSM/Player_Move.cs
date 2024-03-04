@@ -41,8 +41,7 @@ public class Player_Move : cState
         if (Input.GetMouseButtonUp(0))
         {
             player.PerformAttack();
-            SoundManager soundManager = SoundManager.Instance;
-            soundManager.PlaySFX(soundManager.audioClip[9]);
+            
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -69,6 +68,8 @@ public class Player_Move : cState
                     {
                         //Debug.Log(" 시계방향");
                         player.animCtrl.Play("OutWardAttack", 0, 0f);
+                        SoundManager soundManager = SoundManager.Instance;
+                        soundManager.PlaySFX(soundManager.audioClip[9]);
                         player.animCtrl.speed = player.stat.attackSpd;
                         player.atk.Attack();
                         player.atk.curCharging = 0;
@@ -78,6 +79,8 @@ public class Player_Move : cState
                     {
                         //Debug.Log("반 시계 방향");
                         player.animCtrl.Play("InWardAttack", 0, 0f);
+                        SoundManager soundManager = SoundManager.Instance;
+                        soundManager.PlaySFX(soundManager.audioClip[9]);
                         player.animCtrl.speed = player.stat.attackSpd;
                         //player.animCtrl.SetTrigger("tAtk");
                         player.atk.Attack();
@@ -93,8 +96,7 @@ public class Player_Move : cState
         if (Input.GetMouseButtonDown(1))
         {
             player.PerformAttack();
-            SoundManager soundManager = SoundManager.Instance;
-            soundManager.PlaySFX(soundManager.audioClip[9]);
+            
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -121,6 +123,8 @@ public class Player_Move : cState
                     {
                         //Debug.Log(" 시계방향");
                         player.animCtrl.Play("OutWardAttack 0", 0, 0f);
+                        SoundManager soundManager = SoundManager.Instance;
+                        soundManager.PlaySFX(soundManager.audioClip[9]);
                         player.animCtrl.speed = player.stat.attackSpd;
                         player.atk.Attack();
                         player.atk.curCharging = 0;
@@ -130,6 +134,8 @@ public class Player_Move : cState
                     {
                         //Debug.Log("반 시계 방향");
                         player.animCtrl.Play("InWardAttack 0", 0, 0f);
+                        SoundManager soundManager = SoundManager.Instance;
+                        soundManager.PlaySFX(soundManager.audioClip[9]);
                         player.animCtrl.speed = player.stat.attackSpd;
                         //player.animCtrl.SetTrigger("tAtk");
                         player.atk.Attack();

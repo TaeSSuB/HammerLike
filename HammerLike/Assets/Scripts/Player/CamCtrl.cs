@@ -72,8 +72,10 @@ public class CamCtrl : MonoBehaviour
     public AnimationCurve zoomSpdCrv;
     private float zoomCurveTime = 0f;
     private Bounds roomBounds;
-
-
+    //private PlayerAtk playerAtk;
+    public float initialZoom; // 초기 줌 값 저장을 위한 변수
+    private bool shouldReturnToInitialZoom = false; // 초기 줌 값으로 돌아가는지 여부
+    private float returnZoomStartTime;
     [Space(10f)]
     [Header("ETC")]
     public Vector3 worldScaleCrt;
@@ -218,30 +220,76 @@ public class CamCtrl : MonoBehaviour
 
         // 수직 방향이 막혔을 경우, 이미 Y축은 고정되어 있으므로 추가 조치는 필요 없습니다.
     }
-
     public void Zoom()
     {
-        float wheelVal = Input.GetAxis("Mouse ScrollWheel");
+        bool isLeftMouseDown = Input.GetMouseButton(0);
 
-        if (wheelVal == 0f)
+        if (!isLeftMouseDown && !shouldReturnToInitialZoom)
         {
-            // 줌 상태가 아니면 커브 시간 초기화
+            // 마우스 왼쪽 버튼이 놓여지고, 아직 초기 줌으로 돌아가는 과정이 시작되지 않았다면
+            shouldReturnToInitialZoom = true;
+            returnZoomStartTime = Time.time;
+        }
+
+        if (shouldReturnToInitialZoom)
+        {
+            // 초기 줌 값으로 돌아가는 과정
+            float timeSinceReturnStart = Time.time - returnZoomStartTime;
+            float t = timeSinceReturnStart / 1.0f; // 1초 동안의 변화를 계산
+
+            if (t >= 1.0f)
+            {
+                t = 1.0f;
+                shouldReturnToInitialZoom = false; // 돌아가는 과정 완료
+            }
+
+            zoomCam.targetCameraHalfHeight = Mathf.Lerp(zoomCam.targetCameraHalfHeight, initialZoom, t);
+            zoomCam.adjustCameraFOV();
+
+            return; // 추가적인 줌 조정을 중단합니다.
+        }
+
+        if (isLeftMouseDown)
+        {
+            // 마우스 왼쪽 버튼이 눌려있으면 줌 조절
+            zoomCurveTime += Time.deltaTime;
+            float zoomSpdValue = zoomSpdCrv.Evaluate(zoomCurveTime) * zoomSpd;
+            //float zoomSpdValue = zoomSpd;
+            float zoomVal = (-1f * 0.5f * zoomSpdValue) + zoomCam.targetCameraHalfHeight;
+
+            zoomCam.targetCameraHalfHeight = Mathf.Clamp(zoomVal, zoomMin, zoomCam.maxCameraHalfHeight);
+            zoomCam.adjustCameraFOV();
+        }
+    }
+    /*public void Zoom()
+    {
+        bool isLeftMouseDown = Input.GetMouseButton(0);
+
+        if (!isLeftMouseDown)
+        {
+            // 마우스 왼쪽 버튼이 눌려있지 않으면 커브 시간 초기화
             zoomCurveTime = 0f;
-            return;
+
+            // 카메라 줌을 초기 값으로 복원
+            zoomCam.targetCameraHalfHeight = initialZoom;
+            zoomCam.adjustCameraFOV(); // 카메라 FOV를 조정합니다.
+            return; // 추가적인 줌 조정을 중단합니다.
         }
         else
         {
-            // 줌 상태면 커브 시간 업데이트
+            // 마우스 왼쪽 버튼이 눌려있으면 커브 시간 업데이트
             zoomCurveTime += Time.deltaTime;
         }
 
+
         float zoomSpdValue = zoomSpdCrv.Evaluate(zoomCurveTime) * zoomSpd;
-        float zoomVal = (-1f * wheelVal * zoomSpdValue) + zoomCam.targetCameraHalfHeight;
+        //float zoomSpdValue = zoomSpd;
+        float zoomVal = (-1f * 1f * zoomSpdValue) + zoomCam.targetCameraHalfHeight;
 
         zoomCam.targetCameraHalfHeight = Mathf.Clamp(zoomVal, zoomMin, zoomCam.maxCameraHalfHeight);
 
         zoomCam.adjustCameraFOV();
-    }
+    }*/
 
 
     private void Awake()
@@ -280,6 +328,7 @@ public class CamCtrl : MonoBehaviour
             if (player)
             {
                 followObjTr = player.transform;
+
             }
         }
 
@@ -299,6 +348,11 @@ public class CamCtrl : MonoBehaviour
 
         resolutionRef.width = renderTex.width;
         resolutionRef.height = renderTex.height;
+
+        if (zoomCam != null)
+        {
+            initialZoom = zoomCam.targetCameraHalfHeight;
+        }
     }
 
     private void ManageZoomCamera()
@@ -327,6 +381,7 @@ public class CamCtrl : MonoBehaviour
     void Update()
     {
         ManageZoomCamera();
+        
     }
 
 	private void LateUpdate()
