@@ -7,7 +7,7 @@ public class CameraShake : MonoBehaviour
     private CinemachineVirtualCamera cinemachineVirtualCamera;
     public float shakeIntensity = 1.5f;
     public float shakeTime = 0.2f;
-
+    //plic bool isShake = false;
     private float timer;
     private CinemachineBasicMultiChannelPerlin _cbmcp;
 
@@ -34,12 +34,13 @@ public class CameraShake : MonoBehaviour
         CinemachineBasicMultiChannelPerlin _cbmcp = cinemachineVirtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
         _cbmcp.m_AmplitudeGain = 0f;
         timer = 0f;
+
     }
     // Update is called once per frame
     void Update()
     {
-        
 
+       
         if(timer >0)
         {
             timer -= Time.deltaTime;
@@ -48,5 +49,6 @@ public class CameraShake : MonoBehaviour
                 StopShake();
             }
         }
+        
     }
 }

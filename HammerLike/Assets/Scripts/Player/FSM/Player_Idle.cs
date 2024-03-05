@@ -67,8 +67,7 @@ public class Player_Idle : cState
         {
             
             player.PerformAttack();
-            SoundManager soundManager = SoundManager.Instance;
-            soundManager.PlaySFX(soundManager.audioClip[9]);
+            
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -95,18 +94,23 @@ public class Player_Idle : cState
                     {
                         //Debug.Log(" 시계방향");
                         player.animCtrl.Play("OutWardAttack", 0, 0f);
+                        SoundManager soundManager = SoundManager.Instance;
+                        soundManager.PlaySFX(soundManager.audioClip[9]);
                         player.animCtrl.speed = player.stat.attackSpd;
                         player.atk.Attack();
-                        player.atk.curCharging = 0;
+                        //player.atk.curCharging = 0;
+
                         //player.animCtrl.SetTrigger("tIdle");
                     }
                     else  // 반 시계방향 회전
                     {
                         //Debug.Log("반 시계 방향");
                         player.animCtrl.Play("InWardAttack", 0, 0f);
+                        SoundManager soundManager = SoundManager.Instance;
+                        soundManager.PlaySFX(soundManager.audioClip[9]);
                         player.animCtrl.speed = player.stat.attackSpd;
                         player.atk.Attack();
-                        player.atk.curCharging = 0;
+                        //player.atk.curCharging = 0;
                         //player.animCtrl.SetTrigger("tIdle");
                     }
                 }
@@ -119,8 +123,7 @@ public class Player_Idle : cState
         if (Input.GetMouseButtonDown(1))
         {
             player.PerformAttack();
-            SoundManager soundManager = SoundManager.Instance;
-            soundManager.PlaySFX(soundManager.audioClip[9]);
+            
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -147,6 +150,8 @@ public class Player_Idle : cState
                     {
                     
                         player.animCtrl.Play("OutWardAttack 0", 0, 0f);
+                        SoundManager soundManager = SoundManager.Instance;
+                        soundManager.PlaySFX(soundManager.audioClip[9]);
                         player.animCtrl.speed = player.stat.attackSpd;
                         player.atk.Attack();
                         player.atk.curCharging = 0;
@@ -155,6 +160,8 @@ public class Player_Idle : cState
                     {
                     
                         player.animCtrl.Play("InWardAttack 0", 0, 0f);
+                        SoundManager soundManager = SoundManager.Instance;
+                        soundManager.PlaySFX(soundManager.audioClip[9]);
                         player.animCtrl.speed = player.stat.attackSpd;
                         player.atk.Attack();
                         player.atk.curCharging = 0;

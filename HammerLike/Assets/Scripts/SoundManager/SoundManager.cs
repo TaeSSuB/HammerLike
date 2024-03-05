@@ -109,14 +109,17 @@ public class SoundManager : MonoBehaviour
     private void Start()
     {
         // 현재 볼륨 값에 100을 곱하여 문자열로 변환 후, 각 TMP_InputField에 설정
-        masterVolumeTextInput.text = (masterVolume * 100).ToString("0");
-        bgmVolumeTextInput.text = (bgmVolume * 100).ToString("0");
-        sfxVolumeTextInput.text = (sfxVolume * 100).ToString("0");
+        if (SceneManager.GetActiveScene().name == "UI")
+        {
+            masterVolumeTextInput.text = (masterVolume * 100).ToString("0");
+            bgmVolumeTextInput.text = (bgmVolume * 100).ToString("0");
+            sfxVolumeTextInput.text = (sfxVolume * 100).ToString("0");
 
-        // 슬라이더의 값도 현재 볼륨에 맞춰 설정
-        masterVolumeSlider.value = masterVolume;
-        bgmVolumeSlider.value = bgmVolume;
-        sfxVolumeSlider.value = sfxVolume;
+            // 슬라이더의 값도 현재 볼륨에 맞춰 설정
+            masterVolumeSlider.value = masterVolume;
+            bgmVolumeSlider.value = bgmVolume;
+            sfxVolumeSlider.value = sfxVolume;
+        }
     }
 
 

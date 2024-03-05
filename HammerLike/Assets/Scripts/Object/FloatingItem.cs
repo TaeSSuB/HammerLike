@@ -16,7 +16,7 @@ public class FloatingItem : MonoBehaviour
     private float timeToKinematic = 2f; // Kinematic으로 전환하기 전 대기 시간
     private float timer = 0f; // 타이머
     private bool isDropped = false;
-    private float obtainableDistance = 3f; // 아이템을 플레이어가 얻을 수 있는 거리
+    private float obtainableDistance = 8f; // 아이템을 플레이어가 얻을 수 있는 거리
 
     void Start()
     {

@@ -191,10 +191,7 @@ public class Monster : MonoBehaviour
                 animCtrl.SetBool("IsChasing", false);
                 animCtrl.SetTrigger("tIdle");
             }
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-
-            }
+            
         }
         else
         {
@@ -287,26 +284,30 @@ public class Monster : MonoBehaviour
                     //lastProcessedAttackId = weaponCollider.CurrentAttackId;
                     //processedAttacks.Add(weaponCollider.CurrentAttackId);
                     float customDamage=0f;
-                    
+                    float intensity = 100f;
+                    float customIntensity = 0f;
                     if (player.atk.curCharging >= 0 && player.atk.curCharging < 2)
                     {
                         //customForce = raycastShooter.force; // 원본 크기
                         customDamage = playerAttack.attackDamage;
+                        customIntensity = intensity;
                     }
                     else if (player.atk.curCharging >= 2 && player.atk.curCharging < 4)
                     {
                         //customForce = raycastShooter.force * 1.5f; // 1.5배 크기
                         customDamage = playerAttack.attackDamage*1.5f;
+                        customIntensity = intensity*1.5f;
                     }
                     else // player.curCharging >= 4
                     {
                         //customForce = raycastShooter.force * 2f; // 2배 크기
                         customDamage = playerAttack.attackDamage*2f;
+                        customIntensity = intensity*3f;
                     }
                     
                     puppet.puppetMaster.pinWeight = 0f;
                     isRising = true;
-                    ApplyKnockback(player.transform.forward);
+                    ApplyKnockback(player.transform.forward, customIntensity);
                     TakeDamage(customDamage);
            
                     lastProcessedAttackId = weaponCollider.CurrentAttackId;
@@ -326,13 +327,13 @@ public class Monster : MonoBehaviour
         }
     }
 
-    private void ApplyKnockback(Vector3 direction)
+    private void ApplyKnockback(Vector3 direction,float intensity)
     {
 
         Debug.Log(direction);
-           float knockbackIntensity = 100f; // 넉백 강도
+        //float knockbackIntensity = 100f; // 넉백 강도
         direction.y = 0; // Y축 방향을 0으로 설정하여 수평 넉백을 보장
-        GetComponent<Rigidbody>().AddForce(direction.normalized * knockbackIntensity, ForceMode.VelocityChange);
+        GetComponent<Rigidbody>().AddForce(direction.normalized * intensity, ForceMode.VelocityChange);
         isKnockedBack = true;
         StartCoroutine(KnockBackDuration());
         knockbackData++;
@@ -429,14 +430,15 @@ public class Monster : MonoBehaviour
         DisableAttackCollider();
         if(attackMeshRenderer!=null)
         DisableAttackMeshRenderer();
+
         // NavMeshAgent ºñÈ°¼ºÈ­
-        if (nmAgent != null && nmAgent.isActiveAndEnabled)
+        /*if (nmAgent != null && nmAgent.isActiveAndEnabled)
         {
             nmAgent.isStopped = true;
             nmAgent.enabled = false;
            
 
-        }
+        }*/
         navMeshPuppet.enabled = false;
         SoundManager soundManager = SoundManager.Instance;
         soundManager.PlaySFX(soundManager.audioClip[2]);
@@ -449,10 +451,28 @@ public class Monster : MonoBehaviour
     {
         if (puppet != null && puppet.puppetMaster != null)
         {
+            /*Vector3 playerDirection = transform.position - player.transform.position;
+            playerDirection.y = 0;
+            Vector3 knockbackDirection = playerDirection.normalized;*/
             // 모든 근육을 순회하며 재귀적으로 연결 해제
             for (int i = 0; i < puppet.puppetMaster.muscles.Length; i++)
             {
+                
                 puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Explode);
+               /* ///
+                /// 만약에 몬스터 잔해가 날라갈 시 이 코드 지울것
+                ///
+                Rigidbody muscleRigidbody = puppet.puppetMaster.muscles[i].rigidbody;
+                if(muscleRigidbody != null)
+                {
+                    muscleRigidbody.AddForce(knockbackDirection * 100f, ForceMode.Impulse);
+                }
+
+                if (rd != null)
+                {
+                    rd.AddForce(knockbackDirection * customForce, ForceMode.Impulse);
+                }*/
+
                 rd.isKinematic = true;
                 //CapsuleCollider cap = GetComponent<CapsuleCollider>();
                 //cap.GetComponent<CapsuleCollider>().isTrigger = true;
@@ -551,7 +571,7 @@ public class Monster : MonoBehaviour
         {
             if (distanceToTarget > stat.attackRange)
             {
-                nmAgent.SetDestination(playerTransform.position);
+                //nmAgent.SetDestination(playerTransform.position);
                 if(attackCollider!=null)
                 DisableAttackCollider();
                 animCtrl.SetBool("IsChasing", true);
@@ -627,11 +647,12 @@ public class Monster : MonoBehaviour
             animCtrl.SetTrigger("tAttack");
             SoundManager soundManager = SoundManager.Instance;
             soundManager.PlaySFX(soundManager.audioClip[6]);
+            DisableAttackComponentsAfterDelay();
         }
         else if (monsterType == MonsterType.Ranged)
         {
             FaceTarget();
-            nmAgent.isStopped=true;
+            //nmAgent.isStopped=true;
             if (currentProjectile != null)
             {
                 animCtrl.SetBool("IsAimIdle", true);
@@ -675,13 +696,13 @@ public class Monster : MonoBehaviour
         else if (monsterType == MonsterType.Ranged)
         {
             animCtrl.SetBool("IsAiming", true);
-            nmAgent.isStopped = true;
+            //nmAgent.isStopped = true;
         }
 
         // ÃßÀûÀ» ¸ØÃß±â À§ÇØ NavMeshAgent¸¦ ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
         if (nmAgent != null && nmAgent.enabled)
         {
-            nmAgent.isStopped = true;
+            //nmAgent.isStopped = true;
         }
     }
 
@@ -703,10 +724,10 @@ public class Monster : MonoBehaviour
             // ÃßÀûÀ» Àç°³ÇÏ±â À§ÇØ NavMeshAgent¸¦ È°¼ºÈ­ÇÕ´Ï´Ù.
             if (nmAgent != null && nmAgent.enabled && distanceToTarget <= stat.detectionRange)
             {
-                nmAgent.isStopped = false;
+                //nmAgent.isStopped = false;
                 if (playerTransform != null && distanceToTarget > nmAgent.stoppingDistance)
                 {
-                    nmAgent.SetDestination(playerTransform.position);
+                    //nmAgent.SetDestination(playerTransform.position);
                     animCtrl.SetBool("IsChasing", true);
                 }
                 else if (playerTransform != null && distanceToTarget <= nmAgent.stoppingDistance)
@@ -806,6 +827,13 @@ public class Monster : MonoBehaviour
     public void startKnockback()
     {
         isKnockedBack = true;
+    }
+
+    private IEnumerator DisableAttackComponentsAfterDelay()
+    {
+        yield return new WaitForSeconds(1f); // 1초 대기
+        DisableAttackCollider(); // 공격 관련 컴포넌트 비활성화
+        DisableAttackMeshRenderer();
     }
     public void endKnockback()
     {

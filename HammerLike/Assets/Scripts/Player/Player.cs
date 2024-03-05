@@ -382,6 +382,7 @@ public class Player : MonoBehaviour
         isAttacking = false;
         CancelInvoke("ResetAttackState"); // EndAttack이 정상적으로 호출되면 ResetAttackState 호출 취소
         animCtrl.SetTrigger("tIdle");
+        atk.curCharging = 0f;
     }
 
 

@@ -24,11 +24,14 @@ public class MeshDestroy : MonoBehaviour
     private int lastProcessedAttackId = -1;
     private Collider collider;
     private ItemManager itemManager;
+    private ChangeMaterialObject changeMaterial;
+    private CameraShake cameraShake;
     void Start()
     {
         GameObject itemDB = GameObject.Find("ItemDB");
         itemManager = itemDB.GetComponent<ItemManager>();
         curHp = maxHp;
+        changeMaterial = GetComponent<ChangeMaterialObject>(); 
         // player가 null인 경우 Player 이름을 가진 오브젝트에서 Player 스크립트를 찾아 할당
         if (player == null)
         {
@@ -46,7 +49,21 @@ public class MeshDestroy : MonoBehaviour
                 Debug.LogError("Scene 내에 Player 이름을 가진 오브젝트가 존재하지 않습니다.");
             }
         }
-       
+
+        GameObject vcamObject = GameObject.Find("CM vcam1");
+        if (vcamObject != null) // CM vcam1 오브젝트가 존재하는 경우
+        {
+            cameraShake = vcamObject.GetComponent<CameraShake>();
+            if (cameraShake == null) // CameraShake 컴포넌트가 해당 오브젝트에 없는 경우
+            {
+                Debug.LogError("CM vcam1 오브젝트에서 CameraShake 컴포넌트를 찾을 수 없습니다.");
+            }
+        }
+        else
+        {
+            Debug.LogError("Scene 내에 CM vcam1 이름을 가진 오브젝트가 존재하지 않습니다.");
+        }
+
     }
 
     void Update()
@@ -64,6 +81,14 @@ public class MeshDestroy : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         //DestroyMesh();
+        if (other.gameObject.CompareTag("Skeleton_Prisoner") || other.gameObject.CompareTag("Skeleton_Archer"))
+        {
+            Monster monster = other.gameObject.GetComponent<Monster>();
+            if (monster != null && monster.isKnockedBack)
+            {
+                TakeDamage(monster.knockbackDamage);
+            }
+        }
 
     }
     private void OnTriggerEnter(Collider other)
@@ -112,14 +137,7 @@ public class MeshDestroy : MonoBehaviour
 
             }
         }
-        if(other.CompareTag("Skeleton_Prisoner") || other.CompareTag("Skeleton_Archer"))
-        {
-            Monster monster = other.GetComponent<Monster>();
-            if(monster.isKnockedBack)
-            {
-                TakeDamage(monster.knockbackDamage);
-            }
-        }
+        
     }
 
     private void TakeDamage(float damage)
@@ -129,11 +147,18 @@ public class MeshDestroy : MonoBehaviour
         if (curHp > 0)  // ¸?½º??°¡ ??¾Æ???? ¶§¸¸ ??°? ?³¸®
         {
             curHp -= damage;
-            
+            if (!CompareTag("Pot"))
+            {
+                cameraShake.ShakeCamera();
+            }
 
             if (curHp <= 0)
             {
                 DestroyMesh();
+            }
+            else
+            {
+                changeMaterial.OnHit();
             }
         }
     }
@@ -146,6 +171,10 @@ public class MeshDestroy : MonoBehaviour
         hasBeenDestroyed = true;
         if (CompareTag("Pot"))
             itemManager.DropItem(0,transform.position);
+        else
+        {
+            
+        }
         // 여기서 null 체크를 추가합니다.
         if (GetComponent<MeshFilter>() == null || player == null)
         {
