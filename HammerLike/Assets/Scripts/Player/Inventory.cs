@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
+
 public class Inventory : MonoBehaviour
 {
     public static Inventory Instance;
@@ -19,6 +21,10 @@ public class Inventory : MonoBehaviour
     [Header("Quick Slot UI")]
     public Image[] quickSlotUIImages;
     public TMP_Text[] quickSlotQuantityTexts;
+    [Header("Clear UI")]
+    public GameObject goldPopup; // 인스펙터에서 할당할 골드 팝업 오브젝트
+    public Button mainMenuButton; // 메인 메뉴로 돌아가는 버튼
+    public Button quitButton; // 게임 종료 버튼
     void Awake()
     {
         if (Instance == null)
@@ -32,6 +38,13 @@ public class Inventory : MonoBehaviour
         }
 
         // 필요한 초기화 코드 추가
+
+        // 기존 Awake 로직에 추가
+        mainMenuButton.onClick.AddListener(GoToMainMenu);
+        quitButton.onClick.AddListener(QuitGame);
+
+        // 팝업 초기에는 비활성화
+        goldPopup.SetActive(false);
     }
 
     void Start()
@@ -227,6 +240,33 @@ public class Inventory : MonoBehaviour
         int totalGold = GetTotalGoldAmount(goldItemId);
         
         goldText.text = totalGold.ToString() + "G";
+
+        if (totalGold >= 50)
+        {
+            ShowGoldPopup();
+        }
+    }
+
+    private void ShowGoldPopup()
+    {
+        Time.timeScale = 0; // 게임 일시 정지
+        goldPopup.SetActive(true); // 골드 팝업 활성화
+    }
+
+    private void GoToMainMenu()
+    {
+        Time.timeScale = 1; // 게임 속도를 다시 정상으로
+        SceneManager.LoadScene("UI"); // 메인 화면(씬)으로 이동
+    }
+
+    private void QuitGame()
+    {
+        Application.Quit(); // 게임 종료
+
+        // 유니티 에디터에서 작동하는 경우
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
     }
 
     private int GetTotalGoldAmount(int goldItemId)

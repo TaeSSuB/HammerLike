@@ -125,6 +125,8 @@ public class Player : MonoBehaviour
     private SaveDataManager saveDataManager;
     public CameraShake camerashake;
     public ChangeMaterial[] changeMaterials;
+    private bool isDead = false;
+    private GameOver gameOver;
     private void Awake()
     {
         if (!fsm)
@@ -153,18 +155,23 @@ public class Player : MonoBehaviour
         UpdateHealthBar();
         if (ES3.KeyExists("playerStat"))
         {
-            //Debug.Log("playerStat is Exist");
-            //stat = ES3.Load<PlayerStat>("playerStat");
+            /*Debug.Log("playerStat is Exist");
+            stat = ES3.Load<PlayerStat>("playerStat");*/
         }
         
 
         previousLookDirection = transform.forward;
         currentHammerAngle = 0f;
+
+        gameOver = GetComponent<GameOver>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (isDead)
+            return;
+
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             isRotationEnabled = !isRotationEnabled;
@@ -324,6 +331,8 @@ public class Player : MonoBehaviour
         if (stat.curHp > 0)
         {
             stat.curHp -= damage;
+            if(stat.curHp <= 0)
+                stat.curHp = 0;
             UpdateHealthBar();
             camerashake.ShakeCamera();
             for (int i = 0; i < 3; i++)
@@ -332,11 +341,19 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (stat.curHp <= 0)
+        if (stat.curHp <= 0&&!isDead)
         {
 
+            Dead();
         }
 
+    }
+
+    public void Dead()
+    {
+        animCtrl.SetTrigger("tDeath");
+        isDead = true;
+        gameOver.OnGameOver();
     }
 
     public void StartCharge()
@@ -364,8 +381,8 @@ public class Player : MonoBehaviour
     public void StartAttack() // 공격 시작 시 호출
     {
         isAttacking = true;
-        CancelInvoke("ResetAttackState"); // 이전에 설정된 Invoke가 있다면 취소
-        Invoke("ResetAttackState", 1.5f); // 1.5초 후에 ResetAttackState 메서드를 호출
+        //CancelInvoke("ResetAttackState"); // 이전에 설정된 Invoke가 있다면 취소
+        //Invoke("ResetAttackState", 1.5f); // 1.5초 후에 ResetAttackState 메서드를 호출
     }
 
     void ResetAttackState()
@@ -380,7 +397,7 @@ public class Player : MonoBehaviour
     public void EndAttack() // 애니메이션 이벤트로 호출
     {
         isAttacking = false;
-        CancelInvoke("ResetAttackState"); // EndAttack이 정상적으로 호출되면 ResetAttackState 호출 취소
+        //CancelInvoke("ResetAttackState"); // EndAttack이 정상적으로 호출되면 ResetAttackState 호출 취소
         animCtrl.SetTrigger("tIdle");
         atk.curCharging = 0f;
     }

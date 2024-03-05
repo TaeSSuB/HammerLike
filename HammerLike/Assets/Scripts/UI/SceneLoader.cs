@@ -13,4 +13,9 @@ public class SceneLoader : MonoBehaviour
         // sceneToLoad에 설정된 씬으로 이동합니다.
         LoadingSceneController.LoadScene(sceneToLoad);
     }
+
+    public void Exit()
+    {
+        Application.Quit();
+    }
 }

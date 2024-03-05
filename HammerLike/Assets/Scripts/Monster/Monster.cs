@@ -116,6 +116,10 @@ public class Monster : MonoBehaviour
     private bool canShot = true;
     private bool canDamage = true;
     private bool isRising = false;
+    private Vector3 pos;
+
+    public GameObject monsterPrefab; // Inspector에서 할당된 몬스터 프리팹
+    private GameObject clonedMonster;
     private void Awake()
     {
         if (!fsm)
@@ -135,6 +139,7 @@ public class Monster : MonoBehaviour
 
     void Start()
     {
+        pos = transform.position;
         nmAgent = GetComponent<NavMeshAgent>();
         animCtrl.SetBool("IsChasing", true);
         if (healthSlider != null)
@@ -172,6 +177,9 @@ public class Monster : MonoBehaviour
             }
         }
         navMeshPuppet = GetComponent<NavMeshPuppet>();
+
+        clonedMonster = Instantiate(monsterPrefab, transform.position, Quaternion.identity);
+        clonedMonster.SetActive(false);
 
     }
 
@@ -378,12 +386,12 @@ public class Monster : MonoBehaviour
         if (stat.curHp > 0)  // ¸ó½ºÅÍ°¡ »ì¾ÆÀÖÀ» ¶§¸¸ ÇÇ°Ý Ã³¸®
         {
             stat.curHp -= damage;
-            if(attackCollider.enabled==true)
+            if(attackCollider!=null&&attackCollider.enabled==true)
             {
                 attackCollider.enabled = false;
             }
 
-            if(attackMeshRenderer.enabled==true)
+            if(attackMeshRenderer!=null&&attackMeshRenderer.enabled==true)
             {
                 attackMeshRenderer.enabled = false;
             }
@@ -445,8 +453,28 @@ public class Monster : MonoBehaviour
         playerTransform = null;
         DropItems();
         DisconnectMusclesRecursive();
+        //destroyObject();
+        StartCoroutine(destroyObject());
+        //StartCoroutine(respawObject());
         //Destroy(gameObject);
     }
+
+    private IEnumerator destroyObject()
+    {
+        yield return new WaitForSeconds(4f);
+        gameObject.SetActive(false);
+        clonedMonster.SetActive(true);
+        clonedMonster.transform.position = pos;
+    }
+
+    private IEnumerator respawObject()
+    {
+        yield return new WaitForSeconds(6f);
+
+
+    }
+
+
     private void DisconnectMusclesRecursive()
     {
         if (puppet != null && puppet.puppetMaster != null)
@@ -808,6 +836,7 @@ public class Monster : MonoBehaviour
     }
     public void DisableAttackMeshRenderer()
     {
+        if(attackMeshRenderer!=null)
         attackMeshRenderer.enabled = false;
     }
 
@@ -821,12 +850,15 @@ public class Monster : MonoBehaviour
     // °ø°Ý¿ë Collider ºñÈ°¼ºÈ­
     public void DisableAttackCollider()
     {
+        if(attackCollider!=null)
         attackCollider.enabled = false;
     }
 
     public void startKnockback()
     {
         isKnockedBack = true;
+        DisableAttackCollider(); // 공격 관련 컴포넌트 비활성화
+        DisableAttackMeshRenderer();
     }
 
     private IEnumerator DisableAttackComponentsAfterDelay()
@@ -838,6 +870,8 @@ public class Monster : MonoBehaviour
     public void endKnockback()
     {
         isKnockedBack=false;
+        DisableAttackCollider(); // 공격 관련 컴포넌트 비활성화
+        DisableAttackMeshRenderer();
     }
 
 

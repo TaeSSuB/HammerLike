@@ -222,7 +222,7 @@ public class CamCtrl : MonoBehaviour
     }
     public void Zoom()
     {
-        bool isLeftMouseDown = Input.GetMouseButton(0);
+        /*bool isLeftMouseDown = Input.GetMouseButton(0);
 
         if (!isLeftMouseDown && !shouldReturnToInitialZoom)
         {
@@ -259,7 +259,7 @@ public class CamCtrl : MonoBehaviour
 
             zoomCam.targetCameraHalfHeight = Mathf.Clamp(zoomVal, zoomMin, zoomCam.maxCameraHalfHeight);
             zoomCam.adjustCameraFOV();
-        }
+        }*/
     }
     /*public void Zoom()
     {

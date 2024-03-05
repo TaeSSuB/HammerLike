@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.UI;
 using static UnityEngine.Rendering.DebugUI;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 [System.Serializable] 
 public class SceneAudioSource
@@ -68,7 +69,39 @@ public class SoundManager : MonoBehaviour
             bgmSources.Add(scene.name, newSource);
         }
 
+        /*if (scene.name == "UI") // UI 씬이 로드됐을 경우에만 실행
+        {
+            ConnectUIElements();
+            UpdateUIWithCurrentValues();
+        }*/
+
         PlayBGMForCurrentScene();
+    }
+
+    public void ConnectUIElements()
+    {
+        // UI 요소들을 다시 찾아서 연결합니다.
+        masterVolumeSlider = GameObject.Find("Slider_MasterVolume").GetComponent<Slider>();
+        bgmVolumeSlider = GameObject.Find("Slider_BGM").GetComponent<Slider>();
+        sfxVolumeSlider = GameObject.Find("Slider_Effect").GetComponent<Slider>();
+
+        masterVolumeTextInput = GameObject.Find("Value_MasterVolume").GetComponent<TMP_InputField>();
+        bgmVolumeTextInput = GameObject.Find("Value_BGM").GetComponent<TMP_InputField>();
+        sfxVolumeTextInput = GameObject.Find("Value_Effect").GetComponent<TMP_InputField>();
+        UpdateUIWithCurrentValues();
+        // 실제 구현 시에는 적절한 GameObject 이름을 사용해야 합니다.
+    }
+
+    private void UpdateUIWithCurrentValues()
+    {
+        // 볼륨 설정에 따라 UI 요소들을 업데이트합니다.
+        masterVolumeSlider.value = masterVolume;
+        bgmVolumeSlider.value = bgmVolume;
+        sfxVolumeSlider.value = sfxVolume;
+
+        masterVolumeTextInput.text = (masterVolume * 100).ToString("0");
+        bgmVolumeTextInput.text = (bgmVolume * 100).ToString("0");
+        sfxVolumeTextInput.text = (sfxVolume * 100).ToString("0");
     }
 
     private void OnDestroy()

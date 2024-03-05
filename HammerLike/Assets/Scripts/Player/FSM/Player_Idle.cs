@@ -87,16 +87,16 @@ public class Player_Idle : cState
 
                 // 회전 방향 결정 (시계방향 또는 반시계방향)
                 Vector3 cross = Vector3.Cross(currentDirection, targetDirection);
-                if (player.isAttacking == false)
-                {
+                
 
                     if (cross.y > 0)  // 시계 방향
                     {
-                        //Debug.Log(" 시계방향");
-                        player.animCtrl.Play("OutWardAttack", 0, 0f);
+                    //Debug.Log(" 시계방향");
+                    //player.animCtrl.Play("OutWardAttack", 0, 0f);
+                    player.animCtrl.SetTrigger("tOutWardAttack");
                         SoundManager soundManager = SoundManager.Instance;
                         soundManager.PlaySFX(soundManager.audioClip[9]);
-                        player.animCtrl.speed = player.stat.attackSpd;
+                        //player.animCtrl.speed = player.stat.attackSpd;
                         player.atk.Attack();
                         //player.atk.curCharging = 0;
 
@@ -104,16 +104,17 @@ public class Player_Idle : cState
                     }
                     else  // 반 시계방향 회전
                     {
-                        //Debug.Log("반 시계 방향");
-                        player.animCtrl.Play("InWardAttack", 0, 0f);
-                        SoundManager soundManager = SoundManager.Instance;
+                    //Debug.Log("반 시계 방향");
+                    //player.animCtrl.Play("InWardAttack", 0, 0f);
+                    player.animCtrl.SetTrigger("tInWardAttack");
+                    SoundManager soundManager = SoundManager.Instance;
                         soundManager.PlaySFX(soundManager.audioClip[9]);
-                        player.animCtrl.speed = player.stat.attackSpd;
+                        //player.animCtrl.speed = player.stat.attackSpd;
                         player.atk.Attack();
                         //player.atk.curCharging = 0;
                         //player.animCtrl.SetTrigger("tIdle");
                     }
-                }
+                
 
 
 
@@ -143,31 +144,32 @@ public class Player_Idle : cState
 
                 // 회전 방향 결정 (시계방향 또는 반시계방향)
                 Vector3 cross = Vector3.Cross(currentDirection, targetDirection);
-                if(player.isAttacking==false)
-                {
+                
 
                     if (cross.y > 0)  // 시계 방향
                     {
-                    
-                        player.animCtrl.Play("OutWardAttack 0", 0, 0f);
+
+                    //player.animCtrl.Play("OutWardAttack 0", 0, 0f);
+                        player.animCtrl.SetTrigger("tOutWardAttack");
                         SoundManager soundManager = SoundManager.Instance;
                         soundManager.PlaySFX(soundManager.audioClip[9]);
-                        player.animCtrl.speed = player.stat.attackSpd;
+                        //player.animCtrl.speed = player.stat.attackSpd;
                         player.atk.Attack();
                         player.atk.curCharging = 0;
                     }
                     else  // 반 시계방향 회전
                     {
-                    
-                        player.animCtrl.Play("InWardAttack 0", 0, 0f);
-                        SoundManager soundManager = SoundManager.Instance;
+
+                    //player.animCtrl.Play("InWardAttack 0", 0, 0f);
+                    player.animCtrl.SetTrigger("tInWardAttack");
+                    SoundManager soundManager = SoundManager.Instance;
                         soundManager.PlaySFX(soundManager.audioClip[9]);
-                        player.animCtrl.speed = player.stat.attackSpd;
+                        //player.animCtrl.speed = player.stat.attackSpd;
                         player.atk.Attack();
                         player.atk.curCharging = 0;
 
                     }
-                }
+                
 
 
 
