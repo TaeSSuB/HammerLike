@@ -432,13 +432,13 @@ public class Monster : MonoBehaviour
         DisableAttackMeshRenderer();
 
         // NavMeshAgent ºñÈ°¼ºÈ­
-        if (nmAgent != null && nmAgent.isActiveAndEnabled)
+        /*if (nmAgent != null && nmAgent.isActiveAndEnabled)
         {
             nmAgent.isStopped = true;
             nmAgent.enabled = false;
            
 
-        }
+        }*/
         navMeshPuppet.enabled = false;
         SoundManager soundManager = SoundManager.Instance;
         soundManager.PlaySFX(soundManager.audioClip[2]);
@@ -571,7 +571,7 @@ public class Monster : MonoBehaviour
         {
             if (distanceToTarget > stat.attackRange)
             {
-                nmAgent.SetDestination(playerTransform.position);
+                //nmAgent.SetDestination(playerTransform.position);
                 if(attackCollider!=null)
                 DisableAttackCollider();
                 animCtrl.SetBool("IsChasing", true);
@@ -647,11 +647,12 @@ public class Monster : MonoBehaviour
             animCtrl.SetTrigger("tAttack");
             SoundManager soundManager = SoundManager.Instance;
             soundManager.PlaySFX(soundManager.audioClip[6]);
+            DisableAttackComponentsAfterDelay();
         }
         else if (monsterType == MonsterType.Ranged)
         {
             FaceTarget();
-            nmAgent.isStopped=true;
+            //nmAgent.isStopped=true;
             if (currentProjectile != null)
             {
                 animCtrl.SetBool("IsAimIdle", true);
@@ -695,13 +696,13 @@ public class Monster : MonoBehaviour
         else if (monsterType == MonsterType.Ranged)
         {
             animCtrl.SetBool("IsAiming", true);
-            nmAgent.isStopped = true;
+            //nmAgent.isStopped = true;
         }
 
         // ÃßÀûÀ» ¸ØÃß±â À§ÇØ NavMeshAgent¸¦ ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
         if (nmAgent != null && nmAgent.enabled)
         {
-            nmAgent.isStopped = true;
+            //nmAgent.isStopped = true;
         }
     }
 
@@ -723,10 +724,10 @@ public class Monster : MonoBehaviour
             // ÃßÀûÀ» Àç°³ÇÏ±â À§ÇØ NavMeshAgent¸¦ È°¼ºÈ­ÇÕ´Ï´Ù.
             if (nmAgent != null && nmAgent.enabled && distanceToTarget <= stat.detectionRange)
             {
-                nmAgent.isStopped = false;
+                //nmAgent.isStopped = false;
                 if (playerTransform != null && distanceToTarget > nmAgent.stoppingDistance)
                 {
-                    nmAgent.SetDestination(playerTransform.position);
+                    //nmAgent.SetDestination(playerTransform.position);
                     animCtrl.SetBool("IsChasing", true);
                 }
                 else if (playerTransform != null && distanceToTarget <= nmAgent.stoppingDistance)
@@ -826,6 +827,13 @@ public class Monster : MonoBehaviour
     public void startKnockback()
     {
         isKnockedBack = true;
+    }
+
+    private IEnumerator DisableAttackComponentsAfterDelay()
+    {
+        yield return new WaitForSeconds(1f); // 1초 대기
+        DisableAttackCollider(); // 공격 관련 컴포넌트 비활성화
+        DisableAttackMeshRenderer();
     }
     public void endKnockback()
     {

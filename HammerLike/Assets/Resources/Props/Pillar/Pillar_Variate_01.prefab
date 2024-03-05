@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 3561815811312221476}
   - component: {fileID: 3239124287220151969}
   - component: {fileID: 2861687493986609313}
+  - component: {fileID: 768189508231330638}
   m_Layer: 10
   m_Name: Pillar_Variate_01
-  m_TagString: Untagged
+  m_TagString: KnockBackable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -116,3 +117,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.2157066, y: 6.027503, z: 2.2569141}
   m_Center: {x: 0, y: 3.0137515, z: -0.01281786}
+--- !u!114 &768189508231330638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3057628500611423473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bce8e043e81acca4ab8e182c320b6917, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitMaterials:
+  - {fileID: 2100000, guid: d103c03d8a7728648ac95990d0e71a3b, type: 2}
+  meshRenderer: {fileID: 0}
