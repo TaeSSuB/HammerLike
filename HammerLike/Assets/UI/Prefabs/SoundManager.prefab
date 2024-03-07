@@ -683,7 +683,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 830fb185fca226349bd79f019af91210, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 1
@@ -811,7 +811,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 94a57fbd1b9db494d94779b25c3c0c88, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 1
@@ -2057,8 +2057,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bgmSourcesList:
-  - sceneName: 
-    audioSource: {fileID: 0}
+  - sceneName: UI
+    audioSource: {fileID: 1002575351}
+  - sceneName: K_CombatSystemTest
+    audioSource: {fileID: 708319535}
   sfxSources:
   - {fileID: 1735253788}
   - {fileID: 1099540731}

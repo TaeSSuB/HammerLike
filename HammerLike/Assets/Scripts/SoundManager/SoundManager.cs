@@ -69,7 +69,7 @@ public class SoundManager : MonoBehaviour
             bgmSources.Add(scene.name, newSource);
         }
 
-        /*if (scene.name == "UI") // UI ¾ÀÀÌ ·ÎµåµÆÀ» °æ¿ì¿¡¸¸ ½ÇÇà
+        /*if (scene.name == "UI") // UI ì”¬ì´ ë¡œë“œëì„ ê²½ìš°ì—ë§Œ ì‹¤í–‰
         {
             ConnectUIElements();
             UpdateUIWithCurrentValues();
@@ -80,7 +80,7 @@ public class SoundManager : MonoBehaviour
 
     public void ConnectUIElements()
     {
-        // UI ¿ä¼ÒµéÀ» ´Ù½Ã Ã£¾Æ¼­ ¿¬°áÇÕ´Ï´Ù.
+        // UI ìš”ì†Œë“¤ì„ ë‹¤ì‹œ ì°¾ì•„ì„œ ì—°ê²°í•©ë‹ˆë‹¤.
         masterVolumeSlider = GameObject.Find("Slider_MasterVolume").GetComponent<Slider>();
         bgmVolumeSlider = GameObject.Find("Slider_BGM").GetComponent<Slider>();
         sfxVolumeSlider = GameObject.Find("Slider_Effect").GetComponent<Slider>();
@@ -89,12 +89,63 @@ public class SoundManager : MonoBehaviour
         bgmVolumeTextInput = GameObject.Find("Value_BGM").GetComponent<TMP_InputField>();
         sfxVolumeTextInput = GameObject.Find("Value_Effect").GetComponent<TMP_InputField>();
         UpdateUIWithCurrentValues();
-        // ½ÇÁ¦ ±¸Çö ½Ã¿¡´Â ÀûÀıÇÑ GameObject ÀÌ¸§À» »ç¿ëÇØ¾ß ÇÕ´Ï´Ù.
+
+        masterVolumeSlider = GameObject.Find("Slider_MasterVolume").GetComponent<Slider>();
+        if (masterVolumeSlider != null)
+        {
+            // ê¸°ì¡´ì— ì—°ê²°ëœ ëª¨ë“  ë¦¬ìŠ¤ë„ˆë¥¼ ì œê±°í•©ë‹ˆë‹¤.
+            masterVolumeSlider.onValueChanged.RemoveAllListeners();
+            // ìƒˆë¡œìš´ ê°’ì´ ì„¤ì •ë  ë•Œ í˜¸ì¶œë  ë©”ì„œë“œë¥¼ ì—°ê²°í•©ë‹ˆë‹¤.
+            masterVolumeSlider.onValueChanged.AddListener(SetMasterVolume);
+        }
+
+        // Master Volume Text Input ì°¾ê¸° ë° ì´ë²¤íŠ¸ í•¸ë“¤ëŸ¬ ì—°ê²°
+        masterVolumeTextInput = GameObject.Find("Value_MasterVolume").GetComponent<TMP_InputField>();
+        if (masterVolumeTextInput != null)
+        {
+            // ê¸°ì¡´ì— ì—°ê²°ëœ ëª¨ë“  ë¦¬ìŠ¤ë„ˆë¥¼ ì œê±°í•©ë‹ˆë‹¤.
+            masterVolumeTextInput.onValueChanged.RemoveAllListeners();
+            // ìƒˆë¡œìš´ í…ìŠ¤íŠ¸ê°€ ì…ë ¥ë  ë•Œ í˜¸ì¶œë  ë©”ì„œë“œë¥¼ ì—°ê²°í•©ë‹ˆë‹¤.
+            masterVolumeTextInput.onValueChanged.AddListener(SetMasterValue);
+        }
+
+        // BGM
+        bgmVolumeSlider = GameObject.Find("Slider_BGM").GetComponent<Slider>();
+        if (bgmVolumeSlider != null)
+        {
+            bgmVolumeSlider.onValueChanged.RemoveAllListeners();
+            bgmVolumeSlider.onValueChanged.AddListener(SetBGMVolume);
+        }
+
+
+        bgmVolumeTextInput = GameObject.Find("Value_BGM").GetComponent<TMP_InputField>();
+        if (bgmVolumeTextInput != null)
+        {
+            bgmVolumeTextInput.onValueChanged.RemoveAllListeners();
+            bgmVolumeTextInput.onValueChanged.AddListener(SetBGMValue);
+        }
+
+        // SFX
+        sfxVolumeSlider = GameObject.Find("Slider_Effect").GetComponent<Slider>();
+        if (sfxVolumeSlider != null)
+        {
+            sfxVolumeSlider.onValueChanged.RemoveAllListeners();
+            sfxVolumeSlider.onValueChanged.AddListener(SetSFXVolume);
+        }
+
+
+        sfxVolumeTextInput = GameObject.Find("Value_Effect").GetComponent<TMP_InputField>();
+        if (sfxVolumeTextInput != null)
+        {
+            sfxVolumeTextInput.onValueChanged.RemoveAllListeners();
+            sfxVolumeTextInput.onValueChanged.AddListener(SetSFXValue);
+        }
+
     }
 
     private void UpdateUIWithCurrentValues()
     {
-        // º¼·ı ¼³Á¤¿¡ µû¶ó UI ¿ä¼ÒµéÀ» ¾÷µ¥ÀÌÆ®ÇÕ´Ï´Ù.
+        // ë³¼ë¥¨ ì„¤ì •ì— ë”°ë¼ UI ìš”ì†Œë“¤ì„ ì—…ë°ì´íŠ¸í•©ë‹ˆë‹¤.
         masterVolumeSlider.value = masterVolume;
         bgmVolumeSlider.value = bgmVolume;
         sfxVolumeSlider.value = sfxVolume;
@@ -111,13 +162,13 @@ public class SoundManager : MonoBehaviour
 
     private void PlayBGMForCurrentScene()
     {
-        // »õ ¾ÀÀÌ ·ÎµåµÉ ¶§ ¸ğµç ÇöÀç Àç»ı ÁßÀÎ BGMÀ» Á¤ÁöÇÕ´Ï´Ù.
+        // ìƒˆ ì”¬ì´ ë¡œë“œë  ë•Œ ëª¨ë“  í˜„ì¬ ì¬ìƒ ì¤‘ì¸ BGMì„ ì •ì§€í•©ë‹ˆë‹¤.
         StopAllBGM();
 
-        // ÇöÀç ¾À ÀÌ¸§À» °¡Á®¿É´Ï´Ù.
+        // í˜„ì¬ ì”¬ ì´ë¦„ì„ ê°€ì ¸ì˜µë‹ˆë‹¤.
         string currentSceneName = SceneManager.GetActiveScene().name;
 
-        // »õ ¾À¿¡ ÇØ´çÇÏ´Â BGMÀ» Ã£¾Æ Àç»ıÇÕ´Ï´Ù.
+        // ìƒˆ ì”¬ì— í•´ë‹¹í•˜ëŠ” BGMì„ ì°¾ì•„ ì¬ìƒí•©ë‹ˆë‹¤.
         if (bgmSources.TryGetValue(currentSceneName, out AudioSource currentBGM))
         {
             if (currentBGM.clip != null)
@@ -127,7 +178,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    // ¸ğµç BGMÀ» Á¤ÁöÇÏ´Â ¸Ş¼­µåÀÔ´Ï´Ù.
+    // ëª¨ë“  BGMì„ ì •ì§€í•˜ëŠ” ë©”ì„œë“œì…ë‹ˆë‹¤.
     private void StopAllBGM()
     {
         foreach (var bgmSource in bgmSources.Values)
@@ -141,14 +192,14 @@ public class SoundManager : MonoBehaviour
 
     private void Start()
     {
-        // ÇöÀç º¼·ı °ª¿¡ 100À» °öÇÏ¿© ¹®ÀÚ¿­·Î º¯È¯ ÈÄ, °¢ TMP_InputField¿¡ ¼³Á¤
+        // í˜„ì¬ ë³¼ë¥¨ ê°’ì— 100ì„ ê³±í•˜ì—¬ ë¬¸ìì—´ë¡œ ë³€í™˜ í›„, ê° TMP_InputFieldì— ì„¤ì •
         if (SceneManager.GetActiveScene().name == "UI")
         {
             masterVolumeTextInput.text = (masterVolume * 100).ToString("0");
             bgmVolumeTextInput.text = (bgmVolume * 100).ToString("0");
             sfxVolumeTextInput.text = (sfxVolume * 100).ToString("0");
 
-            // ½½¶óÀÌ´õÀÇ °ªµµ ÇöÀç º¼·ı¿¡ ¸ÂÃç ¼³Á¤
+            // ìŠ¬ë¼ì´ë”ì˜ ê°’ë„ í˜„ì¬ ë³¼ë¥¨ì— ë§ì¶° ì„¤ì •
             masterVolumeSlider.value = masterVolume;
             bgmVolumeSlider.value = bgmVolume;
             sfxVolumeSlider.value = sfxVolume;
@@ -157,33 +208,33 @@ public class SoundManager : MonoBehaviour
 
 
 
-    // ¹®ÀÚ¿­ ÀÔ·ÂÀ» ¹Ş¾Æ ¸¶½ºÅÍ º¼·ı ¼³Á¤
+    // ë¬¸ìì—´ ì…ë ¥ì„ ë°›ì•„ ë§ˆìŠ¤í„° ë³¼ë¥¨ ì„¤ì •
     public void SetMasterValue(string value)
     {
         if (float.TryParse(value, out float volume))
         {
-            SetMasterVolume(volume / 100f); // 0¿¡¼­ 100 »çÀÌÀÇ °ªÀ¸·Î º¯È¯
-            masterVolumeSlider.value = volume / 100f; // ½½¶óÀÌ´õ °ª ¾÷µ¥ÀÌÆ®
+            SetMasterVolume(volume / 100f); // 0ì—ì„œ 100 ì‚¬ì´ì˜ ê°’ìœ¼ë¡œ ë³€í™˜
+            masterVolumeSlider.value = volume / 100f; // ìŠ¬ë¼ì´ë” ê°’ ì—…ë°ì´íŠ¸
         }
     }
 
-    // ¹®ÀÚ¿­ ÀÔ·ÂÀ» ¹Ş¾Æ ¹è°æÀ½¾Ç º¼·ı ¼³Á¤
+    // ë¬¸ìì—´ ì…ë ¥ì„ ë°›ì•„ ë°°ê²½ìŒì•… ë³¼ë¥¨ ì„¤ì •
     public void SetBGMValue(string value)
     {
         if (float.TryParse(value, out float volume))
         {
-            SetBGMVolume(volume / 100f); // 0¿¡¼­ 100 »çÀÌÀÇ °ªÀ¸·Î º¯È¯
-            bgmVolumeSlider.value = volume / 100f; // ½½¶óÀÌ´õ °ª ¾÷µ¥ÀÌÆ®
+            SetBGMVolume(volume / 100f); // 0ì—ì„œ 100 ì‚¬ì´ì˜ ê°’ìœ¼ë¡œ ë³€í™˜
+            bgmVolumeSlider.value = volume / 100f; // ìŠ¬ë¼ì´ë” ê°’ ì—…ë°ì´íŠ¸
         }
     }
 
-    // ¹®ÀÚ¿­ ÀÔ·ÂÀ» ¹Ş¾Æ È¿°úÀ½ º¼·ı ¼³Á¤
+    // ë¬¸ìì—´ ì…ë ¥ì„ ë°›ì•„ íš¨ê³¼ìŒ ë³¼ë¥¨ ì„¤ì •
     public void SetSFXValue(string value)
     {
         if (float.TryParse(value, out float volume))
         {
-            SetSFXVolume(volume / 100f); // 0¿¡¼­ 100 »çÀÌÀÇ °ªÀ¸·Î º¯È¯
-            sfxVolumeSlider.value = volume / 100f; // ½½¶óÀÌ´õ °ª ¾÷µ¥ÀÌÆ®
+            SetSFXVolume(volume / 100f); // 0ì—ì„œ 100 ì‚¬ì´ì˜ ê°’ìœ¼ë¡œ ë³€í™˜
+            sfxVolumeSlider.value = volume / 100f; // ìŠ¬ë¼ì´ë” ê°’ ì—…ë°ì´íŠ¸
         }
     }
 
@@ -250,12 +301,12 @@ public class SoundManager : MonoBehaviour
 
     public void OnSFXVolumeChangeComplete()
     {
-        // º¼·ı ¼³Á¤À» ÀúÀåÇÏÁö ¾Ê°í, »ç¿ëÀÚ°¡ º¼·ı Á¶Á¤À» ¿Ï·áÇßÀ» ¶§ Å×½ºÆ® »ç¿îµå¸¦ Àç»ı
-        // ¿¹½Ã·Î, sfxSources ¸®½ºÆ®ÀÇ Ã¹ ¹øÂ° AudioSource¸¦ »ç¿ëÇÏ¿© Å×½ºÆ® »ç¿îµå Àç»ı
-        // ½ÇÁ¦ »ç¿ë ½Ã¿¡´Â ÀûÀıÇÑ Å×½ºÆ® »ç¿îµå Å¬¸³À» ¼±ÅÃÇÏ°Å³ª, Æ¯Á¤ Á¶°Ç¿¡ ¸Â´Â »ç¿îµå¸¦ Àç»ıÇÒ ¼ö ÀÖ½À´Ï´Ù.
+        // ë³¼ë¥¨ ì„¤ì •ì„ ì €ì¥í•˜ì§€ ì•Šê³ , ì‚¬ìš©ìê°€ ë³¼ë¥¨ ì¡°ì •ì„ ì™„ë£Œí–ˆì„ ë•Œ í…ŒìŠ¤íŠ¸ ì‚¬ìš´ë“œë¥¼ ì¬ìƒ
+        // ì˜ˆì‹œë¡œ, sfxSources ë¦¬ìŠ¤íŠ¸ì˜ ì²« ë²ˆì§¸ AudioSourceë¥¼ ì‚¬ìš©í•˜ì—¬ í…ŒìŠ¤íŠ¸ ì‚¬ìš´ë“œ ì¬ìƒ
+        // ì‹¤ì œ ì‚¬ìš© ì‹œì—ëŠ” ì ì ˆí•œ í…ŒìŠ¤íŠ¸ ì‚¬ìš´ë“œ í´ë¦½ì„ ì„ íƒí•˜ê±°ë‚˜, íŠ¹ì • ì¡°ê±´ì— ë§ëŠ” ì‚¬ìš´ë“œë¥¼ ì¬ìƒí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
         if (sfxSources.Count > 0 && audioClip.Length > 0)
         {
-            sfxSources[0].PlayOneShot(audioClip[0], sfxVolume * masterVolume); // Ã¹ ¹øÂ° ¿Àµğ¿À Å¬¸³À» ¿¹½Ã·Î »ç¿ë
+            sfxSources[0].PlayOneShot(audioClip[0], sfxVolume * masterVolume); // ì²« ë²ˆì§¸ ì˜¤ë””ì˜¤ í´ë¦½ì„ ì˜ˆì‹œë¡œ ì‚¬ìš©
         }
     }
 

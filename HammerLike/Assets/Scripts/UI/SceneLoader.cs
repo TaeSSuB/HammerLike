@@ -3,15 +3,21 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
-    // ÀÌ public º¯¼ö´Â ÀÎ½ºÆåÅÍ¿¡¼­ ¼³Á¤ÇÒ ¼ö ÀÖ½À´Ï´Ù.
-    // ¿©±â¿¡ ÀÌµ¿ÇÏ°í ½ÍÀº ¾ÀÀÇ ÀÌ¸§À» ÀÔ·ÂÇÏ¼¼¿ä.
+    // ì´ public ë³€ìˆ˜ëŠ” ì¸ìŠ¤í™í„°ì—ì„œ ì„¤ì •í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+    // ì—¬ê¸°ì— ì´ë™í•˜ê³  ì‹¶ì€ ì”¬ì˜ ì´ë¦„ì„ ì…ë ¥í•˜ì„¸ìš”.
     public string sceneToLoad;
 
-    // ÀÌ public ÇÔ¼ö´Â ¹öÆ° Å¬¸¯°ú °°Àº ÀÌº¥Æ®¿¡ ÀÇÇØ È£ÃâµÉ ¼ö ÀÖ½À´Ï´Ù.
+    // ì´ public í•¨ìˆ˜ëŠ” ë²„íŠ¼ í´ë¦­ê³¼ ê°™ì€ ì´ë²¤íŠ¸ì— ì˜í•´ í˜¸ì¶œë  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
     public void ChangeScene()
     {
-        // sceneToLoad¿¡ ¼³Á¤µÈ ¾ÀÀ¸·Î ÀÌµ¿ÇÕ´Ï´Ù.
+        // sceneToLoadì— ì„¤ì •ëœ ì”¬ìœ¼ë¡œ ì´ë™í•©ë‹ˆë‹¤.
         LoadingSceneController.LoadScene(sceneToLoad);
+    }
+
+    public void ChangeScene(string sceneName)
+    {
+        // sceneToLoadì— ì„¤ì •ëœ ì”¬ìœ¼ë¡œ ì´ë™í•©ë‹ˆë‹¤.
+        LoadingSceneController.LoadScene(sceneName);
     }
 
     public void Exit()

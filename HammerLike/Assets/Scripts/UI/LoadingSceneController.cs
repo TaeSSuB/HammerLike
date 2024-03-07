@@ -39,8 +39,8 @@ public class LoadingSceneController : MonoBehaviour
             else
             {
                 timer += Time.unscaledDeltaTime;
-                progressBar.value = Mathf.Lerp(0.9f, 1f, timer / 3f); // 3ÃÊ µ¿¾È ºÎµå·´°Ô Ã¤¿ì±â
-                if (timer > 3f) // ÃÖ¼Ò 3ÃÊ ´ë±â
+                progressBar.value = Mathf.Lerp(0.9f, 1f, timer / 10f); // 3ì´ˆ ë™ì•ˆ ë¶€ë“œëŸ½ê²Œ ì±„ìš°ê¸°
+                if (timer > 10f) // ìµœì†Œ 3ì´ˆ ëŒ€ê¸°
                 {
                     op.allowSceneActivation = true;
                     yield break;

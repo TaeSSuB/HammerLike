@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -548,15 +548,15 @@ public class Monster : MonoBehaviour
         if (healthSlider != null)
         {
             healthSlider.gameObject.SetActive(true);
-            StopCoroutine("HideHealthSlider");  // ÀÌ¹Ì ÁøÇà ÁßÀÎ ÄÚ·çÆ¾ÀÌ ÀÖ´Ù¸é Áß´Ü
-            StartCoroutine("HideHealthSlider");  // »õ ÄÚ·çÆ¾ ½ÃÀÛ
+            StopCoroutine("HideHealthSlider");  // 체력바 표시 Debug 용
+            StartCoroutine("HideHealthSlider");  
         }
     }
 
     private IEnumerator HideHealthSlider()
     {
         yield return new WaitForSeconds(2f);
-        if (healthSlider != null && stat.curHp > 0)  // ¸ó½ºÅÍ°¡ »ì¾ÆÀÖÀ» ¶§¸¸ ½½¶óÀÌ´õ ºñÈ°¼ºÈ­
+        if (healthSlider != null && stat.curHp > 0)  // 체력바가 존재하며 체력이 0 이상
         {
             healthSlider.gameObject.SetActive(false);
         }
@@ -567,18 +567,18 @@ public class Monster : MonoBehaviour
     }
     private void DetectPlayer()
     {
-        if (stat.curHp <= 0) return; // Ã¼·ÂÀÌ 0 ÀÌÇÏ¸é °¨Áö ÁßÁö
+        if (stat.curHp <= 0) return; // 체력이 0 이하면 중지
         if (Vector3.Distance(transform.position, target.position) <= stat.detectionRange)
         {
-            playerTransform = target; // ±âÁ¸ ·ÎÁ÷À» À¯Áö
-            player = target.GetComponent<Player>(); // target¿¡¼­ Player ÄÄÆ÷³ÍÆ®¸¦ °¡Á®¿È
+            playerTransform = target; // 플레이어를 지정하는게 아닌 사실상 플레이어의 위치를 추적
+            player = target.GetComponent<Player>(); // 타겟은 사실상 플레이어니 플레이어의 플레이어 컴포넌트 받아옴
 
             if (player != null)
             {
-                monsterAim.SetTarget(target); // MonsterAim ½ºÅ©¸³Æ®¿¡µµ Å¸°Ù ¼³Á¤
+                monsterAim.SetTarget(target); //
                 animCtrl.SetBool("IsChasing", true);
                 SoundManager soundManager = SoundManager.Instance;
-                //soundManager.PlaySFX(soundManager.audioClip[4]);
+                //soundManager.PlaySFX(soundManager.audioClip[4]);  // 발자국 소리 좀 애매함 너무 큼
             }
         }
         else
@@ -592,7 +592,7 @@ public class Monster : MonoBehaviour
 
     void ChasePlayer()
     {
-        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking") ) return; // Ã¼·ÂÀÌ 0 ÀÌÇÏ°Å³ª °ø°Ý ÁßÀÌ¸é Ãß°Ý ÁßÁö
+        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking") ) return; // 체력이 0보다 작거나 공격중이면 락온 되기 때문에 제한둠
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
 
         if (distanceToTarget <= stat.detectionRange)
@@ -637,7 +637,7 @@ public class Monster : MonoBehaviour
         }
     }
 
-    // ÇÃ·¹ÀÌ¾î¸¦ ¹Ù¶óº¸°Ô ÇÏ´Â ¸Þ¼­µå
+
     private void FaceTarget()
     {
         Vector3 direction = (playerTransform.position - transform.position).normalized;
@@ -667,7 +667,7 @@ public class Monster : MonoBehaviour
     void Attack()
     {
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
-        if (stat.curHp <= 0 || distanceToTarget > stat.attackRange) return; // Ã¼·ÂÀÌ 0 ÀÌÇÏ°Å³ª »çÁ¤°Å¸® ¹ÛÀÌ¸é °ø°Ý ÁßÁö
+        if (stat.curHp <= 0 || distanceToTarget > stat.attackRange) return; 
         if (monsterType == MonsterType.Melee)
         {
             FaceTarget();
@@ -693,7 +693,7 @@ public class Monster : MonoBehaviour
         }
         else
         {
-            // ÃßÈÄ¿¡ Æ¯¼öÇü Á¦ÀÛ
+            // 특별형 (예시 Special) 애들 참고
         }
 
     }
@@ -792,7 +792,7 @@ public class Monster : MonoBehaviour
     private IEnumerator ShotTime()
     {
         canShot = false;
-        yield return new WaitForSeconds(6f); // ³Ë¹é µ¥¹ÌÁö Äð´Ù¿î
+        yield return new WaitForSeconds(6f); // 쿨타임 6초 
         canShot = true;
     }
 
@@ -824,7 +824,7 @@ public class Monster : MonoBehaviour
 
 
 
-    // Åõ»çÃ¼°¡ ÆÄ±«µÇ¾úÀ» ¶§ È£ÃâÇÏ´Â ¸Þ¼­µå
+    // 애니메이션 관련된 이벤트 함수 
     public void ProjectileDestroyed()
     {
         currentProjectile = null;
@@ -847,7 +847,7 @@ public class Monster : MonoBehaviour
             attackCollider.enabled = true;
     }
 
-    // °ø°Ý¿ë Collider ºñÈ°¼ºÈ­
+
     public void DisableAttackCollider()
     {
         if(attackCollider!=null)
