@@ -1,19 +1,20 @@
 ﻿// Copyright Elliot Bentine, 2018-
 Shader "ProPixelizer/SRP/KMJPixelizedWithOutline"
 {
-	// 픽셀화된 오브젝트의 아웃라인 버퍼 데이터와 색상 모양을 렌더링하는 셰이더
+	//A shader that renders outline buffer data and color appearance for pixelated objects.
 	//
-	// 픽셀화된 아웃라인 셰이더에 자체 프로퍼티를 추가하거나 모양을 수정하려면
-	// 모양을 변경하려면 KMJProPixelizerBase 셰이더 그래프를 변경하자
-	// 
-	// 1. 새 프로퍼티를 추가하는 등 ProPixelizerBase 그래프를 변경
-	// 연결을 변경합니다. 변경 사항은 Unity가 이 셰이더를 다시 로드할 때까지 표시x
-	// 셰이더를 다시 로드할 때까지 변경 사항이 표시 X 리컴파일을 트리거하는 가장 쉬운 방법은 이 파일을 수정하고 다시 저장
-	// 2. 아래 ProPixelizerPass의 UnityPerMaterial CBUFFER가 생성된 프로픽셀라이저 패스에서
-	// 일치하는지 확인합니다(생성된 셰이더는 인스펙터 창에서 // 확인
-	// 인스펙터 창에서 확인
-	// 3. 에디터에서 새 프로퍼티를 편집하려면 하단에 있는
-	// CustomEditor를 비활성화하면 도움됨
+	// If you want to add your own properties to the PixelizedWithOutline shader, or modify
+	// the appearance of it, you can make changes to the ProPixelizerBase shader graph.
+	// Make sure you follow these steps:
+	//   1. Make your changes to the ProPixelizerBase graph, e.g. adding new properties,
+	//      changing connections. Your changes will not be visible until Unity reloads this
+	//      shader. The easiest way to trigger recompilation is to modify and re-saving
+	//      this file.
+	//   2. Make sure the UnityPerMaterial CBUFFER in the ProPixelizerPass below matches that
+	//      in the generated ProPixelizerBase shader (you can view the generated shader from
+	//      the inspector window).
+	//   3. If you want to edit your new properties in editor, it might help to disable the
+	//      CustomEditor at the bottom of this file.
 
     Properties
     {
@@ -31,7 +32,7 @@ Shader "ProPixelizer/SRP/KMJPixelizedWithOutline"
 		_Emission_ST("Emission_ST", Vector) = (1, 1, 0, 0)
 		_EmissionColor("EmissionColor", Color) = (1, 1, 1, 0)
 		_AlphaClipThreshold("Alpha Clip Threshold", Range(0, 1)) = 0.5
-		[IntRange] _ID("ID", Range(0, 255)) = 1 // 윤곽선을 위해 객체를 구분하는 데 사용되는 고유 ID
+		[IntRange] _ID("ID", Range(0, 255)) = 1 // A unique ID used to differentiate objects for purposes of outlines.
 		_OutlineColor("OutlineColor", Color) = (0.0, 0.0, 0.0, 0.5)
 		_EdgeHighlightColor("Edge Highlight Color", Color) = (0.5, 0.5, 0.5, 0)
 		_DiffuseVertexColorWeight("DiffuseVertexColorWeight", Range(0, 1)) = 1
@@ -64,10 +65,9 @@ Shader "ProPixelizer/SRP/KMJPixelizedWithOutline"
 				"DisableBatching" = "True"
 			}
 
-			ZWrite On	// 추후에 반투명 ( 논 디더링) 형태에서 Zwrite를 off 하고 Blend 는 On 해야되는거 아닐까?
+			ZWrite On
 			Cull Off
-			Blend Off	//
-			//ZWrite Off
+			Blend Off
 			//Blend SrcAlpha OneMinusSrcAlpha
 
 			HLSLPROGRAM
@@ -83,10 +83,10 @@ Shader "ProPixelizer/SRP/KMJPixelizedWithOutline"
 			#pragma multi_compile NORMAL_EDGE_DETECTION_ON _
 			#pragma multi_compile_local PROPIXELIZER_DITHERING_ON _
 			
-			// SRP 배처를 사용하려는 경우:
-			// 버퍼가 셰이더그래프에서 생성된 것과 일치시키자
-			// 경우에 따라서는 아웃라인 셰이더에 대한 SRP 배칭 지원을 중단하는 것이 더 쉬울 수도 있다 (큰 차이는 모르겠음)
-			// 그래프 프로퍼티
+			// If you want to use the SRP Batcher:
+			// The CBUFFER has to match that generated from ShaderGraph - otherwise all hell breaks loose.
+			// In some cases, it might be easier to just break SRP Batching support for your outline shader.
+			// Graph Properties
 			CBUFFER_START(UnityPerMaterial)
 			float4 _LightingRamp_TexelSize;
 			float4 _PaletteLUT_TexelSize;
