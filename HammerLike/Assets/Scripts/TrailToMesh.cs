@@ -30,9 +30,7 @@ public class TrailToMesh : MonoBehaviour
     void UpdateTrailMesh()
     {
         int segments = trailRenderer.positionCount;
-        segments = Mathf.Min(segments, 10000); // º∫¥…ªÛ¿« ¿Ã¿Ø∑Œ ºº±◊∏’∆Æ ºˆ ¡¶«—
-
-        if (segments < 2) return;
+        if (segments < 2) return; // ÏµúÏÜå 2Í∞ú Ïù¥ÏÉÅÏùò ÏúÑÏπòÍ∞Ä ÌïÑÏöî
 
         Vector3[] vertices = new Vector3[segments * 2];
         int[] triangles = new int[(segments - 1) * 6];
@@ -40,43 +38,37 @@ public class TrailToMesh : MonoBehaviour
 
         for (int i = 0; i < segments; i++)
         {
-            float width = trailRenderer.widthMultiplier * trailRenderer.widthCurve.Evaluate(i / (float)(segments - 1));
+            float width = trailRenderer.widthMultiplier * trailRenderer.widthCurve.Evaluate((float)i / (segments - 1));
             Vector3 position = transform.InverseTransformPoint(trailRenderer.GetPosition(i));
-            Vector3 direction;
 
-            // ∞¢ ±∏∞£ø° µ˚∏• πÊ«‚ ∫§≈Õ ∞ËªÍ
-            if (i < segments / 3)
+            Vector3 direction = Vector3.forward; // Í∏∞Î≥∏ Î∞©Ìñ•
+            if (i < segments - 1)
             {
-                // øÏ√¯ ¥Î∞¢º± πÊ«‚
-                direction = Quaternion.Euler(0, 45, 0) * Vector3.forward;
+                Vector3 nextPosition = transform.InverseTransformPoint(trailRenderer.GetPosition(i + 1));
+                direction = (nextPosition - position).normalized;
             }
-            else if (i < 2 * segments / 3)
+            else if (i > 0)
             {
-                // ¡§∏È πÊ«‚
-                direction = Vector3.forward;
-            }
-            else
-            {
-                // ¡¬√¯ ¥Î∞¢º± πÊ«‚
-                direction = Quaternion.Euler(0, -45, 0) * Vector3.forward;
+                // ÎßàÏßÄÎßâ ÏÑ∏Í∑∏Î®ºÌä∏Ïùò Í≤ΩÏö∞, Ïù¥Ï†Ñ ÏÑ∏Í∑∏Î®ºÌä∏Ïùò Î∞©Ìñ•ÏùÑ ÏÇ¨Ïö©
+                Vector3 prevPosition = transform.InverseTransformPoint(trailRenderer.GetPosition(i - 1));
+                direction = (position - prevPosition).normalized;
             }
 
-            Vector3 right = Vector3.Cross(direction.normalized, Vector3.up).normalized * width;
-
+            Vector3 right = Vector3.Cross(direction, Vector3.up).normalized * width;
             vertices[i * 2] = position + right;
             vertices[i * 2 + 1] = position - right;
 
-            uv[i * 2] = new Vector2(0, i / (float)segments);
-            uv[i * 2 + 1] = new Vector2(1, i / (float)segments);
+            uv[i * 2] = new Vector2(0, (float)i / (segments - 1));
+            uv[i * 2 + 1] = new Vector2(1, (float)i / (segments - 1));
 
             if (i < segments - 1)
             {
                 int baseIndex = i * 6;
                 triangles[baseIndex] = i * 2;
-                triangles[baseIndex + 1] = i * 2 + 1;
-                triangles[baseIndex + 2] = i * 2 + 2;
-                triangles[baseIndex + 3] = i * 2 + 2;
-                triangles[baseIndex + 4] = i * 2 + 1;
+                triangles[baseIndex + 1] = i * 2 + 3;
+                triangles[baseIndex + 2] = i * 2 + 1;
+                triangles[baseIndex + 3] = i * 2;
+                triangles[baseIndex + 4] = i * 2 + 2;
                 triangles[baseIndex + 5] = i * 2 + 3;
             }
         }
@@ -86,7 +78,6 @@ public class TrailToMesh : MonoBehaviour
         mesh.uv = uv;
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
-
         meshCollider.sharedMesh = mesh;
     }
 
