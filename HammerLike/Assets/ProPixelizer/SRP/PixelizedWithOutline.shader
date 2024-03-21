@@ -1,4 +1,4 @@
-﻿// Copyright Elliot Bentine, 2018-
+// Copyright Elliot Bentine, 2018-
 Shader "ProPixelizer/SRP/PixelizedWithOutline"
 {
 	//A shader that renders outline buffer data and color appearance for pixelated objects.
@@ -44,6 +44,7 @@ Shader "ProPixelizer/SRP/PixelizedWithOutline"
 		[Toggle]USE_OBJECT_POSITION("Use Object Position", Float) = 1
 		[Toggle]RECEIVE_SHADOWS("ReceiveShadows", Float) = 1
 		[Toggle]PROPIXELIZER_DITHERING("Use Dithering", Float) = 1
+
 	}
 
 		SubShader

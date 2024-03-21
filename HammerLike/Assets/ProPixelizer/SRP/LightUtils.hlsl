@@ -1,4 +1,4 @@
-﻿// This file contains shader code required for custom lighting calculations in unity. 
+// This file contains shader code required for custom lighting calculations in unity. 
 // The original source of this file can be found here:
 // https://github.com/Unity-Technologies/ShaderGraph-Custom-Lighting/blob/master/Assets/Includes/CustomLighting.hlsl
 //

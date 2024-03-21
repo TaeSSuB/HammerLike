@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -77,6 +77,120 @@ public class PlayerAtk : MonoBehaviour
             weaponCollider.enabled = false;
         }
     }
+
+    public void ChargeAttack()
+    {
+        player.PerformAttack();
+
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            // 목표 지점 결정
+            Vector3 targetPosition = hit.point;
+            targetPosition.y = player.transform.position.y; /// TODO) 현재 플레이어의 포워드에서 결정 다만 추후엔 무기가 어느 손에
+                                                            /// 있는지 파악
+
+            Vector3 currentDirection = player.transform.forward;
+            Vector3 targetDirection = (targetPosition - player.transform.position).normalized;
+
+            // 각도 계산
+            float angle = Vector3.Angle(currentDirection, targetDirection);
+
+            // 회전 방향 결정 (시계방향 또는 반시계방향)
+            Vector3 cross = Vector3.Cross(currentDirection, targetDirection);
+
+
+            if (cross.y > 0)  // 시계 방향
+            {
+                //Debug.Log(" 시계방향");
+                //player.animCtrl.Play("OutWardAttack", 0, 0f);
+                player.animCtrl.SetTrigger("tOutWardAttack");
+                SoundManager soundManager = SoundManager.Instance;
+                soundManager.PlaySFX(soundManager.audioClip[9]);
+                //player.animCtrl.speed = player.stat.attackSpd;
+                player.atk.Attack();
+                //player.atk.curCharging = 0;
+
+                //player.animCtrl.SetTrigger("tIdle");
+            }
+            else  // 반 시계방향 회전
+            {
+                //Debug.Log("반 시계 방향");
+                //player.animCtrl.Play("InWardAttack", 0, 0f);
+                player.animCtrl.SetTrigger("tInWardAttack");
+                SoundManager soundManager = SoundManager.Instance;
+                soundManager.PlaySFX(soundManager.audioClip[9]);
+                //player.animCtrl.speed = player.stat.attackSpd;
+                player.atk.Attack();
+                //player.atk.curCharging = 0;
+                //player.animCtrl.SetTrigger("tIdle");
+            }
+
+
+
+
+        }
+    }
+
+    // 마우스 오른쪽 버튼 클릭 시 공격
+    public void RightClickAttack()
+    {
+        player.PerformAttack();
+
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            // 목표 지점 결정
+            Vector3 targetPosition = hit.point;
+            targetPosition.y = player.transform.position.y; /// TODO) 현재 플레이어의 포워드에서 결정 다만 추후엔 무기가 어느 손에
+                                                            /// 있는지 파악
+
+            Vector3 currentDirection = player.transform.forward;
+            Vector3 targetDirection = (targetPosition - player.transform.position).normalized;
+
+            // 각도 계산
+            float angle = Vector3.Angle(currentDirection, targetDirection);
+
+            // 회전 방향 결정 (시계방향 또는 반시계방향)
+            Vector3 cross = Vector3.Cross(currentDirection, targetDirection);
+
+
+            if (cross.y > 0)  // 시계 방향
+            {
+
+                //player.animCtrl.Play("OutWardAttack 0", 0, 0f);
+                player.animCtrl.SetTrigger("tOutWardAttack");
+                SoundManager soundManager = SoundManager.Instance;
+                soundManager.PlaySFX(soundManager.audioClip[9]);
+                //player.animCtrl.speed = player.stat.attackSpd;
+                player.atk.Attack();
+                player.atk.curCharging = 0;
+            }
+            else  // 반 시계방향 회전
+            {
+
+                //player.animCtrl.Play("InWardAttack 0", 0, 0f);
+                player.animCtrl.SetTrigger("tInWardAttack");
+                SoundManager soundManager = SoundManager.Instance;
+                soundManager.PlaySFX(soundManager.audioClip[9]);
+                //player.animCtrl.speed = player.stat.attackSpd;
+                player.atk.Attack();
+                player.atk.curCharging = 0;
+
+            }
+
+
+
+
+        }
+    }
+
 
     /*public void EnableWeaponCollider()
     {

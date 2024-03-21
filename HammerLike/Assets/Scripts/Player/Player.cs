@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -327,6 +327,14 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        CheatConsole cheatConsole = GameObject.Find("GraphicsOption")?.GetComponent<CheatConsole>();
+
+        // isHpMax가 true일 경우 데미지를 받지 않음
+        if (cheatConsole != null && cheatConsole.isHpMax)
+        {
+            return; // 이 경우 데미지 처리를 하지 않고 메서드를 종료합니다.
+        }
+
         Debug.Log("take Damage");
         if (stat.curHp > 0)
         {

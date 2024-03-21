@@ -31,7 +31,7 @@ public class Player_Move : cState
             player.StartCharge();
         }
 
-        // Charge Áß
+        // Charge ì¤‘
         if (Input.GetMouseButton(0))
         {
             player.UpdateCharge();
@@ -40,118 +40,17 @@ public class Player_Move : cState
 
         if (Input.GetMouseButtonUp(0))
         {
-            player.PerformAttack();
-            
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                // ¸ñÇ¥ ÁöÁ¡ °áÁ¤
-                Vector3 targetPosition = hit.point;
-                targetPosition.y = player.transform.position.y; /// TODO) ÇöÀç ÇÃ·¹ÀÌ¾îÀÇ Æ÷¿öµå¿¡¼­ °áÁ¤ ´Ù¸¸ ÃßÈÄ¿£ ¹«±â°¡ ¾î´À ¼Õ¿¡
-                                                                /// ÀÖ´ÂÁö ÆÄ¾Ç
-
-                Vector3 currentDirection = player.transform.forward;
-                Vector3 targetDirection = (targetPosition - player.transform.position).normalized;
-
-                // °¢µµ °è»ê
-                float angle = Vector3.Angle(currentDirection, targetDirection);
-
-                // È¸Àü ¹æÇâ °áÁ¤ (½Ã°è¹æÇâ ¶Ç´Â ¹İ½Ã°è¹æÇâ)
-                Vector3 cross = Vector3.Cross(currentDirection, targetDirection);
-                
-                    if (cross.y > 0)  // ½Ã°è ¹æÇâ
-                    {
-                    //Debug.Log(" ½Ã°è¹æÇâ");
-                    //player.animCtrl.Play("OutWardAttack", 0, 0f);
-                    player.animCtrl.SetTrigger("tOutWardAttack");
-                    SoundManager soundManager = SoundManager.Instance;
-                        soundManager.PlaySFX(soundManager.audioClip[9]);
-                        //player.animCtrl.speed = player.stat.attackSpd;
-                        player.atk.Attack();
-                        player.atk.curCharging = 0;
-                        //player.animCtrl.SetTrigger("tIdle");
-                    }
-                    else  // ¹İ ½Ã°è¹æÇâ È¸Àü
-                    {
-                    //Debug.Log("¹İ ½Ã°è ¹æÇâ");
-                    //player.animCtrl.Play("InWardAttack", 0, 0f);
-                    player.animCtrl.SetTrigger("tInWardAttack");
-                    SoundManager soundManager = SoundManager.Instance;
-                        soundManager.PlaySFX(soundManager.audioClip[9]);
-                        //player.animCtrl.speed = player.stat.attackSpd;
-                        //player.animCtrl.SetTrigger("tAtk");
-                        player.atk.Attack();
-                        player.atk.curCharging = 0;
-                        //player.animCtrl.SetTrigger("tIdle");
-                    }
-
-                
-
-            }
+            player.atk.ChargeAttack();
         }
 
         if (Input.GetMouseButtonDown(1))
         {
-            player.PerformAttack();
-            
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                // ¸ñÇ¥ ÁöÁ¡ °áÁ¤
-                Vector3 targetPosition = hit.point;
-                targetPosition.y = player.transform.position.y; /// TODO) ÇöÀç ÇÃ·¹ÀÌ¾îÀÇ Æ÷¿öµå¿¡¼­ °áÁ¤ ´Ù¸¸ ÃßÈÄ¿£ ¹«±â°¡ ¾î´À ¼Õ¿¡
-                                                                /// ÀÖ´ÂÁö ÆÄ¾Ç
-
-                Vector3 currentDirection = player.transform.forward;
-                Vector3 targetDirection = (targetPosition - player.transform.position).normalized;
-
-                // °¢µµ °è»ê
-                float angle = Vector3.Angle(currentDirection, targetDirection);
-
-                // È¸Àü ¹æÇâ °áÁ¤ (½Ã°è¹æÇâ ¶Ç´Â ¹İ½Ã°è¹æÇâ)
-                Vector3 cross = Vector3.Cross(currentDirection, targetDirection);
-               
-                    if (cross.y > 0)  // ½Ã°è ¹æÇâ
-                    {
-                    //Debug.Log(" ½Ã°è¹æÇâ");
-                    //player.animCtrl.Play("OutWardAttack 0", 0, 0f);
-                    player.animCtrl.SetTrigger("tOutWardAttack");
-                    SoundManager soundManager = SoundManager.Instance;
-                        soundManager.PlaySFX(soundManager.audioClip[9]);
-                        //player.animCtrl.speed = player.stat.attackSpd;
-                        player.atk.Attack();
-                        player.atk.curCharging = 0;
-                        //player.animCtrl.SetTrigger("tIdle");
-                    }
-                    else  // ¹İ ½Ã°è¹æÇâ È¸Àü
-                    {
-                    //Debug.Log("¹İ ½Ã°è ¹æÇâ");
-                    //player.animCtrl.Play("InWardAttack 0", 0, 0f);
-                    player.animCtrl.SetTrigger("tInWardAttack");
-
-                    SoundManager soundManager = SoundManager.Instance;
-                        soundManager.PlaySFX(soundManager.audioClip[9]);
-                        //player.animCtrl.speed = player.stat.attackSpd;
-                        //player.animCtrl.SetTrigger("tAtk");
-                        player.atk.Attack();
-                        player.atk.curCharging = 0;
-                        //player.animCtrl.SetTrigger("tIdle");
-                    }
-
-                
-
-
-            }
+            player.atk.RightClickAttack();
         }
 
 
-        // Å° ÀÔ·Â¿¡ µû¸¥ ÀÌµ¿ Ã³¸®
+        // í‚¤ ì…ë ¥ì— ë”°ë¥¸ ì´ë™ ì²˜ë¦¬
         bool isMoving = player.move.Move(player.stat.walkSpd,player.rewiredPlayer);
         if (!isMoving)
         {
@@ -168,7 +67,7 @@ public class Player_Move : cState
         temp.y = player.transform.position.y;
         player.transform.LookAt(temp);
 
-        // ÀÌµ¿ ¹æÇâ¿¡ µû¸¥ ¾Ö´Ï¸ŞÀÌ¼Ç ¾÷µ¥ÀÌÆ®
+        // ì´ë™ ë°©í–¥ì— ë”°ë¥¸ ì• ë‹ˆë©”ì´ì…˜ ì—…ë°ì´íŠ¸
         if (isMoving)
         {
             Vector3 relativeDir = Quaternion.Euler(-player.transform.rotation.eulerAngles) * player.move.lastMoveDir;

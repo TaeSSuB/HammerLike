@@ -10,11 +10,14 @@ public class CheatConsole : MonoBehaviour
     private string commandHistory = ""; // 입력된 명령어들의 기록
 
     public SceneLoader sceneLoader;
+    public bool isHpMax = false;
 
     private void Start()
     {
-        
+        // 이 GameObject를 씬 전환 시에도 파괴되지 않도록 설정
+        DontDestroyOnLoad(gameObject);
     }
+
 
     void Update()
     {
@@ -51,6 +54,11 @@ public class CheatConsole : MonoBehaviour
         if(command =="/admin kmj")
         {
             sceneLoader.ChangeScene("Test");
+        }
+
+        if(command =="/cheat HpMax")
+        {
+            isHpMax = true;
         }
     }
 
