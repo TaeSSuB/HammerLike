@@ -44,7 +44,6 @@ Shader "ProPixelizer/SRP/PixelizedWithOutline"
 		[Toggle]USE_OBJECT_POSITION("Use Object Position", Float) = 1
 		[Toggle]RECEIVE_SHADOWS("ReceiveShadows", Float) = 1
 		[Toggle]PROPIXELIZER_DITHERING("Use Dithering", Float) = 1
-
 	}
 
 		SubShader
