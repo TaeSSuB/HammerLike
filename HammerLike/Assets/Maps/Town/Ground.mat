@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4689170793225536067
+--- !u!114 &-2494319288336445267
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Material
+  m_Name: Ground
   m_Shader: {fileID: -6465566751694194690, guid: 083d37bf70610e043a0935fbe736a55f,
     type: 3}
   m_ValidKeywords: []
@@ -34,67 +34,43 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _AlbedoTexture1:
-        m_Texture: {fileID: 2800000, guid: a1c3b24e2eec2e8459f83b5015b7cc42, type: 3}
+    - _AlbedoTexture_1:
+        m_Texture: {fileID: 2800000, guid: 022319ac5402a25408c4354d6b5d28f2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _AlbedoTexture2:
-        m_Texture: {fileID: 2800000, guid: 5afe39a0d0abd0d4e91e72a5c6706839, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _AlbedoTexture3:
-        m_Texture: {fileID: 2800000, guid: 426001f5aa37f9e4b92048e3d89e11fc, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _AlbedoTexture4:
-        m_Texture: {fileID: 2800000, guid: 2a64304eda14c3f4ca0d5454c74b866e, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _BaseMap:
+    - _AlbedoTexture_2:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _BumpMap:
+    - _AlbedoTexture_3:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
+    - _AlbedoTexture_4:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DetailMask:
+    - _AlbedoTexture_5:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
+    - _Normal_Texture_1:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
+    - _Normal_Texture_2:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _MainTex:
+    - _Normal_Texture_3:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
+    - _Normal_Texture_4:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SpecGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Texture2D:
+    - _Normal_Texture_5:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -112,37 +88,19 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClip: 0
-    - _Blend: 0
-    - _BumpScale: 1
-    - _ClearCoatMask: 0
-    - _ClearCoatSmoothness: 0
-    - _Cull: 2
-    - _Cutoff: 0.5
-    - _DetailAlbedoMapScale: 1
-    - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _EnvironmentReflections: 1
-    - _Gloss: 0.489
-    - _GlossMapScale: 0
-    - _Glossiness: 0
-    - _GlossyReflections: 0
+    - _Gloss: 0
     - _Metallic: 0
-    - _OcclusionStrength: 1
-    - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _ReceiveShadows: 1
-    - _Smoothness: 1
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _Surface: 0
-    - _WorkflowMode: 1
-    - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _Offset_1: {r: 0, g: 0, b: 0, a: 0}
+    - _Offset_2: {r: 0, g: 0, b: 0, a: 0}
+    - _Offset_3: {r: 0, g: 0, b: 0, a: 0}
+    - _Offset_4: {r: 0, g: 0, b: 0, a: 0}
+    - _Offset_5: {r: 0, g: 0, b: 0, a: 0}
+    - _Tiling_1: {r: 8, g: 8, b: 0, a: 0}
+    - _Tiling_2: {r: 1, g: 1, b: 0, a: 0}
+    - _Tiling_3: {r: 1, g: 1, b: 0, a: 0}
+    - _Tiling_4: {r: 1, g: 1, b: 0, a: 0}
+    - _Tiling_5: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
