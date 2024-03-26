@@ -12,7 +12,6 @@ namespace Critter.Instancing
 
         [Header("Instance Configurations")]
         public float Density = 1f;
-        public float DistanceOffset = 0.1f;
         public InstanceConfiguration[] InstanceConfigurations;
 
         public override Dictionary<InstanceConfiguration, List<InstanceData>> GetInstanceData()
@@ -43,7 +42,7 @@ namespace Critter.Instancing
                     mesh = subMesh;
                 }
             }
-            var instanceData = InstanceDataGenerator.RandomMeshInstanceData(mesh, Density, DistanceOffset, InstanceConfigurations);
+            var instanceData = InstanceDataGenerator.RandomMeshInstanceData(mesh, Density, InstanceConfigurations);
             return InstanceDataGenerator.DivideInstanceData(instanceData, InstanceConfigurations);
         }
     }
