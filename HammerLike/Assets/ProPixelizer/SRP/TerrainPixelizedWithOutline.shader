@@ -16,61 +16,60 @@ Shader "ProPixelizer/SRP/TerrainPixleizedWithOutline"
 	//   3. If you want to edit your new properties in editor, it might help to disable the
 	//      CustomEditor at the bottom of this file.
 
-		Properties
-		{
-			_BaseColor("Color", Color) = (1, 1, 1, 1)
-			[NoScaleOffset]_LightingRamp("LightingRamp", 2D) = "white" {}
-			_AmbientLight("AmbientLight", Color) = (0.1, 0.1, 0.1, 0.5019608)
-			_Color_1("Color 1", Color) = (1, 1, 1, 1)
-			_Albedo("Albedo", 2D) = "white" {}
-			_Height_1("Height 1", 2D) = "white" {}
-			_Normal_1("Normal 1", 2D) = "white" {}
-			_Height_1_Shift("Height 1 Shift", Range(-5, 5)) = 0
-			_Tiling_1("Tiling 1", Vector) = (1, 1, 0, 0)
-			_Offset_1("Offset 1", Vector) = (0, 0, 0, 0)
-			_Color_2("Color 2", Color) = (1, 1, 1, 1)
-			_Albedo_2("Albedo 2", 2D) = "white" {}
-			_Normal_2("Normal 2", 2D) = "white" {}
-			_Height_2("Height 2", 2D) = "white" {}
-			_Height_2_Shift("Height 2 Shift", Range(-5, 5)) = 0
-			_Tiling_2("Tiling 2", Vector) = (1, 1, 0, 0)
-			_Offset_2("Offset 2", Vector) = (0, 0, 0, 0)
-			_Color_3("Color 3", Color) = (1, 1, 1, 1)
-			_Albedo_3("Albedo 3", 2D) = "white" {}
-			_Normal_3("Normal 3", 2D) = "white" {}
-			_Height_3("Height 3", 2D) = "white" {}
-			_Height_3_Shift("Height 3 Shift", Range(-5, 5)) = 0
-			_Tiling_3("Tiling 3", Vector) = (1, 1, 0, 0)
-			_Offset_3("Offset 3", Vector) = (0, 0, 0, 0)
-			_Color_4("Color 4", Color) = (1, 1, 1, 1)
-			_Albedo_4("Albedo 4", 2D) = "white" {}
-			_Normal_4("Normal 4", 2D) = "white" {}
-			_Height_4("Height 4", 2D) = "white" {}
-			_Height_4_Shift("Height 4 Shift", Range(-5, 5)) = 0
-			_Tiling_4("Tiling 4", Vector) = (1, 1, 0, 0)
-			_Offset_4("Offset 4", Vector) = (0, 0, 0, 0)
-			_TransitionSmoothness("TransitionSmoothness", Float) = 0.5
-			_PixelSize("PixelSize", Range(1, 5)) = 1
-			_PixelGridOrigin("PixelGridOrigin", Vector) = (0, 0, 0, 0)
-			_AlphaClipThreshold("Alpha Clip Threshold", Float) = 0.5
-			_ID("ID", Float) = 1
-			_OutlineColor("OutlineColor", Color) = (1, 1, 1, 0.5019608)
-			_EdgeHighlightColor("Edge Highlight Color", Color) = (0.5, 0.5, 0.5, 0.5058824)
-			_EmissionColor("EmissionColor", Color) = (1, 1, 1, 0)
-			_DiffuseVertexColorWeight("DiffuseVertexColorWeight", Float) = 1
-			_EmissiveVertexColorWeight("EmissiveVertexColorWeight", Float) = 0
-			[Toggle]COLOR_GRADING("Use Color Grading", Float) = 1
-			[Toggle]USE_OBJECT_POSITION("Use Object Position", Float) = 1
-			[Toggle]RECEIVE_SHADOWS("Receive Shadows", Float) = 1
-			[Toggle]PROPIXELIZER_DITHERING("Use Dithering", Float) = 0
-			_Albedo_ST("Albedo_ST", Vector) = (1, 1, 0, 0)
-			[HideInInspector]_QueueOffset("_QueueOffset", Float) = 0
-			[HideInInspector]_QueueControl("_QueueControl", Float) = -1
-			[HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
-			[HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
-			[HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
-		}
-
+	Properties
+	{
+		_BaseColor("Color", Color) = (1, 1, 1, 1)
+		_AlphaClipThreshold("Alpha Clip Threshold", Range(0, 1)) = 0.5
+		[NoScaleOffset]_LightingRamp("LightingRamp", 2D) = "white" {}
+		_AmbientLight("AmbientLight", Color) = (0.1, 0.1, 0.1, 0.5019608)
+		_TransitionSmoothness("TransitionSmoothness", Range(0, 1)) = 0.5
+		_PixelSize("PixelSize", Range(1, 5)) = 2
+		_PixelGridOrigin("PixelGridOrigin", Vector) = (0, 0, 0, 0)
+		_EmissionColor("EmissionColor", Color) = (1, 1, 1, 0)
+		_Albedo_ST("Albedo_ST", Vector) = (1, 1, 0, 0)
+		_Color_1("Color 1", Color) = (1, 1, 1, 1)
+		_Albedo("Albedo", 2D) = "white" {}
+		_Normal_1("Normal 1", 2D) = "white" {}
+		_Height_1("Height 1", 2D) = "white" {}
+		_Height_1_Shift("Height 1 Shift", Range(-5, 5)) = 0
+		_Tiling_1("Tiling 1", Vector) = (1, 1, 0, 0)
+		_Offset_1("Offset 1", Vector) = (0, 0, 0, 0)
+		_Color_2("Color 2", Color) = (1, 1, 1, 1)
+		_Albedo_2("Albedo 2", 2D) = "white" {}
+		_Normal_2("Normal 2", 2D) = "white" {}
+		_Height_2("Height 2", 2D) = "white" {}
+		_Height_2_Shift("Height 2 Shift", Range(-5, 5)) = 0
+		_Tiling_2("Tiling 2", Vector) = (1, 1, 0, 0)
+		_Offset_2("Offset 2", Vector) = (0, 0, 0, 0)
+		_Color_3("Color 3", Color) = (1, 1, 1, 1)
+		_Albedo_3("Albedo 3", 2D) = "white" {}
+		_Normal_3("Normal 3", 2D) = "white" {}
+		_Height_3("Height 3", 2D) = "white" {}
+		_Height_3_Shift("Height 3 Shift", Range(-5, 5)) = 0
+		_Tiling_3("Tiling 3", Vector) = (1, 1, 0, 0)
+		_Offset_3("Offset 3", Vector) = (0, 0, 0, 0)
+		_Color_4("Color 4", Color) = (1, 1, 1, 1)
+		_Albedo_4("Albedo 4", 2D) = "white" {}
+		_Normal_4("Normal 4", 2D) = "white" {}
+		_Height_4("Height 4", 2D) = "white" {}
+		_Height_4_Shift("Height 4 Shift", Range(-5, 5)) = 0
+		_Tiling_4("Tiling 4", Vector) = (1, 1, 0, 0)
+		_Offset_4("Offset 4", Vector) = (0, 0, 0, 0)
+		_OutlineColor("OutlineColor", Color) = (1, 1, 1, 0.5019608)
+		_EdgeHighlightColor("Edge Highlight Color", Color) = (0.5, 0.5, 0.5, 0.5058824)
+		_ID("ID", Float) = 1
+		_DiffuseVertexColorWeight("DiffuseVertexColorWeight", Float) = 0
+		_EmissiveVertexColorWeight("EmissiveVertexColorWeight", Float) = 0
+		[Toggle]COLOR_GRADING("Use Color Grading", Float) = 0
+		[Toggle]USE_OBJECT_POSITION("Use Object Position", Float) = 1
+		[Toggle]RECEIVE_SHADOWS("Receive Shadows", Float) = 1
+		[Toggle]PROPIXELIZER_DITHERING("Use Dithering", Float) = 0
+		[HideInInspector]_QueueOffset("_QueueOffset", Float) = 0
+		[HideInInspector]_QueueControl("_QueueControl", Float) = -1
+		[HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
+		[HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
+		[HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
+	}
 		SubShader
 		{
 			Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
@@ -115,6 +114,7 @@ Shader "ProPixelizer/SRP/TerrainPixleizedWithOutline"
 			float4 _Albedo_TexelSize;
 			float4 _Albedo_ST;
 			float4 _BaseColor;
+			float _AlphaClipThreshold;
 			float4 _Albedo_2_TexelSize;
 			float4 _Albedo_2_ST;
 			float4 _Normal_1_TexelSize;
@@ -150,7 +150,6 @@ Shader "ProPixelizer/SRP/TerrainPixleizedWithOutline"
 			float4 _Height_4_TexelSize;
 			float4 _Height_4_ST;
 			float _Height_4_Shift;
-			float _AlphaClipThreshold;
 			float _ID;
 			float4 _OutlineColor;
 			float4 _EdgeHighlightColor;
