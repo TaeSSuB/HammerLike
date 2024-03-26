@@ -1,4 +1,4 @@
-﻿// Copyright Elliot Bentine, 2018-
+// Copyright Elliot Bentine, 2018-
 //
 // vertex and fragment shaders for outline pass.
 #ifndef OUTLINE_PASS_INCLUDED

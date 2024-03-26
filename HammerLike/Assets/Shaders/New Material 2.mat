@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-480583224815399324
+--- !u!114 &-2820399375045265308
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,9 +20,10 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TerrainMaterial
+  m_Name: New Material 2
   m_Shader: {fileID: 4800000, guid: be91f11adfbf0134286f10e4f1c95522, type: 3}
   m_ValidKeywords:
+  - COLOR_GRADING_ON
   - RECEIVE_SHADOWS_ON
   - USE_OBJECT_POSITION_ON
   m_InvalidKeywords: []
@@ -36,23 +37,19 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Albedo:
-        m_Texture: {fileID: 2800000, guid: 5ef22f953ba4bfe49b34145a761d241c, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Albedo_1:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Albedo_2:
-        m_Texture: {fileID: 2800000, guid: 03329c8f25c9e6e4caf80aa53ea3a01c, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Albedo_3:
-        m_Texture: {fileID: 2800000, guid: b21d045b05ef2d94ebd0e746d1a32a47, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Albedo_4:
-        m_Texture: {fileID: 2800000, guid: 7f61d77f8b5bb45989362e0fd5477ea8, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
@@ -72,10 +69,6 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Emission:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -100,7 +93,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _LightingRamp:
-        m_Texture: {fileID: 2800000, guid: 211497300d75d8e4b9b3e2913a93e908, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -108,10 +101,6 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _NormalMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -133,10 +122,6 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _PaletteLUT:
-        m_Texture: {fileID: 2800000, guid: 7780bac17c729914b8ef3def13826388, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
@@ -161,7 +146,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - COLOR_GRADING: 0
+    - COLOR_GRADING: 1
     - PROPIXELIZER_DITHERING: 0
     - RECEIVE_SHADOWS: 1
     - USE_OBJECT_POSITION: 1
@@ -175,7 +160,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DiffuseVertexColorWeight: 0
+    - _DiffuseVertexColorWeight: 1
     - _DstBlend: 0
     - _EmissiveVertexColorWeight: 0
     - _EnvironmentReflections: 1
@@ -184,14 +169,14 @@ Material:
     - _GlossyReflections: 0
     - _Height_1_Shift: 0
     - _Height_2_Shift: 0
-    - _Height_3_Shift: 1.26
+    - _Height_3_Shift: 0
     - _Height_4_Shift: 0
     - _ID: 1
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
-    - _PixelSize: 5
-    - _QueueControl: 0
+    - _PixelSize: 1
+    - _QueueControl: -1
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Smoothness: 0.5
@@ -212,7 +197,6 @@ Material:
     - _Color_4: {r: 1, g: 1, b: 1, a: 1}
     - _EdgeHighlightColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5058824}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MasterColor: {r: 1, g: 1, b: 1, a: 1}
     - _Offset_1: {r: 0, g: 0, b: 0, a: 0}
     - _Offset_2: {r: 0, g: 0, b: 0, a: 0}
     - _Offset_3: {r: 0, g: 0, b: 0, a: 0}

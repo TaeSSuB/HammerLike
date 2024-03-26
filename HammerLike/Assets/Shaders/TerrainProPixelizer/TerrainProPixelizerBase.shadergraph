@@ -121,6 +121,9 @@
             "m_Id": "5a823a6426e44a99b5a910204e54150c"
         },
         {
+            "m_Id": "47719a513c8345e5a6164517282ba722"
+        },
+        {
             "m_Id": "d634c1449e354de5a00da5305f6f78e2"
         },
         {
@@ -2772,11 +2775,11 @@
     "m_Guid": {
         "m_GuidSerialized": "ea6f6c01-560a-430c-bc8b-756721402136"
     },
-    "m_Name": "MasterColor",
+    "m_Name": "Color",
     "m_DefaultRefNameVersion": 0,
     "m_RefNameGeneratedByDisplayName": "",
     "m_DefaultReferenceName": "Color_091ad34bdac74eaea3e66f6c03ba5a3a",
-    "m_OverrideReferenceName": "_MasterColor",
+    "m_OverrideReferenceName": "_BaseColor",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -5459,6 +5462,33 @@
 }
 
 {
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector4ShaderProperty",
+    "m_ObjectId": "47719a513c8345e5a6164517282ba722",
+    "m_Guid": {
+        "m_GuidSerialized": "2fa2a61b-e5e7-4658-b2f8-a43affdbc6eb"
+    },
+    "m_Name": "Albedo_ST",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Albedo_ST",
+    "m_DefaultReferenceName": "_Albedo_ST",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": 0.0
+    }
+}
+
+{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector2MaterialSlot",
     "m_ObjectId": "4868e3d4f66f4cbf9417be23f8975d3e",
@@ -5743,7 +5773,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "4bebbdd9ad1e4aafa2b2736c418579ce",
     "m_Id": 0,
-    "m_DisplayName": "MasterColor",
+    "m_DisplayName": "Color",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -5794,7 +5824,7 @@
     ],
     "synonyms": [],
     "m_Precision": 0,
-    "m_PreviewExpanded": false,
+    "m_PreviewExpanded": true,
     "m_PreviewMode": 0,
     "m_CustomColors": {
         "m_SerializableColors": []
@@ -7730,7 +7760,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
     "m_ObjectId": "7225c4fe9df4477fa8ff6379ce0b1fcd",
     "m_Id": 0,
-    "m_DisplayName": "Albedo 1",
+    "m_DisplayName": "Albedo",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -9358,7 +9388,7 @@
     ],
     "synonyms": [],
     "m_Precision": 0,
-    "m_PreviewExpanded": false,
+    "m_PreviewExpanded": true,
     "m_PreviewMode": 0,
     "m_CustomColors": {
         "m_SerializableColors": []
@@ -9456,10 +9486,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -587.3333740234375,
-            "y": -194.66665649414063,
-            "width": 209.3333740234375,
-            "height": 303.9999694824219
+            "x": -540.0000610351563,
+            "y": -30.000062942504884,
+            "width": 208.0001220703125,
+            "height": 302.0
         }
     },
     "m_Slots": [
@@ -10073,7 +10103,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "a35aca9962b4495caa34fe79c4e8603f",
     "m_Id": 0,
-    "m_DisplayName": "MasterColor",
+    "m_DisplayName": "Color",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -11165,11 +11195,11 @@
     "m_Guid": {
         "m_GuidSerialized": "0e3e335a-1077-49f5-bbdd-b86b18deaac7"
     },
-    "m_Name": "Albedo 1",
+    "m_Name": "Albedo",
     "m_DefaultRefNameVersion": 0,
     "m_RefNameGeneratedByDisplayName": "",
     "m_DefaultReferenceName": "Texture2D_bf61f19b55254df0bae26219ac451d8f",
-    "m_OverrideReferenceName": "_Albedo_1",
+    "m_OverrideReferenceName": "_Albedo",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -12154,7 +12184,7 @@
     "m_AlphaClip": true,
     "m_CastShadows": true,
     "m_ReceiveShadows": true,
-    "m_CustomEditorGUI": "",
+    "m_CustomEditorGUI": "ProPixelizer.TerrainProPixelizerBaseGUI",
     "m_SupportVFX": false
 }
 
@@ -13342,6 +13372,9 @@
         },
         {
             "m_Id": "ed62dfca07d049de93c00fd3369a01f1"
+        },
+        {
+            "m_Id": "47719a513c8345e5a6164517282ba722"
         }
     ]
 }

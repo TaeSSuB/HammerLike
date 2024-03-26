@@ -68,14 +68,14 @@ namespace ProPixelizer
                 var albedo = FindProperty("_Albedo", properties);
                 editor.TextureProperty(albedo, "Albedo", true);
 
-                var albedo1 = FindProperty("_Albedo1", properties);
-                editor.TextureProperty(albedo1, "Albedo1", true);
+                var albedo2 = FindProperty("_Albedo_2", properties);
+                editor.TextureProperty(albedo2, "Albedo 2", true);
 
-                var albedo2 = FindProperty("_Albedo2", properties);
-                editor.TextureProperty(albedo2, "Albedo2", true);
+                var albedo3 = FindProperty("_Albedo_3", properties);
+                editor.TextureProperty(albedo3, "Albedo 3", true);
 
-                var albedo3 = FindProperty("_Albedo3", properties);
-                editor.TextureProperty(albedo3, "Albedo3", true);
+                var albedo4 = FindProperty("_Albedo_4", properties);
+                editor.TextureProperty(albedo4, "Albedo 4", true);
 
                 var baseColor = FindProperty("_BaseColor", properties);
                 editor.ColorProperty(baseColor, "Color");
