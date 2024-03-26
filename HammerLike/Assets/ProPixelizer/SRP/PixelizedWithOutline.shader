@@ -1,4 +1,4 @@
-﻿// Copyright Elliot Bentine, 2018-
+// Copyright Elliot Bentine, 2018-
 Shader "ProPixelizer/SRP/PixelizedWithOutline"
 {
 	//A shader that renders outline buffer data and color appearance for pixelated objects.
@@ -18,34 +18,35 @@ Shader "ProPixelizer/SRP/PixelizedWithOutline"
 
     Properties
     {
-		_LightingRamp("LightingRamp", 2D) = "white" {}
-		_PaletteLUT("PaletteLUT", 2D) = "white" {}
-		[MainTex][NoScaleOffset]_Albedo("Albedo", 2D) = "white" {}
-		_Albedo_ST("Albedo_ST", Vector) = (1, 1, 0, 0)
-		[MainColor]_BaseColor("Color", Color) = (1, 1, 1, 1)
-		_AmbientLight("AmbientLight", Color) = (0.2, 0.2, 0.2, 1.0)
-		[IntRange] _PixelSize("PixelSize", Range(1, 5)) = 3
-		_PixelGridOrigin("PixelGridOrigin", Vector) = (0, 0, 0, 0)
-		[Normal][NoScaleOffset]_NormalMap("Normal Map", 2D) = "bump" {}
-		_NormalMap_ST("Normal Map_ST", Vector) = (1, 1, 0, 0)
-		[NoScaleOffset]_Emission("Emission", 2D) = "white" {}
-		_Emission_ST("Emission_ST", Vector) = (1, 1, 0, 0)
-		_EmissionColor("EmissionColor", Color) = (1, 1, 1, 0)
-		_AlphaClipThreshold("Alpha Clip Threshold", Range(0, 1)) = 0.5
-		[IntRange] _ID("ID", Range(0, 255)) = 1 // A unique ID used to differentiate objects for purposes of outlines.
-		_OutlineColor("OutlineColor", Color) = (0.0, 0.0, 0.0, 0.5)
-		_EdgeHighlightColor("Edge Highlight Color", Color) = (0.5, 0.5, 0.5, 0)
-		_DiffuseVertexColorWeight("DiffuseVertexColorWeight", Range(0, 1)) = 1
-		_EmissiveVertexColorWeight("EmissiveVertexColorWeight", Range(0, 1)) = 0
-		[HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
-		[HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
-		[HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
-		[Toggle]COLOR_GRADING("Use Color Grading", Float) = 0
-		[Toggle]USE_OBJECT_POSITION("Use Object Position", Float) = 1
-		[Toggle]RECEIVE_SHADOWS("ReceiveShadows", Float) = 1
-		[Toggle]PROPIXELIZER_DITHERING("Use Dithering", Float) = 1
-	}
-
+        [NoScaleOffset]_LightingRamp("LightingRamp", 2D) = "white" {}
+        [NoScaleOffset]_PaletteLUT("PaletteLUT", 2D) = "white" {}
+        [NoScaleOffset]_Albedo("Albedo", 2D) = "white" {}
+        _Albedo_ST("Albedo_ST", Vector) = (1, 1, 0, 0)
+        _BaseColor("Color", Color) = (1, 1, 1, 1)
+        _AmbientLight("AmbientLight", Color) = (0.1, 0.1, 0.1, 0.5019608)
+        _PixelSize("PixelSize", Range(1, 5)) = 1
+        _PixelGridOrigin("PixelGridOrigin", Vector) = (0, 0, 0, 0)
+        [Normal][NoScaleOffset]_NormalMap("Normal Map", 2D) = "bump" {}
+        _NormalMap_ST("Normal Map_ST", Vector) = (1, 1, 0, 0)
+        [NoScaleOffset]_Emission("Emission", 2D) = "black" {}
+        _Emission_ST("Emission_ST", Vector) = (1, 1, 0, 0)
+        _AlphaClipThreshold("Alpha Clip Threshold", Float) = 0.5
+        _ID("ID", Float) = 1
+        _OutlineColor("OutlineColor", Color) = (1, 1, 1, 0.5019608)
+        _EdgeHighlightColor("Edge Highlight Color", Color) = (0.5, 0.5, 0.5, 0.5058824)
+        _EmissionColor("EmissionColor", Color) = (1, 1, 1, 0)
+        _DiffuseVertexColorWeight("DiffuseVertexColorWeight", Float) = 1
+        _EmissiveVertexColorWeight("EmissiveVertexColorWeight", Float) = 0
+        [Toggle]COLOR_GRADING("Use Color Grading", Float) = 1
+        [Toggle]USE_OBJECT_POSITION("Use Object Position", Float) = 1
+        [Toggle]RECEIVE_SHADOWS("Receive Shadows", Float) = 1
+        [Toggle]PROPIXELIZER_DITHERING("Use Dithering", Float) = 0
+        [HideInInspector]_QueueOffset("_QueueOffset", Float) = 0
+        [HideInInspector]_QueueControl("_QueueControl", Float) = -1
+        [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
+        [HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
+        [HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
+    }
 		SubShader
 		{
 			Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
@@ -85,42 +86,42 @@ Shader "ProPixelizer/SRP/PixelizedWithOutline"
 			// The CBUFFER has to match that generated from ShaderGraph - otherwise all hell breaks loose.
 			// In some cases, it might be easier to just break SRP Batching support for your outline shader.
 			// Graph Properties
-			CBUFFER_START(UnityPerMaterial)
-			float4 _LightingRamp_TexelSize;
-			float4 _PaletteLUT_TexelSize;
-			float4 _Albedo_TexelSize;
-			float4 _Albedo_ST;
-			float4 _BaseColor;
-			float4 _AmbientLight;
-			float _PixelSize;
-			float4 _PixelGridOrigin;
-			float4 _NormalMap_TexelSize;
-			float4 _NormalMap_ST;
-			float4 _Emission_TexelSize;
-			float4 _Emission_ST;
-			float _AlphaClipThreshold;
-			float _ID;
-			float4 _OutlineColor;
-			float4 _EdgeHighlightColor;
-			float4 _EmissionColor;
-			float _DiffuseVertexColorWeight;
-			float _EmissiveVertexColorWeight;
-			CBUFFER_END
-			
-			// Object and Global properties
-			SAMPLER(SamplerState_Linear_Repeat);
-			SAMPLER(SamplerState_Point_Clamp);
-			SAMPLER(SamplerState_Point_Repeat);
-			TEXTURE2D(_LightingRamp);
-			SAMPLER(sampler_LightingRamp);
-			TEXTURE2D(_PaletteLUT);
-			SAMPLER(sampler_PaletteLUT);
-			TEXTURE2D(_Albedo);
-			SAMPLER(sampler_Albedo);
-			TEXTURE2D(_NormalMap);
-			SAMPLER(sampler_NormalMap);
-			TEXTURE2D(_Emission);
-			SAMPLER(sampler_Emission);
+            CBUFFER_START(UnityPerMaterial)
+            float4 _LightingRamp_TexelSize;
+            float4 _PaletteLUT_TexelSize;
+            float4 _Albedo_TexelSize;
+            float4 _Albedo_ST;
+            float4 _BaseColor;
+            float4 _AmbientLight;
+            float _PixelSize;
+            float4 _PixelGridOrigin;
+            float4 _NormalMap_TexelSize;
+            float4 _NormalMap_ST;
+            float4 _Emission_TexelSize;
+            float4 _Emission_ST;
+            float _AlphaClipThreshold;
+            float _ID;
+            float4 _OutlineColor;
+            float4 _EdgeHighlightColor;
+            float4 _EmissionColor;
+            float _DiffuseVertexColorWeight;
+            float _EmissiveVertexColorWeight;
+            CBUFFER_END
+
+            // Object and Global properties
+            SAMPLER(SamplerState_Linear_Repeat);
+            SAMPLER(SamplerState_Point_Clamp);
+            SAMPLER(SamplerState_Point_Repeat);
+            TEXTURE2D(_LightingRamp);
+            SAMPLER(sampler_LightingRamp);
+            TEXTURE2D(_PaletteLUT);
+            SAMPLER(sampler_PaletteLUT);
+            TEXTURE2D(_Albedo);
+            SAMPLER(sampler_Albedo);
+            TEXTURE2D(_NormalMap);
+            SAMPLER(sampler_NormalMap);
+            TEXTURE2D(_Emission);
+            SAMPLER(sampler_Emission);
 
 			#include "OutlinePass.hlsl"
 			ENDHLSL
