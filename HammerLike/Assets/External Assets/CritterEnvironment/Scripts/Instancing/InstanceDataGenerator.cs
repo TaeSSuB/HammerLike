@@ -13,7 +13,7 @@ namespace Critter.Instancing
     }
     public static class InstanceDataGenerator
     {
-        public static InstanceData[] RandomMeshInstanceData(Mesh mesh, float density, float distanceOffset, InstanceConfiguration[] configurations)
+        public static InstanceData[] RandomMeshInstanceData(Mesh mesh, float density, InstanceConfiguration[] configurations)
         {
             if (mesh == null || density <= 0 || configurations == null || configurations.Length == 0)
                 return null;
@@ -31,7 +31,7 @@ namespace Critter.Instancing
                 var instance = new InstanceData
                 {
                     TRS = Matrix4x4.TRS(
-                        vertex + normal * distanceOffset, 
+                        vertex, 
                         Quaternion.identity,
                         Vector3.one
                     ),
@@ -103,7 +103,7 @@ namespace Critter.Instancing
         }
         static InstanceData ApplyConfiguration(InstanceConfiguration configuration, InstanceData data)
         {
-            data.TRS *= Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(configuration.Scale, configuration.Scale, configuration.Scale)); // Matrix4x4.TRS(configuration.Offset, Quaternion.identity, configuration.Scale);
+            data.TRS *= Matrix4x4.TRS(configuration.NormalOffset * data.Normal, Quaternion.identity, new Vector3(configuration.Scale, configuration.Scale, configuration.Scale)); // Matrix4x4.TRS(configuration.Offset, Quaternion.identity, configuration.Scale);
             return data;
         }
         public static Dictionary<InstanceConfiguration, List<InstanceData>> DivideInstanceData(InstanceData[] instanceData, InstanceConfiguration[] instanceConfigurations)

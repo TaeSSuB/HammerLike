@@ -13,6 +13,7 @@ namespace Critter.Instancing
         public Material Material;
         public float Probability = 1f;
         public float Scale = 1f;
+        public float NormalOffset = 0.1f;   // is the instance position pushed towards its normal
 
         // public Vector3 Scale = new(1, 1, 1);             // These 3 are useful features but rarely used. You can implement them by commentting in stuff here and elsewhere.
         // public Vector3 Offset = Vector3.zero;
