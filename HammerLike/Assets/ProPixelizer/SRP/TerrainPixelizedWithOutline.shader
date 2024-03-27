@@ -1,20 +1,6 @@
 // Copyright Elliot Bentine, 2018-
 Shader "ProPixelizer/SRP/TerrainPixleizedWithOutline"
 {
-	//A shader that renders outline buffer data and color appearance for pixelated objects.
-	//
-	// If you want to add your own properties to the PixelizedWithOutline shader, or modify
-	// the appearance of it, you can make changes to the ProPixelizerBase shader graph.
-	// Make sure you follow these steps:
-	//   1. Make your changes to the ProPixelizerBase graph, e.g. adding new properties,
-	//      changing connections. Your changes will not be visible until Unity reloads this
-	//      shader. The easiest way to trigger recompilation is to modify and re-saving
-	//      this file.
-	//   2. Make sure the UnityPerMaterial CBUFFER in the ProPixelizerPass below matches that
-	//      in the generated ProPixelizerBase shader (you can view the generated shader from
-	//      the inspector window).
-	//   3. If you want to edit your new properties in editor, it might help to disable the
-	//      CustomEditor at the bottom of this file.
 
     Properties
     {
