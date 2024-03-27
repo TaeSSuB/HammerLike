@@ -27,6 +27,19 @@ MonoBehaviour:
       type: 3}
   OutlineShaders:
     OutlineDetection: {fileID: 4800000, guid: c59878161c7e0ad40b0661b47620d0e5, type: 3}
+--- !u!114 &-609815826488080796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d111dc2a0b22b142804f4d59508b893, type: 3}
+  m_Name: URPOutlineFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45,7 +58,9 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: -7443692436875361921}
   - {fileID: 9092573768000973968}
-  m_RendererFeatureMap: 7f41c8c22ab1b29890acbbdfaa4f2f7e
+  - {fileID: 7438385996131927080}
+  - {fileID: -609815826488080796}
+  m_RendererFeatureMap: 7f41c8c22ab1b29890acbbdfaa4f2f7e2804af39a7743a676446c49bbc7f89f7
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -86,6 +101,33 @@ MonoBehaviour:
   m_ClusteredRendering: 0
   m_TileSize: 32
   m_IntermediateTextureMode: 1
+--- !u!114 &7438385996131927080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ef6d2d7bf3633e4baf72310f121f717, type: 3}
+  m_Name: PixelisationFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  UseDepthTestingForIDOutlines: 1
+  DepthTestThreshold: 0.001
+  UseNormalsForEdgeDetection: 1
+  NormalEdgeDetectionSensitivity: 1
+  GenerateWarnings: 1
+  PixelizationShaders:
+    PixelizationMap: {fileID: 4800000, guid: 8dd346b62451e76418dabc2355815f15, type: 3}
+    CopyDepth: {fileID: 4800000, guid: 5854eec6cff8aa8449c5f14562cf9c11, type: 3}
+    CopyMainTexAndDepth: {fileID: 4800000, guid: 4fdd965c0d64e16468688f87fbca597d,
+      type: 3}
+    ApplyPixelizationMap: {fileID: 4800000, guid: f47f4f650fb29834684600d9a95f41c7,
+      type: 3}
+  OutlineShaders:
+    OutlineDetection: {fileID: 4800000, guid: c59878161c7e0ad40b0661b47620d0e5, type: 3}
 --- !u!114 &9092573768000973968
 MonoBehaviour:
   m_ObjectHideFlags: 0
