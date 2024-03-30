@@ -4,32 +4,33 @@ Shader "HLPixelizer/SRP/HLPixelizer"
 
     Properties
     {
-        _BaseColor("Color", Color) = (1, 1, 1, 1)
-        [NoScaleOffset]_LightingRamp("LightingRamp", 2D) = "white" {}
+        _BaseColor("BaseColor", Color) = (1, 1, 1, 1)
+        _AlphaClipThreshold("Alpha Clip Threshold", Float) = 0.5
         [NoScaleOffset]_Albedo("Albedo", 2D) = "white" {}
         _Albedo_ST("Albedo_ST", Vector) = (1, 1, 0, 0)
-        _AmbientLight("AmbientLight", Color) = (0.1, 0.1, 0.1, 0.5019608)
-        _PixelSize("PixelSize", Range(1, 5)) = 1
-        _PixelGridOrigin("PixelGridOrigin", Vector) = (0, 0, 0, 0)
+        _Normal_Strength("Normal Strength", Range(0, 5)) = 1
         [Normal][NoScaleOffset]_NormalMap("Normal Map", 2D) = "bump" {}
         _NormalMap_ST("Normal Map_ST", Vector) = (1, 1, 0, 0)
-        _Normal_Strength("Normal Strength", Float) = 1
+        [HDR]_EmissionColor("Emission Color", Color) = (0, 0, 0, 0)
         [NoScaleOffset]_Emission("Emission", 2D) = "black" {}
         _Emission_ST("Emission_ST", Vector) = (1, 1, 0, 0)
-        _AlphaClipThreshold("Alpha Clip Threshold", Float) = 0.5
-        [HDR]_EmissionColor("EmissionColor", Color) = (0, 0, 0, 0)
-        [Toggle]COLOR_GRADING("Use Color Grading", Float) = 1
-        [Toggle]USE_OBJECT_POSITION("Use Object Position", Float) = 1
+        [NoScaleOffset]_LightingRamp("LightingRamp", 2D) = "white" {}
+        _AmbientLight("AmbientLight", Color) = (0.1, 0.1, 0.1, 0.5019608)
         [Toggle]RECEIVE_SHADOWS("Receive Shadows", Float) = 1
+        [Toggle]COLOR_GRADING("Use Color Grading", Float) = 1
+        [NoScaleOffset]_PaletteLUT("PaletteLUT", 2D) = "white" {}
         [Toggle]PROPIXELIZER_DITHERING("Use Dithering", Float) = 0
-        _ID("ID", Float) = 1
-        _OutlineColor("Inline Color", Color) = (1, 1, 1, 0.5019608)
-        _EdgeHighlightColor("Edge Highlight Color", Color) = (0.5, 0.5, 0.5, 0.5058824)
         _DiffuseVertexColorWeight("DiffuseVertexColorWeight", Float) = 0
         _EmissiveVertexColorWeight("EmissiveVertexColorWeight", Float) = 0
         _Hue("Hue", Float) = 0
         _Saturation("Saturation", Float) = 1
         _Contrast("Contrast", Float) = 1
+        _PixelSize("PixelSize", Range(1, 5)) = 2
+        [Toggle]USE_OBJECT_POSITION("Use Object Position", Float) = 1
+        _PixelGridOrigin("PixelGridOrigin", Vector) = (0, 0, 0, 0)
+        _ID("ID", Float) = 1
+        _OutlineColor("Inline Color", Color) = (0, 0, 0, 0.5019608)
+        _EdgeHighlightColor("Edge Highlight Color", Color) = (1, 1, 1, 0.5019608)
         [HideInInspector]_QueueOffset("_QueueOffset", Float) = 0
         [HideInInspector]_QueueControl("_QueueControl", Float) = -1
         [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
@@ -75,10 +76,12 @@ Shader "HLPixelizer/SRP/HLPixelizer"
 			// The CBUFFER has to match that generated from ShaderGraph - otherwise all hell breaks loose.
 			// In some cases, it might be easier to just break SRP Batching support for your outline shader.
 			// Graph Properties
+            // Graph Properties
             CBUFFER_START(UnityPerMaterial)
             float _Saturation;
             float _Contrast;
             float4 _LightingRamp_TexelSize;
+            float4 _PaletteLUT_TexelSize;
             float4 _Albedo_TexelSize;
             float4 _Albedo_ST;
             float4 _BaseColor;
@@ -108,7 +111,6 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             SAMPLER(sampler_LightingRamp);
             TEXTURE2D(_PaletteLUT);
             SAMPLER(sampler_PaletteLUT);
-            float4 _PaletteLUT_TexelSize;
             TEXTURE2D(_Albedo);
             SAMPLER(sampler_Albedo);
             TEXTURE2D(_NormalMap);
