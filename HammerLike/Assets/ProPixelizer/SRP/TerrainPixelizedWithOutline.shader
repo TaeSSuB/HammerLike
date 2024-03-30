@@ -1,5 +1,5 @@
 // Copyright Elliot Bentine, 2018-
-Shader "ProPixelizer/SRP/TerrainPixleizedWithOutline"
+Shader "ProPixelizer/SRP/TerrainPixelizedWithOutline"
 {
 
     Properties

@@ -9,13 +9,15 @@ Shader "HLPixelizer/SRP/HLPixelizer"
         [NoScaleOffset]_Albedo("Albedo", 2D) = "white" {}
         _Albedo_ST("Albedo_ST", Vector) = (1, 1, 0, 0)
         _Normal_Strength("Normal Strength", Range(0, 5)) = 1
-        [Normal][NoScaleOffset]_NormalMap("Normal Map", 2D) = "bump" {}
+        [Normal]_NormalMap("Normal Map", 2D) = "bump" {}
         _NormalMap_ST("Normal Map_ST", Vector) = (1, 1, 0, 0)
         [HDR]_EmissionColor("Emission Color", Color) = (0, 0, 0, 0)
         [NoScaleOffset]_Emission("Emission", 2D) = "black" {}
         _Emission_ST("Emission_ST", Vector) = (1, 1, 0, 0)
+        [ToggleUI]_EnableDynamicLight("Enable Dynamic Light", Float) = 1
         [NoScaleOffset]_LightingRamp("LightingRamp", 2D) = "white" {}
         _AmbientLight("AmbientLight", Color) = (0.1, 0.1, 0.1, 0.5019608)
+        [ToggleUI]_BlinnPhong("BlinnPhong", Float) = 0
         _Specular_Color("Specular Color", Color) = (1, 1, 1, 0)
         _Specular_Power("Specular Power", Float) = 10
         [Toggle]RECEIVE_SHADOWS("Receive Shadows", Float) = 1
@@ -78,7 +80,6 @@ Shader "HLPixelizer/SRP/HLPixelizer"
 			// The CBUFFER has to match that generated from ShaderGraph - otherwise all hell breaks loose.
 			// In some cases, it might be easier to just break SRP Batching support for your outline shader.
 			// Graph Properties
-            // Graph Properties
             CBUFFER_START(UnityPerMaterial)
             float _Saturation;
             float _Contrast;
@@ -105,12 +106,12 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float _Normal_Strength;
             float _Specular_Power;
             float4 _Specular_Color;
+            float _EnableDynamicLight;
+            float _BlinnPhong;
             CBUFFER_END
 
             // Object and Global properties
-            SAMPLER(SamplerState_Linear_Repeat);
             SAMPLER(SamplerState_Point_Clamp);
-            SAMPLER(SamplerState_Point_Repeat);
             TEXTURE2D(_LightingRamp);
             SAMPLER(sampler_LightingRamp);
             TEXTURE2D(_PaletteLUT);
@@ -121,6 +122,7 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             SAMPLER(sampler_NormalMap);
             TEXTURE2D(_Emission);
             SAMPLER(sampler_Emission);
+            SAMPLER(SamplerState_Point_Repeat);
 
 			#include "Assets/ProPixelizer/SRP/OutlinePass.hlsl"
 			ENDHLSL
