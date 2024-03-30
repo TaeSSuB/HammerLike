@@ -16,8 +16,10 @@ Shader "HLPixelizer/SRP/HLPixelizer"
         _Emission_ST("Emission_ST", Vector) = (1, 1, 0, 0)
         [NoScaleOffset]_LightingRamp("LightingRamp", 2D) = "white" {}
         _AmbientLight("AmbientLight", Color) = (0.1, 0.1, 0.1, 0.5019608)
+        _Specular_Color("Specular Color", Color) = (1, 1, 1, 0)
+        _Specular_Power("Specular Power", Float) = 10
         [Toggle]RECEIVE_SHADOWS("Receive Shadows", Float) = 1
-        [Toggle]COLOR_GRADING("Use Color Grading", Float) = 1
+        [Toggle]COLOR_GRADING("Use Color Grading", Float) = 0
         [NoScaleOffset]_PaletteLUT("PaletteLUT", 2D) = "white" {}
         [Toggle]PROPIXELIZER_DITHERING("Use Dithering", Float) = 0
         _DiffuseVertexColorWeight("DiffuseVertexColorWeight", Float) = 0
@@ -101,6 +103,8 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float _EmissiveVertexColorWeight;
             float _Hue;
             float _Normal_Strength;
+            float _Specular_Power;
+            float4 _Specular_Color;
             CBUFFER_END
 
             // Object and Global properties
