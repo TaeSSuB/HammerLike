@@ -192,6 +192,5 @@ Shader "ProPixelizer/SRP/TerrainPixleizedWithOutline"
 			ENDHLSL
 		}
      }
-	CustomEditor "TerrainPixelizedWithOutlineShaderGUI"
 	FallBack "ProPixelizer/Hidden/TerrainProPixelizerBase"
 }

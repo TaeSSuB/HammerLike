@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace ProPixelizer
 {
-    public class TerrainPixelizedWithOutlineShaderGUI : ShaderGUI
+    public class HLPixelizerGUI : ShaderGUI
     {
         bool showColor, showAlpha, showPixelize, showLighting, showOutline;
         bool useColorGrading, useNormalMap, useEmission, useObjectPosition, useAlpha, useShadows;
