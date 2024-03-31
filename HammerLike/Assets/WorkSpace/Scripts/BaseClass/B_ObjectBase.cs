@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class B_ObjectBase : MonoBehaviour
 {
+    [Header("Manager (Temp - 240331), a.HG")]
+    [SerializeField] protected GameManager manager;
+
     [Header("Base Object Info")]
     [SerializeField] protected GameObject rootObj;
     [SerializeField] protected Collider col;
@@ -27,8 +30,18 @@ public class B_ObjectBase : MonoBehaviour
 
     }
 
+    protected virtual void OnTriggerEnter(Collider other)
+    {
+
+    }
+
     public virtual void Init()
     {
+        if(manager == null)
+        {
+            manager = GameManager.instance;
+        }
+
         if(rootObj == null)
         {
             rootObj = gameObject;

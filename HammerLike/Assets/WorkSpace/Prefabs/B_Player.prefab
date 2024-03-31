@@ -265,6 +265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d3c7810508c534daf67b3eb220ca2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  manager: {fileID: 0}
   rootObj: {fileID: 1768623638817304503}
   col: {fileID: 3484366558637496199}
   rigid: {fileID: 7190315784335179458}
@@ -274,6 +275,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2147483648
   groundCheckDistance: 0.1
+  isGrounded: 0
+  weaponCollider: {fileID: 5855659360047067548}
 --- !u!1 &1768623639244865642
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,7 +296,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1768623639244865643
 Transform:
   m_ObjectHideFlags: 0
@@ -359,7 +362,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1768623639244865642}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!114 &1768623639244865640
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -855,7 +858,7 @@ BoxCollider:
   m_GameObject: {fileID: 3390375666078707877}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 0.8, z: 1}
   m_Center: {x: 0, y: 1.25, z: 0}
@@ -2074,7 +2077,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5855659359285085397
 Transform:
   m_ObjectHideFlags: 0
