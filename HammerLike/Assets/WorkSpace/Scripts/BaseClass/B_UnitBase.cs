@@ -6,10 +6,10 @@ using UnityEngine;
 public class B_UnitBase : B_ObjectBase
 {
     protected SO_UnitStatus unitStatus;
-    public float knockbackMultiplier = 1.0f;
-    public float knockbackIncrease = 1.5f; // Multiplier increase per hit
-    public float knockbackResetTime = 1.0f;
-    private float lastKnockbackTime = -Mathf.Infinity; // Initialize to a time in the past
+    
+    // animation curve for knockback
+    [SerializeField] protected AnimationCurve knockbackCurve;
+    [SerializeField] protected float knockBackMultiplier = 10f;
 
     // lock move and rotate
     public bool isLockMove { get; private set; }
@@ -127,27 +127,14 @@ public class B_UnitBase : B_ObjectBase
     // knockback function with mass
     public void Knockback(Vector3 inDir, float force)
     {
-        float timeSinceLastKnockback = Time.time - lastKnockbackTime;
-        if (timeSinceLastKnockback < knockbackResetTime)
-        {
-            knockbackMultiplier *= knockbackIncrease; // Increase multiplier for consecutive hits
-        }
-        else
-        {
-            knockbackMultiplier = 1.0f; // Reset multiplier after knockbackResetTime
-        }
-
         // Apply a smoothed knockback over time rather than as an impulse
-        StartCoroutine(SmoothKnockback(inDir, force));
-        //rigid.AddForce(inDir * force, ForceMode.Impulse);
-
-        //Debug.Log(rigid.velocity);
-        lastKnockbackTime = Time.time;
+        StartCoroutine(SmoothKnockback(inDir, force * knockBackMultiplier));
     }
 
+    // knockback coroutine with animation curve
     private IEnumerator SmoothKnockback(Vector3 inDir, float force)
     {
-        Vector3 knockbackVelocity = inDir.normalized * force / unitStatus.mass;
+        Vector3 knockbackVelocity = inDir * force / unitStatus.mass;
         // 초기 속도를 저장합니다.
         Vector3 initialVelocity = rigid.velocity;
         float knockbackDuration = 1f; // Duration over which the force is applied
@@ -159,13 +146,15 @@ public class B_UnitBase : B_ObjectBase
         {
             float elapsed = (Time.time - startTime) / knockbackDuration;
 
-            rigid.velocity = Vector3.Lerp(initialVelocity, knockbackVelocity, elapsed);
+            // Apply the force using the animation curve
+            rigid.velocity = Vector3.Lerp(initialVelocity, knockbackVelocity, knockbackCurve.Evaluate(elapsed));
 
             yield return null;
         }
 
         EnableMovementAndRotation();
     }
+
     protected virtual void Dead()
     {
         //Destroy(gameObject);

@@ -32,7 +32,7 @@ public class B_Enemy : B_UnitBase
             Vector3 coordDir = GameManager.instance.ApplyCoordScale(hitDir);
 
             // Take Damage and Knockback dir from player
-            TakeDamage(coordDir, 10);
+            TakeDamage(coordDir, player.UnitStatus.atkDamage);
             
             //ChangeState(new ChaseState(this));
             if (aIStateManager?.CurrentStateType != AIStateType.HIT)

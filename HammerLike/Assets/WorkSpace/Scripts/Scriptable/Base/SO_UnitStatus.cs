@@ -5,12 +5,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "UnitStatus", menuName = "B_ScriptableObjects/UnitStatus", order = 1)]
 public class SO_UnitStatus : ScriptableObject
 {
-    public float currentHP = 100;
-    public float maxHP = 100;
+    public int currentHP = 100;
+    public int maxHP = 100;
 
     public float moveSpeed = 5f;
 
-    public float atkDamage = 10f;
+    public int atkDamage = 10;
     public float atkRange = 1f;
     public float atkSpeed = 1f;
 
