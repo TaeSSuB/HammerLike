@@ -15,6 +15,7 @@ public class AttackState : IAIState
     public void OnEnter()
     {
         Debug.Log("AttackState OnEnter");
+        unitBase.Anim.SetTrigger("tAttack");
     }
 
     public void OnExit()
@@ -24,6 +25,6 @@ public class AttackState : IAIState
 
     public void OnUpdate()
     {
-        Debug.Log("AttackState OnUpdate");
+        //Debug.Log("AttackState OnUpdate");
     }
 }

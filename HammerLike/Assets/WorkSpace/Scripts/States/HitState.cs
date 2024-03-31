@@ -37,7 +37,14 @@ public class HitState : IAIState
 
         if (invincibleTime <= 0)
         {
-            (unitBase as B_Enemy).AIStateManager.SetState(AIStateType.IDLE);
+            if(unitBase.UnitStatus.currentHP <= 0)
+            {
+                (unitBase as B_Enemy).AIStateManager.SetState(AIStateType.DEAD);
+            }
+            else
+            {
+                (unitBase as B_Enemy).AIStateManager.SetState(AIStateType.IDLE);
+            }
         }
     }
 }

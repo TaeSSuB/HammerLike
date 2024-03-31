@@ -19,6 +19,7 @@ public class B_Player : B_UnitBase
     {
         base.Init();
         // Init logic
+        GameManager.instance.SetPlayer(this);
     }
 
     protected override void Update()

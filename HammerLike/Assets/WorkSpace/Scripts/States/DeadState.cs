@@ -2,28 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IdleState : IAIState
+public class DeadState : IAIState
 {
     private B_UnitBase unitBase;
 
-    public IdleState(B_UnitBase unitBase)
+    public DeadState(B_UnitBase unitBase)
     {
         this.unitBase = unitBase;
     }
 
     public void OnEnter()
     {
-        Debug.Log("IdleState OnEnter");
+        Debug.Log("DeadState OnEnter");
+
+        // Dead logic
+        unitBase.Anim.SetTrigger("tDead");
+        //unitBase.Anim.SetTrigger("Dead");
     }
 
     public void OnExit()
     {
-        Debug.Log("IdleState OnExit");
+        Debug.Log("DeadState OnExit()");
+
+
     }
 
     public void OnUpdate()
     {
-        //Debug.Log("IdleState OnUpdate");
+
     }
 }
+
 

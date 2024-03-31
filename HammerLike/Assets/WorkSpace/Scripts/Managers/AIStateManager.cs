@@ -23,12 +23,18 @@ public class AIStateManager : MonoBehaviour
         states[AIStateType.WANDER] = new WanderState(unitBase);
         states[AIStateType.HIT] = new HitState(unitBase);
         states[AIStateType.ATTACK] = new AttackState(unitBase);
+        states[AIStateType.DEAD] = new DeadState(unitBase);
 
         SetState(AIStateType.IDLE); // 기본 상태 설정
     }
 
     public void SetState(AIStateType newState)
     {
+        if(newState == currentStateType)
+        {
+            return;
+        }
+
         if (currentState != null)
         {
             currentState.OnExit();

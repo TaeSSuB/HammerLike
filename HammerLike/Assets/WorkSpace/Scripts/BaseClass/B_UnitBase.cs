@@ -58,14 +58,17 @@ public class B_UnitBase : B_ObjectBase
         CheckGrounded();
     }
 
-    public virtual void Move(Vector3 inDir)
+    public virtual Vector3 Move(Vector3 inDir)
     {
         if (!isGrounded || isLockMove)
-            return;
+            return Vector3.zero;
 
+        inDir.Normalize();
         var moveDir = manager.ApplyCoordScale(inDir);
 
         rigid.velocity = moveDir * unitStatus.moveSpeed;
+
+        return moveDir * unitStatus.moveSpeed;
     }
 
 
@@ -89,7 +92,7 @@ public class B_UnitBase : B_ObjectBase
             return;
         }
 
-        Knockback(damageDir, damage);
+        Knockback(damageDir, Mathf.Clamp(damage, 0f, 15f));
 
         UnitStatus.currentHP = UnitStatus.currentHP - damage;
         ClampHP();
@@ -184,5 +187,8 @@ public class B_UnitBase : B_ObjectBase
         Debug.Log("EnableMovementAndRotation()");
     }
 
+    protected override void OnTriggerEnter(Collider other)
+    {
 
+    }
 }

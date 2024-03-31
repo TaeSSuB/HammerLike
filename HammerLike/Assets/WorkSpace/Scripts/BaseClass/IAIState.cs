@@ -11,5 +11,6 @@ public enum AIStateType
     CHASE,
     WANDER,
     HIT,
-    ATTACK
+    ATTACK,
+    DEAD
 }

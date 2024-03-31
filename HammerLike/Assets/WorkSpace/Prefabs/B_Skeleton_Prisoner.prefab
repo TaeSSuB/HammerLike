@@ -6271,7 +6271,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 0ec1865fb7e68504fa8b7aa055aba3ed, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -6307,7 +6307,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &8995942570513142275
 MonoBehaviour:
@@ -6316,7 +6316,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8995942570513142273}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6c1c360019cf4368a4302b85327a3e5, type: 3}
   m_Name: 
@@ -6363,7 +6363,7 @@ MonoBehaviour:
   drawingMode: 1
   outlineLayer: 0
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -6379,7 +6379,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -6395,7 +6395,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -6909,15 +6909,14 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  knockbackMultiplier: 1
-  knockbackIncrease: 1.5
-  knockbackResetTime: 1
+  knockBackMultiplier: 10
   anim: {fileID: 8995942570513142287}
   groundLayer:
     serializedVersion: 2
     m_Bits: 2147483648
   groundCheckDistance: 0.1
   isGrounded: 0
+  chasingStartDis: 20
 --- !u!114 &7728055365080933140
 MonoBehaviour:
   m_ObjectHideFlags: 0

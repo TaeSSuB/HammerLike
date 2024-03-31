@@ -7,11 +7,19 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    [SerializeField] private B_Player player;
+
     // player Status SO
     [SerializeField] private SO_PlayerStatus playerStatus;
 
     // system settings SO
     [SerializeField] private SO_SystemSettings systemSettings;
+
+    public B_Player Player { get => player; }
+    public void SetPlayer(B_Player inPlayer)
+    {
+        player = inPlayer;
+    }
 
     public SO_PlayerStatus PlayerStatus { get => playerStatus; }
     public SO_SystemSettings SystemSettings { get => systemSettings; }

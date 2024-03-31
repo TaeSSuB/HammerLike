@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 
 public class ChaseState : IAIState
@@ -15,6 +16,7 @@ public class ChaseState : IAIState
     public void OnEnter()
     {
         Debug.Log("ChaseState OnEnter");
+        this.target = GameManager.instance.Player.transform;
     }
 
     public void OnExit()
@@ -24,7 +26,11 @@ public class ChaseState : IAIState
 
     public void OnUpdate()
     {
-        Debug.Log("ChaseState OnUpdate");
+        //Debug.Log("ChaseState OnUpdate");
+        Vector3 moveDir = target.position - unitBase.transform.position;
+
+        var resultMoveDir = unitBase.Move(moveDir);
+        unitBase.transform.LookAt(resultMoveDir + unitBase.transform.position);
     }
 }
 
