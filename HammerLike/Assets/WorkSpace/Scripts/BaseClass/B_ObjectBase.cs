@@ -19,6 +19,10 @@ public class B_ObjectBase : MonoBehaviour
     {
         //Init();
     }
+    protected virtual void OnEnable()
+    {
+        //Init();
+    }
 
     protected virtual void Start()
     {

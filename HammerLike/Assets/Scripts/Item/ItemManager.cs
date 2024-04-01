@@ -1,4 +1,3 @@
-using Mono.Cecil.Cil;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -37,8 +36,8 @@ public class ItemManager : MonoBehaviour
             Rigidbody rb = droppedItem.AddComponent<Rigidbody>();
 
             FloatingItem floatingItem = droppedItem.AddComponent<FloatingItem>();
-            floatingItem.itemManager = this; // ItemManager ÂüÁ¶ Ãß°¡
-            floatingItem.itemId = itemToDrop.itemID; // ¾ÆÀÌÅÛ ID ¼³Á¤
+            floatingItem.itemManager = this; // ItemManager ì°¸ì¡° ì¶”ê°€
+            floatingItem.itemId = itemToDrop.itemID; // ì•„ì´í…œ ID ì„¤ì •
         }
     }
 

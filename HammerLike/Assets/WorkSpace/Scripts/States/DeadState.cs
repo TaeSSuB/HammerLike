@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DeadState : IAIState
@@ -16,6 +17,7 @@ public class DeadState : IAIState
         Debug.Log("DeadState OnEnter");
 
         // Dead logic
+        unitBase.DisableMovementAndRotation();
         unitBase.Anim.SetTrigger("tDead");
         //unitBase.Anim.SetTrigger("Dead");
     }

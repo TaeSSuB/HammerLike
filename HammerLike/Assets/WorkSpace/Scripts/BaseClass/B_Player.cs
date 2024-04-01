@@ -175,12 +175,12 @@ public class B_Player : B_UnitBase
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
     }
 
-    void StartAttack()
+    protected override void StartAttack()
     {
 
     }
 
-    void EndAttack()
+    protected override void EndAttack()
     {
         // End attack logic
         Anim.SetBool("bAttack", false);

@@ -1,19 +1,23 @@
 using RootMotion.Dynamics;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class B_UnitBase : B_ObjectBase
 {
     protected SO_UnitStatus unitStatus;
-    
+
+    [Header("Knockback")]
     // animation curve for knockback
     [SerializeField] protected AnimationCurve knockbackCurve;
+    [SerializeField] protected AnimationCurve partsBreakForceCurve;
     [SerializeField] protected float knockBackMultiplier = 10f;
 
-    // lock move and rotate
-    public bool isLockMove { get; private set; }
-    public bool isLockRotate { get; private set; }
+    // Temp 240402 - Puppet 테스트 목적, a.HG
+    public BehaviourPuppet puppet;
+    public Vector3 remainKnockBackDir;
+    public float remainKnockBackForce = 0f;
 
     // Anim
     [SerializeField] private Animator anim;
@@ -26,6 +30,11 @@ public class B_UnitBase : B_ObjectBase
 
     public SO_UnitStatus UnitStatus { get => unitStatus;}
     public Animator Anim { get => anim;}
+
+    // lock move and rotate
+    public bool isLockMove { get; private set; }
+    public bool isLockRotate { get; private set; }
+
 
     protected virtual void ApplyStatus()
     {
@@ -54,8 +63,10 @@ public class B_UnitBase : B_ObjectBase
     protected override void Update()
     {
         base.Update();
-
         CheckGrounded();
+
+        if(UnitStatus.currentAttackCooltime > 0)
+            UnitStatus.currentAttackCooltime -= Time.deltaTime;
     }
 
     public virtual Vector3 Move(Vector3 inDir)
@@ -92,11 +103,32 @@ public class B_UnitBase : B_ObjectBase
             return;
         }
 
-        Knockback(damageDir, Mathf.Clamp(damage, 0f, 15f));
-
         UnitStatus.currentHP = UnitStatus.currentHP - damage;
+
         ClampHP();
-        CheckDead();
+
+        //CheckDead();
+
+        //Knockback(damageDir, Mathf.Clamp(damage, 0f, 15f));
+        remainKnockBackDir = damageDir;
+        remainKnockBackForce = Mathf.Clamp(damage, 0f, 15f);
+
+
+        if (!CheckDead())
+        {
+            // If the unit is not dead, apply smooth knockback
+            Knockback(damageDir, Mathf.Clamp(damage, 0f, 15f));
+        }
+    }
+
+    protected virtual void StartAttack()
+    {
+
+    }
+
+    protected virtual void EndAttack()
+    {
+
     }
 
     // Clamp hp between 0 and maxHP
@@ -118,12 +150,17 @@ public class B_UnitBase : B_ObjectBase
         Debug.DrawRay(transform.position, -Vector3.up * (groundCheckDistance), Color.red);
     }
 
-    protected virtual void CheckDead()
+    protected virtual bool CheckDead()
     {
         // Dead if hp is 0
         if (UnitStatus.currentHP <= 0)
         {
             Dead();
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -131,16 +168,29 @@ public class B_UnitBase : B_ObjectBase
     public void Knockback(Vector3 inDir, float force)
     {
         // Apply a smoothed knockback over time rather than as an impulse
-        StartCoroutine(SmoothKnockback(inDir, force * knockBackMultiplier));
+        StartCoroutine(SmoothKnockback(inDir, force, rigid, knockbackCurve, 1f));
+    }
+
+    // Temp 240402 - Puppet 테스트 목적, a.HG
+    public void ImpulseKnockbackToPuppet(Vector3 inDir, float force, Rigidbody rigid)
+    {
+        Debug.Log("Add force!!");
+        rigid.velocity = (inDir * force * knockBackMultiplier);
     }
 
     // knockback coroutine with animation curve
-    private IEnumerator SmoothKnockback(Vector3 inDir, float force)
+    private IEnumerator SmoothKnockback(Vector3 inDir, float force, Rigidbody inRigid, AnimationCurve inCurve, float inDuration = 0.5f)
     {
-        Vector3 knockbackVelocity = inDir * force / unitStatus.mass;
+        if(inRigid == null)
+        {
+            inRigid = rigid;
+        }
+
+        Vector3 knockbackVelocity = inDir * force / unitStatus.mass * knockBackMultiplier;
+
         // 초기 속도를 저장합니다.
-        Vector3 initialVelocity = rigid.velocity;
-        float knockbackDuration = 1f; // Duration over which the force is applied
+        Vector3 initialVelocity = inRigid.velocity;
+        float knockbackDuration = inDuration; // Duration over which the force is applied
         float startTime = Time.time;
 
         DisableMovementAndRotation();
@@ -150,7 +200,7 @@ public class B_UnitBase : B_ObjectBase
             float elapsed = (Time.time - startTime) / knockbackDuration;
 
             // Apply the force using the animation curve
-            rigid.velocity = Vector3.Lerp(initialVelocity, knockbackVelocity, knockbackCurve.Evaluate(elapsed));
+            inRigid.velocity = Vector3.Lerp(initialVelocity, knockbackVelocity, inCurve.Evaluate(elapsed));
 
             yield return null;
         }
@@ -163,9 +213,10 @@ public class B_UnitBase : B_ObjectBase
         //Destroy(gameObject);
         //gameObject.SetActive(false);
         Debug.Log("Dead");
+        DisableMovementAndRotation();
     }
 
-    protected virtual void DisableMovementAndRotation()
+    public virtual void DisableMovementAndRotation()
     {
         // Disable movement and rotation logic
         // For example, you can set a flag to prevent movement and rotation
@@ -176,7 +227,7 @@ public class B_UnitBase : B_ObjectBase
         Debug.Log("DisableMovementAndRotation()");
     }
 
-    protected virtual void EnableMovementAndRotation()
+    public virtual void EnableMovementAndRotation()
     {
         // Enable movement and rotation logic
         // For example, you can reset the flag to allow movement and rotation
@@ -190,5 +241,42 @@ public class B_UnitBase : B_ObjectBase
     protected override void OnTriggerEnter(Collider other)
     {
 
+    }
+
+    // Temp 240402 - Puppet 테스트 목적, a.HG
+    // From Monster.DisconnectMusclesRecursive()
+    protected void DisconnectMusclesRecursive()
+    {
+        if (puppet != null && puppet.puppetMaster != null)
+        {
+            for (int i = 0; i < puppet.puppetMaster.muscles.Length; i++)
+            {
+                Rigidbody muscleRigid = puppet.puppetMaster.muscles[i].rigidbody;
+
+                // Temp 240402 - 파츠 별 넉백.., a.HG
+                // 1. StartCoroutine(SmoothKnockback)
+                // 2. ImpulseKnockbackToPuppet
+                // 3. AddForce Each (Loop)
+
+                if (muscleRigid != null)
+                {
+                    Vector3 dir = (muscleRigid.transform.position - GameManager.instance.Player.transform.position).normalized;
+                    dir = GameManager.instance.ApplyCoordScale(dir);
+                    dir.y = 0f;
+
+                    //muscleRigid.AddForce(dir * remainKnockBackForce * knockBackMultiplier, ForceMode.Impulse);
+                    StartCoroutine(SmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, 0.2f));
+                    //uscleRigid.velocity = (remainKnockBackDir * remainKnockBackForce * knockBackMultiplier);
+                }
+
+                puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Explode);
+
+                //puppet.puppetMaster.muscles[i].rigidbody.AddForce(remainKnockBackForce, ForceMode.Impulse);
+
+                // root RigidBody 물리력 고정 및 콜라이더 비활성화
+                rigid.isKinematic = true;
+                col.enabled = false;
+            }
+        }
     }
 }

@@ -13,6 +13,8 @@ public class SO_UnitStatus : ScriptableObject
     public int atkDamage = 10;
     public float atkRange = 1f;
     public float atkSpeed = 1f;
+    public float maxAttackCooltime = 1f;
+    public float currentAttackCooltime = 0f;
 
     public float mass = 1f;
 
@@ -26,6 +28,8 @@ public class SO_UnitStatus : ScriptableObject
         newStatus.atkDamage = atkDamage;
         newStatus.atkRange = atkRange;
         newStatus.atkSpeed = atkSpeed;
+        newStatus.maxAttackCooltime = maxAttackCooltime;
+        newStatus.currentAttackCooltime = currentAttackCooltime;
         newStatus.mass = mass;
 
         return newStatus;

@@ -1,3 +1,4 @@
+using RootMotion.Dynamics;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,7 +26,19 @@ public class B_Enemy : B_UnitBase
     protected override void Dead()
     {
         base.Dead();
-        aIStateManager.SetState(AIStateType.DEAD);
+        //aIStateManager.SetState(AIStateType.DEAD);
+        DisconnectMusclesRecursive();
+        //Invoke(nameof(DisconnectMusclesRecursive), 0.1f);
+    }
+
+    protected override void StartAttack()
+    {
+
+    }
+
+    protected override void EndAttack()
+    {
+        aIStateManager.SetState(AIStateType.IDLE);
     }
 
     // Update
@@ -41,7 +54,7 @@ public class B_Enemy : B_UnitBase
         }
 
         // Temp - Set Chasing
-        if (aIStateManager.CurrentStateType != AIStateType.HIT)
+        if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
         {
             var targetDis = Vector3.Distance(transform.position, GameManager.instance.Player.transform.position);
 
@@ -51,7 +64,7 @@ public class B_Enemy : B_UnitBase
                 {
                     aIStateManager.SetState(AIStateType.ATTACK);
                 }
-                else
+                else if(aIStateManager?.CurrentStateType != AIStateType.ATTACK)
                 {
                     aIStateManager.SetState(AIStateType.CHASE);
                 }
@@ -76,7 +89,7 @@ public class B_Enemy : B_UnitBase
             TakeDamage(coordDir, player.UnitStatus.atkDamage);
             
             //ChangeState(new ChaseState(this));
-            if (aIStateManager?.CurrentStateType != AIStateType.HIT)
+            if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
                 aIStateManager?.SetState(AIStateType.HIT);
         }
     }
