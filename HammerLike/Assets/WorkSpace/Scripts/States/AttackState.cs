@@ -34,6 +34,8 @@ public class AttackState : IAIState
             // Attack
             unitBase.UnitStatus.currentAttackCooltime = unitBase.UnitStatus.maxAttackCooltime;
 
+            unitBase.Anim.SetFloat("fRemainShot", unitBase.UnitStatus.maxAttackCooltime);
+
             // Temp 20240402 - UnitBase에서 Attack 함수로 Anim 포함 일괄 호출하도록 변경 예정, a.HG
             //unitBase.Attack();
             // LookAt Player

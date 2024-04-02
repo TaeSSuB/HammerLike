@@ -4,9 +4,24 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+// enum for types unit
+public enum UnitType
+{
+    Melee,
+    Range,
+    Magic,
+    Boss,
+    Develop
+}
+
 public class B_UnitBase : B_ObjectBase
 {
     protected SO_UnitStatus unitStatus;
+
+    [Header("Unit Data")]
+    [SerializeField] private UnitType unitType = UnitType.Melee;
+    // Anim
+    [SerializeField] private Animator anim;
 
     [Header("Knockback")]
     // animation curve for knockback
@@ -18,9 +33,6 @@ public class B_UnitBase : B_ObjectBase
     public BehaviourPuppet puppet;
     public Vector3 remainKnockBackDir;
     public float remainKnockBackForce = 0f;
-
-    // Anim
-    [SerializeField] private Animator anim;
 
     // Ground check variables
     [Header("Ground Check")]
@@ -38,8 +50,24 @@ public class B_UnitBase : B_ObjectBase
 
     protected virtual void ApplyStatus()
     {
-        // Apply status to the unit
-        unitStatus = UnitManager.instance.baseUnitStatus.MakeCopyStatus();
+        switch (unitType)
+        {
+            case UnitType.Melee:
+                unitStatus = UnitManager.instance.baseUnitStatus.MakeCopyStatus();
+                break;
+            case UnitType.Range:
+                unitStatus = UnitManager.instance.rangerUnitStatus.MakeCopyStatus();
+                break;
+            case UnitType.Magic:
+                // add please
+                break;
+            case UnitType.Boss:
+                // add please
+                break;
+            case UnitType.Develop:
+                unitStatus = UnitManager.instance.devUnitStatus.MakeCopyStatus();
+                break;
+        }
     }
 
     //init override
@@ -65,8 +93,12 @@ public class B_UnitBase : B_ObjectBase
         base.Update();
         CheckGrounded();
 
-        if(UnitStatus.currentAttackCooltime > 0)
+        if (UnitStatus.currentAttackCooltime > 0)
+        {
             UnitStatus.currentAttackCooltime -= Time.deltaTime;
+            Anim.SetFloat("fRemainShot", UnitStatus.currentAttackCooltime);
+        }
+            
     }
 
     public virtual Vector3 Move(Vector3 inDir)

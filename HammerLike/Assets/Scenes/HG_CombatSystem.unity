@@ -260,6 +260,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 745235998095987422, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
+        type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 2684364799
+      objectReference: {fileID: 0}
     - target: {fileID: 745235999134340651, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
         type: 3}
       propertyPath: m_Name
@@ -2946,7 +2951,7 @@ MonoBehaviour:
   player: {fileID: 0}
   playerStatus: {fileID: 11400000, guid: f81b0e2aed3684e4f8088db754b079bc, type: 2}
   systemSettings: {fileID: 11400000, guid: f90dd2497e9748144930a65da7efc0ae, type: 2}
-  isDevMode: 1
+  isDevMode: 0
   tempCombatTestGroupPrefab: {fileID: 1901445337346543820, guid: fb42186742fa2a349b00312682dc29e9,
     type: 3}
   textPrefab: {fileID: 3845870437154051211, guid: 48b1e2ba64c176f4e809715b13c31aaa,
@@ -3000,6 +3005,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitList: []
   baseUnitStatus: {fileID: 11400000, guid: 3e94b9645ccb9e546afcc1b49cd7791b, type: 2}
+  rangerUnitStatus: {fileID: 11400000, guid: d3fa066df6473e54fb5c3776a840de0f, type: 2}
+  devUnitStatus: {fileID: 11400000, guid: e50a83e614043774db11dc09ece4f36b, type: 2}
 --- !u!23 &1932748685111125
 MeshRenderer:
   m_ObjectHideFlags: 0

@@ -14,11 +14,13 @@ public class ChaseState : IAIState
     {
         Debug.Log("ChaseState OnEnter");
         this.target = GameManager.instance.Player.transform;
+        unitBase.Anim.SetBool("IsChasing", true);
     }
 
     public void OnExit()
     {
         Debug.Log("ChaseState OnExit");
+        unitBase.Anim.SetBool("IsChasing", false);
     }
 
     public void OnUpdate()

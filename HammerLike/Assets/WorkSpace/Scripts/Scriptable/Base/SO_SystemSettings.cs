@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "SystemSettings", menuName = "ScriptableObjects/SystemSettings", order = 1)]
+[CreateAssetMenu(fileName = "SystemSettings", menuName = "B_ScriptableObjects/SystemSettings", order = 1)]
 public class SO_SystemSettings : ScriptableObject
 {
     [SerializeField] private Vector3 coordinateScale = new Vector3(1, 1, 1);

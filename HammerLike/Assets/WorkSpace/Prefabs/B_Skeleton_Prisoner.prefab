@@ -6230,8 +6230,8 @@ GameObject:
   - component: {fileID: 8995942570513142275}
   - component: {fileID: 8995942570513142293}
   - component: {fileID: 6351146761269656495}
-  - component: {fileID: 6777081595933202946}
   - component: {fileID: 7728055365080933140}
+  - component: {fileID: 1183918704893762077}
   m_Layer: 8
   m_Name: Skeleton_Prisoner
   m_TagString: Untagged
@@ -6436,7 +6436,7 @@ MonoBehaviour:
     fillPass:
       shader: {fileID: 0}
       serializedProperties: []
---- !u!114 &6777081595933202946
+--- !u!114 &7728055365080933140
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6445,7 +6445,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 8995942570513142273}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb23156e923764845811aea96426c270, type: 3}
+  m_Script: {fileID: 11500000, guid: 122e2d075db95a343a0997656ff47528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentStateType: 0
+--- !u!114 &1183918704893762077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8995942570513142273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 391632d62e344c24babca1c8699bb445, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   manager: {fileID: 0}
@@ -6453,6 +6466,8 @@ MonoBehaviour:
   col: {fileID: 8995942570513142284}
   rigid: {fileID: 8995942570513142280}
   isInvincible: 0
+  unitType: 0
+  anim: {fileID: 8995942570513142287}
   knockbackCurve:
     serializedVersion: 2
     m_Curve:
@@ -6915,48 +6930,34 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0.4849057
-      inSlope: -0.023590088
-      outSlope: -0.023590088
-      tangentMode: 34
+      inSlope: -0.06650144
+      outSlope: -0.06650144
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.33333334
+      outWeight: 0.08161044
     - serializedVersion: 3
       time: 1
       value: 0.4613156
-      inSlope: -0.023590088
-      outSlope: -0.023590088
-      tangentMode: 34
+      inSlope: -0.008106265
+      outSlope: -0.008106265
+      tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
+      inWeight: 0.087595224
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  knockBackMultiplier: 8
+  knockBackMultiplier: 5
   puppet: {fileID: 8995942570625409004}
   remainKnockBackDir: {x: 0, y: 0, z: 0}
   remainKnockBackForce: 0
-  anim: {fileID: 8995942570513142287}
   groundLayer:
     serializedVersion: 2
     m_Bits: 2147483648
   groundCheckDistance: 0.1
   isGrounded: 0
   chasingStartDis: 20
---- !u!114 &7728055365080933140
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8995942570513142273}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 122e2d075db95a343a0997656ff47528, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentStateType: 0
 --- !u!1 &8995942570552095039
 GameObject:
   m_ObjectHideFlags: 0

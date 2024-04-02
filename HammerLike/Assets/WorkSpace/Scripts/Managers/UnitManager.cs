@@ -11,6 +11,8 @@ public class UnitManager : MonoBehaviour
 
     // only SO_UnitStatus
     public SO_UnitStatus baseUnitStatus;
+    public SO_RangerUnitStatus rangerUnitStatus;
+    public SO_UnitStatus devUnitStatus;
 
     private void Awake()
     {

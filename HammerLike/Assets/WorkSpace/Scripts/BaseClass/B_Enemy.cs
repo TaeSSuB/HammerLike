@@ -11,6 +11,8 @@ public class B_Enemy : B_UnitBase
 
     // Temp - Chasing
     [SerializeField] private float chasingStartDis = 20f;
+    // Temp - Dev
+    [SerializeField] private bool isTester = false;
 
     // get aIStateManager
     public AIStateManager AIStateManager => aIStateManager;
@@ -19,7 +21,9 @@ public class B_Enemy : B_UnitBase
     public override void Init()
     {
         base.Init();
-        aIStateManager = GetComponent<AIStateManager>();
+
+        if(!isTester)
+            aIStateManager = GetComponent<AIStateManager>();
     }
 
     // override Dead() method
@@ -47,7 +51,7 @@ public class B_Enemy : B_UnitBase
         base.Update();
 
         // if Dead return
-        if (UnitStatus.currentHP <= 0)
+        if (UnitStatus.currentHP <= 0 || isTester)
         {
             //DisableMovementAndRotation();
             return;
@@ -62,11 +66,11 @@ public class B_Enemy : B_UnitBase
             {
                 if (targetDis <= unitStatus.atkRange)
                 {
-                    aIStateManager.SetState(AIStateType.ATTACK);
+                    aIStateManager?.SetState(AIStateType.ATTACK);
                 }
                 else if(aIStateManager?.CurrentStateType != AIStateType.ATTACK)
                 {
-                    aIStateManager.SetState(AIStateType.CHASE);
+                    aIStateManager?.SetState(AIStateType.CHASE);
                 }
             }
         }
@@ -87,7 +91,10 @@ public class B_Enemy : B_UnitBase
 
             // Take Damage and Knockback dir from player
             TakeDamage(coordDir, player.UnitStatus.atkDamage);
-            
+
+            if (isTester)
+                return;
+
             //ChangeState(new ChaseState(this));
             if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
                 aIStateManager?.SetState(AIStateType.HIT);

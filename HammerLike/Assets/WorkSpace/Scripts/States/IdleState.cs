@@ -14,6 +14,7 @@ public class IdleState : IAIState
     public void OnEnter()
     {
         Debug.Log("IdleState OnEnter");
+        unitBase.Anim.SetTrigger("tIdle");
     }
 
     public void OnExit()

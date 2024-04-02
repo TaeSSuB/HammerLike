@@ -23,9 +23,10 @@ public class TempDummyBox : MonoBehaviour
             // Get hit dir from player
             Vector3 hitDir = (transform.position - player.transform.position).normalized;
             Vector3 coordDir = GameManager.instance.ApplyCoordScale(hitDir);
+            //Vector3 coordDir = hitDir * GameManager.instance.CalcCoordScale(hitDir);
 
             // Take Damage and Knockback dir from player
-            Knockback(coordDir, 10);
+            Knockback(coordDir, 5);
 
 
         }
@@ -67,7 +68,7 @@ public class TempDummyBox : MonoBehaviour
     }
     private IEnumerator SmoothKnockback(Vector3 inDir, float force)
     {
-        Vector3 knockbackVelocity = inDir.normalized * force;
+        Vector3 knockbackVelocity = inDir * force;
         // 초기 속도를 저장합니다.
         Vector3 initialVelocity = rigid.velocity;
         float knockbackDuration = 0.3f; // Duration over which the force is applied

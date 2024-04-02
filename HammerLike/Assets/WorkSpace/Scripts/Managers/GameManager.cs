@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform textTR;
     public KeyCode resetKey = KeyCode.F5;
     public KeyCode devModeKey = KeyCode.F2;
+    private GameObject devModeTextObj;
 
     public B_Player Player { get => player; }
     public void SetPlayer(B_Player inPlayer)
@@ -47,8 +48,8 @@ public class GameManager : MonoBehaviour
 
             var resetTextObj = Instantiate(textPrefab, textTR);
             resetTextObj.GetComponent<TextMeshProUGUI>().text = "Reset - " + resetKey.ToString();
-            //var devModeTextObj = Instantiate(textPrefab, textTR);
-            //devModeTextObj.GetComponent<TextMeshProUGUI>().text = "Dev Mode ON/OFF - " + devModeKey.ToString();
+            devModeTextObj = Instantiate(textPrefab, textTR);
+            devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();
             ResetTester();
         }
         else
@@ -65,17 +66,30 @@ public class GameManager : MonoBehaviour
         }
         if(Input.GetKeyDown(devModeKey))
         {
-            //isDevMode = !isDevMode;
+            isDevMode = !isDevMode;
+            devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();
         }
     }
 
     public Vector3 ApplyCoordScale(Vector3 inVector)
     {
+        //return new Vector3(
+        //    inVector.x * CoordScale.x,
+        //    inVector.y * CoordScale.y,
+        //    inVector.z * CoordScale.z
+        //    );
+
+        var coordVector = inVector * CalcCoordScale(inVector);
+
+        return coordVector;
+    }
+    public float CalcCoordScale(Vector3 inVector)
+    {
         return new Vector3(
             inVector.x * CoordScale.x,
             inVector.y * CoordScale.y,
             inVector.z * CoordScale.z
-            );
+            ).magnitude;
     }
 
     public void ResetTester()
