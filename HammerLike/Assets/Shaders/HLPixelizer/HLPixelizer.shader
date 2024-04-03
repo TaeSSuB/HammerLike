@@ -6,32 +6,36 @@ Shader "HLPixelizer/SRP/HLPixelizer"
     {
         _BaseColor("BaseColor", Color) = (1, 1, 1, 1)
         _AlphaClipThreshold("Alpha Clip Threshold", Float) = 0.5
-        [NoScaleOffset]_Albedo("Albedo", 2D) = "white" {}
+        _Albedo("Albedo", 2D) = "white" {}
         _Albedo_ST("Albedo_ST", Vector) = (1, 1, 0, 0)
         _Normal_Strength("Normal Strength", Range(0, 5)) = 1
         [Normal]_NormalMap("Normal Map", 2D) = "bump" {}
         _NormalMap_ST("Normal Map_ST", Vector) = (1, 1, 0, 0)
         [HDR]_EmissionColor("Emission Color", Color) = (0, 0, 0, 0)
-        [NoScaleOffset]_Emission("Emission", 2D) = "black" {}
+        _Emission("Emission", 2D) = "black" {}
         _Emission_ST("Emission_ST", Vector) = (1, 1, 0, 0)
-        [ToggleUI]_EnableDynamicLight("Enable Dynamic Light", Float) = 1
-        [NoScaleOffset]_LightingRamp("LightingRamp", 2D) = "white" {}
-        _AmbientLight("AmbientLight", Color) = (0.1, 0.1, 0.1, 0.5019608)
-        [ToggleUI]_BlinnPhong("BlinnPhong", Float) = 0
-        _Specular_Color("Specular Color", Color) = (1, 1, 1, 0)
-        _Specular_Power("Specular Power", Float) = 10
+        _AmbientLight("Ambient Light", Color) = (0, 0, 0, 0.5019608)
+        [NoScaleOffset]_LightingRamp("Lighting Ramp", 2D) = "white" {}
+        _Lighting_Step("Lighting Step", Range(0, 10)) = 5
+        [ToggleUI]_EnableDynamicLights("Enable Dynamic Lights", Float) = 0
+        [ToggleUI]_Specular("Specular", Float) = 0
+        _SpecularColor("Specular Color", Color) = (1, 1, 1, 1)
+        _SpecularPower("Specular Power", Range(0, 10)) = 3
+        [ToggleUI]_ReflectionLight("Reflection Light", Float) = 0
+        _ReflectionLightColor("Reflection Light Color", Color) = (0, 0, 1, 1)
+        _ReflectionLightPower("Reflection Light Power", Range(0, 10)) = 3
+        [ToggleUI]_RimLight("Rim Light", Float) = 0
+        _RimLightColor("Rim Light Color", Color) = (1, 1, 1, 1)
+        _RimLightPower("Rim Light Power", Range(0, 10)) = 3
         [Toggle]RECEIVE_SHADOWS("Receive Shadows", Float) = 1
         [Toggle]COLOR_GRADING("Use Color Grading", Float) = 0
-        [NoScaleOffset]_PaletteLUT("PaletteLUT", 2D) = "white" {}
-        [Toggle]PROPIXELIZER_DITHERING("Use Dithering", Float) = 0
-        _DiffuseVertexColorWeight("DiffuseVertexColorWeight", Float) = 0
-        _EmissiveVertexColorWeight("EmissiveVertexColorWeight", Float) = 0
+        [ToggleUI]_Show_Vertex_Color_Weight("Show Vertex Color Weight", Float) = 0
         _Hue("Hue", Float) = 0
         _Saturation("Saturation", Float) = 1
         _Contrast("Contrast", Float) = 1
-        _PixelSize("PixelSize", Range(1, 5)) = 2
+        _PixelSize("Pixel Size", Range(1, 5)) = 2
         [Toggle]USE_OBJECT_POSITION("Use Object Position", Float) = 1
-        _PixelGridOrigin("PixelGridOrigin", Vector) = (0, 0, 0, 0)
+        _PixelGridOrigin("Pixel Grid Origin", Vector) = (0, 0, 0, 0)
         _ID("ID", Float) = 1
         _OutlineColor("Inline Color", Color) = (0, 0, 0, 0.5019608)
         _EdgeHighlightColor("Edge Highlight Color", Color) = (1, 1, 1, 0.5019608)
@@ -84,9 +88,14 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float _Saturation;
             float _Contrast;
             float4 _LightingRamp_TexelSize;
-            float4 _PaletteLUT_TexelSize;
             float4 _Albedo_TexelSize;
             float4 _Albedo_ST;
+            float _RimLightPower;
+            float4 _RimLightColor;
+            float _RimLight;
+            float _ReflectionLightPower;
+            float4 _ReflectionLightColor;
+            float _ReflectionLight;
             float4 _BaseColor;
             float4 _AmbientLight;
             float _PixelSize;
@@ -100,14 +109,14 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float4 _OutlineColor;
             float4 _EdgeHighlightColor;
             float4 _EmissionColor;
-            float _DiffuseVertexColorWeight;
-            float _EmissiveVertexColorWeight;
             float _Hue;
             float _Normal_Strength;
-            float _Specular_Power;
-            float4 _Specular_Color;
-            float _EnableDynamicLight;
-            float _BlinnPhong;
+            float _SpecularPower;
+            float4 _SpecularColor;
+            float _EnableDynamicLights;
+            float _Specular;
+            float _Show_Vertex_Color_Weight;
+            float _Lighting_Step;
             CBUFFER_END
 
             // Object and Global properties
@@ -116,12 +125,15 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             SAMPLER(sampler_LightingRamp);
             TEXTURE2D(_PaletteLUT);
             SAMPLER(sampler_PaletteLUT);
+            float4 _PaletteLUT_TexelSize;
             TEXTURE2D(_Albedo);
             SAMPLER(sampler_Albedo);
             TEXTURE2D(_NormalMap);
             SAMPLER(sampler_NormalMap);
             TEXTURE2D(_Emission);
             SAMPLER(sampler_Emission);
+            float _DiffuseVertexColorWeight;
+            float _EmissiveVertexColorWeight;
             SAMPLER(SamplerState_Point_Repeat);
 
 			#include "Assets/ProPixelizer/SRP/OutlinePass.hlsl"
