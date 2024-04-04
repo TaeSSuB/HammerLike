@@ -4,7 +4,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Grass Tool Settings", menuName = "Utility/GrassToolSettings")]
 public class SO_GrassToolSettings : ScriptableObject
 {
-    public enum VertexColorSetting { None, Red, Blue, Green };
+    [System.Flags]
+    public enum VertexColorSetting
+    {
+        None = 0,
+        Red = 1 << 0,  
+        Green = 1 << 1, 
+        Blue = 1 << 2, 
+        Alpha = 1 << 3  
+    }
 
 
     [Header("Terrain Layer Settings")]
