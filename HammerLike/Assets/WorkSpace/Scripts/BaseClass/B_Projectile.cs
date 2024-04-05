@@ -20,7 +20,7 @@ public class B_Projectile : MonoBehaviour
     {
         // 투사체 초기화
         Rigidbody rigid = GetComponent<Rigidbody>();
-        var resultforward = GameManager.instance.ApplyCoordScale(transform.forward);
+        var resultforward = GameManager.instance.ApplyCoordScaleNormalize(transform.forward);
         //rigid.velocity = resultforward * projectileSpeed;
         rigid.velocity = transform.forward * projectileSpeed * resultforward.magnitude;
     }

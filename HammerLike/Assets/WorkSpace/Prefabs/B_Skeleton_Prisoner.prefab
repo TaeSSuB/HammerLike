@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4295723780838795957
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4266959465240773480}
+  m_Layer: 8
+  m_Name: HPPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4266959465240773480
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4295723780838795957}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8995942570513142274}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8461987264248040813
 GameObject:
   m_ObjectHideFlags: 0
@@ -6234,7 +6265,7 @@ GameObject:
   - component: {fileID: 1183918704893762077}
   m_Layer: 8
   m_Name: Skeleton_Prisoner
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6254,6 +6285,7 @@ Transform:
   - {fileID: 8995942568759618707}
   - {fileID: 2516722913199798503}
   - {fileID: 8995942568557764027}
+  - {fileID: 4266959465240773480}
   - {fileID: 6442737946508374047}
   m_Father: {fileID: 1282768447140505254}
   m_RootOrder: 0
@@ -6302,13 +6334,13 @@ Rigidbody:
   m_GameObject: {fileID: 8995942570513142273}
   serializedVersion: 2
   m_Mass: 3
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Drag: 5
+  m_AngularDrag: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
+  m_Interpolate: 2
+  m_Constraints: 116
+  m_CollisionDetection: 1
 --- !u!114 &8995942570513142275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6948,7 +6980,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  knockBackMultiplier: 5
+  knockBackMultiplier: 50
   puppet: {fileID: 8995942570625409004}
   remainKnockBackDir: {x: 0, y: 0, z: 0}
   remainKnockBackForce: 0
@@ -6957,6 +6989,8 @@ MonoBehaviour:
     m_Bits: 2147483648
   groundCheckDistance: 0.1
   isGrounded: 0
+  isKnockback: 0
+  hpPosTR: {fileID: 4266959465240773480}
   chasingStartDis: 20
   isTester: 0
 --- !u!1 &8995942570552095039
@@ -7324,7 +7358,7 @@ PrefabInstance:
     - target: {fileID: 2716011545075135056, guid: f1be4878ab4224a4b8d657aa440d1675,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2716011545075135056, guid: f1be4878ab4224a4b8d657aa440d1675,
         type: 3}

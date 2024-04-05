@@ -22,7 +22,7 @@ public class TempDummyBox : MonoBehaviour
 
             // Get hit dir from player
             Vector3 hitDir = (transform.position - player.transform.position).normalized;
-            Vector3 coordDir = GameManager.instance.ApplyCoordScale(hitDir);
+            Vector3 coordDir = GameManager.instance.ApplyCoordScaleNormalize(hitDir);
             //Vector3 coordDir = hitDir * GameManager.instance.CalcCoordScale(hitDir);
 
             // Take Damage and Knockback dir from player

@@ -5,11 +5,23 @@ public enum AudioTag { MainMenu, Battle, Ambient, UI }
 
 public class B_AudioManager : MonoBehaviour
 {
+    public static B_AudioManager Instance;
+
     public SO_AudioSet audioSet; // Assign in the Unity editor
     private AudioSource audioSource;
 
     private void Awake()
     {
+        if(Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        else
+        {
+            Instance = this;
+        }
+        
         audioSource = gameObject.AddComponent<AudioSource>();
     }
 

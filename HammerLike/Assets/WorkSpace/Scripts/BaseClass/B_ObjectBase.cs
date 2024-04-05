@@ -39,6 +39,11 @@ public class B_ObjectBase : MonoBehaviour
 
     }
 
+    protected virtual void OnCollisionEnter(Collision collision)
+    {
+
+    }
+
     public virtual void Init()
     {
         if(manager == null)

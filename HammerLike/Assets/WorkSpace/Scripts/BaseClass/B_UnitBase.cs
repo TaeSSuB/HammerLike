@@ -46,6 +46,8 @@ public class B_UnitBase : B_ObjectBase
     // lock move and rotate
     public bool isLockMove { get; private set; }
     public bool isLockRotate { get; private set; }
+    public bool isKnockback;
+
 
 
     protected virtual void ApplyStatus()
@@ -68,6 +70,8 @@ public class B_UnitBase : B_ObjectBase
                 unitStatus = UnitManager.instance.devUnitStatus.MakeCopyStatus();
                 break;
         }
+
+        rigid.mass = UnitStatus.mass;
     }
 
     //init override
@@ -76,6 +80,7 @@ public class B_UnitBase : B_ObjectBase
         base.Init();
 
         ApplyStatus();
+
         UnitManager.instance.AddUnit(this);
 
         InitHP();
@@ -106,8 +111,8 @@ public class B_UnitBase : B_ObjectBase
         if (!isGrounded || isLockMove)
             return Vector3.zero;
 
-        inDir.Normalize();
-        var moveDir = manager.ApplyCoordScale(inDir);
+        var moveDir = manager.ApplyCoordScaleNormalize(inDir);
+        //moveDir.Normalize();
 
         rigid.velocity = moveDir * unitStatus.moveSpeed;
 
@@ -128,7 +133,7 @@ public class B_UnitBase : B_ObjectBase
         ClampHP();
     }
 
-    public void TakeDamage(Vector3 damageDir, int damage = 0)
+    public void TakeDamage(Vector3 damageDir, int damage = 0, bool knockBack = true)
     {
         if (isInvincible)
         {
@@ -139,17 +144,22 @@ public class B_UnitBase : B_ObjectBase
 
         ClampHP();
 
+        Debug.Log(this.gameObject.name + " TakeDamage : " + damage);
+
         //CheckDead();
 
-        //Knockback(damageDir, Mathf.Clamp(damage, 0f, 15f));
-        remainKnockBackDir = damageDir;
-        remainKnockBackForce = Mathf.Clamp(damage, 0f, 15f);
-
-
-        if (!CheckDead())
+        if (knockBack)
         {
-            // If the unit is not dead, apply smooth knockback
-            Knockback(damageDir, Mathf.Clamp(damage, 0f, 15f));
+            //Knockback(damageDir, Mathf.Clamp(damage, 0f, 15f));
+            remainKnockBackDir = damageDir;
+            remainKnockBackForce = Mathf.Clamp(damage, 0f, 15f);
+
+
+            if (!CheckDead())
+            {
+                // If the unit is not dead, apply smooth knockback
+                Knockback(damageDir, Mathf.Clamp(damage, 0f, 15f));
+            }
         }
     }
 
@@ -226,17 +236,21 @@ public class B_UnitBase : B_ObjectBase
         float startTime = Time.time;
 
         DisableMovementAndRotation();
+        isKnockback = true;
 
         while (Time.time < startTime + knockbackDuration)
         {
             float elapsed = (Time.time - startTime) / knockbackDuration;
 
             // Apply the force using the animation curve
-            inRigid.velocity = Vector3.Lerp(initialVelocity, knockbackVelocity, inCurve.Evaluate(elapsed));
+            //inRigid.velocity = Vector3.Lerp(initialVelocity, knockbackVelocity, inCurve.Evaluate(elapsed));
+
+            inRigid.AddForce(knockbackVelocity * knockBackMultiplier * inCurve.Evaluate(elapsed), ForceMode.Force);
 
             yield return null;
         }
 
+        isKnockback = false;
         EnableMovementAndRotation();
     }
 
@@ -293,7 +307,7 @@ public class B_UnitBase : B_ObjectBase
                 if (muscleRigid != null)
                 {
                     Vector3 dir = (muscleRigid.transform.position - GameManager.instance.Player.transform.position).normalized;
-                    dir = GameManager.instance.ApplyCoordScale(dir);
+                    dir = GameManager.instance.ApplyCoordScaleNormalize(dir);
                     dir.y = 0f;
 
                     //muscleRigid.AddForce(dir * remainKnockBackForce * knockBackMultiplier, ForceMode.Impulse);

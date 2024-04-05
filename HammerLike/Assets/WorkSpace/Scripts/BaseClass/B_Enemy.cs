@@ -9,6 +9,10 @@ public class B_Enemy : B_UnitBase
 {
     private AIStateManager aIStateManager;
 
+    // Temp - HP UI
+    [Header("HP UI")]
+    [SerializeField] Transform hpPosTR;
+
     // Temp - Chasing
     [SerializeField] private float chasingStartDis = 20f;
     // Temp - Dev
@@ -24,6 +28,11 @@ public class B_Enemy : B_UnitBase
 
         if(!isTester)
             aIStateManager = GetComponent<AIStateManager>();
+
+        if(hpPosTR == null)
+            hpPosTR = transform;
+
+        FindObjectOfType<B_UIManager>().CreateHPWorldUI(hpPosTR, this);
     }
 
     // override Dead() method
@@ -82,15 +91,25 @@ public class B_Enemy : B_UnitBase
 
         if(other.CompareTag("WeaponCollider") && UnitStatus.currentHP > 0)
         {
+            if(isInvincible) return;
+
             // Get player
             B_Player player = other.GetComponentInParent<B_Player>();
 
             // Get hit dir from player
             Vector3 hitDir = (transform.position - player.transform.position).normalized;
-            Vector3 coordDir = GameManager.instance.ApplyCoordScale(hitDir);
+            Vector3 coordDir = GameManager.instance.ApplyCoordScaleNormalize(hitDir);
 
             // Take Damage and Knockback dir from player
             TakeDamage(coordDir, player.UnitStatus.atkDamage);
+
+            // Temp 240406 - VFX & SFX
+            var vfx = B_VFXPoolManager.Instance.GetVFX();
+            vfx.transform.position = other.ClosestPointOnBounds(transform.position);
+            vfx.PlayVFX();
+
+            B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+            //
 
             if (isTester)
                 return;
@@ -100,4 +119,41 @@ public class B_Enemy : B_UnitBase
                 aIStateManager?.SetState(AIStateType.HIT);
         }
     }
+
+    protected override void OnCollisionEnter(Collision collision)
+    {
+        base.OnCollisionEnter(collision);
+
+        // When hit Other Enemy
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            if (isKnockback) return;
+
+            var other = collision.gameObject.GetComponent<B_Enemy>();
+            
+            if (other == null) return;
+            if (!other.isKnockback) return;
+
+            // Get hit dir from another enemy
+            Vector3 hitDir = (transform.position - collision.transform.position).normalized;
+            Vector3 coordDir = GameManager.instance.ApplyCoordScaleNormalize(hitDir);
+
+            TakeDamage(coordDir, (int)(other.rigid.velocity.magnitude * other.rigid.mass / 4f), true);
+
+            // Temp 240406 - VFX & SFX
+            var vfx = B_VFXPoolManager.Instance.GetVFX();
+            vfx.transform.position = collision.contacts[0].point;
+            vfx.PlayVFX();
+
+            B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+            //
+
+            if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
+                aIStateManager?.SetState(AIStateType.HIT);
+        }
+
+
+    }
+
+
 }

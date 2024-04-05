@@ -14,7 +14,16 @@ public class B_VFXPoolManager : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        else
+        {
+            Instance = this;
+        }
+
         InitializePool();
     }
 

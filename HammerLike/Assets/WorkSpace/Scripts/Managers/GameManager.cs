@@ -78,18 +78,38 @@ public class GameManager : MonoBehaviour
         //    inVector.y * CoordScale.y,
         //    inVector.z * CoordScale.z
         //    );
+        inVector.y = 0;
 
         var coordVector = inVector * CalcCoordScale(inVector);
 
         return coordVector;
     }
+    public Vector3 ApplyCoordScaleNormalize(Vector3 inVector)
+    {
+        inVector.y = 0;
+        inVector.Normalize();
+
+        //var coordVector = inVector * CalcCoordScale(inVector);
+
+        var coordVector = new Vector3(
+            inVector.x * CoordScale.x,
+            inVector.y * CoordScale.y,
+            inVector.z * CoordScale.z
+            );
+
+        return coordVector;
+    }
     public float CalcCoordScale(Vector3 inVector)
     {
-        return new Vector3(
+        inVector.y = 0;
+
+        var coordVecMag = new Vector3(
             inVector.x * CoordScale.x,
             inVector.y * CoordScale.y,
             inVector.z * CoordScale.z
             ).magnitude;
+
+        return coordVecMag;
     }
 
     public void ResetTester()

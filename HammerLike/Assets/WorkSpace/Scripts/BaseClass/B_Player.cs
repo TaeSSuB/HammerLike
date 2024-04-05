@@ -40,7 +40,9 @@ public class B_Player : B_UnitBase
         Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         moveDir.Normalize();
 
-        Move(moveDir);
+        var move = Move(moveDir);
+        Debug.Log("Move - " + move);
+        Debug.Log("ACSN - " + GameManager.instance.ApplyCoordScaleNormalize(moveDir));
         MoveAnim(moveDir);
 
         if(Input.GetKeyDown(KeyCode.Space))
@@ -79,7 +81,7 @@ public class B_Player : B_UnitBase
 
         StartDash();
 
-        Vector3 coordDir = GameManager.instance.ApplyCoordScale(inDir);
+        Vector3 coordDir = GameManager.instance.ApplyCoordScaleNormalize(inDir);
 
         while (dashTime > 0)
         {

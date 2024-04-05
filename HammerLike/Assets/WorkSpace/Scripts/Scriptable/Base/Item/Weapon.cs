@@ -1,18 +1,17 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Weapon", menuName = "Inventory/Equipment/Weapon")]
 public class Weapon : EquipItem
 {    
-    // ÇÊ¿äÇÑ Ãß°¡ÀûÀÎ ¹«±â Æ¯¼º
-    public GameObject prefab; // ¹«±â ÇÁ¸®ÆÕ
+    // í•„ìš”í•œ ì¶”ê°€ì ì¸ ë¬´ê¸° íŠ¹ì„±
+    public GameObject prefab; // ë¬´ê¸° í”„ë¦¬íŒ¹
 
     public int damage; 
     public float weight;
     public float knockback;
 
     public ElementalType elementalType;
-    public Skill unlockableSkill; // Ãß°¡ ½ºÅ³ ÇØ±İ. SkillÀº º°µµ·Î Á¤ÀÇµÈ ScriptableObject°¡ µÉ ¼ö ÀÖ½À´Ï´Ù.
+    public Skill unlockableSkill; // ì¶”ê°€ ìŠ¤í‚¬ í•´ê¸ˆ. Skillì€ ë³„ë„ë¡œ ì •ì˜ëœ ScriptableObjectê°€ ë  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 
-    // Weapon Å¬·¡½ºÀÇ ±â´É ±¸Çö...
+    // Weapon í´ë˜ìŠ¤ì˜ ê¸°ëŠ¥ êµ¬í˜„...
 }
