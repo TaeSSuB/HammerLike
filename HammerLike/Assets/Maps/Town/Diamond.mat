@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-5924134921759996045
+--- !u!114 &-8986997085842210036
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,11 +20,10 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Material
+  m_Name: Diamond
   m_Shader: {fileID: 4800000, guid: d766f21a08a9362468fb17420927adb8, type: 3}
   m_ValidKeywords:
   - RECEIVE_SHADOWS_ON
-  - USE_OBJECT_POSITION_ON
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -111,7 +110,7 @@ Material:
     m_Floats:
     - COLOR_GRADING: 0
     - RECEIVE_SHADOWS: 1
-    - USE_OBJECT_POSITION: 1
+    - USE_OBJECT_POSITION: 0
     - _AlphaClip: 0
     - _AlphaClipThreshold: 0.5
     - _Blend: 0
@@ -131,7 +130,7 @@ Material:
     - _GlossyReflections: 0
     - _Hue: 0
     - _ID: 1
-    - _Lighting_Step: 6.4
+    - _Lighting_Step: 5
     - _Metallic: 0
     - _Normal_Strength: 1
     - _OcclusionStrength: 1
@@ -140,15 +139,15 @@ Material:
     - _QueueControl: -1
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ReflectionLight: 1
-    - _ReflectionLightPower: 1.2
+    - _ReflectionLight: 0
+    - _ReflectionLightPower: 0.5
     - _RimLight: 1
-    - _RimLightPower: 1.2
+    - _RimLightPower: 5
     - _Saturation: 1
     - _Show_Vertex_Color_Weight: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
-    - _Specular: 0
+    - _Specular: 1
     - _SpecularHighlights: 1
     - _SpecularPower: 3
     - _SrcBlend: 1
@@ -156,15 +155,15 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _AmbientLight: {r: 0.6132076, g: 0.43194494, b: 0.43194494, a: 0.5019608}
-    - _BaseColor: {r: 0.76216483, g: 0.5372549, b: 0.90588236, a: 1}
+    - _AmbientLight: {r: 0.36470592, g: 0.55686283, b: 1, a: 0.5019608}
+    - _BaseColor: {r: 0.6289308, g: 0.898099, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EdgeHighlightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _EdgeHighlightColor: {r: 1, g: 1, b: 1, a: 0.5019608}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _OutlineColor: {r: 0, g: 0.09318784, b: 0.4245283, a: 0.6431373}
     - _PixelGridOrigin: {r: 0, g: 0, b: 0, a: 0}
-    - _ReflectionLightColor: {r: 0.74432033, g: 0, b: 0.7830189, a: 1}
-    - _RimLightColor: {r: 0, g: 1, b: 0.8705807, a: 1}
+    - _ReflectionLightColor: {r: 0.283, g: 0.11391193, b: 0.27831972, a: 1}
+    - _RimLightColor: {r: 0.24352156, g: 0.36528233, b: 0.509, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
