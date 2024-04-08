@@ -7,13 +7,16 @@ Shader "HLPixelizer/SRP/HLPixelizer"
         _BaseColor("BaseColor", Color) = (1, 1, 1, 1)
         _AlphaClipThreshold("Alpha Clip Threshold", Float) = 0.5
         _Albedo("Albedo", 2D) = "white" {}
-        _Albedo_ST("Albedo_ST", Vector) = (1, 1, 0, 0)
         _Normal_Strength("Normal Strength", Range(0, 5)) = 1
+        _Albedo_Tiling("Albedo Tiling", Vector) = (1, 1, 0, 0)
+        _Albedo_Offset("Albedo Offset", Vector) = (0, 0, 0, 0)
         [Normal]_NormalMap("Normal Map", 2D) = "bump" {}
-        _NormalMap_ST("Normal Map_ST", Vector) = (1, 1, 0, 0)
         [HDR]_EmissionColor("Emission Color", Color) = (0, 0, 0, 0)
+        _Normal_Map_Tiling("Normal Map Tiling", Vector) = (1, 1, 0, 0)
+        _Normal_Map_Offset("Normal Map Offset", Vector) = (0, 0, 0, 0)
         _Emission("Emission", 2D) = "black" {}
-        _Emission_ST("Emission_ST", Vector) = (1, 1, 0, 0)
+        _Emission_Tiling("Emission Tiling", Vector) = (1, 1, 0, 0)
+        _Emission_Offset("Emission Offset", Vector) = (0, 0, 0, 0)
         _AmbientLight("Ambient Light", Color) = (0, 0, 0, 0.5019608)
         [NoScaleOffset]_LightingRamp("Lighting Ramp", 2D) = "white" {}
         _Lighting_Step("Lighting Step", Range(0, 100)) = 5
@@ -88,14 +91,18 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float _Saturation;
             float _Contrast;
             float4 _LightingRamp_TexelSize;
+            float2 _Albedo_Offset;
             float4 _Albedo_TexelSize;
             float4 _Albedo_ST;
             float _RimLightPower;
             float4 _RimLightColor;
             float _RimLight;
             float _ReflectionLightPower;
+            float2 _Emission_Offset;
+            float2 _Emission_Tiling;
             float4 _ReflectionLightColor;
             float _ReflectionLight;
+            float2 _Normal_Map_Offset;
             float4 _BaseColor;
             float4 _AmbientLight;
             float _PixelSize;
@@ -117,7 +124,10 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float _Specular;
             float _Show_Vertex_Color_Weight;
             float _Lighting_Step;
+            float2 _Normal_Map_Tiling;
+            float2 _Albedo_Tiling;
             CBUFFER_END
+
 
             // Object and Global properties
             SAMPLER(SamplerState_Point_Clamp);
