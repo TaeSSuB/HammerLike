@@ -21,7 +21,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Town
-  m_Shader: {fileID: 4800000, guid: be91f11adfbf0134286f10e4f1c95522, type: 3}
+  m_Shader: {fileID: 4800000, guid: 17b46bc95ac84c34184160bb97a6933d, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - RECEIVE_SHADOWS_ON
   - USE_OBJECT_POSITION_ON
@@ -32,6 +34,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -95,6 +98,18 @@ Material:
         m_Texture: {fileID: 2800000, guid: 211497300d75d8e4b9b3e2913a93e908, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _LightingRamp_1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LightingRamp_2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LightingRamp_3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -155,6 +170,7 @@ Material:
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
+    - _Contrast: 1
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
@@ -162,6 +178,7 @@ Material:
     - _DiffuseVertexColorWeight: 0
     - _DstBlend: 0
     - _EmissiveVertexColorWeight: 0
+    - _EnableDynamicLights: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -170,17 +187,31 @@ Material:
     - _Height_2_Shift: 4
     - _Height_3_Shift: 2.49
     - _Height_4_Shift: 2.1
+    - _Hue: 0
     - _ID: 1
+    - _Lighting_Step: 5
     - _Metallic: 0
+    - _Normal_1_Strength: 1
+    - _Normal_2_Strength: 1
+    - _Normal_3_Strength: 1
+    - _Normal_4_Strength: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _PixelSize: 2
     - _QueueControl: -1
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _ReflectionLight: 0
+    - _ReflectionLightPower: 3
+    - _RimLight: 0
+    - _RimLightPower: 3
+    - _Saturation: 1
+    - _Show_Vertex_Color_Weight: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
+    - _Specular: 0
     - _SpecularHighlights: 1
+    - _SpecularPower: 3
     - _SrcBlend: 1
     - _Surface: 0
     - _TransitionSmoothness: 0.5
@@ -188,6 +219,9 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _AmbientLight: {r: 0, g: 0, b: 0, a: 0.5019608}
+    - _AmbientLight_1: {r: 0, g: 0, b: 0, a: 0.5019608}
+    - _AmbientLight_2: {r: 0, g: 0, b: 0, a: 0.5019608}
+    - _AmbientLight_3: {r: 0, g: 0, b: 0, a: 0.5019608}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color_1: {r: 1, g: 1, b: 1, a: 1}
@@ -202,7 +236,10 @@ Material:
     - _Offset_4: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _PixelGridOrigin: {r: 0, g: 0, b: 0, a: 0}
+    - _ReflectionLightColor: {r: 0, g: 0, b: 1, a: 1}
+    - _RimLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _Tiling_1: {r: 1, g: 1, b: 0, a: 0}
     - _Tiling_2: {r: 1, g: 1, b: 0, a: 0}
     - _Tiling_3: {r: 1, g: 1, b: 0, a: 0}
