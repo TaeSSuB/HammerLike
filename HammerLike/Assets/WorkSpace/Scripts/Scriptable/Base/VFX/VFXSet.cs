@@ -5,10 +5,10 @@ public class VFXData
 {
     public string name;
     public GameObject vfxPrefab;
-    public float duration = 2f; // VFX Áö¼Ó ½Ã°£, ÇÊ¿ä¿¡ µû¶ó Á¶Àı
+    public float duration = 2f; // VFX ì§€ì† ì‹œê°„, í•„ìš”ì— ë”°ë¼ ì¡°ì ˆ
 }
 
-[CreateAssetMenu(fileName = "New VFXSet", menuName = "VFX/VFXSet")]
+[CreateAssetMenu(fileName = "New VFXSet", menuName = "B_ScriptableObjects/VFX/VFXSet")]
 public class VFXSet : ScriptableObject
 {
     public VFXData[] vfxDatas;

@@ -160,6 +160,9 @@ public class B_Player : B_UnitBase
     {
         // Attack logic
         Anim.SetBool("bAttack", true);
+
+        // Attack damage = Original attack damage
+
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
     }
 
@@ -167,6 +170,9 @@ public class B_Player : B_UnitBase
     {
         // Charge attack logic
         Anim.SetBool("bAttack", true);
+
+        ApplyChargeDamage();
+
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
     }
 
@@ -174,7 +180,22 @@ public class B_Player : B_UnitBase
     {
         // Maximum charge attack logic
         Anim.SetBool("bAttack", true);
+
+        ApplyChargeDamage();
+
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
+    }
+
+    void ApplyChargeDamage()
+    {
+        var resultAtk = (unitStatus as SO_PlayerStatus).atkDamage * (unitStatus as SO_PlayerStatus).chargeRate;
+
+        (unitStatus as SO_PlayerStatus).atkDamage = (int)resultAtk;
+    }
+
+    void ResetDamage()
+    {
+        (unitStatus as SO_PlayerStatus).atkDamage = (unitStatus as SO_PlayerStatus).atkDamageOrigin;
     }
 
     protected override void StartAttack()
@@ -188,6 +209,8 @@ public class B_Player : B_UnitBase
         Anim.SetBool("bAttack", false);
         Anim.SetTrigger("tIdle");
         Anim.speed = 1f;//(unitStatus as SO_PlayerStatus).atkSpeed;
+
+        ResetDamage();
     }
 
     void EnableWeaponCollider()

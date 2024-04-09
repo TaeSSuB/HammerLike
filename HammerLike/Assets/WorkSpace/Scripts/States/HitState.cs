@@ -6,8 +6,8 @@ using UnityEngine;
 public class HitState : IAIState
 {
     private B_UnitBase unitBase;
-    private float invincibleTime = 1.0f;
-    private float maxInvincibleTime = 1.0f;
+    private float invincibleTime = 0.5f;
+    private float maxInvincibleTime = 0.5f;
 
     public HitState(B_UnitBase unitBase)
     {
