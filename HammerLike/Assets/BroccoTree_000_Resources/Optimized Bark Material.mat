@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Optimized Bark Material
-  m_Shader: {fileID: 4800000, guid: 71d6765ad72e11541bc1448c891bbcf9, type: 3}
+  m_Shader: {fileID: 4800000, guid: d766f21a08a9362468fb17420927adb8, type: 3}
   m_ValidKeywords:
   - RECEIVE_SHADOWS_ON
   - USE_OBJECT_POSITION_ON
@@ -33,7 +33,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -96,16 +96,29 @@ Material:
     - _AlphaClipThreshold: 0.5
     - _BillboardKwToggle: 0
     - _BillboardShadowFade: 0.5
+    - _Contrast: 1
     - _DiffuseVertexColorWeight: 0
     - _EmissiveVertexColorWeight: 0
+    - _EnableDynamicLights: 0
     - _Glossiness: 0.5
+    - _Hue: 0
     - _HueVariationKwToggle: 0
     - _ID: 1
+    - _Lighting_Step: 5
     - _Metallic: 0
     - _NormalMapKwToggle: 1
-    - _PixelSize: 3
+    - _Normal_Strength: 1
+    - _PixelSize: 5
     - _QueueControl: -1
     - _QueueOffset: 0
+    - _ReflectionLight: 0
+    - _ReflectionLightPower: 3
+    - _RimLight: 0
+    - _RimLightPower: 3
+    - _Saturation: 1
+    - _Show_Vertex_Color_Weight: 0
+    - _Specular: 0
+    - _SpecularPower: 3
     - _SubsurfaceIndirect: 0.25
     - _SubsurfaceKwToggle: 0
     - _TwoSided: 2
@@ -119,5 +132,8 @@ Material:
     - _HueVariationColor: {r: 1, g: 0.5, b: 0, a: 0.1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 0.15686275}
     - _PixelGridOrigin: {r: 0, g: 0, b: 0, a: 0}
+    - _ReflectionLightColor: {r: 0, g: 0, b: 1, a: 1}
+    - _RimLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _SubsurfaceColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
