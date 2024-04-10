@@ -5,12 +5,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "UnitStatus", menuName = "B_ScriptableObjects/UnitStatus", order = 1)]
 public class SO_UnitStatus : ScriptableObject
 {
+    public Sprite unitSprite;
+
     public int currentHP = 100;
     public int maxHP = 100;
 
     public float moveSpeed = 5f;
 
     public int atkDamage = 10;
+    public int atkDamageOrigin = 10;
     public float atkRange = 1f;
     public float atkSpeed = 1f;
     public float maxAttackCooltime = 1f;
@@ -26,6 +29,7 @@ public class SO_UnitStatus : ScriptableObject
         newStatus.maxHP = maxHP;
         newStatus.moveSpeed = moveSpeed;
         newStatus.atkDamage = atkDamage;
+        newStatus.atkDamageOrigin = atkDamageOrigin;
         newStatus.atkRange = atkRange;
         newStatus.atkSpeed = atkSpeed;
         newStatus.maxAttackCooltime = maxAttackCooltime;

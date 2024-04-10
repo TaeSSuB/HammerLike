@@ -13,13 +13,13 @@ public class IdleState : IAIState
 
     public void OnEnter()
     {
-        Debug.Log("IdleState OnEnter");
+        //Debug.Log("IdleState OnEnter");
         unitBase.Anim.SetTrigger("tIdle");
     }
 
     public void OnExit()
     {
-        Debug.Log("IdleState OnExit");
+        //Debug.Log("IdleState OnExit");
     }
 
     public void OnUpdate()

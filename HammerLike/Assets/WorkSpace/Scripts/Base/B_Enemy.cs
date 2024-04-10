@@ -94,6 +94,7 @@ public class B_Enemy : B_UnitBase
             if(isInvincible) return;
 
             // Get player
+            // 현재는 B_Player지만, B_UnitBase를 상속받는 모든 유닛에게 적용 가능. a.HG
             B_Player player = other.GetComponentInParent<B_Player>();
 
             // Get hit dir from player
@@ -103,13 +104,9 @@ public class B_Enemy : B_UnitBase
             // Take Damage and Knockback dir from player
             TakeDamage(coordDir, player.UnitStatus.atkDamage);
 
-            // Temp 240406 - VFX & SFX
-            var vfx = B_VFXPoolManager.Instance.GetVFX();
-            vfx.transform.position = other.ClosestPointOnBounds(transform.position);
-            vfx.PlayVFX();
-
+            var vfxPos = other.ClosestPointOnBounds(transform.position);
+            B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
             B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
-            //
 
             if (isTester)
                 return;
@@ -140,13 +137,9 @@ public class B_Enemy : B_UnitBase
 
             TakeDamage(coordDir, (int)(other.rigid.velocity.magnitude * other.rigid.mass / 4f), true);
 
-            // Temp 240406 - VFX & SFX
-            var vfx = B_VFXPoolManager.Instance.GetVFX();
-            vfx.transform.position = collision.contacts[0].point;
-            vfx.PlayVFX();
-
+            var vfxPos = collision.contacts[0].point;
+            B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
             B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
-            //
 
             if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
                 aIStateManager?.SetState(AIStateType.HIT);

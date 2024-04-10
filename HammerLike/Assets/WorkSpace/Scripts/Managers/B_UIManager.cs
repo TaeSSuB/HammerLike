@@ -24,6 +24,10 @@ public class B_UIManager : MonoBehaviour
         hpWorldUI.transform.SetParent(target);
 
         B_HPBar b_HPBar = hpWorldUI.GetComponent<B_HPBar>();
+        
+        if(b_HPBar == null) 
+            b_HPBar  = hpWorldUI.AddComponent<B_HPBar>();
+        
         b_HPBar.SetUnit(unit);
     }
 }

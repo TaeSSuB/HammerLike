@@ -84,9 +84,10 @@ public class B_UnitBase : B_ObjectBase
         UnitManager.instance.AddUnit(this);
 
         InitHP();
+        InitAttack();
 
         // Get the Animator component if it's not already assigned
-        if(Anim == null)
+        if (Anim == null)
         {
             anim = GetComponent<Animator>();
         }
@@ -126,6 +127,10 @@ public class B_UnitBase : B_ObjectBase
     {
         UnitStatus.currentHP = UnitStatus.maxHP;
     }
+    public void InitAttack()
+    {
+        UnitStatus.atkDamageOrigin = UnitStatus.atkDamage;
+    }
 
     public void RestoreHP(int hpRate = 0)
     {
@@ -152,13 +157,13 @@ public class B_UnitBase : B_ObjectBase
         {
             //Knockback(damageDir, Mathf.Clamp(damage, 0f, 15f));
             remainKnockBackDir = damageDir;
-            remainKnockBackForce = Mathf.Clamp(damage, 0f, 15f);
+            remainKnockBackForce = damage;
 
 
             if (!CheckDead())
             {
                 // If the unit is not dead, apply smooth knockback
-                Knockback(damageDir, Mathf.Clamp(damage, 0f, 15f));
+                Knockback(damageDir, Mathf.Clamp(damage, 0f, 10000f));
             }
         }
     }
@@ -210,7 +215,7 @@ public class B_UnitBase : B_ObjectBase
     public void Knockback(Vector3 inDir, float force)
     {
         // Apply a smoothed knockback over time rather than as an impulse
-        StartCoroutine(SmoothKnockback(inDir, force, rigid, knockbackCurve, 1f));
+        StartCoroutine(SmoothKnockback(inDir, force, rigid, knockbackCurve));
     }
 
     // Temp 240402 - Puppet 테스트 목적, a.HG
@@ -299,6 +304,8 @@ public class B_UnitBase : B_ObjectBase
             {
                 Rigidbody muscleRigid = puppet.puppetMaster.muscles[i].rigidbody;
 
+                float partsKnockBackTime = 0.2f;
+
                 // Temp 240402 - 파츠 별 넉백.., a.HG
                 // 1. StartCoroutine(SmoothKnockback)
                 // 2. ImpulseKnockbackToPuppet
@@ -308,16 +315,13 @@ public class B_UnitBase : B_ObjectBase
                 {
                     Vector3 dir = (muscleRigid.transform.position - GameManager.instance.Player.transform.position).normalized;
                     dir = GameManager.instance.ApplyCoordScaleNormalize(dir);
-                    dir.y = 0f;
 
-                    //muscleRigid.AddForce(dir * remainKnockBackForce * knockBackMultiplier, ForceMode.Impulse);
-                    StartCoroutine(SmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, 0.2f));
-                    //uscleRigid.velocity = (remainKnockBackDir * remainKnockBackForce * knockBackMultiplier);
+                    remainKnockBackForce = Mathf.Clamp(remainKnockBackForce, 0f, 15f);
+
+                    StartCoroutine(SmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime));
                 }
 
-                puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Explode);
-
-                //puppet.puppetMaster.muscles[i].rigidbody.AddForce(remainKnockBackForce, ForceMode.Impulse);
+                puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Sever);
 
                 // root RigidBody 물리력 고정 및 콜라이더 비활성화
                 rigid.isKinematic = true;
