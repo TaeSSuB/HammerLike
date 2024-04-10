@@ -163,7 +163,7 @@ public class B_UnitBase : B_ObjectBase
             if (!CheckDead())
             {
                 // If the unit is not dead, apply smooth knockback
-                Knockback(damageDir, Mathf.Clamp(damage, 0f, 15f));
+                Knockback(damageDir, Mathf.Clamp(damage, 0f, 10000f));
             }
         }
     }

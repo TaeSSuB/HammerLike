@@ -16175,7 +16175,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 29.115, y: -11.005}
-  m_SizeDelta: {x: 58.23, y: 22.01}
+  m_SizeDelta: {x: 58.23, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6876500934131444086
 CanvasRenderer:
@@ -17899,7 +17899,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 68.68, y: -11.005}
-  m_SizeDelta: {x: 10.9, y: 22.01}
+  m_SizeDelta: {x: 10.9, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1016678810954487605
 CanvasRenderer:
@@ -18024,7 +18024,7 @@ GameObject:
   - component: {fileID: 8819599246508132580}
   - component: {fileID: 2810844400355921674}
   - component: {fileID: 2610372866467461249}
-  - component: {fileID: 1048487439}
+  - component: {fileID: 4952682207700859863}
   m_Layer: 5
   m_Name: ChargeGauge
   m_TagString: Untagged
@@ -18093,7 +18093,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1048487439
+--- !u!114 &4952682207700859863
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -18102,10 +18102,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6220748608921747548}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4189e56a2576280409457310eccd99d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 498996305cd9cb745a038d3aee1077fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerAtk: {fileID: 0}
   gaugeImage: {fileID: 4012909139435754068}
   particleObject: {fileID: 4009782092148145765}
 --- !u!1 &6434563182811859555
@@ -18144,7 +18143,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 108.244995, y: -11.005}
-  m_SizeDelta: {x: 58.23, y: 22.01}
+  m_SizeDelta: {x: 58.23, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &98195508912915409
 CanvasRenderer:
@@ -20829,6 +20828,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 904213478561764212}
     m_Modifications:
+    - target: {fileID: 5140192557674128321, guid: 18ad908eb9eb0294f8716993ea882559,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5140192557674128325, guid: 18ad908eb9eb0294f8716993ea882559,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5371157859371430776, guid: 18ad908eb9eb0294f8716993ea882559,
         type: 3}
       propertyPath: m_Pivot.x

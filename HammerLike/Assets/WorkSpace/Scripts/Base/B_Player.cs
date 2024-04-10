@@ -41,13 +41,13 @@ public class B_Player : B_UnitBase
         moveDir.Normalize();
 
         var move = Move(moveDir);
-        Debug.Log("Move - " + move);
-        Debug.Log("ACSN - " + GameManager.instance.ApplyCoordScaleNormalize(moveDir));
+        //Debug.Log("Move - " + move);
+        //Debug.Log("ACSN - " + GameManager.instance.ApplyCoordScaleNormalize(moveDir));
         MoveAnim(moveDir);
 
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            Dash(moveDir);
+            Dash(move);
         }
 
         return moveDir;
@@ -76,15 +76,16 @@ public class B_Player : B_UnitBase
         float dashTime = (unitStatus as SO_PlayerStatus).dashDuration;
         float dashSpeed = (unitStatus as SO_PlayerStatus).dashSpeed;
 
-        Vector3 lookDir = inDir + transform.position;//
-        transform.LookAt(lookDir);
-
         StartDash();
 
         Vector3 coordDir = GameManager.instance.ApplyCoordScaleNormalize(inDir);
+        //transform.LookAt(coordDir + transform.position);
+
+        Debug.DrawLine(transform.position, coordDir + transform.position, Color.red, 3f);
 
         while (dashTime > 0)
         {
+            transform.LookAt(coordDir + transform.position);
             // move with rigid body
             rigid.velocity = coordDir * dashSpeed;
             dashTime -= Time.deltaTime;
@@ -120,7 +121,11 @@ public class B_Player : B_UnitBase
         {
             (unitStatus as SO_PlayerStatus).chargeRate += Time.deltaTime;
 
-            if((unitStatus as SO_PlayerStatus).chargeRate > (unitStatus as SO_PlayerStatus).minChargeRate)
+            // clamp charge
+            (unitStatus as SO_PlayerStatus).chargeRate = Mathf.Clamp((unitStatus as SO_PlayerStatus).chargeRate, 1f, (unitStatus as SO_PlayerStatus).maxChargeRate);
+            
+
+            if ((unitStatus as SO_PlayerStatus).chargeRate > (unitStatus as SO_PlayerStatus).minChargeRate)
                 Anim.SetBool("IsCharge", true);
 
             // 확장성을 위해 폐기

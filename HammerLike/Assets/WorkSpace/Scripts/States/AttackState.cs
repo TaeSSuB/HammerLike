@@ -15,13 +15,13 @@ public class AttackState : IAIState
 
     public void OnEnter()
     {
-        Debug.Log("AttackState OnEnter");
+        //Debug.Log("AttackState OnEnter");
         //unitBase.Anim.SetTrigger("tAttack");
     }
 
     public void OnExit()
     {
-        Debug.Log("AttackState OnExit");
+        //Debug.Log("AttackState OnExit");
     }
 
     public void OnUpdate()

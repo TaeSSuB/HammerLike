@@ -5,6 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "UnitStatus", menuName = "B_ScriptableObjects/UnitStatus", order = 1)]
 public class SO_UnitStatus : ScriptableObject
 {
+    public Sprite unitSprite;
+
     public int currentHP = 100;
     public int maxHP = 100;
 
