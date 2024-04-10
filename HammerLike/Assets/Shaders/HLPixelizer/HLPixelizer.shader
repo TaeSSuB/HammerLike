@@ -21,6 +21,7 @@ Shader "HLPixelizer/SRP/HLPixelizer"
         [NoScaleOffset]_LightingRamp("Lighting Ramp", 2D) = "white" {}
         _Lighting_Step("Lighting Step", Range(0, 100)) = 5
         [ToggleUI]_EnableDynamicLights("Enable Dynamic Lights", Float) = 0
+        _Smoothness("Smoothness", Float) = 0
         [ToggleUI]_Specular("Specular", Float) = 0
         _SpecularColor("Specular Color", Color) = (1, 1, 1, 1)
         _SpecularPower("Specular Power", Range(0, 50)) = 3
@@ -31,7 +32,11 @@ Shader "HLPixelizer/SRP/HLPixelizer"
         _RimLightColor("Rim Light Color", Color) = (1, 1, 1, 1)
         _RimLightPower("Rim Light Power", Range(0, 50)) = 3
         [Toggle]RECEIVE_SHADOWS("Receive Shadows", Float) = 1
+        [ToggleUI]_Additional_Shadow("Additional Shadow", Float) = 0
+        _ShadowPower("Additional Shadow Power", Range(0, 50)) = 3
+        _ShadowColor("Additional Shadow Color", Color) = (0, 0, 0, 0)
         [Toggle]COLOR_GRADING("Use Color Grading", Float) = 0
+        [NoScaleOffset]_PaletteLUT("PaletteLUT", 2D) = "white" {}
         [ToggleUI]_Show_Vertex_Color_Weight("Show Vertex Color Weight", Float) = 0
         _Hue("Hue", Float) = 0
         _Saturation("Saturation", Float) = 1
@@ -42,6 +47,7 @@ Shader "HLPixelizer/SRP/HLPixelizer"
         _ID("ID", Float) = 1
         _OutlineColor("Inline Color", Color) = (0, 0, 0, 0.5019608)
         _EdgeHighlightColor("Edge Highlight Color", Color) = (1, 1, 1, 0.5019608)
+        _HitAmount("HitAmount", Float) = 0
         [HideInInspector]_QueueOffset("_QueueOffset", Float) = 0
         [HideInInspector]_QueueControl("_QueueControl", Float) = -1
         [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
@@ -91,6 +97,7 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float _Saturation;
             float _Contrast;
             float4 _LightingRamp_TexelSize;
+            float4 _PaletteLUT_TexelSize;
             float2 _Albedo_Offset;
             float4 _Albedo_TexelSize;
             float4 _Albedo_ST;
@@ -126,6 +133,11 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float _Lighting_Step;
             float2 _Normal_Map_Tiling;
             float2 _Albedo_Tiling;
+            float _ShadowPower;
+            float4 _ShadowColor;
+            float _Additional_Shadow;
+            float _Smoothness;
+            float _HitAmount;
             CBUFFER_END
 
 
@@ -135,7 +147,6 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             SAMPLER(sampler_LightingRamp);
             TEXTURE2D(_PaletteLUT);
             SAMPLER(sampler_PaletteLUT);
-            float4 _PaletteLUT_TexelSize;
             TEXTURE2D(_Albedo);
             SAMPLER(sampler_Albedo);
             TEXTURE2D(_NormalMap);

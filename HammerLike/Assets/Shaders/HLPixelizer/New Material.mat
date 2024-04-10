@@ -9,6 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: New Material
   m_Shader: {fileID: 4800000, guid: d766f21a08a9362468fb17420927adb8, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - RECEIVE_SHADOWS_ON
   - USE_OBJECT_POSITION_ON
@@ -19,6 +21,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -74,6 +77,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _PaletteLUT:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -118,7 +125,7 @@ Material:
     - _GlossyReflections: 0
     - _Hue: 0
     - _ID: 1
-    - _Lighting_Step: 5
+    - _Lighting_Step: 8
     - _Metallic: 0
     - _Normal_Strength: 1
     - _OcclusionStrength: 1
@@ -128,14 +135,15 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _ReflectionLight: 1
-    - _ReflectionLightPower: 5
+    - _ReflectionLightPower: 1.1
     - _RimLight: 1
-    - _RimLightPower: 3
+    - _RimLightPower: 3.3
     - _Saturation: 1
+    - _ShadowPower: 0
     - _Show_Vertex_Color_Weight: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
-    - _Specular: 0
+    - _Specular: 1
     - _SpecularHighlights: 1
     - _SpecularPower: 3
     - _SrcBlend: 1
@@ -143,17 +151,24 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
+    - _Albedo_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Albedo_Tiling: {r: 1, g: 1, b: 0, a: 0}
     - _AmbientLight: {r: 0, g: 0, b: 0, a: 0.5019608}
-    - _BaseColor: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
+    - _BaseColor: {r: 0.39622638, g: 0.25044492, b: 0.32987052, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EdgeHighlightColor: {r: 1, g: 1, b: 1, a: 0.5019608}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Emission_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Emission_Tiling: {r: 1, g: 1, b: 0, a: 0}
+    - _Normal_Map_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Normal_Map_Tiling: {r: 1, g: 1, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 0.5019608}
     - _PixelGridOrigin: {r: 0, g: 0, b: 0, a: 0}
-    - _ReflectionLightColor: {r: 0.254717, g: 0.014983353, b: 0, a: 1}
-    - _RimLightColor: {r: 0.5660378, g: 0.5085068, b: 0, a: 1}
+    - _ReflectionLightColor: {r: 0, g: 0.07179642, b: 1, a: 1}
+    - _RimLightColor: {r: 0, g: 0.6858543, b: 0.7798742, a: 1}
+    - _ShadowColor: {r: 1, g: 1, b: 1, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecularColor: {r: 1, g: 0.56684095, b: 0.54402506, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &2465169610013322686
 MonoBehaviour:
