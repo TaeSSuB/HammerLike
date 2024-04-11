@@ -47,7 +47,10 @@ Shader "HLPixelizer/SRP/HLPixelizer"
         _ID("ID", Float) = 1
         _OutlineColor("Inline Color", Color) = (0, 0, 0, 0.5019608)
         _EdgeHighlightColor("Edge Highlight Color", Color) = (1, 1, 1, 0.5019608)
+        _HitColor("HitColor", Color) = (1, 0, 0, 1)
         _HitAmount("HitAmount", Float) = 0
+        _ChargeColor("ChargeColor", Color) = (1, 0.5037829, 0, 1)
+        _ChargeAmount("ChargeAmount", Float) = 0
         [HideInInspector]_QueueOffset("_QueueOffset", Float) = 0
         [HideInInspector]_QueueControl("_QueueControl", Float) = -1
         [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
@@ -110,6 +113,7 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float4 _ReflectionLightColor;
             float _ReflectionLight;
             float2 _Normal_Map_Offset;
+            float4 _ChargeColor;
             float4 _BaseColor;
             float4 _AmbientLight;
             float _PixelSize;
@@ -138,6 +142,8 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float _Additional_Shadow;
             float _Smoothness;
             float _HitAmount;
+            float _ChargeAmount;
+            float4 _HitColor;
             CBUFFER_END
 
 
