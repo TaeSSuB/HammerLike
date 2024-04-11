@@ -39,7 +39,7 @@ public class HitState : IAIState
 
         invincibleTime -= Time.deltaTime;
 
-        HitEvent(invincibleTime);
+        //HitEvent(invincibleTime);
 
         if (invincibleTime <= 0)
         {
