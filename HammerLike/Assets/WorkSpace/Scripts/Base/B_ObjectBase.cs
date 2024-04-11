@@ -10,10 +10,13 @@ public class B_ObjectBase : MonoBehaviour
 
     [Header("Base Object Info")]
     [SerializeField] protected GameObject rootObj;
+    [SerializeField] protected GameObject meshObj;
     [SerializeField] protected Collider col;
     [SerializeField] protected Rigidbody rigid;
 
     [SerializeField] protected bool isInvincible;
+
+    public GameObject MeshObj { get => meshObj; }
 
     protected virtual void Awake()
     {

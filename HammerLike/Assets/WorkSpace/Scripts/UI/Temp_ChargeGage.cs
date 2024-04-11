@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 본 스크립트는 4월 12일 발표용 빌드를 위해 임시로 작성됨.
+/// 추후 삭제 및 UIManager 통합 예정. (4월 13일 이후) - a.HG
+/// </summary>
 public class Temp_ChargeGage : MonoBehaviour
 {
     public Image gaugeImage; // 게이지 이미지
@@ -32,7 +36,7 @@ public class Temp_ChargeGage : MonoBehaviour
 
     private void UpdateGauge()
     {
-        float chargeRate = (playerStatus.chargeRate / playerStatus.maxChargeRate);
+        float chargeRate = (playerStatus.chargeRate - 1) / (playerStatus.maxChargeRate - 1);
 
         float chargeRatio = Mathf.Clamp(chargeRate, 0f, 1f); // 0 ~ 1 사이의 값
         gaugeRectTransform.anchorMax = new Vector2(gaugeRectTransform.anchorMax.x, chargeRatio);
