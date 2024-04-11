@@ -1,3 +1,4 @@
+using Language.Lua;
 using RootMotion.Dynamics;
 using System.Collections;
 using System.Collections.Generic;
@@ -40,6 +41,7 @@ public class B_Enemy : B_UnitBase
     {
         base.Dead();
         //aIStateManager.SetState(AIStateType.DEAD);
+
         DisconnectMusclesRecursive();
         //Invoke(nameof(DisconnectMusclesRecursive), 0.1f);
     }
@@ -106,7 +108,15 @@ public class B_Enemy : B_UnitBase
 
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
-            B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+
+            if (unitStatus.currentHP > 0)
+            {
+                B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+            }
+            else
+            {
+                B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Death);
+            }
 
             if (isTester)
                 return;
@@ -139,7 +149,15 @@ public class B_Enemy : B_UnitBase
 
             var vfxPos = collision.contacts[0].point;
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
-            B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+
+            if (unitStatus.currentHP > 0)
+            {
+                B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+            }
+            else
+            {
+                B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Death);
+            }
 
             if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
                 aIStateManager?.SetState(AIStateType.HIT);
