@@ -19,6 +19,9 @@ public class HitState : IAIState
         Debug.Log("HitState OnEnter");
         unitBase.SetInvincible(true);
         unitBase.Anim.SetTrigger("tHit");
+
+        HitEvent(1f);
+
         invincibleTime = maxInvincibleTime;
     }
 
@@ -26,6 +29,7 @@ public class HitState : IAIState
     {
         Debug.Log("HitState OnExit");
 
+        HitEvent(0f);
         unitBase.SetInvincible(false);
     }
 
@@ -34,6 +38,8 @@ public class HitState : IAIState
         Debug.Log("HitState OnUpdate");
 
         invincibleTime -= Time.deltaTime;
+
+        HitEvent(invincibleTime);
 
         if (invincibleTime <= 0)
         {
@@ -44,6 +50,25 @@ public class HitState : IAIState
             else
             {
                 (unitBase as B_Enemy).AIStateManager.SetState(AIStateType.IDLE);
+            }
+        }
+    }
+
+    // Temp 20240411 - Hit Event (Shader) a.HG
+    protected void HitEvent(float amount = 1f)
+    {
+        amount = Mathf.Clamp01(amount);
+
+        var renderers  = unitBase.MeshObj?.GetComponentsInChildren<Renderer>();
+
+        if (renderers.Length > 0)
+        {
+            foreach (var renderer in renderers)
+            {
+                foreach (var material in renderer.materials)
+                {
+                    material.SetFloat("_HitAmount", amount);
+                }
             }
         }
     }
