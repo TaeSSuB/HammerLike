@@ -1,0 +1,41 @@
+name: Upload Scripts to Gist
+
+on:
+  push:
+    branches:
+      - main  # Set to your default branch
+    paths:
+      - 'HammerLike\Assets\WorkSpace\Scripts\Baseder/*.cs'  # Adjust the path to match your script files
+
+jobs:
+  upload_to_gist:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Upload to Gist
+      uses: fjogeleit/http-request-action@master
+      with:
+        url: "https://api.github.com/gists"
+        method: "POST"
+        contentType: "application/json"
+        headers: '{"Authorization": "token ${{ secrets.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 }}"}'
+        requestBody: |
+          {
+            "files": {
+              "${{ matrix.file }}": {
+                "content": "${{ steps.files.outputs.content }}"
+              }
+            },
+            "public": true  # Set to false if you want a private gist
+          }
+      env:
+        FILE: ${{ matrix.file }}
+
+    - name: Get File Content
+      id: files
+      uses: juliangruber/read-file-action@v1
+      with:
+        path: ./${{ env.FILE }}
