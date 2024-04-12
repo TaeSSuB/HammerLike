@@ -13,7 +13,7 @@ public class GrassComputeScript : MonoBehaviour
 {
     // very slow, but will update always
     public bool autoUpdate;
-
+    public static bool enableCulling = true;
     // main camera
     private Camera m_MainCamera;
 
@@ -62,6 +62,7 @@ public class GrassComputeScript : MonoBehaviour
     float[] cutIDs;
 
 
+
     private uint[] argsBufferReset = new uint[5]
    {
         0,  // Number of vertices to render (Calculated in the compute shader with "InterlockedAdd(_IndirectArgsBuffer[0].numVertices);")
@@ -89,6 +90,8 @@ public class GrassComputeScript : MonoBehaviour
 
     // max buffer size can depend on platform and your draw stride, you may have to change it
     int maxBufferSize = 2500000;
+
+
 
     ///-------------------------------------------------------------------------------------
 
@@ -308,6 +311,14 @@ public class GrassComputeScript : MonoBehaviour
 
     void GetFrustumData()
     {
+        /*if (!enableCulling)
+        {
+            // If culling is disabled, make all grass instances visible.
+            GrassFastList(grassData.Count);
+            m_VisibleIDBuffer.SetData(grassVisibleIDList);
+            return;
+        }*/
+
         if (m_MainCamera == null)
         {
             return;
@@ -370,6 +381,9 @@ public class GrassComputeScript : MonoBehaviour
     // LateUpdate is called after all Update calls
     private void Update()
     {
+        
+
+
         // If in edit mode, we need to update the shaders each Update to make sure settings changes are applied
         // Don't worry, in edit mode, Update isn't called each frame
         if (!Application.isPlaying && autoUpdate && !m_fastMode)
@@ -385,8 +399,20 @@ public class GrassComputeScript : MonoBehaviour
             // or just because there is not vertex being painted.
             return;
         }
+
+
         // get the data from the camera for culling
         GetFrustumData();
+        /*if (!enableCulling)
+        {
+            // Directly update the visibility buffer if culling is disabled.
+            m_VisibleIDBuffer.SetData(grassVisibleIDList);
+        }
+        else
+        {
+            // Your existing method to update visibility based on culling.
+            GetFrustumData();
+        }*/
         // Update the shader with frame specific data
         SetGrassDataUpdate();
         // Clear the draw and indirect args buffers of last frame's data
