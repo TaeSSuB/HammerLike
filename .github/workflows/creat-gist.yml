@@ -20,10 +20,13 @@ jobs:
           script: |
             const fs = require('fs');
             const github = require('@actions/github');
-
-            const content = fs.readFileSync('HammerLike\Assets\WorkSpace\Scripts\Base/B_ObjectBase.cs', 'utf8');
+            const path = require('path');
+            
+            // 파일 경로 수정: 슬래시 사용, 상대 경로
+            const filePath = path.join(__dirname, 'HammerLike', 'Assets', 'WorkSpace', 'Scripts', 'Base', 'B_ObjectBase.cs');
+            const content = fs.readFileSync(filePath, 'utf8');
+            
             const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-
             octokit.gists.create({
               files: {
                 'UnitDataStructure.txt': {
