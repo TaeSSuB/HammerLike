@@ -1,9 +1,10 @@
 name: Upload CS Files to Gist
 
-on: 
+on:
   push:
     paths:
       - 'HammerLike/Assets/WorkSpace/Scripts/Base/*.cs'
+  workflow_dispatch:
 
 jobs:
   upload-to-gist:
