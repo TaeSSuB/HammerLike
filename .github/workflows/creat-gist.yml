@@ -19,15 +19,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const github = require('@actions/github');
-            const path = require('path');
+            const octokit = require('@octokit/core');
             
-            // 파일 경로 수정: 슬래시 사용, 상대 경로
-            const filePath = path.join(__dirname, 'HammerLike', 'Assets', 'WorkSpace', 'Scripts', 'Base', 'B_ObjectBase.cs');
-            const content = fs.readFileSync(filePath, 'utf8');
+            const content = fs.readFileSync('HammerLike/Assets/WorkSpace/Scripts/Base/B_ObjectBase.cs', 'utf8');
             
-            const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-            octokit.gists.create({
+            const octo = new octokit.Octokit({ auth: process.env.GITHUB_TOKEN });
+            octo.request('POST /gists', {
+              description: 'Gist created by GitHub Actions',
+              public: true,
               files: {
                 'UnitDataStructure.txt': {
                   content: content
