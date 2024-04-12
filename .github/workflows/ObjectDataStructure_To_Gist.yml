@@ -13,10 +13,9 @@ jobs:
         id: sync
         with:
           auth: ${{ secrets.GIST_TOKEN }}
-          gist_url: https://gist.github.com/TaeSSuB/fdc6f54e047730dc849618ab858d7062
+          gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
           github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_ObjectBase.cs
           
-jobs:
   UnitBaseToGist:
     name: UnitBaseToGist
     runs-on: ubuntu-latest
@@ -27,10 +26,9 @@ jobs:
         id: sync
         with:
           auth: ${{ secrets.GIST_TOKEN }}
-          gist_url: https://gist.github.com/TaeSSuB/fdc6f54e047730dc849618ab858d7062
+          gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
           github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_UnitBase.cs
           
-jobs:
   EnemyToGist:
     name: ObjectBaseToGist
     runs-on: ubuntu-latest
@@ -41,10 +39,9 @@ jobs:
         id: sync
         with:
           auth: ${{ secrets.GIST_TOKEN }}
-          gist_url: https://gist.github.com/TaeSSuB/fdc6f54e047730dc849618ab858d7062
+          gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
           github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_Enemy.cs
           
-jobs:
   PlayerToGist:
     name: PlayerToGist
     runs-on: ubuntu-latest
@@ -55,5 +52,5 @@ jobs:
         id: sync
         with:
           auth: ${{ secrets.GIST_TOKEN }}
-          gist_url: https://gist.github.com/TaeSSuB/fdc6f54e047730dc849618ab858d7062
+          gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
           github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_Enemy.cs
