@@ -4,49 +4,33 @@ on:
   push:
     paths:
       - 'HammerLike/Assets/WorkSpace/Scripts/Base/*.cs'
-  workflow_dispatch:
+  workflow_dispatch:  # Enables manual trigger through GitHub UI
 
 jobs:
-  upload-to-gist:
+  upload_to_gist:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+      - name: Install jq
+        run: sudo apt-get install jq
 
-      - name: Install requests module
-        run: pip install requests
-
-      - name: Upload files to Gist
+      - name: Upload Files to Gist
         env:
+          GIST_ID: 'TaeSSuB'  # Make sure to replace this with your actual Gist ID if needed
           GIST_TOKEN: ${{ secrets.GIST }}
-          GIST_ID: 'TaeSSuB'
         run: |
-          import os
-          import requests
+          FILES=""
+          for FILE in HammerLike/Assets/WorkSpace/Scripts/Base/*.cs; do
+            CONTENT=$(<"$FILE")
+            JSON_CONTENT=$(jq -aRs . <<< "$CONTENT")
+            FILES+=\"$(basename "$FILE")\": {\"content\": $JSON_CONTENT},
+          done
+          JSON="{\"files\": {${FILES%?}}}"
 
-          api_url = "https://api.github.com/gists"
-          headers = {
-            "Authorization": f"token {os.getenv('GIST')}"
-          }
-
-          files = {}
-          for filename in os.listdir('HammerLike/Assets/WorkSpace/Scripts/Base'):
-            if filename.endswith('.cs'):
-              path = f'HammerLike/Assets/WorkSpace/Scripts/Base/{filename}'
-              with open(path, 'r') as file:
-                files[filename] = {"content": file.read()}
-
-          gist_data = {
-            "files": files,
-            "description": "Auto-updated CS files",
-            "public": False
-          }
-
-          response = requests.patch(f"{api_url}/{os.getenv('GIST_ID')}", headers=headers, json=gist_data)
-          print(response.json())
+          curl -H "Authorization: token $GIST" \
+               -X PATCH \
+               "https://api.github.com/gists/$GIST_ID" \
+               -d "$JSON"
