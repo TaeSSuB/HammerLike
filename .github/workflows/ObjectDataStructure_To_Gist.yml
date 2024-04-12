@@ -1,0 +1,59 @@
+name: Data Structure To GIST
+
+on: [push]
+
+jobs:
+  ObjectBaseToGist:
+    name: ObjectBaseToGist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: popsiclestick/gist-sync-action@v1.2.0
+        id: sync
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gist_url: https://gist.github.com/TaeSSuB/fdc6f54e047730dc849618ab858d7062
+          github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_ObjectBase.cs
+          
+jobs:
+  UnitBaseToGist:
+    name: UnitBaseToGist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: popsiclestick/gist-sync-action@v1.2.0
+        id: sync
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gist_url: https://gist.github.com/TaeSSuB/fdc6f54e047730dc849618ab858d7062
+          github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_UnitBase.cs
+          
+jobs:
+  EnemyToGist:
+    name: ObjectBaseToGist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: popsiclestick/gist-sync-action@v1.2.0
+        id: sync
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gist_url: https://gist.github.com/TaeSSuB/fdc6f54e047730dc849618ab858d7062
+          github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_Enemy.cs
+          
+jobs:
+  PlayerToGist:
+    name: PlayerToGist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: popsiclestick/gist-sync-action@v1.2.0
+        id: sync
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gist_url: https://gist.github.com/TaeSSuB/fdc6f54e047730dc849618ab858d7062
+          github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_Enemy.cs
