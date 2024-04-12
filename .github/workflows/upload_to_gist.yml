@@ -1,49 +1,51 @@
 name: Upload CS Files to Gist
 
-on:
+on: 
   push:
     paths:
       - 'HammerLike/Assets/WorkSpace/Scripts/Base/*.cs'
 
 jobs:
-  upload_to_gist:
+  upload-to-gist:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Upload .cs files to Gist
-      env:
-        GITHUB_TOKEN: ${{ secrets.GIST }}
-        GIST_ID: 'TaeSSuB'  # Replace with your actual Gist ID
-      run: |
-        #!/bin/bash
-        API_URL="https://api.github.com/gists/TaeSSuB"
-        FILES_TO_UPLOAD=""
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
-        # Collecting .cs files
-        for FILE in $(find HammerLike/Assets/WorkSpace/Scripts/Base/ -type f -name '*.cs'); do
-          FILE_CONTENT=$(cat "$FILE")
-          # Prepare JSON data for API
-          FILE_BASENAME=$(basename "$FILE")
-          FILE_JSON_PART=$(jq -n --arg name "$FILE_BASENAME" --arg content "$FILE_CONTENT" \
-            '{($name): {"content": $content}}')
-          FILES_TO_UPLOAD=$(echo "$FILES_TO_UPLOAD $FILE_JSON_PART" | jq -s add)
-        done
+      - name: Install requests module
+        run: pip install requests
 
-        # Create JSON payload
-        JSON_PAYLOAD=$(jq -n --argjson files "$FILES_TO_UPLOAD" '{"files": $files}')
+      - name: Upload files to Gist
+        env:
+          GIST_TOKEN: ${{ secrets.GIST }}
+          GIST_ID: 'TaeSSuB'
+        run: |
+          import os
+          import requests
 
-        # Update the Gist
-        RESPONSE=$(curl -s -X PATCH "$API_URL" -H "Authorization: token ${GITHUB_TOKEN}" \
-          -H "Accept: application/vnd.github.v3+json" -d "$JSON_PAYLOAD")
+          api_url = "https://api.github.com/gists"
+          headers = {
+            "Authorization": f"token {os.getenv('GIST')}"
+          }
 
-        if echo "$RESPONSE" | jq -e '.message' > /dev/null; then
-          echo "Failed to update Gist. Response: $RESPONSE"
-          exit 1
-        else
-          echo "Gist updated successfully."
-        fi
+          files = {}
+          for filename in os.listdir('HammerLike/Assets/WorkSpace/Scripts/Base'):
+            if filename.endswith('.cs'):
+              path = f'HammerLike/Assets/WorkSpace/Scripts/Base/{filename}'
+              with open(path, 'r') as file:
+                files[filename] = {"content": file.read()}
 
-      shell: bash
+          gist_data = {
+            "files": files,
+            "description": "Auto-updated CS files",
+            "public": False
+          }
+
+          response = requests.patch(f"{api_url}/{os.getenv('GIST_ID')}", headers=headers, json=gist_data)
+          print(response.json())
