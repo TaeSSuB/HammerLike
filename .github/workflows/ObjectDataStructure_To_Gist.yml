@@ -14,6 +14,7 @@ jobs:
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
+          gist_title: ObjectBase.cs
           github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_ObjectBase.cs
           
   UnitBaseToGist:
@@ -27,6 +28,7 @@ jobs:
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
+          gist_title: UnitBase.cs
           github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_UnitBase.cs
           
   EnemyToGist:
@@ -40,6 +42,7 @@ jobs:
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
+          gist_title: Enermy.cs
           github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_Enemy.cs
           
   PlayerToGist:
@@ -53,4 +56,5 @@ jobs:
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
-          github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_Enemy.cs
+          gist_title: Player.cs
+          github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_Plyer.cs
