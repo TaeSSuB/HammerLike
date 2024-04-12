@@ -1,36 +1,19 @@
 name: Upload CS Files to Gist
 
-on:
-  push:
-    paths:
-      - 'HammerLike/Assets/WorkSpace/Scripts/Base/*.cs'
-  workflow_dispatch:  # Enables manual trigger through GitHub UI
+on: [push]
 
 jobs:
-  upload_to_gist:
+  gist-sync:
+    name: gist-sync
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Install jq
-        run: sudo apt-get install jq
-
-      - name: Upload Files to Gist
-        env:
-          GIST_ID: 'TaeSSuB'  # Make sure to replace this with your actual Gist ID if needed
-          GIST_TOKEN: ${{ secrets.GIST }}
-        run: |
-          FILES=""
-          for FILE in HammerLike/Assets/WorkSpace/Scripts/Base/*.cs; do
-            CONTENT=$(<"$FILE")
-            JSON_CONTENT=$(jq -aRs . <<< "$CONTENT")
-            FILES+=\"$(basename "$FILE")\": {\"content\": $JSON_CONTENT},
-          done
-          JSON="{\"files\": {${FILES%?}}}"
-
-          curl -H "Authorization: token $GIST" \
-               -X PATCH \
-               "https://api.github.com/gists/$GIST_ID" \
-               -d "$JSON"
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: popsiclestick/gist-sync-action@v1.2.0
+        id: sync
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gist_url: https://gist.github.com/TaeSSuB/fdc6f54e047730dc849618ab858d7062
+          gist_title: Example Gist Title
+          gist_description: Example Gist Description
+          github_file: filename-to-sync
