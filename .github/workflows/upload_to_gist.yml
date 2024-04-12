@@ -1,53 +1,49 @@
-name: Create Gist on Push
+name: Upload CS Files to Gist
 
 on:
   push:
-    branches:
-      - main
+    paths:
+      - 'HammerLike/Assets/WorkSpace/Scripts/Base/*.cs'
 
 jobs:
-  build:
+  upload_to_gist:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14'
+    - name: Upload .cs files to Gist
+      env:
+        GITHUB_TOKEN: ${{ secrets.GIST }}
+        GIST_ID: 'TaeSSuB'  # Replace with your actual Gist ID
+      run: |
+        #!/bin/bash
+        API_URL="https://api.github.com/gists/TaeSSuB"
+        FILES_TO_UPLOAD=""
 
-      - name: Install Dependencies
-        run: npm install @octokit/core
+        # Collecting .cs files
+        for FILE in $(find HammerLike/Assets/WorkSpace/Scripts/Base/ -type f -name '*.cs'); do
+          FILE_CONTENT=$(cat "$FILE")
+          # Prepare JSON data for API
+          FILE_BASENAME=$(basename "$FILE")
+          FILE_JSON_PART=$(jq -n --arg name "$FILE_BASENAME" --arg content "$FILE_CONTENT" \
+            '{($name): {"content": $content}}')
+          FILES_TO_UPLOAD=$(echo "$FILES_TO_UPLOAD $FILE_JSON_PART" | jq -s add)
+        done
 
-      - name: List CS Files
-        run: |
-          find HammerLike/Assets/WorkSpace/Scripts/Base -type f -name '*.cs' > files.txt
+        # Create JSON payload
+        JSON_PAYLOAD=$(jq -n --argjson files "$FILES_TO_UPLOAD" '{"files": $files}')
 
-      - name: Create Gists
-        id: create_gists
-        run: |
-          const fs = require('fs');
-          const { Octokit } = require('@octokit/core');
-          const fileList = fs.readFileSync('files.txt', 'utf-8').split('\n').filter(Boolean);
-          const octo = new Octokit({ auth: process.env.GITHUB_TOKEN });
-          const gistPromises = fileList.map(file => {
-            const content = fs.readFileSync(file, 'utf-8');
-            return octo.request('POST /gists', {
-              description: `Gist created by GitHub Actions for ${file}`,
-              public: true,
-              files: {
-                [`${file.split('/').pop()}.txt`]: {
-                  content: content
-                }
-              }
-            });
-          });
-          Promise.all(gistPromises).then(gists => {
-            console.log('Gists created:');
-            gists.forEach(gist => console.log(gist.data.html_url));
-          }).catch(error => {
-            console.error('Error creating Gists: ', error);
-            process.exit(1);
-          });
+        # Update the Gist
+        RESPONSE=$(curl -s -X PATCH "$API_URL" -H "Authorization: token ${GITHUB_TOKEN}" \
+          -H "Accept: application/vnd.github.v3+json" -d "$JSON_PAYLOAD")
+
+        if echo "$RESPONSE" | jq -e '.message' > /dev/null; then
+          echo "Failed to update Gist. Response: $RESPONSE"
+          exit 1
+        else
+          echo "Gist updated successfully."
+        fi
+
+      shell: bash
