@@ -32,7 +32,7 @@ jobs:
           github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_UnitBase.cs
           
   EnemyToGist:
-    name: ObjectBaseToGist
+    name: EnemyBaseToGist
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -42,7 +42,7 @@ jobs:
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
-          gist_title: Enermy.cs
+          gist_title: Enemy.cs
           github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_Enemy.cs
           
   PlayerToGist:
@@ -58,3 +58,73 @@ jobs:
           gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
           gist_title: Player.cs
           github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_Player.cs
+
+  BossToGist:
+    name: BossToGist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: popsiclestick/gist-sync-action@v1.2.0
+        id: sync
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
+          gist_title: Boss.cs
+          github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_Boss.cs
+
+  NPCToGist:
+    name: NPCToGist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: popsiclestick/gist-sync-action@v1.2.0
+        id: sync
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
+          gist_title: NPC.cs
+          github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_NPC.cs
+
+  PropToGist:
+    name: PropToGist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: popsiclestick/gist-sync-action@v1.2.0
+        id: sync
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
+          gist_title: Prop.cs
+          github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_Prop.cs
+
+  ProjectileToGist:
+    name: ProjectileToGist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: popsiclestick/gist-sync-action@v1.2.0
+        id: sync
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
+          gist_title: Projectile.cs
+          github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_Projectile.cs
+
+  AIStateToGist:
+    name: IAIStateToGist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: popsiclestick/gist-sync-action@v1.2.0
+        id: sync
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
+          gist_title: IAIState.cs
+          github_file: HammerLike/Assets/WorkSpace/Scripts/Base/IAIState.cs
