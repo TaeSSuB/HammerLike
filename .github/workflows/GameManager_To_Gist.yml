@@ -3,8 +3,8 @@ name: Game Manager To GIST
 on: [push]
 
 jobs:
-  ObjectBaseToGist:
-    name: ObjectBaseToGist
+  GameManagerToGist:
+    name: GameManagerToGist
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -13,6 +13,6 @@ jobs:
         id: sync
         with:
           auth: ${{ secrets.GIST_TOKEN }}
-          gist_url: https://gist.github.com/TaeSSuB/ac3d80c75d7266550afd53f435965c2b
-          gist_title: ObjectBase.cs
-          github_file: HammerLike/Assets/WorkSpace/Scripts/Base/B_ObjectBase.cs
+          gist_url: https://gist.github.com/TaeSSuB/f2947717de8f34e37f8a24f12a2550ca
+          gist_title: GameManager.cs
+          github_file: HammerLike/Assets/WorkSpace/Scripts/Managers/GameManager.cs
