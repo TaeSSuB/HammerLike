@@ -17,12 +17,12 @@ public class BSPNode
     public BSPNode rightChild;
     public Rect room;
     public RoomType roomType = RoomType.None;
-    public GameObject roomObject; // ë°© ì˜¤ë¸Œì íŠ¸
+    public GameObject roomObject; // ¹æ ¿ÀºêÁ§Æ®
     public bool isConnectedNorth;
     public bool isConnectedEast;
     public bool isConnectedSouth;
     public bool isConnectedWest;
-    // ê¸°íƒ€ í•„ìš”í•œ ë³€ìˆ˜ë“¤
+    // ±âÅ¸ ÇÊ¿äÇÑ º¯¼öµé
 }
 
 public class BSPGenerator : MonoBehaviour
@@ -31,45 +31,19 @@ public class BSPGenerator : MonoBehaviour
     public GameObject bossRoomPrefab;
     public GameObject eliteRoomPrefab;
     public GameObject[] normalRoomPrefabs;
-    public int normalRoomCount; // NormalRoomì˜ ê°œìˆ˜
+    public int normalRoomCount; // NormalRoomÀÇ °³¼ö
     public int mapWidth;
     public int mapHeight;
-    public int divideCount; // ë¶„í•  íšŸìˆ˜ë¥¼ ì •í•˜ëŠ” ë³€ìˆ˜
+    public int divideCount; // ºĞÇÒ È½¼ö¸¦ Á¤ÇÏ´Â º¯¼ö
 
     void Start()
     {
         BSPNode root = new BSPNode();
         root.room = new Rect(0, 0, mapWidth, mapHeight);
         SplitNode(root, divideCount);
-        PlaceSpecialRooms(root); // íŠ¹ë³„í•œ ë°© ë°°ì¹˜
-        PlaceNormalRooms(root, normalRoomCount); // ì¼ë°˜ ë°© ë°°ì¹˜
-        ConnectRooms(root); // ê¸¸ ìƒì„± ë° ì—°ê²°
-        DrawLines(root);
-    }
-
-    public void ReGenerator()
-    {
-        StartCoroutine(ReGenerateCoroutine());
-    }
-
-    private IEnumerator ReGenerateCoroutine()
-    {
-        // ê¸°ì¡´ì— ìƒì„±ëœ ëª¨ë“  ìì‹ ì˜¤ë¸Œì íŠ¸ ì œê±°
-        foreach (Transform child in transform)
-        {
-            Destroy(child.gameObject);
-        }
-
-        // ëª¨ë“  ì˜¤ë¸Œì íŠ¸ ì œê±° í›„ ë‹¤ìŒ í”„ë ˆì„ê¹Œì§€ ê¸°ë‹¤ë¦¼
-        yield return null;
-
-        // ìƒˆë¡œìš´ BSP êµ¬ì¡° ìƒì„±
-        BSPNode root = new BSPNode();
-        root.room = new Rect(0, 0, mapWidth, mapHeight);
-        SplitNode(root, divideCount);
-        PlaceSpecialRooms(root); // íŠ¹ë³„í•œ ë°© ë°°ì¹˜
-        PlaceNormalRooms(root, normalRoomCount); // ì¼ë°˜ ë°© ë°°ì¹˜
-        ConnectRooms(root); // ê¸¸ ìƒì„± ë° ì—°ê²°
+        PlaceSpecialRooms(root); // Æ¯º°ÇÑ ¹æ ¹èÄ¡
+        PlaceNormalRooms(root, normalRoomCount); // ÀÏ¹İ ¹æ ¹èÄ¡
+        ConnectRooms(root); // ±æ »ı¼º ¹× ¿¬°á
         DrawLines(root);
     }
 
@@ -77,26 +51,25 @@ public class BSPGenerator : MonoBehaviour
     {
         if (node == null) return;
 
-        // LineRenderer ìƒì„± ë° ì„¤ì •
+        // LineRenderer »ı¼º ¹× ¼³Á¤
         GameObject lineObj = new GameObject("Line");
-        lineObj.transform.parent = this.transform; // BSPGeneratorì˜ ìì‹ìœ¼ë¡œ ì„¤ì •
         LineRenderer lineRenderer = lineObj.AddComponent<LineRenderer>();
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default")); // ì ì ˆí•œ ì‰ì´ë” ì„ íƒ
-        lineRenderer.widthMultiplier = 0.05f; // ì„ ì˜ ë„ˆë¹„
-        lineRenderer.positionCount = 5; // ì‚¬ê°í˜•ì„ ê·¸ë¦¬ê¸° ìœ„í•´ 5ê°œì˜ ì ì´ í•„ìš”
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default")); // ÀûÀıÇÑ ½¦ÀÌ´õ ¼±ÅÃ
+        lineRenderer.widthMultiplier = 0.05f; // ¼±ÀÇ ³Êºñ
+        lineRenderer.positionCount = 5; // »ç°¢ÇüÀ» ±×¸®±â À§ÇØ 5°³ÀÇ Á¡ÀÌ ÇÊ¿ä
 
-        // ì‚¬ê°í˜•ì˜ ëª¨ì„œë¦¬ ì¢Œí‘œ ê³„ì‚°
+        // »ç°¢ÇüÀÇ ¸ğ¼­¸® ÁÂÇ¥ °è»ê
         Vector3[] corners = new Vector3[5];
         corners[0] = new Vector3(node.room.xMin, 0, node.room.yMin);
         corners[1] = new Vector3(node.room.xMax, 0, node.room.yMin);
         corners[2] = new Vector3(node.room.xMax, 0, node.room.yMax);
         corners[3] = new Vector3(node.room.xMin, 0, node.room.yMax);
-        corners[4] = corners[0]; // ì‹œì‘ì ìœ¼ë¡œ ëŒì•„ì˜´
+        corners[4] = corners[0]; // ½ÃÀÛÁ¡À¸·Î µ¹¾Æ¿È
 
-        // LineRendererì— ì ë“¤ì„ ì„¤ì •
+        // LineRenderer¿¡ Á¡µéÀ» ¼³Á¤
         lineRenderer.SetPositions(corners);
 
-        // ìì‹ ë…¸ë“œì— ëŒ€í•´ì„œë„ ê°™ì€ ì‘ì—… ìˆ˜í–‰
+        // ÀÚ½Ä ³ëµå¿¡ ´ëÇØ¼­µµ °°Àº ÀÛ¾÷ ¼öÇà
         DrawLines(node.leftChild);
         DrawLines(node.rightChild);
     }
@@ -104,26 +77,26 @@ public class BSPGenerator : MonoBehaviour
     {
         if (depth <= 0) return;
 
-        // ëœë¤ ë¶„í•  ë¹„ìœ¨ (0.4ì—ì„œ 0.6 ì‚¬ì´)
+        // ·£´ı ºĞÇÒ ºñÀ² (0.4¿¡¼­ 0.6 »çÀÌ)
         float splitRatio = Random.Range(0.4f, 0.6f);
 
-        // ìˆ˜í‰ì´ ìˆ˜ì§ë³´ë‹¤ ê¸¸ë©´ ìˆ˜í‰ìœ¼ë¡œ, ê·¸ë ‡ì§€ ì•Šìœ¼ë©´ ìˆ˜ì§ìœ¼ë¡œ ë¶„í• 
+        // ¼öÆòÀÌ ¼öÁ÷º¸´Ù ±æ¸é ¼öÆòÀ¸·Î, ±×·¸Áö ¾ÊÀ¸¸é ¼öÁ÷À¸·Î ºĞÇÒ
         if (node.room.width > node.room.height)
         {
-            // ìˆ˜í‰ ë¶„í• 
+            // ¼öÆò ºĞÇÒ
             float split = node.room.width * splitRatio;
             node.leftChild = new BSPNode { room = new Rect(node.room.x, node.room.y, split, node.room.height) };
             node.rightChild = new BSPNode { room = new Rect(node.room.x + split, node.room.y, node.room.width - split, node.room.height) };
         }
         else
         {
-            // ìˆ˜ì§ ë¶„í• 
+            // ¼öÁ÷ ºĞÇÒ
             float split = node.room.height * splitRatio;
             node.leftChild = new BSPNode { room = new Rect(node.room.x, node.room.y, node.room.width, split) };
             node.rightChild = new BSPNode { room = new Rect(node.room.x, node.room.y + split, node.room.width, node.room.height - split) };
         }
 
-        // ì¬ê·€ì ìœ¼ë¡œ ìì‹ ë…¸ë“œë“¤ì„ ë¶„í• 
+        // Àç±ÍÀûÀ¸·Î ÀÚ½Ä ³ëµåµéÀ» ºĞÇÒ
         SplitNode(node.leftChild, depth - 1);
         SplitNode(node.rightChild, depth - 1);
     }
@@ -134,25 +107,25 @@ public class BSPGenerator : MonoBehaviour
     {
         if (node == null || node.leftChild == null || node.rightChild == null) return;
 
-        // ë‘ ìì‹ ë…¸ë“œì˜ ì¤‘ì‹¬ì  ì°¾ê¸°
+        // µÎ ÀÚ½Ä ³ëµåÀÇ Áß½ÉÁ¡ Ã£±â
         Vector3 centerA = new Vector3(
             node.leftChild.room.x + node.leftChild.room.width / 2,
-            0, // yì¶• ìœ„ì¹˜ëŠ” í•„ìš”ì— ë”°ë¼ ì¡°ì •
+            0, // yÃà À§Ä¡´Â ÇÊ¿ä¿¡ µû¶ó Á¶Á¤
             node.leftChild.room.y + node.leftChild.room.height / 2
         );
 
         Vector3 centerB = new Vector3(
             node.rightChild.room.x + node.rightChild.room.width / 2,
-            0, // yì¶• ìœ„ì¹˜ëŠ” í•„ìš”ì— ë”°ë¼ ì¡°ì •
+            0, // yÃà À§Ä¡´Â ÇÊ¿ä¿¡ µû¶ó Á¶Á¤
             node.rightChild.room.y + node.rightChild.room.height / 2
         );
 
-        // Lì í˜•íƒœì˜ ê¸¸ ìƒì„±
+        // LÀÚ ÇüÅÂÀÇ ±æ »ı¼º
         Vector3 midPoint = new Vector3(centerA.x, 0, centerB.z);
         CreatePath(centerA, midPoint, node.leftChild, node.rightChild);
         CreatePath(midPoint, centerB, node.leftChild, node.rightChild);
 
-        // ìì‹ ë…¸ë“œì— ëŒ€í•´ì„œë„ ê¸¸ ìƒì„±
+        // ÀÚ½Ä ³ëµå¿¡ ´ëÇØ¼­µµ ±æ »ı¼º
         ConnectRooms(node.leftChild);
         ConnectRooms(node.rightChild);
 
@@ -162,35 +135,34 @@ public class BSPGenerator : MonoBehaviour
     void CreatePath(Vector3 start, Vector3 end, BSPNode nodeA, BSPNode nodeB)
     {
         GameObject lineObj = new GameObject("PathLine");
-        lineObj.transform.parent = this.transform;
         LineRenderer lineRenderer = lineObj.AddComponent<LineRenderer>();
         Rigidbody rb = lineObj.AddComponent<Rigidbody>();
         BoxCollider collider = lineObj.AddComponent<BoxCollider>();
 
-        // LineRendererì— ë¹¨ê°„ìƒ‰ ì¬ì§ˆ ì„¤ì •
+        // LineRenderer¿¡ »¡°£»ö ÀçÁú ¼³Á¤
         Material redMaterial = new Material(Shader.Find("Sprites/Default"));
-        redMaterial.color = Color.red; // ë¹¨ê°„ìƒ‰ìœ¼ë¡œ ì„¤ì •
+        redMaterial.color = Color.red; // »¡°£»öÀ¸·Î ¼³Á¤
         lineRenderer.material = redMaterial;
 
-        // Rigidbody ì„¤ì •
+        // Rigidbody ¼³Á¤
         rb.isKinematic = true;
         rb.useGravity = false;
 
-        // Collider ì„¤ì •
+        // Collider ¼³Á¤
         collider.isTrigger = true;
 
         lineRenderer.widthMultiplier = 0.1f;
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, start);
         lineRenderer.SetPosition(1, end);
-        // Colliderì˜ ìœ„ì¹˜, í¬ê¸°, ë°©í–¥ ì¡°ì •
+        // ColliderÀÇ À§Ä¡, Å©±â, ¹æÇâ Á¶Á¤
         Vector3 midPoint = (start + end) / 2;
         lineObj.transform.position = midPoint;
 
         float lineLength = Vector3.Distance(start, end);
-        collider.size = new Vector3(0.1f, 0.1f, lineLength); // ì½œë¼ì´ë”ì˜ ë‘ê»˜ì™€ ë†’ì´ëŠ” ì ì ˆíˆ ì¡°ì •
+        collider.size = new Vector3(0.1f, 0.1f, lineLength); // Äİ¶óÀÌ´õÀÇ µÎ²²¿Í ³ôÀÌ´Â ÀûÀıÈ÷ Á¶Á¤
 
-        // Colliderë¥¼ ë¼ì¸ì˜ ë°©í–¥ìœ¼ë¡œ íšŒì „
+        // Collider¸¦ ¶óÀÎÀÇ ¹æÇâÀ¸·Î È¸Àü
         Vector3 lineDirection = (end - start).normalized;
         Quaternion rotation = Quaternion.LookRotation(lineDirection);
         lineObj.transform.rotation = rotation;
@@ -214,36 +186,36 @@ public class BSPGenerator : MonoBehaviour
 
     void PlaceSpecialRooms(BSPNode node)
     {
-        // StartRoom, BossRoom, EliteRoomì˜ ìœ„ì¹˜ë¥¼ ê²°ì •í•˜ëŠ” ë¡œì§
+        // StartRoom, BossRoom, EliteRoomÀÇ À§Ä¡¸¦ °áÁ¤ÇÏ´Â ·ÎÁ÷
         List<BSPNode> leafNodes = GetLeafNodes(node);
-        if (leafNodes.Count < 3) return; // ì ì–´ë„ ì„¸ ê°œì˜ ì ë…¸ë“œê°€ í•„ìš”
+        if (leafNodes.Count < 3) return; // Àû¾îµµ ¼¼ °³ÀÇ ÀÙ ³ëµå°¡ ÇÊ¿ä
 
-        // StartRoom ë°°ì¹˜
+        // StartRoom ¹èÄ¡
         BSPNode startNode = leafNodes[Random.Range(0, leafNodes.Count)];
-        InstantiateRoom(startRoomPrefab, startNode.room, startNode); // ì—¬ê¸° ìˆ˜ì •
+        InstantiateRoom(startRoomPrefab, startNode.room, startNode); // ¿©±â ¼öÁ¤
         startNode.roomType = RoomType.StartRoom;
 
-        // BossRoom ë°°ì¹˜ - StartRoomì—ì„œ ê°€ì¥ ë¨¼ ê³³ì— ìœ„ì¹˜
+        // BossRoom ¹èÄ¡ - StartRoom¿¡¼­ °¡Àå ¸Õ °÷¿¡ À§Ä¡
         leafNodes.Remove(startNode);
         BSPNode bossNode = GetFurthestNode(startNode, leafNodes);
-        InstantiateRoom(bossRoomPrefab, bossNode.room, bossNode); // ì—¬ê¸° ìˆ˜ì •
+        InstantiateRoom(bossRoomPrefab, bossNode.room, bossNode); // ¿©±â ¼öÁ¤
         bossNode.roomType = RoomType.BossRoom;
 
-        // EliteRoom ë°°ì¹˜ - ë‚˜ë¨¸ì§€ ì ë…¸ë“œ ì¤‘ í•˜ë‚˜ ì„ íƒ
+        // EliteRoom ¹èÄ¡ - ³ª¸ÓÁö ÀÙ ³ëµå Áß ÇÏ³ª ¼±ÅÃ
         leafNodes.Remove(bossNode);
         BSPNode eliteNode = leafNodes[Random.Range(0, leafNodes.Count)];
-        InstantiateRoom(eliteRoomPrefab, eliteNode.room, eliteNode); // ì—¬ê¸° ìˆ˜ì •
+        InstantiateRoom(eliteRoomPrefab, eliteNode.room, eliteNode); // ¿©±â ¼öÁ¤
         eliteNode.roomType = RoomType.EliteRoom;
     }
 
     void PlaceNormalRooms(BSPNode node, int count)
     {
-        // ê¸°ì¡´ ë¡œì§ì—ì„œ ìˆ˜ì •í•˜ì—¬ ì´ë¯¸ íŠ¹ë³„í•œ ë°©ì´ ë°°ì¹˜ëœ ë…¸ë“œëŠ” ê±´ë„ˆë›°ê³  ì¼ë°˜ ë°©ë§Œ ë°°ì¹˜
+        // ±âÁ¸ ·ÎÁ÷¿¡¼­ ¼öÁ¤ÇÏ¿© ÀÌ¹Ì Æ¯º°ÇÑ ¹æÀÌ ¹èÄ¡µÈ ³ëµå´Â °Ç³Ê¶Ù°í ÀÏ¹İ ¹æ¸¸ ¹èÄ¡
         List<BSPNode> leafNodes = GetLeafNodes(node);
         foreach (BSPNode leafNode in leafNodes)
         {
             if (count <= 0 || leafNode.roomType != RoomType.None) continue;
-            InstantiateRoom(normalRoomPrefabs[Random.Range(0, normalRoomPrefabs.Length)], leafNode.room, leafNode); // ì—¬ê¸° ìˆ˜ì •
+            InstantiateRoom(normalRoomPrefabs[Random.Range(0, normalRoomPrefabs.Length)], leafNode.room, leafNode); // ¿©±â ¼öÁ¤
             leafNode.roomType = RoomType.NormalRoom;
             count--;
         }
@@ -263,8 +235,7 @@ public class BSPGenerator : MonoBehaviour
                     room.y + (room.height - prefabSize.z) / 2
                 );
                 GameObject roomObject = Instantiate(prefab, position, Quaternion.identity);
-                roomObject.transform.parent = this.transform;
-                node.roomObject = roomObject; // ìƒì„±ëœ ë°© ì˜¤ë¸Œì íŠ¸ ì €ì¥
+                node.roomObject = roomObject; // »ı¼ºµÈ ¹æ ¿ÀºêÁ§Æ® ÀúÀå
             }
         }
     }
@@ -274,7 +245,7 @@ public class BSPGenerator : MonoBehaviour
 
     List<BSPNode> GetLeafNodes(BSPNode node)
     {
-        // ì ë…¸ë“œë“¤ì„ ë°˜í™˜í•˜ëŠ” ë¡œì§
+        // ÀÙ ³ëµåµéÀ» ¹İÈ¯ÇÏ´Â ·ÎÁ÷
         List<BSPNode> leafNodes = new List<BSPNode>();
         if (node == null) return leafNodes;
         if (node.leftChild == null && node.rightChild == null)
@@ -291,7 +262,7 @@ public class BSPGenerator : MonoBehaviour
 
     BSPNode GetFurthestNode(BSPNode startNode, List<BSPNode> nodes)
     {
-        // StartNodeë¡œë¶€í„° ê°€ì¥ ë¨¼ ë…¸ë“œë¥¼ ì°¾ëŠ” ë¡œì§
+        // StartNode·ÎºÎÅÍ °¡Àå ¸Õ ³ëµå¸¦ Ã£´Â ·ÎÁ÷
         BSPNode furthestNode = null;
         float maxDistance = 0;
         foreach (BSPNode node in nodes)
@@ -309,5 +280,5 @@ public class BSPGenerator : MonoBehaviour
         return furthestNode;
     }
 
-    // ê¸°íƒ€ í•„ìš”í•œ ë©”ì„œë“œë“¤
+    // ±âÅ¸ ÇÊ¿äÇÑ ¸Ş¼­µåµé
 }

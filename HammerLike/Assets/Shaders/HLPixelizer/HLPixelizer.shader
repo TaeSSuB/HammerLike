@@ -7,17 +7,21 @@ Shader "HLPixelizer/SRP/HLPixelizer"
         _BaseColor("BaseColor", Color) = (1, 1, 1, 1)
         _AlphaClipThreshold("Alpha Clip Threshold", Float) = 0.5
         _Albedo("Albedo", 2D) = "white" {}
-        _Albedo_ST("Albedo_ST", Vector) = (1, 1, 0, 0)
         _Normal_Strength("Normal Strength", Range(0, 5)) = 1
+        _Albedo_Tiling("Albedo Tiling", Vector) = (1, 1, 0, 0)
+        _Albedo_Offset("Albedo Offset", Vector) = (0, 0, 0, 0)
         [Normal]_NormalMap("Normal Map", 2D) = "bump" {}
-        _NormalMap_ST("Normal Map_ST", Vector) = (1, 1, 0, 0)
         [HDR]_EmissionColor("Emission Color", Color) = (0, 0, 0, 0)
+        _Normal_Map_Tiling("Normal Map Tiling", Vector) = (1, 1, 0, 0)
+        _Normal_Map_Offset("Normal Map Offset", Vector) = (0, 0, 0, 0)
         _Emission("Emission", 2D) = "black" {}
-        _Emission_ST("Emission_ST", Vector) = (1, 1, 0, 0)
+        _Emission_Tiling("Emission Tiling", Vector) = (1, 1, 0, 0)
+        _Emission_Offset("Emission Offset", Vector) = (0, 0, 0, 0)
         _AmbientLight("Ambient Light", Color) = (0, 0, 0, 0.5019608)
         [NoScaleOffset]_LightingRamp("Lighting Ramp", 2D) = "white" {}
         _Lighting_Step("Lighting Step", Range(0, 100)) = 5
         [ToggleUI]_EnableDynamicLights("Enable Dynamic Lights", Float) = 0
+        _Smoothness("Smoothness", Float) = 0
         [ToggleUI]_Specular("Specular", Float) = 0
         _SpecularColor("Specular Color", Color) = (1, 1, 1, 1)
         _SpecularPower("Specular Power", Range(0, 50)) = 3
@@ -28,7 +32,11 @@ Shader "HLPixelizer/SRP/HLPixelizer"
         _RimLightColor("Rim Light Color", Color) = (1, 1, 1, 1)
         _RimLightPower("Rim Light Power", Range(0, 50)) = 3
         [Toggle]RECEIVE_SHADOWS("Receive Shadows", Float) = 1
+        [ToggleUI]_Additional_Shadow("Additional Shadow", Float) = 0
+        _ShadowPower("Additional Shadow Power", Range(0, 50)) = 3
+        _ShadowColor("Additional Shadow Color", Color) = (0, 0, 0, 0)
         [Toggle]COLOR_GRADING("Use Color Grading", Float) = 0
+        [NoScaleOffset]_PaletteLUT("PaletteLUT", 2D) = "white" {}
         [ToggleUI]_Show_Vertex_Color_Weight("Show Vertex Color Weight", Float) = 0
         _Hue("Hue", Float) = 0
         _Saturation("Saturation", Float) = 1
@@ -39,6 +47,10 @@ Shader "HLPixelizer/SRP/HLPixelizer"
         _ID("ID", Float) = 1
         _OutlineColor("Inline Color", Color) = (0, 0, 0, 0.5019608)
         _EdgeHighlightColor("Edge Highlight Color", Color) = (1, 1, 1, 0.5019608)
+        _HitColor("HitColor", Color) = (1, 0, 0, 1)
+        _HitAmount("HitAmount", Float) = 0
+        _ChargeColor("ChargeColor", Color) = (1, 0.5037829, 0, 1)
+        _ChargeAmount("ChargeAmount", Float) = 0
         [HideInInspector]_QueueOffset("_QueueOffset", Float) = 0
         [HideInInspector]_QueueControl("_QueueControl", Float) = -1
         [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
@@ -88,14 +100,20 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float _Saturation;
             float _Contrast;
             float4 _LightingRamp_TexelSize;
+            float4 _PaletteLUT_TexelSize;
+            float2 _Albedo_Offset;
             float4 _Albedo_TexelSize;
             float4 _Albedo_ST;
             float _RimLightPower;
             float4 _RimLightColor;
             float _RimLight;
             float _ReflectionLightPower;
+            float2 _Emission_Offset;
+            float2 _Emission_Tiling;
             float4 _ReflectionLightColor;
             float _ReflectionLight;
+            float2 _Normal_Map_Offset;
+            float4 _ChargeColor;
             float4 _BaseColor;
             float4 _AmbientLight;
             float _PixelSize;
@@ -117,7 +135,17 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float _Specular;
             float _Show_Vertex_Color_Weight;
             float _Lighting_Step;
+            float2 _Normal_Map_Tiling;
+            float2 _Albedo_Tiling;
+            float _ShadowPower;
+            float4 _ShadowColor;
+            float _Additional_Shadow;
+            float _Smoothness;
+            float _HitAmount;
+            float _ChargeAmount;
+            float4 _HitColor;
             CBUFFER_END
+
 
             // Object and Global properties
             SAMPLER(SamplerState_Point_Clamp);
@@ -125,7 +153,6 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             SAMPLER(sampler_LightingRamp);
             TEXTURE2D(_PaletteLUT);
             SAMPLER(sampler_PaletteLUT);
-            float4 _PaletteLUT_TexelSize;
             TEXTURE2D(_Albedo);
             SAMPLER(sampler_Albedo);
             TEXTURE2D(_NormalMap);

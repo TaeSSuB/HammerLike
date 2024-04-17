@@ -8,11 +8,11 @@ public class AnimationEventReceiver : MonoBehaviour
 
     public void EnableWeaponTrail()
     {
-        weaponObject.GetComponent<WeaponTrail>().EnableTrail();
+        //weaponObject.GetComponent<WeaponTrail>().EnableTrail();
     }
 
     public void DisableWeaponTrail()
     {
-        weaponObject.GetComponent<WeaponTrail>().DisableTrail();
+        //weaponObject.GetComponent<WeaponTrail>().DisableTrail();
     }
 }

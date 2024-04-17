@@ -11,7 +11,6 @@ public class CullingTreeNode
 
     public List<int> grassIDHeld = new List<int>();
 
-    public static bool EnableCulling = false;
     public CullingTreeNode(Bounds bounds, int depth)
     {
         m_children.Clear();
@@ -71,15 +70,7 @@ public class CullingTreeNode
 
     public void RetrieveLeaves(Plane[] frustum, List<Bounds> list, List<int> visibleIDList)
     {
-        bool isInFrustum = true;
-
-        // Check against the frustum only if culling is enabled.
-        if (EnableCulling)
-        {
-            isInFrustum = GeometryUtility.TestPlanesAABB(frustum, m_bounds);
-        }
-
-        if (isInFrustum)
+        if (GeometryUtility.TestPlanesAABB(frustum, m_bounds))
         {
             if (m_children.Count == 0)
             {
