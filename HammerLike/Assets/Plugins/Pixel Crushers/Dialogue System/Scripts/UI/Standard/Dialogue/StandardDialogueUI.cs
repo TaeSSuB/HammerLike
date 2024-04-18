@@ -204,6 +204,12 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
+        public override void HideAllAlerts()
+        {
+            m_alertQueue.Clear();
+            base.HideAllAlerts();
+        }
+
         private void UpdateAlertQueue()
         {
             if (alertUIElements.queueAlerts && m_alertQueue.Count > 0 && !alertUIElements.isVisible && !(alertUIElements.waitForHideAnimation && alertUIElements.isHiding))
@@ -315,6 +321,14 @@ namespace PixelCrushers.DialogueSystem
         public virtual void ForceOverrideSubtitlePanel(StandardUISubtitlePanel customPanel)
         {
             conversationUIElements.standardSubtitleControls.ForceOverrideSubtitlePanel(customPanel);
+        }
+
+        /// <summary>
+        /// Shows an actor immediately in a subtitle panel.
+        /// </summary>
+        public virtual void ShowActorInPanel(Actor actor, SubtitlePanelNumber subtitlePanelNumber, StandardUISubtitlePanel customPanel = null)
+        {
+            conversationUIElements.standardSubtitleControls.ShowActorInPanel(actor, subtitlePanelNumber, customPanel);
         }
 
         #endregion
