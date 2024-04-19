@@ -15,7 +15,10 @@ namespace RootMotion.Demos
         {
             if (target == null)
             {
-                GameObject player = GameObject.Find("Player"); // "Player"라는 이름을 가진 GameObject를 찾습니다.
+                //GameObject player = GameObject.Find("Player"); // "Player"라는 이름을 가진 GameObject를 찾습니다.
+
+                GameObject player = GameObject.FindWithTag("Player");
+
                 if (player != null) // GameObject가 존재하는지 확인합니다.
                 {
                     target = player.transform; // 찾은 GameObject의 Transform 컴포넌트를 target에 할당합니다.
