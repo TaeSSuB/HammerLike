@@ -1,9 +1,9 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Skill", menuName = "Skills/BasicSkill")]
-public class Skill : ScriptableObject
+public class SO_Skill : ScriptableObject
 {
     public string skillName;
     public string description;
-    // ½ºÅ³ÀÇ ¼¼ºÎÀûÀÎ Æ¯¼º ¹× È¿°ú ±¸Çö...
+    // ìŠ¤í‚¬ì˜ ì„¸ë¶€ì ì¸ íŠ¹ì„± ë° íš¨ê³¼ êµ¬í˜„...
 }

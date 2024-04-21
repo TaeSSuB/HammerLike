@@ -3,15 +3,35 @@ using UnityEngine;
 
 public class B_Inventory : MonoBehaviour
 {
-    public List<ItemBase> items = new List<ItemBase>();
+    public List<SO_Item> items = new List<SO_Item>();
 
-    public void AddItem(ItemBase item)
+    public int capacity = 20;
+
+    public bool AddItem(SO_Item item)
     {
-        items.Add(item);
+        if (items.Count < capacity)
+        {
+            items.Add(item);
+            return true;
+        }
+        else
+        {
+            Debug.Log("Not enough space in the container.");
+            return false;
+        }
     }
 
-    public void UseItem(ItemBase item)
+    public bool RemoveItem(SO_Item item)
     {
-        item.Use();
+        if (items.Contains(item))
+        {
+            items.Remove(item);
+            return true;
+        }
+        else
+        {
+            Debug.Log("Item not found in the container.");
+            return false;
+        }
     }
 }
