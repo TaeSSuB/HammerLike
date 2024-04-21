@@ -20,22 +20,4 @@ public class SO_UnitStatus : ScriptableObject
     public float currentAttackCooltime = 0f;
 
     public float mass = 1f;
-
-    public SO_UnitStatus MakeCopyStatus()
-    {
-        SO_UnitStatus newStatus = CreateInstance<SO_UnitStatus>();
-
-        newStatus.currentHP = currentHP;
-        newStatus.maxHP = maxHP;
-        newStatus.moveSpeed = moveSpeed;
-        newStatus.atkDamage = atkDamage;
-        newStatus.atkDamageOrigin = atkDamageOrigin;
-        newStatus.atkRange = atkRange;
-        newStatus.atkSpeed = atkSpeed;
-        newStatus.maxAttackCooltime = maxAttackCooltime;
-        newStatus.currentAttackCooltime = currentAttackCooltime;
-        newStatus.mass = mass;
-
-        return newStatus;
-    }
 }

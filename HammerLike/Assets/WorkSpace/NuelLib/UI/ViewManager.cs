@@ -109,12 +109,12 @@ namespace NuelLib.UI
 
         public static void ShowFirst()
         {
-            Show(instance.startingView.IView, false);
+            Show(instance.startingView?.IView, false);
         }
 
         public static void ShowMain()
         {
-            Show(instance.mainView.IView, false);
+            Show(instance.mainView?.IView, false);
         }
 
         public void ShowTooltip(GameObject newTooltipObj)

@@ -55,11 +55,10 @@ public class B_UnitBase : B_Entity
         switch (unitType)
         {
             case UnitType.Melee:
-                unitStatus = UnitManager.instance.baseUnitStatus.MakeCopyStatus();
+                unitStatus = Instantiate(UnitManager.instance.baseUnitStatus);
                 break;
             case UnitType.Range:
-                unitStatus = UnitManager.instance.rangerUnitStatus.MakeCopyStatus();
-                break;
+                unitStatus = Instantiate(UnitManager.instance.rangerUnitStatus); break;
             case UnitType.Magic:
                 // add please
                 break;
@@ -67,7 +66,7 @@ public class B_UnitBase : B_Entity
                 // add please
                 break;
             case UnitType.Develop:
-                unitStatus = UnitManager.instance.devUnitStatus.MakeCopyStatus();
+                unitStatus = Instantiate(UnitManager.instance.devUnitStatus);
                 break;
         }
 
@@ -138,7 +137,7 @@ public class B_UnitBase : B_Entity
         ClampHP();
     }
 
-    public void TakeDamage(Vector3 damageDir, int damage = 0, bool knockBack = true)
+    public virtual void TakeDamage(Vector3 damageDir, int damage = 0, bool knockBack = true)
     {
         if (isInvincible)
         {
