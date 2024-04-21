@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -18,7 +18,8 @@ public enum eBoundary
 public enum FollowOption
 {
     FollowToObject,
-    LimitedInRoom
+    LimitedInRoom,
+    DirectFollow
 }
 
 [System.Serializable]
@@ -157,6 +158,28 @@ public class CamCtrl : MonoBehaviour
     bool CameraBoundaryCheck(Vector3 proposedPosition)
     {
         return roomBounds.Contains(proposedPosition);
+    }
+
+    public void DirectFollow()
+    {
+        Vector3 prePos = mainCam.transform.position;
+        Vector3 targetPosition = followObjTr.transform.position;
+
+        // Y축의 위치를 고정합니다.
+        targetPosition.y = prePos.y;
+
+        // 공식 = a=hcot(θ)
+        float angle = mainCam.transform.eulerAngles.x;
+        float radian = angle * Mathf.Deg2Rad;
+        float height = prePos.y; 
+        height = Mathf.Abs(height);
+
+        float distance = height / Mathf.Tan(radian);
+
+        targetPosition.z += -distance;
+
+        mainCam.transform.position = targetPosition;
+
     }
 
     public void Following()
@@ -394,8 +417,18 @@ public class CamCtrl : MonoBehaviour
 			ComputeCamBoundaryRay(Defines.ViewportPos[i], ref boundaryPosToRay[i]);
 		}
 		Zoom();
-        if (followOption == FollowOption.FollowToObject)
-            Following();
+
+        switch (followOption)
+        {
+            case FollowOption.FollowToObject:
+                Following();
+                break;
+            case FollowOption.LimitedInRoom:
+                break;
+            case FollowOption.DirectFollow:
+                DirectFollow();
+                break;
+        }
     }
 
 	private void FixedUpdate()
