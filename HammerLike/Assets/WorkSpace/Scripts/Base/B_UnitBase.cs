@@ -14,7 +14,7 @@ public enum UnitType
     Develop
 }
 
-public class B_UnitBase : B_ObjectBase
+public class B_UnitBase : B_Entity
 {
     protected SO_UnitStatus unitStatus;
 
@@ -112,7 +112,7 @@ public class B_UnitBase : B_ObjectBase
         if (!isGrounded || isLockMove)
             return Vector3.zero;
 
-        var moveDir = manager.ApplyCoordScaleNormalize(inDir);
+        var moveDir = GameManager.instance.ApplyCoordScaleNormalize(inDir);
         //moveDir.Normalize();
 
         rigid.velocity = moveDir * unitStatus.moveSpeed;

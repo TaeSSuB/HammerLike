@@ -3,11 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class B_ObjectBase : MonoBehaviour
+public class B_Entity : MonoBehaviour
 {
-    [Header("Manager (Temp - 240331), a.HG")]
-    [SerializeField] protected GameManager manager;
-
     [Header("Base Object Info")]
     [SerializeField] protected GameObject rootObj;
     [SerializeField] protected GameObject meshObj;
@@ -49,11 +46,6 @@ public class B_ObjectBase : MonoBehaviour
 
     public virtual void Init()
     {
-        if(manager == null)
-        {
-            manager = GameManager.instance;
-        }
-
         if(rootObj == null)
         {
             rootObj = gameObject;
