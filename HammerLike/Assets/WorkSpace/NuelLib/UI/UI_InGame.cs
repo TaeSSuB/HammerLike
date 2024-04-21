@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UI_InGame : MonoBehaviour
 {
     [Header("HP UI")]
     [SerializeField] protected Image hpBarImg;
+    [SerializeField] protected TMP_Text hpMaxText;
+    [SerializeField] protected TMP_Text hpCurrentText;
     protected RectTransform hpBarRctTR;
 
     [Header("Charge UI")]
@@ -15,7 +18,7 @@ public class UI_InGame : MonoBehaviour
     [SerializeField] protected GameObject chargeParticle;
 
     [Header("Gold UI")]
-    [SerializeField] protected Text goldText;
+    [SerializeField] protected TMP_Text goldText;
 
     [Header("Inventory UI")]
     [SerializeField] protected GameObject inventoryUI;
@@ -44,6 +47,7 @@ public class UI_InGame : MonoBehaviour
 
     public void Initialize()
     {
+        Debug.Log("UI_InGame Initialize");
         B_Player player = GameManager.instance.Player;
         playerStatus = player.UnitStatus as SO_PlayerStatus;
 
@@ -51,6 +55,8 @@ public class UI_InGame : MonoBehaviour
 
         chargeBarRctTR = chargeBarImg.gameObject.GetComponent<RectTransform>();
         chargeParticle.SetActive(false);
+
+        UpdateHP(playerStatus.maxHP);
 
         // 이벤트 등록. 메모리 해제 주의. a.HG
         player.OnHPChanged += UpdateHP;
@@ -75,6 +81,9 @@ public class UI_InGame : MonoBehaviour
 
     private void UpdateHP(int hp)
     {
+        hpMaxText.text = playerStatus.maxHP.ToString();
+        hpCurrentText.text = hp.ToString();
+
         float hpRatio = (float)hp / playerStatus.maxHP;
         hpBarRctTR.anchorMax = new Vector2(hpBarRctTR.anchorMax.x, hpRatio);
     }
