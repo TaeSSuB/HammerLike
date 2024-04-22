@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 
 namespace ProPixelizer
 {
-
+    [DisallowMultipleComponent]
     public class ObjectRenderSnapable : MonoBehaviour
     {
         /// <summary>
@@ -66,7 +66,7 @@ namespace ProPixelizer
 
         // Should we use a pixel grid aligned to the root entity's position? 
         [FormerlySerializedAs("UseRootPixelGrid")]
-        [Tooltip("When true, the pixels of this object are snapped into alignment with another transform.")]
+        [Tooltip("When true, the pixels of this object are snapped into alignment with the specified transform.")]
         public bool AlignPixelGrid = false;
 
         /// <summary>
@@ -115,8 +115,12 @@ namespace ProPixelizer
                 iter = iter.parent;
             }
             TransformDepth = depth;
-
             _renderer = GetComponent<Renderer>();
+            UpdateMaterials();
+        }
+
+        public void UpdateMaterials()
+        {
             if (_renderer == null)
                 return;
 
@@ -124,11 +128,13 @@ namespace ProPixelizer
             {
                 if (_renderer.materials[i].HasProperty("_PixelGridOrigin"))
                 {
-                    // Instance the propixelizer material.
-                    _renderer.materials[i] = new Material(_renderer.materials[i]);
-                    _renderer.materials[i].EnableKeyword("USE_OBJECT_POSITION_ON");
-                    _renderer.materials[i].EnableKeyword("USE_OBJECT_POSITION");
+                    // _renderer.materials[i] = new Material(_renderer.materials[i]);
+                    // Note - instancing should be automatic from unity when accessing materials reference:
+                    //
+                    // > "Modifying any material in materials will change the appearance of only that object."
+                    //     - https://docs.unity3d.com/ScriptReference/Renderer-materials.html
                     _pixelSize = Mathf.RoundToInt(_renderer.materials[i].GetFloat("_PixelSize"));
+                    _renderer.materials[i].EnableKeyword(ProPixelizerKeywords.USE_OBJECT_POSITION_FOR_PIXEL_GRID_ON);
                 }
             }
         }
@@ -141,7 +147,7 @@ namespace ProPixelizer
         /// <summary>
         /// Snap euler angles to specified AngleResolution.
         /// </summary>
-        public void SnapAngles(Camera camera)
+        public void SnapAngles(ProPixelizerCamera camera)
         {
             if (!ShouldSnapAngles())
                 return;
@@ -160,7 +166,7 @@ namespace ProPixelizer
                     }
                 case eSnapAngleStrategy.CameraSpaceY:
                     {
-                        float cameraY = camera.transform.eulerAngles.y;
+                        float cameraY = camera.PreSnapCameraRotation.eulerAngles.y;
                         //snap in relative angle space with respect to camera
                         angles.y -= cameraY;
                         Vector3 snapped = new Vector3(

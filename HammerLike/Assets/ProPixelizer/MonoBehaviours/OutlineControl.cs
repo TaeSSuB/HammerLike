@@ -39,7 +39,6 @@ namespace ProPixelizer
                 {
                     if (mesh.materials[i].HasProperty("_OutlineColor"))
                     {
-                        mesh.materials[i] = new Material(mesh.materials[i]); //create instance
                         OutlineMaterialIndices.Add(i); //needed b/c other things might create a new instance of material
                     }
                 }

@@ -76,7 +76,7 @@ Shader "HLPixelizer/SRP/HLPixelizerTerrain"
     }
 		SubShader
 		{
-			Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
+			Tags { "RenderType" = "ProPixelizer" "RenderPipeline" = "UniversalPipeline" }
 
 			UsePass "HLPixelizer/Hidden/HLPixelizerTerrain/UNIVERSAL FORWARD"
 			UsePass "HLPixelizer/Hidden/HLPixelizerTerrain/SHADOWCASTER"
@@ -87,7 +87,6 @@ Shader "HLPixelizer/SRP/HLPixelizerTerrain"
 		{
 			Name "ProPixelizerPass"
 			Tags {
-				"RenderPipeline" = "UniversalRenderPipeline"
 				"LightMode" = "ProPixelizer"
 				"DisableBatching" = "True"
 			}
@@ -98,16 +97,14 @@ Shader "HLPixelizer/SRP/HLPixelizerTerrain"
 
 			HLSLPROGRAM
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Assets/ProPixelizer/SRP/PixelUtils.hlsl"
-            #include "Assets/ProPixelizer/SRP/PackingUtils.hlsl"
-            #include "Assets/ProPixelizer/SRP/ScreenUtils.hlsl"
+            #include "Assets/ProPixelizer/SRP/ShaderLibrary/PixelUtils.hlsl"
+            #include "Assets/ProPixelizer/SRP/ShaderLibrary/PackingUtils.hlsl"
+            #include "Assets/ProPixelizer/SRP/ShaderLibrary/ScreenUtils.hlsl"
 			#pragma vertex outline_vert
 			#pragma fragment outline_frag
 			#pragma target 2.5
-			#pragma multi_compile_local USE_OBJECT_POSITION_ON _
-			#pragma multi_compile USE_ALPHA_ON _
-			#pragma multi_compile NORMAL_EDGE_DETECTION_ON _
-			#pragma multi_compile_local PROPIXELIZER_DITHERING_ON _
+            #pragma multi_compile_local USE_OBJECT_POSITION_FOR_PIXEL_GRID_ON _
+            #pragma shader_feature_local PROPIXELIZER_DITHERING_ON _
 			
 			// If you want to use the SRP Batcher:
 			// The CBUFFER has to match that generated from ShaderGraph - otherwise all hell breaks loose.
@@ -227,7 +224,7 @@ Shader "HLPixelizer/SRP/HLPixelizerTerrain"
             TEXTURE2D(_Normal_1);
             SAMPLER(sampler_Normal_1);
 
-			#include "Assets/ProPixelizer/SRP/OutlinePass.hlsl"
+			#include "Assets/ProPixelizer/SRP/ShaderLibrary/OutlinePass.hlsl"
 			ENDHLSL
 		}
      }
