@@ -1,4 +1,3 @@
-using RoomGen;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,7 +53,7 @@ public class BSPGenerator : MonoBehaviour
         {
             return renderer.bounds.size;
         }
-        return new Vector3(1, 0, 1);  // 기본 크기를 반환 (렌더러가 없는 경우)
+        return new Vector3(1, 0, 1);  // 湲곕낯 ?ш린瑜?諛섑솚 (?뚮뜑?ш? ?녿뒗 寃쎌슦)
     }
 
     public void ReGenerator()
@@ -117,7 +116,7 @@ public class BSPGenerator : MonoBehaviour
     {
         if (depth <= 0) return;
 
-        float splitRatio = Random.Range(0.4f, 0.6f);
+        float splitRatio = Mathf.Round(Random.Range(0.4f, 0.6f) * 100f) / 100f;
 
         if (node.room.width > node.room.height)
         {
@@ -256,7 +255,7 @@ public class BSPGenerator : MonoBehaviour
 
         if (deltaX == 0 || deltaZ == 0)
         {
-            
+
             PlaceTilesAlongLine(startPosition, endPosition, false);
         }
         else
@@ -278,17 +277,19 @@ public class BSPGenerator : MonoBehaviour
 
             // Place corner objects
             DetermineAndPlaceCornerObjects(deltaX, deltaZ, intermediate1, intermediate2);
-
+            Vector3 cornerKMJ = new Vector3(2, 0, 6);
             Vector3 cornerSize = GetPrefabSize(cornerPrefab); // 
             Vector3 direction1 = (intermediate2 - intermediate1).normalized;
             Vector3 offsetStart1 = intermediate1 + direction1 * cornerSize.x * 4; // 
             Vector3 direction0 = (intermediate1 - startPosition).normalized;
             Vector3 direction2 = (endPosition - intermediate2).normalized;
             Vector3 offsetStart2 = intermediate2 + direction2 * cornerSize.x * 4f; // 
-            Vector3 offsetEnd1 = intermediate1 - direction0 * cornerSize.x*2;
-            Vector3 offsetEnd2 = intermediate2 - direction1 * cornerSize.x *2;
-            PlaceTilesAlongLine(startPosition, offsetEnd1, true);
-            PlaceTilesAlongLine(offsetStart1, offsetEnd2, false);
+            Vector3 offsetEnd1 = intermediate1 - direction0 * cornerSize.x * 2;
+            Vector3 offsetEnd11 = offsetEnd1 - direction0 * cornerSize.z * 2;
+            Vector3 offsetEnd2 = intermediate2 - direction1 * cornerSize.x * 2;
+            Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 2;
+            PlaceTilesAlongLine(startPosition, offsetEnd11, false);
+            PlaceTilesAlongLine(offsetStart1, offsetEnd22, false);
             PlaceTilesAlongLine(offsetStart2, endPosition, false);
         }
     }
@@ -465,7 +466,7 @@ public class BSPGenerator : MonoBehaviour
         if (node.roomObject != null)
         {
             // Check connection between left and right child rooms if they both have roomObjects
-            if (node.leftChild != null && node.leftChild.roomObject != null && 
+            if (node.leftChild != null && node.leftChild.roomObject != null &&
                 node.rightChild != null && node.rightChild.roomObject != null)
             {
                 connectedRooms.Add(new KeyValuePair<BSPNode, BSPNode>(node.leftChild, node.rightChild));
@@ -480,24 +481,21 @@ public class BSPGenerator : MonoBehaviour
         Vector3 direction = (end - start).normalized;
         float distance = Vector3.Distance(start, end);
         float tileStep = tileSize.x;
-        int tileCount = Mathf.CeilToInt(distance / tileStep);
+        int tileCount = Mathf.FloorToInt(distance / tileStep);
 
-        if (skipLastTile && tileCount > 0)
+        if (skipLastTile)
             tileCount--;
 
         Quaternion rotation = Quaternion.LookRotation(direction);
 
-
         for (int i = 0; i < tileCount; i++)
         {
             Vector3 tilePosition = start + direction * tileStep * i;
-            if (i == tileCount - 1 && !skipLastTile)
+            Instantiate(tilePrefab, tilePosition, rotation);
+            if (i == tileCount - 1)
             {
-                // 마지막 타일 위치 보정
-                tilePosition = end - direction * (tileSize.x / 2);
+                Instantiate(tilePrefab, end, rotation);
             }
-            GameObject tile = Instantiate(tilePrefab, tilePosition, rotation);
-            tile.transform.parent = tileParent.transform;
         }
     }
 
