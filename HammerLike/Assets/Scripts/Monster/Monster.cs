@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Johnson;
 using UnityEngine.AI;
-using RootMotion.Dynamics; // RootMotion 라이브러리 참조 추가
+using RootMotion.Dynamics; // RootMotion ?쇱씠釉뚮윭由?李몄“ 異붽?
 using RootMotion.Demos;
 
 public enum MonsterType
@@ -21,7 +21,7 @@ public struct MonsterStat
     public float maxHp;
     public float curHp;
     public float attackPoint;
-    public float attackRange; // °ø°Ý »çÁ¤°Å¸®
+    public float attackRange; // 째첩째횦 쨩챌횁짚째횇쨍짰
     [Space(7.5f)]
     public float walkSpd;
     public float runSpd;
@@ -30,18 +30,18 @@ public struct MonsterStat
     public EnvasionStat envasionStat;
 
     [Space(7.5f)]
-    public float upperHomingSpd; //»óÃ¼ È¸Àü ¼Óµµ
-    public float legHomingSpd; //ÇÏÃ¼ È¸Àü ¼Óµµ
+    public float upperHomingSpd; //쨩처횄쩌 횊쨍?체 쩌횙쨉쨉
+    public float legHomingSpd; //횉횕횄쩌 횊쨍?체 쩌횙쨉쨉
 
-    public float detectionRange;  // ÇÃ·¹ÀÌ¾î¸¦ ÀÎ½ÄÇÒ ¹üÀ§ ¼³Á¤. ¿øÇÏ´Â °ªÀ¸·Î Á¶Àý °¡´É.
+    public float detectionRange;  // 횉횄쨌쨔?횑쩐챤쨍짝 ?횓쩍횆횉횘 쨔체?짠 쩌쨀횁짚. 쩔첩횉횕쨈횂 째짧?쨍쨌횓 횁쨋?첵 째징쨈횋.
 
 }
 
 [System.Serializable]
 public class DropItem
 {
-    public int itemID; // ¾ÆÀÌÅÛ ID
-    public float dropChance; // µå¶ø È®·ü
+    public int itemID; // 쩐횈?횑횇횤 ID
+    public float dropChance; // 쨉책쨋첩 횊짰쨌체
 }
 
 
@@ -49,9 +49,11 @@ public class Monster : MonoBehaviour
 {
 
     private Transform playerTransform;
-    // Note: ±â´É ±¸Çö ÇÒ ¶§´Â Á¢±ÙÁöÁ¤ÀÚ Å©°Ô ½Å°æ ¾È¾²°í ÀÛ¾÷ÇÔ.
-    // Â÷ÈÄ ±â´É ÀÛ¾÷ ³¡³ª°í ³ª¸é Ãß°¡ÀûÀ¸·Î Á¤¸® ¿¹Á¤!!
-    // ºÒÆíÇØµµ ¾çÇØ¹Ù¶ø´Ï´Ù!!! ½º¸¶¹Ì¼¾!!
+    // Note: 짹창쨈횋 짹쨍횉철 횉횘 쨋짠쨈횂 횁짖짹횢횁철횁짚?횣 횇짤째횚 쩍횇째챈 쩐횊쩐짼째챠 ?횤쩐첨횉횚.
+    // 횂첨횊횆 짹창쨈횋 ?횤쩐첨 쨀징쨀짧째챠 쨀짧쨍챕 횄횩째징?청?쨍쨌횓 횁짚쨍짰 쩔쨔횁짚!!
+    // 쨘횘횈챠횉횠쨉쨉 쩐챌횉횠쨔횢쨋첩쨈횕쨈횢!!! 쩍쨘쨍쨋쨔횑쩌쩐!!
+
+    public static event Action<Vector3> OnMonsterDeath;
 
     public MonsterStat stat;
     public MonsterType monsterType;
@@ -60,9 +62,9 @@ public class Monster : MonoBehaviour
     public MonsterFSM fsm;
 
     [Header("Ranged Attack Settings")]
-    public GameObject ProjectilePrefab; // ¿ø°Å¸® °ø°ÝÀ» À§ÇÑ Åõ»çÃ¼ ÇÁ¸®ÆÕ
-    public float ProjectileSpeed; // Åõ»çÃ¼ ¼Óµµ
-    public Transform ProjectileSpawnPoint; // ¹ß»çÃ¼ »ý¼º À§Ä¡
+    public GameObject ProjectilePrefab; // 쩔첩째횇쨍짰 째첩째횦?쨩 ?짠횉횗 횇천쨩챌횄쩌 횉횁쨍짰횈횛
+    public float ProjectileSpeed; // 횇천쨩챌횄쩌 쩌횙쨉쨉
+    public Transform ProjectileSpawnPoint; // 쨔횩쨩챌횄쩌 쨩첵쩌쨘 ?짠횆징
     private GameObject currentProjectile;
 
     [Space(10f)]
@@ -73,17 +75,17 @@ public class Monster : MonoBehaviour
 
     [Space(10f)]
     [Header("Action Table")]
-    // Note: ÇØ´ç ºÎºÐÀº ¸ó½ºÅÍ¿¡ ¸Â´Â ¾×¼ÇÀ¸·Î ¼öÁ¤ ÇÊ¿ä
+    // Note: 횉횠쨈챌 쨘횓쨘횖?쨘 쨍처쩍쨘횇횒쩔징 쨍횂쨈횂 쩐횞쩌횉?쨍쨌횓 쩌철횁짚 횉횎쩔채
     public MonsterMove move;
     public MonsterAtk atk;
     public MonsterAim monsterAim;
 
     [Space(10f)]
     [Header("Cam Controller")]
-    public CamCtrl camCtrl; // Note: ¸ó½ºÅÍ°¡ Ä«¸Þ¶ó¸¦ Á÷Á¢ Á¦¾îÇÒ ÇÊ¿ä°¡ ÀÖÀ»Áö È®ÀÎ ÇÊ¿ä
+    public CamCtrl camCtrl; // Note: 쨍처쩍쨘횇횒째징 횆짬쨍횧쨋처쨍짝 횁첨횁짖 횁짝쩐챤횉횘 횉횎쩔채째징 ?횜?쨩횁철 횊짰?횓 횉횎쩔채
 
     [Header("Drop Items")]
-    public List<DropItem> dropItems = new List<DropItem>(); // µå¶ø ¾ÆÀÌÅÛ ¸ñ·Ï
+    public List<DropItem> dropItems = new List<DropItem>(); // 쨉책쨋첩 쩐횈?횑횇횤 쨍챰쨌횕
 
     [Space(10f)]
     [Header("Anim Bones")]
@@ -98,7 +100,7 @@ public class Monster : MonoBehaviour
 
     public Transform target;
     NavMeshAgent nmAgent;
-    public LineRenderer lineRenderer; // LineRenderer ÂüÁ¶
+    public LineRenderer lineRenderer; // LineRenderer 횂체횁쨋
 
     public Collider attackCollider;
     public MeshRenderer attackMeshRenderer;
@@ -118,7 +120,7 @@ public class Monster : MonoBehaviour
     private bool isRising = false;
     private Vector3 pos;
 
-    public GameObject monsterPrefab; // Inspector에서 할당된 몬스터 프리팹
+    public GameObject monsterPrefab; // Inspector?먯꽌 ?좊떦??紐ъ뒪???꾨━??
     private GameObject clonedMonster;
     private void Awake()
     {
@@ -148,23 +150,23 @@ public class Monster : MonoBehaviour
             healthSlider.value = stat.curHp;
         }
 
-        // LineRenderer ±âº» ¼³Á¤
+        // LineRenderer 짹창쨘쨩 쩌쨀횁짚
         if (lineRenderer != null)
         {
-            lineRenderer.positionCount = 2; // ½ÃÀÛÁ¡°ú ³¡Á¡
-            lineRenderer.widthMultiplier = 0.05f; // ¼±ÀÇ ³Êºñ
+            lineRenderer.positionCount = 2; // 쩍횄?횤횁징째첬 쨀징횁징
+            lineRenderer.widthMultiplier = 0.05f; // 쩌짹?횉 쨀횎쨘챰
         }
 
         if (target == null)
         {
-            GameObject player = GameObject.Find("Player"); // "Player"라는 이름을 가진 GameObject를 찾습니다.
-            if (player != null) // GameObject가 존재하는지 확인합니다.
+            GameObject player = GameObject.Find("Player"); // "Player"?쇰뒗 ?대쫫??媛吏?GameObject瑜?李얠뒿?덈떎.
+            if (player != null) // GameObject媛 議댁옱?섎뒗吏 ?뺤씤?⑸땲??
             {
-                target = player.transform; // 찾은 GameObject의 Transform 컴포넌트를 target에 할당합니다.
+                target = player.transform; // 李얠? GameObject??Transform 而댄룷?뚰듃瑜?target???좊떦?⑸땲??
             }
             else
             {
-                Debug.LogError("Player 오브젝트를 찾을 수 없습니다. 'Player'라는 이름의 오브젝트가 씬에 존재하는지 확인해주세요.");
+                Debug.LogError("Player ?ㅻ툕?앺듃瑜?李얠쓣 ???놁뒿?덈떎. 'Player'?쇰뒗 ?대쫫???ㅻ툕?앺듃媛 ?ъ뿉 議댁옱?섎뒗吏 ?뺤씤?댁＜?몄슂.");
             }
         }
         if (raycastShooter == null)
@@ -211,7 +213,7 @@ public class Monster : MonoBehaviour
             stat.curHp = 0;
             Die();
         }
-        // 플레이어 방향 기반 라인 렌더링 업데이트
+        // ?뚮젅?댁뼱 諛⑺뼢 湲곕컲 ?쇱씤 ?뚮뜑留??낅뜲?댄듃
         UpdateDirectionLines();
         if (Input.GetKeyDown(KeyCode.K))
         {
@@ -227,14 +229,14 @@ public class Monster : MonoBehaviour
             Vector3 playerForward = player.transform.forward;
             Vector3 playerPosition = player.transform.position + Vector3.up * 0.5f;
 
-            // 정면 방향
+            // ?뺣㈃ 諛⑺뼢
             Vector3 frontDirection = playerForward;
-            // 좌측 대각선 방향
+            // 醫뚯륫 ?媛곸꽑 諛⑺뼢
             Vector3 leftDirection = Quaternion.Euler(0, -45, 0) * playerForward;
-            // 우측 대각선 방향
+            // ?곗륫 ?媛곸꽑 諛⑺뼢
             Vector3 rightDirection = Quaternion.Euler(0, 45, 0) * playerForward;
 
-            // 방향 저장
+            // 諛⑺뼢 ???
 
         }
     }
@@ -251,7 +253,7 @@ public class Monster : MonoBehaviour
     {
         if (playerTransform != null && stat.curHp > 0)
         {
-            FaceTarget(); // ÇÃ·¹ÀÌ¾î¸¦ Áö¼ÓÀûÀ¸·Î ¹Ù¶óº¸°Ô ÇÏ´Â ¸Þ¼­µå
+            FaceTarget(); // 횉횄쨌쨔?횑쩐챤쨍짝 횁철쩌횙?청?쨍쨌횓 쨔횢쨋처쨘쨍째횚 횉횕쨈횂 쨍횧쩌짯쨉책
         }
 
     }
@@ -280,7 +282,7 @@ public class Monster : MonoBehaviour
             WeaponCollider weaponCollider = other.GetComponent<WeaponCollider>();
             if (weaponCollider != null && lastProcessedAttackId != weaponCollider.CurrentAttackId)
             {
-                // µ¥¹ÌÁö ¹× ³Ë¹é Ã³¸®
+                // 쨉짜쨔횑횁철 쨔횞 쨀횏쨔챕 횄쨀쨍짰
                 PlayerAtk playerAttack = other.GetComponentInParent<PlayerAtk>();
                 if (playerAttack != null && canDamage)
                 {
@@ -290,19 +292,19 @@ public class Monster : MonoBehaviour
                     float customIntensity = 0f;
                     if (player.atk.curCharging >= 0 && player.atk.curCharging < 2)
                     {
-                        //customForce = raycastShooter.force; // 원본 크기
+                        //customForce = raycastShooter.force; // ?먮낯 ?ш린
                         customDamage = playerAttack.attackDamage;
                         customIntensity = intensity;
                     }
                     else if (player.atk.curCharging >= 2 && player.atk.curCharging < 4)
                     {
-                        //customForce = raycastShooter.force * 1.5f; // 1.5배 크기
+                        //customForce = raycastShooter.force * 1.5f; // 1.5諛??ш린
                         customDamage = playerAttack.attackDamage * 1.5f;
                         customIntensity = intensity * 1.5f;
                     }
                     else // player.curCharging >= 4
                     {
-                        //customForce = raycastShooter.force * 2f; // 2배 크기
+                        //customForce = raycastShooter.force * 2f; // 2諛??ш린
                         customDamage = playerAttack.attackDamage * 2f;
                         customIntensity = intensity * 3f;
                     }
@@ -316,7 +318,7 @@ public class Monster : MonoBehaviour
                     }
 
                     lastProcessedAttackId = weaponCollider.CurrentAttackId;
-                    weaponCollider.hasProcessedAttack = true; // 공격 처리 표시
+                    weaponCollider.hasProcessedAttack = true; // 怨듦꺽 泥섎━ ?쒖떆
 
                 }
 
@@ -344,10 +346,10 @@ public class Monster : MonoBehaviour
 
     private IEnumerator KnockbackCoroutine(Vector3 direction, float intensity)
     {
-        float duration = 1.0f; // 넉백 지속 시간 (1초)
-        direction.y = 0; // Y축 방향을 0으로 설정하여 수평 넉백을 보장
+        float duration = 1.0f; // ?됰갚 吏???쒓컙 (1珥?
+        direction.y = 0; // Y異?諛⑺뼢??0?쇰줈 ?ㅼ젙?섏뿬 ?섑룊 ?됰갚??蹂댁옣
         Vector3 start = transform.position;
-        Vector3 end = transform.position + direction.normalized * intensity; // 최종 목표 위치
+        Vector3 end = transform.position + direction.normalized * intensity; // 理쒖쥌 紐⑺몴 ?꾩튂
 
         float elapsedTime = 0;
         while (elapsedTime < duration)
@@ -357,26 +359,26 @@ public class Monster : MonoBehaviour
             yield return null;
         }
 
-        // 마지막으로 최종 위치를 확실히 설정
+        // 留덉?留됱쑝濡?理쒖쥌 ?꾩튂瑜??뺤떎???ㅼ젙
         transform.position = end;
     }
 
     private IEnumerator KnockBackDamageCooldown()
     {
-        yield return new WaitForSeconds(1f); // ³Ë¹é µ¥¹ÌÁö Äð´Ù¿î
+        yield return new WaitForSeconds(1f); // 쨀횏쨔챕 쨉짜쨔횑횁철 횆챨쨈횢쩔챤
         canTakeKnockBackDamage = true;
     }
 
 
     private IEnumerator CanDamage()
     {
-        yield return new WaitForSeconds(2f); // ³Ë¹é µ¥¹ÌÁö Äð´Ù¿î
+        yield return new WaitForSeconds(2f); // 쨀횏쨔챕 쨉짜쨔횑횁철 횆챨쨈횢쩔챤
         canDamage = true;
     }
 
     private void TakeDamage(float damage)
     {
-        if (stat.curHp <= 0) return; // ÀÌ¹Ì »ç¸ÁÇÑ °æ¿ì µ¥¹ÌÁö¸¦ ¹ÞÁö ¾ÊÀ½
+        if (stat.curHp <= 0) return; // ?횑쨔횑 쨩챌쨍횁횉횗 째챈쩔챙 쨉짜쨔횑횁철쨍짝 쨔횧횁철 쩐횎?쩍
         SoundManager soundManager = SoundManager.Instance;
         soundManager.PlaySFX(soundManager.audioClip[3]);
 
@@ -396,7 +398,7 @@ public class Monster : MonoBehaviour
             }
         }
 
-        if (stat.curHp > 0)  // ¸ó½ºÅÍ°¡ »ì¾ÆÀÖÀ» ¶§¸¸ ÇÇ°Ý Ã³¸®
+        if (stat.curHp > 0)  // 쨍처쩍쨘횇횒째징 쨩챙쩐횈?횜?쨩 쨋짠쨍쨍 횉횉째횦 횄쨀쨍짰
         {
             stat.curHp -= damage;
             if (attackCollider != null && attackCollider.enabled == true)
@@ -412,7 +414,7 @@ public class Monster : MonoBehaviour
             if (healthSlider != null)
             {
                 healthSlider.value = stat.curHp;
-                //ShowHealthSlider();  // Ã¼·Â UI ½½¶óÀÌ´õ Ç¥½Ã
+                //ShowHealthSlider();  // 횄쩌쨌횂 UI 쩍쩍쨋처?횑쨈천 횉짜쩍횄
             }
 
             if (stat.curHp <= 0)
@@ -435,7 +437,7 @@ public class Monster : MonoBehaviour
 
     private IEnumerator KnockBackDuration()
     {
-        yield return new WaitForSeconds(0.2f); // ³Ë¹é Áö¼Ó ½Ã°£
+        yield return new WaitForSeconds(0.2f); // 쨀횏쨔챕 횁철쩌횙 쩍횄째짙
         isKnockedBack = false;
         isRising = false;
         puppet.puppetMaster.pinWeight = 1;
@@ -443,8 +445,8 @@ public class Monster : MonoBehaviour
 
     private void Die()
     {
-        // ¸ó½ºÅÍ »ç¸Á Ã³¸®
-        // ¿¹: gameObject.SetActive(false); ¶Ç´Â Destroy(gameObject);
+        // 쨍처쩍쨘횇횒 쨩챌쨍횁 횄쨀쨍짰
+        // 쩔쨔: gameObject.SetActive(false); 쨋횉쨈횂 Destroy(gameObject);
         animCtrl.SetBool("IsChasing", false);
         animCtrl.SetTrigger("tDead");
         if (attackCollider != null)
@@ -452,7 +454,7 @@ public class Monster : MonoBehaviour
         if (attackMeshRenderer != null)
             DisableAttackMeshRenderer();
 
-        // NavMeshAgent ºñÈ°¼ºÈ­
+        // NavMeshAgent 쨘챰횊째쩌쨘횊짯
         /*if (nmAgent != null && nmAgent.isActiveAndEnabled)
         {
             nmAgent.isStopped = true;
@@ -464,6 +466,7 @@ public class Monster : MonoBehaviour
         SoundManager soundManager = SoundManager.Instance;
         soundManager.PlaySFX(soundManager.audioClip[2]);
         playerTransform = null;
+        OnMonsterDeath?.Invoke(transform.position);
         DropItems();
         DisconnectMusclesRecursive();
         //destroyObject();
@@ -495,7 +498,7 @@ public class Monster : MonoBehaviour
             /*Vector3 playerDirection = transform.position - player.transform.position;
             playerDirection.y = 0;
             Vector3 knockbackDirection = playerDirection.normalized;*/
-            // 모든 근육을 순회하며 재귀적으로 연결 해제
+            // 紐⑤뱺 洹쇱쑁???쒗쉶?섎ŉ ?ш??곸쑝濡??곌껐 ?댁젣
             for (int i = 0; i < puppet.puppetMaster.muscles.Length; i++)
             {
 
@@ -513,32 +516,32 @@ public class Monster : MonoBehaviour
     }
     private void DetectPlayer()
     {
-        if (stat.curHp <= 0) return; // 체력이 0 이하면 중지
+        if (stat.curHp <= 0) return; // 泥대젰??0 ?댄븯硫?以묒?
         if (Vector3.Distance(transform.position, target.position) <= stat.detectionRange)
         {
-            playerTransform = target; // 플레이어를 지정하는게 아닌 사실상 플레이어의 위치를 추적
-            player = target.GetComponent<Player>(); // 타겟은 사실상 플레이어니 플레이어의 플레이어 컴포넌트 받아옴
+            playerTransform = target; // ?뚮젅?댁뼱瑜?吏?뺥븯?붽쾶 ?꾨땶 ?ъ떎???뚮젅?댁뼱???꾩튂瑜?異붿쟻
+            player = target.GetComponent<Player>(); // ?寃잛? ?ъ떎???뚮젅?댁뼱???뚮젅?댁뼱???뚮젅?댁뼱 而댄룷?뚰듃 諛쏆븘??
 
             if (player != null)
             {
                 monsterAim.SetTarget(target); //
                 animCtrl.SetBool("IsChasing", true);
                 SoundManager soundManager = SoundManager.Instance;
-                //soundManager.PlaySFX(soundManager.audioClip[4]);  // 발자국 소리 좀 애매함 너무 큼
+                //soundManager.PlaySFX(soundManager.audioClip[4]);  // 諛쒖옄援??뚮━ 醫 ?좊ℓ???덈Т ??
             }
         }
         else
         {
             playerTransform = null;
-            player = null; // Player ÂüÁ¶µµ ÇØÁ¦
-            monsterAim.SetTarget(null); // MonsterAim ½ºÅ©¸³Æ®ÀÇ Å¸°Ùµµ ÇØÁ¦
+            player = null; // Player 횂체횁쨋쨉쨉 횉횠횁짝
+            monsterAim.SetTarget(null); // MonsterAim 쩍쨘횇짤쨍쨀횈짰?횉 횇쨍째횢쨉쨉 횉횠횁짝
         }
     }
 
 
     void ChasePlayer()
     {
-        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking")) return; // 체력이 0보다 작거나 공격중이면 락온 되기 때문에 제한둠
+        if (stat.curHp <= 0 || animCtrl.GetBool("IsAttacking")) return; // 泥대젰??0蹂대떎 ?묎굅??怨듦꺽以묒씠硫??쎌삩 ?섍린 ?뚮Ц???쒗븳??
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
 
         if (distanceToTarget <= stat.detectionRange)
@@ -595,7 +598,7 @@ public class Monster : MonoBehaviour
     {
         if (puppet != null && puppet.isActiveAndEnabled)
         {
-            // 각 뼈대에 대해 Mesh의 위치와 회전을 PuppetMaster의 상태에 맞춥니다.
+            // 媛?堉덈??????Mesh???꾩튂? ?뚯쟾??PuppetMaster???곹깭??留욎땅?덈떎.
             foreach (var muscle in puppet.puppetMaster.muscles)
             {
                 var boneTransform = muscle.transform;
@@ -639,7 +642,7 @@ public class Monster : MonoBehaviour
         }
         else
         {
-            // 특별형 (예시 Special) 애들 참고
+            // ?밸퀎??(?덉떆 Special) ?좊뱾 李멸퀬
         }
 
     }
@@ -673,7 +676,7 @@ public class Monster : MonoBehaviour
             //nmAgent.isStopped = true;
         }
 
-        // ÃßÀûÀ» ¸ØÃß±â À§ÇØ NavMeshAgent¸¦ ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
+        // 횄횩?청?쨩 쨍횠횄횩짹창 ?짠횉횠 NavMeshAgent쨍짝 쨘챰횊째쩌쨘횊짯횉횛쨈횕쨈횢.
         if (nmAgent != null && nmAgent.enabled)
         {
             //nmAgent.isStopped = true;
@@ -691,11 +694,11 @@ public class Monster : MonoBehaviour
             animCtrl.SetBool("IsAimIdle", false);
         }
         float distanceToTarget = Vector3.Distance(transform.position, playerTransform.position);
-        if (stat.curHp > 0)  // Ã¼·ÂÀÌ 0 ÀÌ»óÀÏ ¶§¸¸ tIdle Æ®¸®°Å¸¦ ¼³Á¤
+        if (stat.curHp > 0)  // 횄쩌쨌횂?횑 0 ?횑쨩처?횕 쨋짠쨍쨍 tIdle 횈짰쨍짰째횇쨍짝 쩌쨀횁짚
         {
 
 
-            // ÃßÀûÀ» Àç°³ÇÏ±â À§ÇØ NavMeshAgent¸¦ È°¼ºÈ­ÇÕ´Ï´Ù.
+            // 횄횩?청?쨩 ?챌째쨀횉횕짹창 ?짠횉횠 NavMeshAgent쨍짝 횊째쩌쨘횊짯횉횛쨈횕쨈횢.
             if (nmAgent != null && nmAgent.enabled && distanceToTarget <= stat.detectionRange)
             {
                 //nmAgent.isStopped = false;
@@ -730,7 +733,7 @@ public class Monster : MonoBehaviour
             animCtrl.SetTrigger("tShot");
             SoundManager soundManager = SoundManager.Instance;
             soundManager.PlaySFX(soundManager.audioClip[5]);
-            FireProjectile(); // ¿ø°Å¸® Åõ»çÃ¼ ¹ß»ç ¸Þ¼­µå
+            FireProjectile(); // 쩔첩째횇쨍짰 횇천쨩챌횄쩌 쨔횩쨩챌 쨍횧쩌짯쨉책
             StartCoroutine(ShotTime());
         }
     }
@@ -738,7 +741,7 @@ public class Monster : MonoBehaviour
     private IEnumerator ShotTime()
     {
         canShot = false;
-        yield return new WaitForSeconds(6f); // 쿨타임 6초 
+        yield return new WaitForSeconds(6f); // 荑⑦???6珥?
         canShot = true;
     }
 
@@ -750,17 +753,17 @@ public class Monster : MonoBehaviour
         Vector3 targetDirection = (playerTransform.position - spawnPosition).normalized;
         Quaternion spawnRotation = Quaternion.LookRotation(targetDirection);
 
-        // 새로 생성하는 대신 풀에서 투사체를 가져옴
+        // ?덈줈 ?앹꽦?섎뒗 ?????먯꽌 ?ъ궗泥대? 媛?몄샂
         currentProjectile = ProjectilePool.Instance.GetProjectile();
         currentProjectile.transform.position = spawnPosition;
         currentProjectile.transform.rotation = spawnRotation;
         currentProjectile.SetActive(true);
 
-        // 투사체의 속도 설정
+        // ?ъ궗泥댁쓽 ?띾룄 ?ㅼ젙
         Rigidbody rb = currentProjectile.GetComponent<Rigidbody>();
         rb.velocity = targetDirection * ProjectileSpeed;
 
-        // 투사체가 발사한 몬스터 설정
+        // ?ъ궗泥닿? 諛쒖궗??紐ъ뒪???ㅼ젙
         Projectile projectileComponent = currentProjectile.GetComponent<Projectile>();
         if (projectileComponent != null)
         {
@@ -770,7 +773,7 @@ public class Monster : MonoBehaviour
 
 
 
-    // 애니메이션 관련된 이벤트 함수 
+    // ?좊땲硫붿씠??愿?⑤맂 ?대깽???⑥닔 
     public void ProjectileDestroyed()
     {
         currentProjectile = null;
@@ -803,20 +806,20 @@ public class Monster : MonoBehaviour
     public void startKnockback()
     {
         isKnockedBack = true;
-        DisableAttackCollider(); // 공격 관련 컴포넌트 비활성화
+        DisableAttackCollider(); // 怨듦꺽 愿??而댄룷?뚰듃 鍮꾪솢?깊솕
         DisableAttackMeshRenderer();
     }
 
     private IEnumerator DisableAttackComponentsAfterDelay()
     {
-        yield return new WaitForSeconds(1f); // 1초 대기
-        DisableAttackCollider(); // 공격 관련 컴포넌트 비활성화
+        yield return new WaitForSeconds(1f); // 1珥??湲?
+        DisableAttackCollider(); // 怨듦꺽 愿??而댄룷?뚰듃 鍮꾪솢?깊솕
         DisableAttackMeshRenderer();
     }
     public void endKnockback()
     {
         isKnockedBack = false;
-        DisableAttackCollider(); // 공격 관련 컴포넌트 비활성화
+        DisableAttackCollider(); // 怨듦꺽 愿??而댄룷?뚰듃 鍮꾪솢?깊솕
         DisableAttackMeshRenderer();
     }
 

@@ -53,7 +53,7 @@ public class BSPGenerator : MonoBehaviour
         {
             return renderer.bounds.size;
         }
-        return new Vector3(1, 0, 1);  // 湲곕낯 ?ш린瑜?諛섑솚 (?뚮뜑?ш? ?녿뒗 寃쎌슦)
+        return new Vector3(1, 0, 1);  // 疫꿸퀡????由곁몴?獄쏆꼹??(???쐭??? ??용뮉 野껋럩??
     }
 
     public void ReGenerator()
@@ -244,6 +244,9 @@ public class BSPGenerator : MonoBehaviour
             start = startEntrance.transform.position;
             end = endEntrance.transform.position;
             CreateLShapedPath(start, end);
+
+            startEntrance.SetActive(false);
+            endEntrance.SetActive(false);
         }
     }
 

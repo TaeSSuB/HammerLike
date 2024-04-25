@@ -1,9 +1,10 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
 
 using Johnson;
+using Unity.VisualScripting;
 
 public enum eBoundary
 {
@@ -18,7 +19,8 @@ public enum eBoundary
 public enum FollowOption
 {
     FollowToObject,
-    LimitedInRoom
+    LimitedInRoom,
+    DirectFollow
 }
 
 [System.Serializable]
@@ -26,6 +28,13 @@ public class ResolutionRef
 {
     public int width;
     public int height;
+}
+
+[System.Serializable]
+public class CameraBounds
+{
+    public Vector3 min; // Minimum XYZ coordinates of the camera boundary
+    public Vector3 max; // Maximum XYZ coordinates of the camera boundary
 }
 
 
@@ -81,6 +90,12 @@ public class CamCtrl : MonoBehaviour
     public Vector3 worldScaleCrt;
     //public Vector3[] boundaryDir; //카메라의 모서리+중앙 Direction 
     public float distToGround;
+
+    [Space(10f)]
+    [Header("Camera Limits")]
+    public CameraBounds cameraBounds;
+
+    private Vector3 cameraOffset;
 
     //MainCam의 바닥에 닿는 4군대 모서리
     public Vector3[] boundaryPosToRay = new Vector3[(int)eBoundary.End];
@@ -348,7 +363,7 @@ public class CamCtrl : MonoBehaviour
 
         resolutionRef.width = renderTex.width;
         resolutionRef.height = renderTex.height;
-
+        cameraOffset = mainCam.transform.position;
         if (zoomCam != null)
         {
             initialZoom = zoomCam.targetCameraHalfHeight;
@@ -377,11 +392,47 @@ public class CamCtrl : MonoBehaviour
         }
     }
 
+    public void ChangeFollowOption()
+    {
+        if (followOption == FollowOption.FollowToObject)
+        {
+            followOption = FollowOption.LimitedInRoom;
+        }
+        else if (followOption == FollowOption.LimitedInRoom)
+        {
+            followOption = FollowOption.FollowToObject;
+        }
+
+    }
+
+    void HandleZoomWithMouseWheel()
+    {
+        float mouseScroll = Input.GetAxis("Mouse ScrollWheel");
+        if (mouseScroll != 0)
+        {
+            Zoom(mouseScroll);
+        }
+    }
+
+    void Zoom(float scrollAmount)
+    {
+        // subCam의 projection size를 마우스 휠 입력에 따라 조절합니다.
+        if (subCam != null)
+        {
+            // 현재 사이즈에 입력 값에 따른 변화량을 추가합니다. scrollAmount가 양수면 확대, 음수면 축소
+            float newSize = subCam.orthographicSize - scrollAmount * zoomSpd;
+            // newSize가 최소값과 최대값 사이에 있는지 확인하고 조절합니다.
+            newSize = Mathf.Clamp(newSize, zoomMin, zoomMax);
+            // 계산된 새 사이즈를 subCam의 projection size로 설정합니다.
+            subCam.orthographicSize = newSize;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
         ManageZoomCamera();
-        
+        HandleZoomWithMouseWheel();
     }
 
 	private void LateUpdate()
@@ -396,9 +447,52 @@ public class CamCtrl : MonoBehaviour
 		Zoom();
         if (followOption == FollowOption.FollowToObject)
             Following();
+        if (followOption == FollowOption.LimitedInRoom)
+            LimitedInRoomFollow();
+        if (followOption == FollowOption.DirectFollow)
+            DirectFollow();
     }
 
-	private void FixedUpdate()
+    public void DirectFollow()
+    {
+        Vector3 prePos = mainCam.transform.position;
+        Vector3 targetPosition = followObjTr.transform.position;
+
+        // Y축의 위치를 고정합니다.
+        targetPosition.y = prePos.y;
+
+        // 공식 = a=hcot(θ)
+        float angle = mainCam.transform.eulerAngles.x;
+        float radian = angle * Mathf.Deg2Rad;
+        float height = prePos.y;
+        height = Mathf.Abs(height);
+
+        float distance = height / Mathf.Tan(radian);
+
+        targetPosition.z += -distance;
+
+        mainCam.transform.position = targetPosition;
+
+    }
+
+    private void LimitedInRoomFollow()
+    {
+        // LimitedInRoom 로직: 카메라가 followObjTr을 따라 이동하지만, cameraBounds 내에서만 이동합니다.
+        Vector3 targetPosition = followObjTr.position;
+        targetPosition.y = mainCam.transform.position.y;  // 카메라의 높이 유지
+        targetPosition.x = Mathf.Clamp(targetPosition.x + cameraOffset.x, cameraBounds.min.x, cameraBounds.max.x);
+        targetPosition.z = Mathf.Clamp(targetPosition.z + cameraOffset.z, cameraBounds.min.z, cameraBounds.max.z);
+        mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, targetPosition, followSpd * Time.deltaTime);
+    }
+
+    private bool IsWithinBounds(Vector3 position)
+    {
+        return position.x >= cameraBounds.min.x && position.x <= cameraBounds.max.x &&
+               position.y >= cameraBounds.min.y && position.y <= cameraBounds.max.y &&
+               position.z >= cameraBounds.min.z && position.z <= cameraBounds.max.z;
+    }
+
+    private void FixedUpdate()
 	{
         
     }
