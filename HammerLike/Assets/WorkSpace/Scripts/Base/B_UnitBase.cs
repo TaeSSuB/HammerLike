@@ -11,7 +11,8 @@ public enum UnitType
     Range,
     Magic,
     Boss,
-    Develop
+    Develop,
+    Slime  // Temp..
 }
 
 public class B_UnitBase : B_Entity
@@ -25,8 +26,8 @@ public class B_UnitBase : B_Entity
 
     [Header("Knockback")]
     // animation curve for knockback
-    [SerializeField] protected AnimationCurve knockbackCurve;
-    [SerializeField] protected AnimationCurve partsBreakForceCurve;
+    //[SerializeField] protected AnimationCurve knockbackCurve;
+    //[SerializeField] protected AnimationCurve partsBreakForceCurve;
     [SerializeField] protected float knockBackMultiplier = 10f;
 
     // Temp 240402 - Puppet 테스트 목적, a.HG
@@ -43,6 +44,8 @@ public class B_UnitBase : B_Entity
     public SO_UnitStatus UnitStatus { get => unitStatus;}
     public Animator Anim { get => anim;}
 
+    private bool isAlive = true;
+    public bool IsAlive { get => isAlive; }
     // lock move and rotate
     public bool isLockMove { get; private set; }
     public bool isLockRotate { get; private set; }
@@ -61,6 +64,9 @@ public class B_UnitBase : B_Entity
                 unitStatus = Instantiate(UnitManager.instance.rangerUnitStatus); break;
             case UnitType.Magic:
                 // add please
+                break;
+            case UnitType.Slime:
+                unitStatus = Instantiate(UnitManager.instance.slimeStatus);
                 break;
             case UnitType.Boss:
                 // add please
@@ -98,12 +104,29 @@ public class B_UnitBase : B_Entity
         base.Update();
         CheckGrounded();
 
+        if (!isAlive)
+            return;
+
         if (UnitStatus.currentAttackCooltime > 0)
         {
             UnitStatus.currentAttackCooltime -= Time.deltaTime;
             Anim.SetFloat("fRemainShot", UnitStatus.currentAttackCooltime);
+
+            // Init - On Attack State
+            // current Attack -> Max Attack Cooltime
         }
-            
+
+        if(UnitStatus.currentRestoreHPCooltime > 0)
+        {
+            UnitStatus.currentRestoreHPCooltime -= Time.deltaTime;
+        }
+
+        if (UnitStatus.currentRestoreHPCooltime <= 0)
+        {
+            RestoreHP((int)UnitStatus.restoreHP);
+            UnitStatus.currentRestoreHPCooltime = UnitStatus.restoreHPCooltime;
+        }
+
     }
 
     public virtual Vector3 Move(Vector3 inDir)
@@ -202,10 +225,12 @@ public class B_UnitBase : B_Entity
         if (UnitStatus.currentHP <= 0)
         {
             Dead();
+            isAlive = false;
             return true;
         }
         else
         {
+            isAlive = true;
             return false;
         }
     }
@@ -214,7 +239,7 @@ public class B_UnitBase : B_Entity
     public void Knockback(Vector3 inDir, float force)
     {
         // Apply a smoothed knockback over time rather than as an impulse
-        StartCoroutine(SmoothKnockback(inDir, force, rigid, knockbackCurve));
+        StartCoroutine(SmoothKnockback(inDir, force, rigid, unitStatus.knockbackCurve));
     }
 
     // Temp 240402 - Puppet 테스트 목적, a.HG
@@ -317,7 +342,7 @@ public class B_UnitBase : B_Entity
 
                     remainKnockBackForce = Mathf.Clamp(remainKnockBackForce, 0f, 15f);
 
-                    StartCoroutine(SmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime));
+                    StartCoroutine(SmoothKnockback(dir, remainKnockBackForce, muscleRigid, unitStatus.partsBreakForceCurve, partsKnockBackTime));
                 }
 
                 puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Sever);

@@ -10,6 +10,10 @@ public class SO_UnitStatus : ScriptableObject
     public int currentHP = 100;
     public int maxHP = 100;
 
+    public int restoreHP = 0;
+    public float restoreHPCooltime = 0f;
+    public float currentRestoreHPCooltime = 0f;
+
     public float moveSpeed = 5f;
 
     public int atkDamage = 10;
@@ -20,4 +24,7 @@ public class SO_UnitStatus : ScriptableObject
     public float currentAttackCooltime = 0f;
 
     public float mass = 1f;
+
+    public AnimationCurve knockbackCurve;
+    public AnimationCurve partsBreakForceCurve;
 }

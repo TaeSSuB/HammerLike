@@ -15,6 +15,7 @@ public class SO_PlayerStatus : SO_UnitStatus
     public float chargeRate = 1f;
     public float minChargeRate = 1f;
     public float maxChargeRate = 2f;
+    public float chargeRateIncrease = 0.1f;
 
     // stamina
     public float currentStamina = 100f;
@@ -40,6 +41,7 @@ public class SO_PlayerStatus : SO_UnitStatus
         newStatus.chargeRate = chargeRate;
         newStatus.minChargeRate = minChargeRate;
         newStatus.maxChargeRate = maxChargeRate;
+        newStatus.chargeRateIncrease = chargeRateIncrease;
 
         newStatus.currentStamina = currentStamina;
         newStatus.maxStamina = maxStamina;

@@ -56,6 +56,12 @@ public class B_Enemy : B_UnitBase
         aIStateManager.SetState(AIStateType.IDLE);
     }
 
+    protected virtual void Attack()
+    {
+        aIStateManager?.SetState(AIStateType.ATTACK);
+
+    }
+
     // Update
     protected override void Update()
     {
@@ -77,7 +83,8 @@ public class B_Enemy : B_UnitBase
             {
                 if (targetDis <= unitStatus.atkRange)
                 {
-                    aIStateManager?.SetState(AIStateType.ATTACK);
+                    //aIStateManager?.SetState(AIStateType.ATTACK);
+                    Attack();
                 }
                 else if(aIStateManager?.CurrentStateType != AIStateType.ATTACK)
                 {

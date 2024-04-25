@@ -136,7 +136,7 @@ public class B_Player : B_UnitBase
         // Charge attack logic
         if (Input.GetMouseButton(0))
         {
-            (unitStatus as SO_PlayerStatus).chargeRate += Time.deltaTime;
+            (unitStatus as SO_PlayerStatus).chargeRate += Time.deltaTime * (unitStatus as SO_PlayerStatus).chargeRateIncrease;
 
             // clamp charge
             (unitStatus as SO_PlayerStatus).chargeRate = Mathf.Clamp((unitStatus as SO_PlayerStatus).chargeRate, 1f, (unitStatus as SO_PlayerStatus).maxChargeRate);
