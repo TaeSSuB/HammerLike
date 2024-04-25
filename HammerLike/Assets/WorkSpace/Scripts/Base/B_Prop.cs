@@ -26,6 +26,7 @@ public class B_Prop : B_Entity
         else
         {
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, pos);
+            B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
         }
     }
 
