@@ -1,3 +1,4 @@
+using RoomGen;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -55,6 +56,7 @@ public class RoomManager : MonoBehaviour
         if (foundRoom != currentRoom)
         {
             currentRoom = foundRoom; // Update the current room
+            monsterParent = foundRoom.monsterParent;
             if (currentRoom != null)
             {
                 Debug.Log($"Player has entered a new room: {currentRoom.gameObject.name}");
@@ -91,6 +93,7 @@ public class RoomManager : MonoBehaviour
     private int CountMonstersInRoom(RoomPrefab room)
     {
         int monsterCount = 0;
+        
         if (monsterParent != null)
         {
             foreach (Transform monsterParentTransform in monsterParent.transform)

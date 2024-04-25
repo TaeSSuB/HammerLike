@@ -16,10 +16,10 @@ public class RoomPrefab : MonoBehaviour
     // This method checks if a given position is within the room's ground collider
     public bool IsPositionInside(Vector3 position)
     {
-        Vector3 localPos = Ground.transform.InverseTransformPoint(position); // 방의 BoxCollider를 기준으로 로컬 위치 계산
-        localPos.y = 0; // Y 축 무시
+        Vector3 localPos = Ground.transform.InverseTransformPoint(position); // 諛⑹쓽 BoxCollider瑜?湲곗??쇰줈 濡쒖뺄 ?꾩튂 怨꾩궛
+        localPos.y = 0; // Y 異?臾댁떆
 
-        // 로컬 경계 확인을 위해 BoxCollider의 center와 size를 사용
+        // 濡쒖뺄 寃쎄퀎 ?뺤씤???꾪빐 BoxCollider??center? size瑜??ъ슜
         Bounds localBounds = new Bounds(Ground.center, Ground.size);
         return localBounds.Contains(localPos);
     }
