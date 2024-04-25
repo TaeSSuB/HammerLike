@@ -38,16 +38,16 @@ public class CameraBounds
 }
 
 
-//231025 1152 카메라 다른 연출이 있어서
-//더 작업 안해도 될 듯.
+//231025 1152 移대찓???ㅻⅨ ?곗텧???덉뼱??
+//???묒뾽 ?덊빐??????
 
 public class CamCtrl : MonoBehaviour
 {
 
     /// <summary>
     /// 231025 1152
-    /// 테스트용 스크립트임!!!!
-    /// 나중에 카메라 재 작업할때는 편하게 지우거나 수정해서 쓰십셔
+    /// ?뚯뒪?몄슜 ?ㅽ겕由쏀듃??!!!
+    /// ?섏쨷??移대찓?????묒뾽?좊븣???명븯寃?吏?곌굅???섏젙?댁꽌 ?곗떗??
     /// </summary>
 
     
@@ -69,7 +69,7 @@ public class CamCtrl : MonoBehaviour
     private float curveTime = 0f;
     public float followSpd;
     public float followDistOffset;
-    public GameObject currentRoom; // 인스펙터에서 현재 방을 볼 수 있도록
+    public GameObject currentRoom; // ?몄뒪?숉꽣?먯꽌 ?꾩옱 諛⑹쓣 蹂????덈룄濡?
 
     [Space(10f)]
     [Header("Zoom")]
@@ -82,13 +82,13 @@ public class CamCtrl : MonoBehaviour
     private float zoomCurveTime = 0f;
     private Bounds roomBounds;
     //private PlayerAtk playerAtk;
-    public float initialZoom; // 초기 줌 값 저장을 위한 변수
-    private bool shouldReturnToInitialZoom = false; // 초기 줌 값으로 돌아가는지 여부
+    public float initialZoom; // 珥덇린 以?媛???μ쓣 ?꾪븳 蹂??
+    private bool shouldReturnToInitialZoom = false; // 珥덇린 以?媛믪쑝濡??뚯븘媛?붿? ?щ?
     private float returnZoomStartTime;
     [Space(10f)]
     [Header("ETC")]
     public Vector3 worldScaleCrt;
-    //public Vector3[] boundaryDir; //카메라의 모서리+중앙 Direction 
+    //public Vector3[] boundaryDir; //移대찓?쇱쓽 紐⑥꽌由?以묒븰 Direction 
     public float distToGround;
 
     [Space(10f)]
@@ -97,7 +97,7 @@ public class CamCtrl : MonoBehaviour
 
     private Vector3 cameraOffset;
 
-    //MainCam의 바닥에 닿는 4군대 모서리
+    //MainCam??諛붾떏???용뒗 4援곕? 紐⑥꽌由?
     public Vector3[] boundaryPosToRay = new Vector3[(int)eBoundary.End];
     //public Vector3[] boundaryDirToRay;
     //public Vector3[] boundaryPosToView;
@@ -120,7 +120,7 @@ public class CamCtrl : MonoBehaviour
         }
         else
         { 
-            //만약 바닥 체크 안되면 그냥 임시로 하나 만들고 체크하고 나서 없애셈 ㅋ;
+            //留뚯빟 諛붾떏 泥댄겕 ?덈릺硫?洹몃깷 ?꾩떆濡??섎굹 留뚮뱾怨?泥댄겕?섍퀬 ?섏꽌 ?놁븷????
             
         
         }
@@ -141,7 +141,7 @@ public class CamCtrl : MonoBehaviour
         }
     }
 
-    // 현재 카메라가 비추고 있는 방 감지
+    // ?꾩옱 移대찓?쇨? 鍮꾩텛怨??덈뒗 諛?媛먯?
     void DetectCurrentRoom()
     {
         
@@ -154,7 +154,7 @@ public class CamCtrl : MonoBehaviour
                 CalculateRoomBounds();
             }
         }
-        //Debug.Log("현재 방 :" + currentRoom);
+        //Debug.Log("?꾩옱 諛?:" + currentRoom);
     }
 
     void CalculateRoomBounds()
@@ -176,64 +176,31 @@ public class CamCtrl : MonoBehaviour
 
     public void Following()
     {
-        float dist = Vector3.Distance(followObjTr.position, boundaryPosToRay[(int)eBoundary.Center]);
+        Vector3 targetPosition = followObjTr.position + cameraOffset;
 
+        // 카메라와 목표 위치 사이의 거리 계산
+        float dist = Vector3.Distance(mainCam.transform.position, targetPosition);
+
+        // 목표 위치와의 거리가 너무 작으면 카메라 이동을 중지
         if (dist <= followDistOffset)
         {
-            // 카메라가 객체를 따라가지 않을 때 커브 시간을 초기화합니다
-            curveTime = 0f;
+            curveTime = 0f;  // 커브 시간 초기화
             return;
         }
 
-        // 커브 시간을 1초 동안 증가시킵니다 (1초가 지나면 다시 0으로 초기화)
+        // 커브 시간을 1초 동안 증가 (1초 후 초기화)
         curveTime += Time.deltaTime;
         if (curveTime > 1f)
         {
             curveTime = 0f;
         }
 
-        // 커브를 사용하여 속도를 계산합니다
+        // 속도를 커브 함수로 계산
         float speed = followSpdCurve.Evaluate(curveTime) * followSpd;
 
-        Vector3 dir = (followObjTr.position - boundaryPosToRay[(int)eBoundary.Center]).normalized;
-        Vector3 prePos = mainCam.transform.position;
-        Vector3 targetPosition = mainCam.transform.position + dir * speed * Time.unscaledDeltaTime;
+        // 카메라를 목표 위치로 부드럽게 이동
+        mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, targetPosition, speed * Time.deltaTime);
 
-        // Y축의 위치를 고정합니다.
-        targetPosition.y = prePos.y;
-
-        mainCam.transform.position = targetPosition;
-
-        bool isHorizontalBlocked = false;
-        bool isVerticalBlocked = false;
-
-        // 경계 체크를 위한 레이캐스팅
-        for (int i = 0; i < (int)eBoundary.End; ++i)
-        {
-            Vector3 worldPos = mainCam.ViewportToWorldPoint(new Vector3(Defines.ViewportPos[i].x, Defines.ViewportPos[i].y, mainCam.nearClipPlane));
-            Vector3 camDir = mainCam.transform.forward;
-            var ray = new Ray(worldPos, camDir);
-            var rayResult = new RaycastHit();
-            if (!Physics.Raycast(ray, out rayResult, 100f, LayerMask.GetMask("Ground")))
-            {
-                if (i == (int)eBoundary.LT || i == (int)eBoundary.RT || i == (int)eBoundary.LB || i == (int)eBoundary.RB)
-                {
-                    isHorizontalBlocked = true;
-                }
-                else
-                {
-                    isVerticalBlocked = true;
-                }
-            }
-        }
-
-        // 수평 방향이 막혔을 경우, X와 Z축 위치를 조정합니다.
-        if (isHorizontalBlocked)
-        {
-            mainCam.transform.position = new Vector3(prePos.x, mainCam.transform.position.y, mainCam.transform.position.z);
-        }
-
-        // 수직 방향이 막혔을 경우, 이미 Y축은 고정되어 있으므로 추가 조치는 필요 없습니다.
     }
     public void Zoom()
     {
@@ -241,32 +208,32 @@ public class CamCtrl : MonoBehaviour
 
         if (!isLeftMouseDown && !shouldReturnToInitialZoom)
         {
-            // 마우스 왼쪽 버튼이 놓여지고, 아직 초기 줌으로 돌아가는 과정이 시작되지 않았다면
+            // 留덉슦???쇱そ 踰꾪듉???볦뿬吏怨? ?꾩쭅 珥덇린 以뚯쑝濡??뚯븘媛??怨쇱젙???쒖옉?섏? ?딆븯?ㅻ㈃
             shouldReturnToInitialZoom = true;
             returnZoomStartTime = Time.time;
         }
 
         if (shouldReturnToInitialZoom)
         {
-            // 초기 줌 값으로 돌아가는 과정
+            // 珥덇린 以?媛믪쑝濡??뚯븘媛??怨쇱젙
             float timeSinceReturnStart = Time.time - returnZoomStartTime;
-            float t = timeSinceReturnStart / 1.0f; // 1초 동안의 변화를 계산
+            float t = timeSinceReturnStart / 1.0f; // 1珥??숈븞??蹂?붾? 怨꾩궛
 
             if (t >= 1.0f)
             {
                 t = 1.0f;
-                shouldReturnToInitialZoom = false; // 돌아가는 과정 완료
+                shouldReturnToInitialZoom = false; // ?뚯븘媛??怨쇱젙 ?꾨즺
             }
 
             zoomCam.targetCameraHalfHeight = Mathf.Lerp(zoomCam.targetCameraHalfHeight, initialZoom, t);
             zoomCam.adjustCameraFOV();
 
-            return; // 추가적인 줌 조정을 중단합니다.
+            return; // 異붽??곸씤 以?議곗젙??以묐떒?⑸땲??
         }
 
         if (isLeftMouseDown)
         {
-            // 마우스 왼쪽 버튼이 눌려있으면 줌 조절
+            // 留덉슦???쇱そ 踰꾪듉???뚮젮?덉쑝硫?以?議곗젅
             zoomCurveTime += Time.deltaTime;
             float zoomSpdValue = zoomSpdCrv.Evaluate(zoomCurveTime) * zoomSpd;
             //float zoomSpdValue = zoomSpd;
@@ -282,17 +249,17 @@ public class CamCtrl : MonoBehaviour
 
         if (!isLeftMouseDown)
         {
-            // 마우스 왼쪽 버튼이 눌려있지 않으면 커브 시간 초기화
+            // 留덉슦???쇱そ 踰꾪듉???뚮젮?덉? ?딆쑝硫?而ㅻ툕 ?쒓컙 珥덇린??
             zoomCurveTime = 0f;
 
-            // 카메라 줌을 초기 값으로 복원
+            // 移대찓??以뚯쓣 珥덇린 媛믪쑝濡?蹂듭썝
             zoomCam.targetCameraHalfHeight = initialZoom;
-            zoomCam.adjustCameraFOV(); // 카메라 FOV를 조정합니다.
-            return; // 추가적인 줌 조정을 중단합니다.
+            zoomCam.adjustCameraFOV(); // 移대찓??FOV瑜?議곗젙?⑸땲??
+            return; // 異붽??곸씤 以?議곗젙??以묐떒?⑸땲??
         }
         else
         {
-            // 마우스 왼쪽 버튼이 눌려있으면 커브 시간 업데이트
+            // 留덉슦???쇱そ 踰꾪듉???뚮젮?덉쑝硫?而ㅻ툕 ?쒓컙 ?낅뜲?댄듃
             zoomCurveTime += Time.deltaTime;
         }
 
@@ -316,7 +283,7 @@ public class CamCtrl : MonoBehaviour
 
         if (mainCam != null && renderTex != null)
         {
-            mainCam.targetTexture = renderTex; // RenderTexture를 카메라의 targetTexture로 설정
+            mainCam.targetTexture = renderTex; // RenderTexture瑜?移대찓?쇱쓽 targetTexture濡??ㅼ젙
         }
 
 
@@ -328,8 +295,8 @@ public class CamCtrl : MonoBehaviour
 
                 if (child.name.Equals("Zoom Camera"))
                 {
-                    //어차피 씬 초기화 단계에서 찾는거기에 크게 신경 안쓰는 편.
-                    //string형으로 오브젝트 찾는거 도저히 못참을 경우 없애도 무방.
+                    //?댁감????珥덇린???④퀎?먯꽌 李얜뒗嫄곌린???ш쾶 ?좉꼍 ?덉벐????
+                    //string?뺤쑝濡??ㅻ툕?앺듃 李얜뒗嫄??꾩???紐살갭??寃쎌슦 ?놁븷??臾대갑.
                     zoomCam = child.GetComponent<PixelPerfectCamera>();
                 }
 
@@ -357,7 +324,7 @@ public class CamCtrl : MonoBehaviour
 
     void Start()
     {
-        //1. 플레이어를 중앙에 두는 위치로 카메라 이동
+        //1. ?뚮젅?댁뼱瑜?以묒븰???먮뒗 ?꾩튂濡?移대찓???대룞
         /*if (followOption == FollowOption.FollowToObject)
             CameraCallibration(followObjTr.position);*/
 
@@ -374,16 +341,16 @@ public class CamCtrl : MonoBehaviour
     {
         if (zoomOption)
         {
-            // ZoomOption이 true일 경우, PixelPerfectCamera 컴포넌트 추가
+            // ZoomOption??true??寃쎌슦, PixelPerfectCamera 而댄룷?뚰듃 異붽?
             if (!zoomCam)
             {
                 zoomCam = gameObject.AddComponent<PixelPerfectCamera>();
-                // 필요한 경우, zoomCam 변수의 초기 설정을 여기서 수행
+                // ?꾩슂??寃쎌슦, zoomCam 蹂?섏쓽 珥덇린 ?ㅼ젙???ш린???섑뻾
             }
         }
         else
         {
-            // ZoomOption이 false일 경우, PixelPerfectCamera 컴포넌트 제거
+            // ZoomOption??false??寃쎌슦, PixelPerfectCamera 而댄룷?뚰듃 ?쒓굅
             if (zoomCam)
             {
                 Destroy(zoomCam);
@@ -416,14 +383,14 @@ public class CamCtrl : MonoBehaviour
 
     void Zoom(float scrollAmount)
     {
-        // subCam의 projection size를 마우스 휠 입력에 따라 조절합니다.
+        // subCam??projection size瑜?留덉슦?????낅젰???곕씪 議곗젅?⑸땲??
         if (subCam != null)
         {
-            // 현재 사이즈에 입력 값에 따른 변화량을 추가합니다. scrollAmount가 양수면 확대, 음수면 축소
+            // ?꾩옱 ?ъ씠利덉뿉 ?낅젰 媛믪뿉 ?곕Ⅸ 蹂?붾웾??異붽??⑸땲?? scrollAmount媛 ?묒닔硫??뺣?, ?뚯닔硫?異뺤냼
             float newSize = subCam.orthographicSize - scrollAmount * zoomSpd;
-            // newSize가 최소값과 최대값 사이에 있는지 확인하고 조절합니다.
+            // newSize媛 理쒖냼媛믨낵 理쒕?媛??ъ씠???덈뒗吏 ?뺤씤?섍퀬 議곗젅?⑸땲??
             newSize = Mathf.Clamp(newSize, zoomMin, zoomMax);
-            // 계산된 새 사이즈를 subCam의 projection size로 설정합니다.
+            // 怨꾩궛?????ъ씠利덈? subCam??projection size濡??ㅼ젙?⑸땲??
             subCam.orthographicSize = newSize;
         }
     }
@@ -438,7 +405,7 @@ public class CamCtrl : MonoBehaviour
 	private void LateUpdate()
 	{
         DetectCurrentRoom();
-        //플레이어 이동보다 느리게 ㄱㄱ
+        //?뚮젅?댁뼱 ?대룞蹂대떎 ?먮━寃??긱꽦
 
         for (int i = 0; i < (int)eBoundary.End; ++i)
 		{
@@ -458,10 +425,10 @@ public class CamCtrl : MonoBehaviour
         Vector3 prePos = mainCam.transform.position;
         Vector3 targetPosition = followObjTr.transform.position;
 
-        // Y축의 위치를 고정합니다.
+        // Y異뺤쓽 ?꾩튂瑜?怨좎젙?⑸땲??
         targetPosition.y = prePos.y;
 
-        // 공식 = a=hcot(θ)
+        // 怨듭떇 = a=hcot(罐)
         float angle = mainCam.transform.eulerAngles.x;
         float radian = angle * Mathf.Deg2Rad;
         float height = prePos.y;
@@ -477,9 +444,9 @@ public class CamCtrl : MonoBehaviour
 
     private void LimitedInRoomFollow()
     {
-        // LimitedInRoom 로직: 카메라가 followObjTr을 따라 이동하지만, cameraBounds 내에서만 이동합니다.
+        // LimitedInRoom 濡쒖쭅: 移대찓?쇨? followObjTr???곕씪 ?대룞?섏?留? cameraBounds ?댁뿉?쒕쭔 ?대룞?⑸땲??
         Vector3 targetPosition = followObjTr.position;
-        targetPosition.y = mainCam.transform.position.y;  // 카메라의 높이 유지
+        targetPosition.y = mainCam.transform.position.y;  // 移대찓?쇱쓽 ?믪씠 ?좎?
         targetPosition.x = Mathf.Clamp(targetPosition.x + cameraOffset.x, cameraBounds.min.x, cameraBounds.max.x);
         targetPosition.z = Mathf.Clamp(targetPosition.z + cameraOffset.z, cameraBounds.min.z, cameraBounds.max.z);
         mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, targetPosition, followSpd * Time.deltaTime);
