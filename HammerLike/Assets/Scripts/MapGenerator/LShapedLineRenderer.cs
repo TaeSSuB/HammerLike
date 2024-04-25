@@ -7,7 +7,7 @@ public class LShapedLineRenderer : MonoBehaviour
     public GameObject pointB;
     public GameObject tilePrefab;  // 타일 프리팹
     public GameObject cornerPrefab; // 코너 프리팹
-
+    public GameObject container;
     private LineRenderer lineRenderer;
     private Vector3 tileSize;  // 타일의 실제 크기
 
@@ -21,6 +21,8 @@ public class LShapedLineRenderer : MonoBehaviour
         lineRenderer.endWidth = 0.1f;
 
         tileSize = GetPrefabSize(tilePrefab);  // 프리팹의 크기를 가져옴
+
+        container = new GameObject("TilesAndCornersContainer");
 
         if (pointA != null && pointB != null)
         {
@@ -107,10 +109,10 @@ public class LShapedLineRenderer : MonoBehaviour
         for (int i = 0; i < tileCount; i++)
         {
             Vector3 tilePosition = start + direction * tileStep * i;
-            Instantiate(tilePrefab, tilePosition, rotation);
+            GameObject tile = Instantiate(tilePrefab, tilePosition, rotation, container.transform);
             if (i == tileCount - 1)
             {
-                Instantiate(tilePrefab, end, rotation);
+                Instantiate(tilePrefab, end, rotation, container.transform);
             }
         }
     }
@@ -173,6 +175,6 @@ public class LShapedLineRenderer : MonoBehaviour
 
     private void PlaceCornerObject(Vector3 position, Quaternion rotation)
     {
-        Instantiate(cornerPrefab, position, rotation);
+        Instantiate(cornerPrefab, position, rotation, container.transform);
     }
 }

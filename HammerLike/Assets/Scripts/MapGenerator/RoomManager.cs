@@ -58,6 +58,7 @@ public class RoomManager : MonoBehaviour
             if (currentRoom != null)
             {
                 Debug.Log($"Player has entered a new room: {currentRoom.gameObject.name}");
+                camCtrl.UpdateCameraBounds(currentRoom.Ground.bounds);
             }
             else
             {
