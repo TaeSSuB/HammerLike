@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PlayerStatus", menuName = "B_ScriptableObjects/PlayerStatus", order = 2)]
+[CreateAssetMenu(fileName = "PlayerStatus", menuName = "B_ScriptableObjects/Unit/PlayerStatus", order = 2)]
 public class SO_PlayerStatus : SO_UnitStatus
 {
     // movement

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "UnitStatus", menuName = "B_ScriptableObjects/UnitStatus", order = 1)]
+[CreateAssetMenu(fileName = "UnitStatus", menuName = "B_ScriptableObjects/Unit/UnitStatus", order = 1)]
 public class SO_UnitStatus : ScriptableObject
 {
     public Sprite unitSprite;
