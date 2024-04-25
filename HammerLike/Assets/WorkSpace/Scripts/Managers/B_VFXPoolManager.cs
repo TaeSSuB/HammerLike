@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 // Temp 240408 - DB 구현 전까지 임시 할당, a.HG
 // Load VFX name by value. just use ex. hit = "Hit"
-public class VFXName
+public struct VFXName
 {
     public const string Hit = "Hit";
     public const string Explosion = "Explosion";

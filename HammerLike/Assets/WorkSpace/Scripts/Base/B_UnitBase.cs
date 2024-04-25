@@ -11,10 +11,11 @@ public enum UnitType
     Range,
     Magic,
     Boss,
-    Develop
+    Develop,
+    Slime  // Temp..
 }
 
-public class B_UnitBase : B_ObjectBase
+public class B_UnitBase : B_Entity
 {
     protected SO_UnitStatus unitStatus;
 
@@ -25,8 +26,8 @@ public class B_UnitBase : B_ObjectBase
 
     [Header("Knockback")]
     // animation curve for knockback
-    [SerializeField] protected AnimationCurve knockbackCurve;
-    [SerializeField] protected AnimationCurve partsBreakForceCurve;
+    //[SerializeField] protected AnimationCurve knockbackCurve;
+    //[SerializeField] protected AnimationCurve partsBreakForceCurve;
     [SerializeField] protected float knockBackMultiplier = 10f;
 
     // Temp 240402 - Puppet 테스트 목적, a.HG
@@ -43,6 +44,8 @@ public class B_UnitBase : B_ObjectBase
     public SO_UnitStatus UnitStatus { get => unitStatus;}
     public Animator Anim { get => anim;}
 
+    private bool isAlive = true;
+    public bool IsAlive { get => isAlive; }
     // lock move and rotate
     public bool isLockMove { get; private set; }
     public bool isLockRotate { get; private set; }
@@ -55,19 +58,21 @@ public class B_UnitBase : B_ObjectBase
         switch (unitType)
         {
             case UnitType.Melee:
-                unitStatus = UnitManager.instance.baseUnitStatus.MakeCopyStatus();
+                unitStatus = Instantiate(UnitManager.instance.baseUnitStatus);
                 break;
             case UnitType.Range:
-                unitStatus = UnitManager.instance.rangerUnitStatus.MakeCopyStatus();
-                break;
+                unitStatus = Instantiate(UnitManager.instance.rangerUnitStatus); break;
             case UnitType.Magic:
                 // add please
+                break;
+            case UnitType.Slime:
+                unitStatus = Instantiate(UnitManager.instance.slimeStatus);
                 break;
             case UnitType.Boss:
                 // add please
                 break;
             case UnitType.Develop:
-                unitStatus = UnitManager.instance.devUnitStatus.MakeCopyStatus();
+                unitStatus = Instantiate(UnitManager.instance.devUnitStatus);
                 break;
         }
 
@@ -99,12 +104,29 @@ public class B_UnitBase : B_ObjectBase
         base.Update();
         CheckGrounded();
 
+        if (!isAlive)
+            return;
+
         if (UnitStatus.currentAttackCooltime > 0)
         {
             UnitStatus.currentAttackCooltime -= Time.deltaTime;
             Anim.SetFloat("fRemainShot", UnitStatus.currentAttackCooltime);
+
+            // Init - On Attack State
+            // current Attack -> Max Attack Cooltime
         }
-            
+
+        if(UnitStatus.currentRestoreHPCooltime > 0)
+        {
+            UnitStatus.currentRestoreHPCooltime -= Time.deltaTime;
+        }
+
+        if (UnitStatus.currentRestoreHPCooltime <= 0)
+        {
+            RestoreHP((int)UnitStatus.restoreHP);
+            UnitStatus.currentRestoreHPCooltime = UnitStatus.restoreHPCooltime;
+        }
+
     }
 
     public virtual Vector3 Move(Vector3 inDir)
@@ -112,7 +134,7 @@ public class B_UnitBase : B_ObjectBase
         if (!isGrounded || isLockMove)
             return Vector3.zero;
 
-        var moveDir = manager.ApplyCoordScaleNormalize(inDir);
+        var moveDir = GameManager.instance.ApplyCoordScaleNormalize(inDir);
         //moveDir.Normalize();
 
         rigid.velocity = moveDir * unitStatus.moveSpeed;
@@ -138,7 +160,7 @@ public class B_UnitBase : B_ObjectBase
         ClampHP();
     }
 
-    public void TakeDamage(Vector3 damageDir, int damage = 0, bool knockBack = true)
+    public virtual void TakeDamage(Vector3 damageDir, int damage = 0, bool knockBack = true)
     {
         if (isInvincible)
         {
@@ -203,10 +225,12 @@ public class B_UnitBase : B_ObjectBase
         if (UnitStatus.currentHP <= 0)
         {
             Dead();
+            isAlive = false;
             return true;
         }
         else
         {
+            isAlive = true;
             return false;
         }
     }
@@ -215,7 +239,7 @@ public class B_UnitBase : B_ObjectBase
     public void Knockback(Vector3 inDir, float force)
     {
         // Apply a smoothed knockback over time rather than as an impulse
-        StartCoroutine(SmoothKnockback(inDir, force, rigid, knockbackCurve));
+        StartCoroutine(SmoothKnockback(inDir, force, rigid, unitStatus.knockbackCurve));
     }
 
     // Temp 240402 - Puppet 테스트 목적, a.HG
@@ -318,7 +342,7 @@ public class B_UnitBase : B_ObjectBase
 
                     remainKnockBackForce = Mathf.Clamp(remainKnockBackForce, 0f, 15f);
 
-                    StartCoroutine(SmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime));
+                    StartCoroutine(SmoothKnockback(dir, remainKnockBackForce, muscleRigid, unitStatus.partsBreakForceCurve, partsKnockBackTime));
                 }
 
                 puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Sever);

@@ -9,8 +9,9 @@ public class UnitManager : MonoBehaviour
 
     public List<B_UnitBase> unitList = new List<B_UnitBase>();
 
-    // only SO_UnitStatus
+    // Temp 20240425 - UnitStatus DB 생성 및 관리 예정, a.HG
     public SO_UnitStatus baseUnitStatus;
+    public SO_UnitStatus slimeStatus;
     public SO_RangerUnitStatus rangerUnitStatus;
     public SO_UnitStatus devUnitStatus;
 
