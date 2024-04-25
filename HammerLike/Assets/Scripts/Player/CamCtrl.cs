@@ -408,7 +408,7 @@ public class CamCtrl : MonoBehaviour
     void HandleZoomWithMouseWheel()
     {
         float mouseScroll = Input.GetAxis("Mouse ScrollWheel");
-        if (mouseScroll != 0)
+        if (mouseScroll != 0 && zoomOption)
         {
             Zoom(mouseScroll);
         }
