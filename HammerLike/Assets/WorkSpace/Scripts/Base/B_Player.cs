@@ -10,6 +10,14 @@ public class B_Player : B_UnitBase
 {
     [SerializeField] private Collider weaponCollider;
 
+    // Temp 20240426 - 임시.., a.HG
+    [SerializeField] private GameObject chargeVFXObj;
+    [SerializeField] private GameObject weaponObj;
+    [SerializeField] private Camera zoomCam;
+
+    [SerializeField] private float zoomAmount;
+    [SerializeField] private float startZoom;
+
     public event Action<int> OnHPChanged;
     public event Action<float> OnChargeChanged;
 
@@ -24,6 +32,9 @@ public class B_Player : B_UnitBase
         base.Init();
         // Init logic
         GameManager.instance.SetPlayer(this);
+        chargeVFXObj.SetActive(false);
+
+        startZoom = zoomCam.orthographicSize;
     }
 
     protected override void Update()
@@ -141,17 +152,26 @@ public class B_Player : B_UnitBase
             // clamp charge
             (unitStatus as SO_PlayerStatus).chargeRate = Mathf.Clamp((unitStatus as SO_PlayerStatus).chargeRate, 1f, (unitStatus as SO_PlayerStatus).maxChargeRate);
 
+            // 0 ~ 1 사이의 값으로 정규화
+            float normalizeChargeRate = ((unitStatus as SO_PlayerStatus).chargeRate - 1) / ((unitStatus as SO_PlayerStatus).maxChargeRate - 1);
 
             if ((unitStatus as SO_PlayerStatus).chargeRate > (unitStatus as SO_PlayerStatus).minChargeRate)
+            {
                 Anim.SetBool("IsCharge", true);
+
+                chargeVFXObj.SetActive(true);
+                weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", normalizeChargeRate * 4f);
+
+                zoomCam.orthographicSize = startZoom - (zoomAmount * normalizeChargeRate);
+            }
 
             // 확장성을 위해 폐기
             // Init 해두고 재사용하기엔 편할 듯
             //Anim.SetFloat("fAttackSpd", (unitStatus as SO_PlayerStatus).atkSpeed);
 
-            float normalizeChargeRate = ((unitStatus as SO_PlayerStatus).chargeRate - 1) / ((unitStatus as SO_PlayerStatus).maxChargeRate - 1);
-
             OnChargeChanged?.Invoke(normalizeChargeRate);
+
+            // zoom
         }
         else if (Input.GetMouseButtonUp(0))
         {
@@ -230,6 +250,10 @@ public class B_Player : B_UnitBase
         Anim.SetBool("bAttack", false);
         Anim.SetTrigger("tIdle");
         Anim.speed = 1f;//(unitStatus as SO_PlayerStatus).atkSpeed;
+
+        chargeVFXObj.SetActive(false);
+        weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", 0f);
+        zoomCam.orthographicSize = startZoom;
 
         ResetDamage();
     }
