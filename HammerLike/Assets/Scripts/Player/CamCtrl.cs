@@ -47,10 +47,10 @@ public class CamCtrl : MonoBehaviour
     /// <summary>
     /// 231025 1152
     /// ?뚯뒪?몄슜 ?ㅽ겕由쏀듃??!!!
-    /// ?섏쨷??移대찓?????묒뾽?좊븣???명븯寃?吏?곌굅???섏젙?댁꽌 ?곗떗??
+    /// ?섏쨷??移대찓?????묒뾽?좊븣???명븯寃?吏?곌굅???섏젙?댁꽌 ?곗떗??
     /// </summary>
 
-    
+
     [Header("Cams")]
     public Camera mainCam;  //For RenderTex = mainCam
     public Camera subCam;
@@ -88,7 +88,7 @@ public class CamCtrl : MonoBehaviour
     [Space(10f)]
     [Header("ETC")]
     public Vector3 worldScaleCrt;
-    //public Vector3[] boundaryDir; //移대찓?쇱쓽 紐⑥꽌由?以묒븰 Direction 
+    //public Vector3[] boundaryDir; //移대찓?쇱쓽 紐⑥꽌由?以묒븰 Direction 
     public float distToGround;
 
     [Space(10f)]
@@ -97,15 +97,15 @@ public class CamCtrl : MonoBehaviour
 
     private Vector3 cameraOffset;
 
-    //MainCam??諛붾떏???용뒗 4援곕? 紐⑥꽌由?
+    //MainCam??諛붾떏???용뒗 4援곕? 紐⑥꽌由?
     public Vector3[] boundaryPosToRay = new Vector3[(int)eBoundary.End];
     //public Vector3[] boundaryDirToRay;
     //public Vector3[] boundaryPosToView;
 
     public void CameraCallibration(Vector3 centerPos)
     {
-            
-            Vector3 dir;
+
+        Vector3 dir;
 
         Ray ray = mainCam.ViewportPointToRay(new Vector3(0.5f, 0.5f));
         var rayResult = new RaycastHit();
@@ -113,16 +113,16 @@ public class CamCtrl : MonoBehaviour
         if (Physics.Raycast(ray, out rayResult, 100f, LayerMask.GetMask("Ground")))
         {
             distToGround = Vector3.Distance(mainCam.transform.position, rayResult.point);
-            
+
             dir = mainCam.transform.position - rayResult.point;
 
             mainCam.transform.position = centerPos + dir;
         }
         else
-        { 
-            //留뚯빟 諛붾떏 泥댄겕 ?덈릺硫?洹몃깷 ?꾩떆濡??섎굹 留뚮뱾怨?泥댄겕?섍퀬 ?섏꽌 ?놁븷????
-            
-        
+        {
+            //留뚯빟 諛붾떏 泥댄겕 ?덈릺硫?洹몃깷 ?꾩떆濡??섎굹 留뚮뱾怨?泥댄겕?섍퀬 ?섏꽌 ?놁븷????
+
+
         }
     }
 
@@ -144,7 +144,7 @@ public class CamCtrl : MonoBehaviour
     // ?꾩옱 移대찓?쇨? 鍮꾩텛怨??덈뒗 諛?媛먯?
     void DetectCurrentRoom()
     {
-        
+
         RaycastHit hit;
         if (Physics.Raycast(mainCam.transform.position, mainCam.transform.forward, out hit))
         {
@@ -208,7 +208,7 @@ public class CamCtrl : MonoBehaviour
 
         if (!isLeftMouseDown && !shouldReturnToInitialZoom)
         {
-            // 留덉슦???쇱そ 踰꾪듉???볦뿬吏怨? ?꾩쭅 珥덇린 以뚯쑝濡??뚯븘媛??怨쇱젙???쒖옉?섏? ?딆븯?ㅻ㈃
+            // 留덉슦???쇱そ 踰꾪듉???볦뿬吏怨? ?꾩쭅 珥덇린 以뚯쑝濡??뚯븘媛??怨쇱젙???쒖옉?섏? ?딆븯?ㅻ㈃
             shouldReturnToInitialZoom = true;
             returnZoomStartTime = Time.time;
         }
@@ -233,7 +233,7 @@ public class CamCtrl : MonoBehaviour
 
         if (isLeftMouseDown)
         {
-            // 留덉슦???쇱そ 踰꾪듉???뚮젮?덉쑝硫?以?議곗젅
+            // 留덉슦???쇱そ 踰꾪듉???뚮젮?덉쑝硫?以?議곗젅
             zoomCurveTime += Time.deltaTime;
             float zoomSpdValue = zoomSpdCrv.Evaluate(zoomCurveTime) * zoomSpd;
             //float zoomSpdValue = zoomSpd;
@@ -249,7 +249,7 @@ public class CamCtrl : MonoBehaviour
 
         if (!isLeftMouseDown)
         {
-            // 留덉슦???쇱そ 踰꾪듉???뚮젮?덉? ?딆쑝硫?而ㅻ툕 ?쒓컙 珥덇린??
+            // 留덉슦???쇱そ 踰꾪듉???뚮젮?덉? ?딆쑝硫?而ㅻ툕 ?쒓컙 珥덇린??
             zoomCurveTime = 0f;
 
             // 移대찓??以뚯쓣 珥덇린 媛믪쑝濡?蹂듭썝
@@ -259,7 +259,7 @@ public class CamCtrl : MonoBehaviour
         }
         else
         {
-            // 留덉슦???쇱そ 踰꾪듉???뚮젮?덉쑝硫?而ㅻ툕 ?쒓컙 ?낅뜲?댄듃
+            // 留덉슦???쇱そ 踰꾪듉???뚮젮?덉쑝硫?而ㅻ툕 ?쒓컙 ?낅뜲?댄듃
             zoomCurveTime += Time.deltaTime;
         }
 
@@ -295,8 +295,8 @@ public class CamCtrl : MonoBehaviour
 
                 if (child.name.Equals("Zoom Camera"))
                 {
-                    //?댁감????珥덇린???④퀎?먯꽌 李얜뒗嫄곌린???ш쾶 ?좉꼍 ?덉벐????
-                    //string?뺤쑝濡??ㅻ툕?앺듃 李얜뒗嫄??꾩???紐살갭??寃쎌슦 ?놁븷??臾대갑.
+                    //?댁감????珥덇린???④퀎?먯꽌 李얜뒗嫄곌린???ш쾶 ?좉꼍 ?덉벐????
+                    //string?뺤쑝濡??ㅻ툕?앺듃 李얜뒗嫄??꾩???紐살갭??寃쎌슦 ?놁븷??臾대갑.
                     zoomCam = child.GetComponent<PixelPerfectCamera>();
                 }
 
@@ -314,7 +314,7 @@ public class CamCtrl : MonoBehaviour
             }
         }
 
-        
+
 
         //boundaryPosToRay = new Vector3[4];
         //boundaryDirToRay = new Vector3[4];
@@ -326,8 +326,8 @@ public class CamCtrl : MonoBehaviour
     {
         //1. ?뚮젅?댁뼱瑜?以묒븰???먮뒗 ?꾩튂濡?移대찓???대룞
         /*if (followOption == FollowOption.FollowToObject)
-            CameraCallibration(followObjTr.position);*/
-
+            CameraCallibration(followObjTr.position);
+*/
         resolutionRef.width = renderTex.width;
         resolutionRef.height = renderTex.height;
         cameraOffset = mainCam.transform.position;
@@ -383,14 +383,14 @@ public class CamCtrl : MonoBehaviour
 
     void Zoom(float scrollAmount)
     {
-        // subCam??projection size瑜?留덉슦?????낅젰???곕씪 議곗젅?⑸땲??
+        // subCam??projection size瑜?留덉슦?????낅젰???곕씪 議곗젅?⑸땲??
         if (subCam != null)
         {
-            // ?꾩옱 ?ъ씠利덉뿉 ?낅젰 媛믪뿉 ?곕Ⅸ 蹂?붾웾??異붽??⑸땲?? scrollAmount媛 ?묒닔硫??뺣?, ?뚯닔硫?異뺤냼
+            // ?꾩옱 ?ъ씠利덉뿉 ?낅젰 媛믪뿉 ?곕Ⅸ 蹂?붾웾??異붽??⑸땲?? scrollAmount媛 ?묒닔硫??뺣?, ?뚯닔硫?異뺤냼
             float newSize = subCam.orthographicSize - scrollAmount * zoomSpd;
-            // newSize媛 理쒖냼媛믨낵 理쒕?媛??ъ씠???덈뒗吏 ?뺤씤?섍퀬 議곗젅?⑸땲??
+            // newSize媛 理쒖냼媛믨낵 理쒕?媛??ъ씠???덈뒗吏 ?뺤씤?섍퀬 議곗젅?⑸땲??
             newSize = Mathf.Clamp(newSize, zoomMin, zoomMax);
-            // 怨꾩궛?????ъ씠利덈? subCam??projection size濡??ㅼ젙?⑸땲??
+            // 怨꾩궛?????ъ씠利덈? subCam??projection size濡??ㅼ젙?⑸땲??
             subCam.orthographicSize = newSize;
         }
     }
@@ -402,16 +402,16 @@ public class CamCtrl : MonoBehaviour
         HandleZoomWithMouseWheel();
     }
 
-	private void LateUpdate()
-	{
+    private void LateUpdate()
+    {
         DetectCurrentRoom();
         //?뚮젅?댁뼱 ?대룞蹂대떎 ?먮━寃??긱꽦
 
         for (int i = 0; i < (int)eBoundary.End; ++i)
-		{
-			ComputeCamBoundaryRay(Defines.ViewportPos[i], ref boundaryPosToRay[i]);
-		}
-		Zoom();
+        {
+            ComputeCamBoundaryRay(Defines.ViewportPos[i], ref boundaryPosToRay[i]);
+        }
+        Zoom();
         if (followOption == FollowOption.FollowToObject)
             Following();
         if (followOption == FollowOption.LimitedInRoom)
@@ -444,13 +444,13 @@ public class CamCtrl : MonoBehaviour
 
     private void LimitedInRoomFollow()
     {
-        // LimitedInRoom 濡쒖쭅: 移대찓?쇨? followObjTr???곕씪 ?대룞?섏?留? cameraBounds ?댁뿉?쒕쭔 ?대룞?⑸땲??
-        Vector3 targetPosition = followObjTr.position;
-        targetPosition.y = mainCam.transform.position.y;  // 移대찓?쇱쓽 ?믪씠 ?좎?
-        targetPosition.x = Mathf.Clamp(targetPosition.x + cameraOffset.x, cameraBounds.min.x, cameraBounds.max.x);
-        targetPosition.z = Mathf.Clamp(targetPosition.z + cameraOffset.z, cameraBounds.min.z, cameraBounds.max.z);
+        // 카메라를 제한된 방 경계 내에서만 이동하도록 구현
+        Vector3 targetPosition = followObjTr.position + cameraOffset;
+        targetPosition.x = Mathf.Clamp(targetPosition.x, cameraBounds.min.x, cameraBounds.max.x);
+        targetPosition.z = Mathf.Clamp(targetPosition.z, cameraBounds.min.z, cameraBounds.max.z);
         mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, targetPosition, followSpd * Time.deltaTime);
     }
+
 
     private bool IsWithinBounds(Vector3 position)
     {
@@ -459,21 +459,29 @@ public class CamCtrl : MonoBehaviour
                position.z >= cameraBounds.min.z && position.z <= cameraBounds.max.z;
     }
 
-    private void FixedUpdate()
-	{
-        
+    public void UpdateCameraBounds(Bounds roomBounds)
+    {
+        // 카메라의 최소 및 최대 XYZ 좌표 설정
+        cameraBounds.min = new Vector3(roomBounds.min.x + 15.0f, cameraBounds.min.y, roomBounds.min.z);
+        cameraBounds.max = new Vector3(roomBounds.max.x - 15.0f, cameraBounds.max.y, roomBounds.max.z - 45.0f);
     }
 
 
-	private void OnDrawGizmosSelected()
-	{
+    private void FixedUpdate()
+    {
+
+    }
+
+
+    private void OnDrawGizmosSelected()
+    {
 
 #if UNITY_EDITOR
         Gizmos.color = new Color(1f, 1f, 1f, 0.5f);
-		for (int i = 0; i < (int)eBoundary.End; ++i)
-		{
-			Gizmos.DrawSphere(boundaryPosToRay[i], 1f);
-		}
+        for (int i = 0; i < (int)eBoundary.End; ++i)
+        {
+            Gizmos.DrawSphere(boundaryPosToRay[i], 1f);
+        }
 #endif
     }
 }
