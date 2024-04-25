@@ -71,6 +71,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    #region Coordinate Scale
     public Vector3 ApplyCoordScale(Vector3 inVector)
     {
         //return new Vector3(
@@ -111,7 +112,9 @@ public class GameManager : MonoBehaviour
 
         return coordVecMag;
     }
+    #endregion
 
+    #region Dev Mode
     public void ResetTester()
     {
         //isDevMode = inIsTester;
@@ -123,6 +126,7 @@ public class GameManager : MonoBehaviour
             currentTempCombatTestGroup = Instantiate(tempCombatTestGroupPrefab);
         }
     }
+    #endregion
 }
 
 

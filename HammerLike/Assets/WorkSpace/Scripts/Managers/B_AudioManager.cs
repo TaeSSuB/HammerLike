@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Linq;
 public enum AudioCategory { BGM, SFX }
-public enum AudioTag { MainMenu, Battle, Ambient, UI }
+public enum AudioTag { MainMenu, Battle, Ambient, UI , Death}
 
 public class B_AudioManager : MonoBehaviour
 {
