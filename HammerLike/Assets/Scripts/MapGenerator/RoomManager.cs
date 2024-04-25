@@ -9,6 +9,8 @@ public class RoomManager : MonoBehaviour
 
     private List<RoomPrefab> rooms = new List<RoomPrefab>();
     private RoomPrefab currentRoom = null; // Track the current room the player is in
+    public GameObject entranceA;
+    public GameObject entranceB;
 
     void Start()
     {
@@ -67,14 +69,20 @@ public class RoomManager : MonoBehaviour
     private void UpdateRoomMonsterStatus(RoomPrefab room)
     {
         int monsterCount = CountMonstersInRoom(room);
+        room.monsterCount = monsterCount;
         Debug.Log($"{room.gameObject.name} currently has {monsterCount} monsters.");
-        if (monsterCount > 0)   // TODO) 전투중 
+        if (monsterCount > 0)   // TODO) ?袁る떮餓�?
         {
             camCtrl.followOption = FollowOption.LimitedInRoom;
         }
         else
         {
             camCtrl.followOption = FollowOption.FollowToObject;
+            if(entranceA!=null&&entranceB!=null&&entranceA.activeSelf&&entranceB.activeSelf)
+            {
+                entranceA.SetActive(false);
+                entranceB.SetActive(false);
+            }
         }
     }
 
@@ -90,10 +98,11 @@ public class RoomManager : MonoBehaviour
                 {
                     foreach (Transform child in monsterParentTransform)
                     {
-                        Monster monsterComponent = child.GetComponent<Monster>();
-                        if (monsterComponent != null && monsterComponent.stat.curHp > 0 && room.IsPositionInside(child.position))
+                        AIStateManager monsterComponent = child.GetComponent<AIStateManager>();
+                        if (monsterComponent != null && monsterComponent.CurrentStateType != AIStateType.DEAD&& room.IsPositionInside(child.position))
                         {
-                            monsterCount++; // 게임 시작시 각 방마다 몬스터의 개수 
+                            monsterCount++;
+                            room.monsterCount = monsterCount;
                         }
                     }
                 }
