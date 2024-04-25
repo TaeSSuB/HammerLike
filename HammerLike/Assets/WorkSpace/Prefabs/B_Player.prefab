@@ -276,7 +276,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d3c7810508c534daf67b3eb220ca2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  manager: {fileID: 0}
   rootObj: {fileID: 1768623638817304503}
   meshObj: {fileID: 0}
   col: {fileID: 3484366558637496199}
@@ -284,18 +283,6 @@ MonoBehaviour:
   isInvincible: 0
   unitType: 0
   anim: {fileID: 1768623639919925977}
-  knockbackCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  partsBreakForceCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   knockBackMultiplier: 10
   puppet: {fileID: 0}
   remainKnockBackDir: {x: 0, y: 0, z: 0}
@@ -307,6 +294,11 @@ MonoBehaviour:
   isGrounded: 0
   isKnockback: 0
   weaponCollider: {fileID: 5855659360047067548}
+  chargeVFXObj: {fileID: 4313188254355159387}
+  weaponObj: {fileID: 4389952972687816322}
+  zoomCam: {fileID: 0}
+  zoomAmount: 15
+  startZoom: 0
 --- !u!1 &1768623639244865642
 GameObject:
   m_ObjectHideFlags: 0
@@ -1261,8 +1253,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 673db127ebcbeb1469f3f1386b9de813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ClampCameraOrthoSize: 1
   Mode: 1
   PixelSize: 1
+  TargetScale: 1
+  FullscreenColorGradingLUT: {fileID: 0}
+  EnableProPixelizer: 1
+  overrideUsePixelExpansion: 0
+  overridePixelisationFilter: 0
+  overrideColorGrading: 0
+  UsePixelExpansion: 1
+  PixelizationFilter: 0
 --- !u!114 &3484366559876334672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1488,6 +1489,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5855659359285085397}
+  - {fileID: 8419848830910102924}
   m_Father: {fileID: 6890217952169371145}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &325186012286737142
@@ -8078,3 +8080,83 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1001 &7204177858026569019
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4761890177331708341}
+    m_Modifications:
+    - target: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.67
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.00000017881388
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.000000014901156
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6350607959677043808, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_Name
+      value: ChargeEffect_Test_Hammer
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4f05bfe5c15a1f24aa242bbfe43928e7, type: 3}
+--- !u!1 &4313188254355159387 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6350607959677043808, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+    type: 3}
+  m_PrefabInstance: {fileID: 7204177858026569019}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8419848830910102924 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+    type: 3}
+  m_PrefabInstance: {fileID: 7204177858026569019}
+  m_PrefabAsset: {fileID: 0}
