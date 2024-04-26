@@ -7,25 +7,28 @@ public class CamCtrlEditor : Editor
     private SerializedObject serializedCamCtrl;
     private SerializedProperty boundaryPosToRayProperty;
     private SerializedProperty zoomOptionProperty;
+    private SerializedProperty cameraBoundsProperty;
 
     private bool showCamsSection = true;
     private bool showResolutionSection = true;
     private bool showFollowSection = true;
     private bool showZoomSection = true;
     private bool showEtcSection = true;
+    private bool showCameraLimitsSection = true;
 
     private void OnEnable()
     {
         serializedCamCtrl = new SerializedObject(target);
         boundaryPosToRayProperty = serializedCamCtrl.FindProperty("boundaryPosToRay");
         zoomOptionProperty = serializedCamCtrl.FindProperty("zoomOption");
+        cameraBoundsProperty = serializedCamCtrl.FindProperty("cameraBounds");
     }
 
     public override void OnInspectorGUI()
     {
         serializedCamCtrl.Update();
 
-        // 'Cams' ºΩº«
+        // 'Cams' ÏÑπÏÖò
         showCamsSection = EditorGUILayout.Foldout(showCamsSection, "Cams");
         if (showCamsSection)
         {
@@ -43,7 +46,7 @@ public class CamCtrlEditor : Editor
             }
         }
 
-        // 'Resolution' ºΩº«
+        // 'Resolution' ÏÑπÏÖò
         showResolutionSection = EditorGUILayout.Foldout(showResolutionSection, "Resolution");
         if (showResolutionSection)
         {
@@ -53,7 +56,7 @@ public class CamCtrlEditor : Editor
             EditorGUILayout.PropertyField(resolutionRef, true);
         }
 
-        // 'Follow' ºΩº«
+        // 'Follow' ÏÑπÏÖò
         showFollowSection = EditorGUILayout.Foldout(showFollowSection, "Follow");
         if (showFollowSection)
         {
@@ -72,13 +75,13 @@ public class CamCtrlEditor : Editor
             EditorGUILayout.PropertyField(currentRoom);
         }
 
-        // 'Zoom' ºΩº«
+        // 'Zoom' ÏÑπÏÖò
         showZoomSection = EditorGUILayout.Foldout(showZoomSection, "Zoom");
         if (showZoomSection)
         {
             EditorGUILayout.PropertyField(zoomOptionProperty);
 
-            if (zoomOptionProperty.boolValue) // ZoomOption¿Ã true¿œ ∂ß∏∏ PixelPerfectCamera ø…º« «•Ω√
+            if (zoomOptionProperty.boolValue) // ZoomOptionÏù¥ trueÏùº ÎïåÎßå PixelPerfectCamera ÏòµÏÖò ÌëúÏãú
             {
                 SerializedProperty zoomCam = serializedCamCtrl.FindProperty("zoomCam");
                 SerializedProperty zoomMin = serializedCamCtrl.FindProperty("zoomMin");
@@ -94,7 +97,7 @@ public class CamCtrlEditor : Editor
             }
         }
 
-        // 'ETC' ºΩº«
+        // 'ETC' ÏÑπÏÖò
         showEtcSection = EditorGUILayout.Foldout(showEtcSection, "ETC");
         if (showEtcSection)
         {
@@ -106,6 +109,12 @@ public class CamCtrlEditor : Editor
 
             EditorGUILayout.LabelField("Boundary Positions To Ray", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(boundaryPosToRayProperty, new GUIContent("Boundary Pos To Ray"), true);
+        }
+
+        showCameraLimitsSection = EditorGUILayout.Foldout(showCameraLimitsSection, "Camera Limits");
+        if (showCameraLimitsSection)
+        {
+            EditorGUILayout.PropertyField(cameraBoundsProperty, new GUIContent("Camera Bounds"), true);
         }
 
         serializedCamCtrl.ApplyModifiedProperties();

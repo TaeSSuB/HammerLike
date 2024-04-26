@@ -154,8 +154,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 673db127ebcbeb1469f3f1386b9de813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ClampCameraOrthoSize: 1
   Mode: 0
   PixelSize: 0.032
+  TargetScale: 1
+  FullscreenColorGradingLUT: {fileID: 0}
+  EnableProPixelizer: 1
+  overrideUsePixelExpansion: 0
+  overridePixelisationFilter: 0
+  overrideColorGrading: 0
+  UsePixelExpansion: 1
+  PixelizationFilter: 0
 --- !u!114 &745235998095987418
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -372,6 +381,9 @@ MonoBehaviour:
   initialZoom: 0
   worldScaleCrt: {x: 0, y: 0, z: 0}
   distToGround: 0
+  cameraBounds:
+    min: {x: 0, y: 0, z: 0}
+    max: {x: 0, y: 0, z: 0}
   boundaryPosToRay:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}

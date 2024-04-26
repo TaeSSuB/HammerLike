@@ -1,4 +1,5 @@
 using HutongGames.PlayMaker.Actions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,21 @@ using UnityEngine;
 public class B_Player : B_UnitBase
 {
     [SerializeField] private Collider weaponCollider;
-    
+
+    // Temp 20240426 - 임시.., a.HG
+    [SerializeField] private GameObject chargeVFXObj;
+    [SerializeField] private GameObject weaponObj;
+    [SerializeField] private Camera zoomCam;
+
+    [SerializeField] private float zoomAmount;
+    [SerializeField] private float startZoom;
+
+    public event Action<int> OnHPChanged;
+    public event Action<float> OnChargeChanged;
+
     protected override void ApplyStatus()
     {
-        unitStatus = GameManager.instance.PlayerStatus.MakeCopyStatus();
+        unitStatus = Instantiate(GameManager.instance.PlayerStatus);
     }
 
     //init override
@@ -20,6 +32,9 @@ public class B_Player : B_UnitBase
         base.Init();
         // Init logic
         GameManager.instance.SetPlayer(this);
+        chargeVFXObj.SetActive(false);
+
+        startZoom = zoomCam.orthographicSize;
     }
 
     protected override void Update()
@@ -63,6 +78,7 @@ public class B_Player : B_UnitBase
         Anim.SetFloat("MoveZ", localDir.z);
     }
 
+    #region Dash
     void Dash(Vector3 inDir)
     {
         if (inDir == Vector3.zero)
@@ -114,23 +130,48 @@ public class B_Player : B_UnitBase
         EnableMovementAndRotation();
     }
 
+    #endregion
+    
+    #region Damage
+    void Attack()
+    {
+        // Attack logic
+        Anim.SetBool("bAttack", true);
+
+        // Attack damage = Original attack damage
+
+        Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
+    }
     void CheckCharge()
     {
         // Charge attack logic
-        if(Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0))
         {
-            (unitStatus as SO_PlayerStatus).chargeRate += Time.deltaTime;
+            (unitStatus as SO_PlayerStatus).chargeRate += Time.deltaTime * (unitStatus as SO_PlayerStatus).chargeRateIncrease;
 
             // clamp charge
             (unitStatus as SO_PlayerStatus).chargeRate = Mathf.Clamp((unitStatus as SO_PlayerStatus).chargeRate, 1f, (unitStatus as SO_PlayerStatus).maxChargeRate);
-            
+
+            // 0 ~ 1 사이의 값으로 정규화
+            float normalizeChargeRate = ((unitStatus as SO_PlayerStatus).chargeRate - 1) / ((unitStatus as SO_PlayerStatus).maxChargeRate - 1);
 
             if ((unitStatus as SO_PlayerStatus).chargeRate > (unitStatus as SO_PlayerStatus).minChargeRate)
+            {
                 Anim.SetBool("IsCharge", true);
+
+                chargeVFXObj.SetActive(true);
+                weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", normalizeChargeRate * 4f);
+
+                zoomCam.orthographicSize = startZoom - (zoomAmount * normalizeChargeRate);
+            }
 
             // 확장성을 위해 폐기
             // Init 해두고 재사용하기엔 편할 듯
             //Anim.SetFloat("fAttackSpd", (unitStatus as SO_PlayerStatus).atkSpeed);
+
+            OnChargeChanged?.Invoke(normalizeChargeRate);
+
+            // zoom
         }
         else if (Input.GetMouseButtonUp(0))
         {
@@ -142,7 +183,7 @@ public class B_Player : B_UnitBase
 
             if (chargeRate >= minChargeRate)
             {
-                if(chargeRate >= maxChargeRate)
+                if (chargeRate >= maxChargeRate)
                 {
                     // Max charge attack logic
                     MaximumChargeAttack();
@@ -160,17 +201,6 @@ public class B_Player : B_UnitBase
             (unitStatus as SO_PlayerStatus).chargeRate = 1f;
         }
     }
-
-    void Attack()
-    {
-        // Attack logic
-        Anim.SetBool("bAttack", true);
-
-        // Attack damage = Original attack damage
-
-        Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
-    }
-
     void ChargeAttack()
     {
         // Charge attack logic
@@ -180,7 +210,6 @@ public class B_Player : B_UnitBase
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
     }
-
     void MaximumChargeAttack()
     {
         // Maximum charge attack logic
@@ -190,30 +219,41 @@ public class B_Player : B_UnitBase
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
     }
-
     void ApplyChargeDamage()
     {
         var resultAtk = (unitStatus as SO_PlayerStatus).atkDamage * (unitStatus as SO_PlayerStatus).chargeRate;
 
         (unitStatus as SO_PlayerStatus).atkDamage = (int)resultAtk;
     }
-
     void ResetDamage()
     {
         (unitStatus as SO_PlayerStatus).atkDamage = (unitStatus as SO_PlayerStatus).atkDamageOrigin;
     }
 
+    public override void TakeDamage(Vector3 damageDir, int damage = 0, bool knockBack = true)
+    {
+        base.TakeDamage(damageDir, damage, knockBack);
+
+        OnHPChanged?.Invoke(unitStatus.currentHP);
+    }
+
+    #endregion
+
+    #region Animation Event
     protected override void StartAttack()
     {
 
     }
-
     protected override void EndAttack()
     {
         // End attack logic
         Anim.SetBool("bAttack", false);
         Anim.SetTrigger("tIdle");
         Anim.speed = 1f;//(unitStatus as SO_PlayerStatus).atkSpeed;
+
+        chargeVFXObj.SetActive(false);
+        weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", 0f);
+        zoomCam.orthographicSize = startZoom;
 
         ResetDamage();
     }
@@ -223,12 +263,13 @@ public class B_Player : B_UnitBase
         // Enable weapon collider logic
         weaponCollider.enabled = true;
     }
-
     void DisableWeaponCollider()
     {
         // Disable weapon collider logic
         weaponCollider.enabled = false;
     }
+
+    #endregion
 
     // lookat mouse position
     protected void LookAtMouse()

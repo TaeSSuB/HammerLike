@@ -17,22 +17,15 @@ public class B_Pillar : B_Prop
     public float ExplodeForce = 0;
     public float deathTime = 1.0f;
 
-    // Start is called before the first frame update
-    void Start()
+    protected override void Dead()
     {
-        
+        base.Dead();
+        DestroyMesh();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
 
     public void DestroyMesh()
     {
-        if (hasBeenDestroyed) // ÀÌ¹Ì DestroyMesh°¡ È£ÃâµÇ¾úÀ¸¸é ¾Æ¹« °Íµµ ÇÏÁö ¾ÊÀ½
+        if (hasBeenDestroyed) // ì´ë¯¸ DestroyMeshê°€ í˜¸ì¶œë˜ì—ˆìœ¼ë©´ ì•„ë¬´ ê²ƒë„ í•˜ì§€ ì•ŠìŒ
             return;
 
         hasBeenDestroyed = true;
@@ -74,20 +67,20 @@ public class B_Pillar : B_Prop
             subParts.Clear();
         }
 
-        Vector3 playerDirection = transform.forward; // ÇÃ·¹ÀÌ¾î°¡ ¹Ù¶óº¸´Â ¹æÇâ
+        Vector3 playerDirection = transform.forward; // í”Œë ˆì´ì–´ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥
 
         for (var i = 0; i < parts.Count; i++)
         {
             parts[i].MakeGameobject(this);
             var rigidbody = parts[i].GameObject.GetComponent<Rigidbody>();
 
-            // ÇÃ·¹ÀÌ¾î°¡ ¹Ù¶óº¸´Â ¹æÇâÀ¸·Î ÆÄÆí¿¡ ÈûÀ» °¡ÇÕ´Ï´Ù.
+            // í”Œë ˆì´ì–´ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ íŒŒí¸ì— í˜ì„ ê°€í•©ë‹ˆë‹¤.
             rigidbody.AddForce(playerDirection * ExplodeForce, ForceMode.Impulse);
-            // »ı¼ºµÈ °¢ ÆÄÆíÀ» 10ÃÊ ÈÄ¿¡ ÆÄ±«ÇÕ´Ï´Ù.
+            // ìƒì„±ëœ ê° íŒŒí¸ì„ 10ì´ˆ í›„ì— íŒŒê´´í•©ë‹ˆë‹¤.
             Destroy(parts[i].GameObject, deathTime);
         }
         Destroy(gameObject);
-        // ºÎ¸ğ ¿ÀºêÁ§Æ®ÀÇ BoxCollider¸¦ ÆÄ±«ÇÕ´Ï´Ù.
+        // ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸ì˜ BoxColliderë¥¼ íŒŒê´´í•©ë‹ˆë‹¤.
         if (transform.parent != null)
         {
             BoxCollider parentBoxCollider = transform.parent.gameObject.GetComponent<BoxCollider>();
@@ -99,7 +92,7 @@ public class B_Pillar : B_Prop
         }
         else
         {
-            // ºÎ¸ğ ¿ÀºêÁ§Æ®°¡ ¾øÀ¸¸é ÀÌ ¿ÀºêÁ§Æ® ÀÚÃ¼¸¦ ÆÄ±«ÇÕ´Ï´Ù.
+            // ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸ê°€ ì—†ìœ¼ë©´ ì´ ì˜¤ë¸Œì íŠ¸ ìì²´ë¥¼ íŒŒê´´í•©ë‹ˆë‹¤.
             Destroy(gameObject);
         }
     }
@@ -138,7 +131,7 @@ public class B_Pillar : B_Prop
                     continue;
                 }
 
-                //ÄÆ Æ÷ÀÎÆ®
+                //ì»· í¬ì¸íŠ¸
                 var singleIndex = sideB == sideC ? 0 : sideA == sideC ? 1 : 2;
 
                 ray1.origin = original.Vertices[triangles[j + singleIndex]];
