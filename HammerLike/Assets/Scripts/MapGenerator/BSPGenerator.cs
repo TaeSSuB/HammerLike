@@ -256,6 +256,12 @@ public class BSPGenerator : MonoBehaviour
         float deltaX = endPosition.x - startPosition.x;
         float deltaZ = endPosition.z - startPosition.z;
 
+        if (deltaX != 0 && deltaZ != 0 && Mathf.Abs(deltaX) < 9 && Mathf.Abs(deltaZ) < 9)
+        {
+            ReGenerator(); // x좌표 혹은 z좌표로 9이하면 다시 배치
+            return;     // 더 이쁘게 배치할려면 시간이 좀 걸릴듯
+        }
+
         if (deltaX == 0 || deltaZ == 0)
         {
 
@@ -494,10 +500,12 @@ public class BSPGenerator : MonoBehaviour
         for (int i = 0; i < tileCount; i++)
         {
             Vector3 tilePosition = start + direction * tileStep * i;
-            Instantiate(tilePrefab, tilePosition, rotation);
+            GameObject tile =Instantiate(tilePrefab, tilePosition, rotation);
+            tile.transform.parent = tileParent.transform;
             if (i == tileCount - 1)
             {
-                Instantiate(tilePrefab, end, rotation);
+                GameObject tile2 = Instantiate(tilePrefab, end, rotation);
+                tile2.transform.parent = tileParent.transform;
             }
         }
     }

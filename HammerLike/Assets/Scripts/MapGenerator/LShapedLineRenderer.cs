@@ -41,6 +41,8 @@ public class LShapedLineRenderer : MonoBehaviour
         float deltaX = endPosition.x - startPosition.x;
         float deltaZ = endPosition.z - startPosition.z;
 
+
+
         if (deltaX == 0 || deltaZ == 0)
         {
             
