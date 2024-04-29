@@ -1,26 +1,19 @@
 using UnityEngine;
 
-[RequireComponent(typeof(LineRenderer))]
+
 public class LShapedLineRenderer : MonoBehaviour
 {
     public GameObject pointA;
     public GameObject pointB;
-    public GameObject tilePrefab;  // 타일 프리팹
-    public GameObject cornerPrefab; // 코너 프리팹
+    public GameObject tilePrefab;  // ?????袁ⓥ봺??
+    public GameObject cornerPrefab; // ?꾨뗀瑗??袁ⓥ봺??
     public GameObject container;
-    private LineRenderer lineRenderer;
-    private Vector3 tileSize;  // 타일의 실제 크기
+    private Vector3 tileSize;  // ????깆벥 ??쇱젫 ??由?
 
     void Start()
     {
-        lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.positionCount = 4;
-        lineRenderer.startColor = Color.red;
-        lineRenderer.endColor = Color.red;
-        lineRenderer.startWidth = 0.1f;
-        lineRenderer.endWidth = 0.1f;
-
-        tileSize = GetPrefabSize(tilePrefab);  // 프리팹의 크기를 가져옴
+        
+        tileSize = GetPrefabSize(tilePrefab);  // ?袁ⓥ봺?諭????由곁몴?揶쎛?紐꾩긾
 
         container = new GameObject("TilesAndCornersContainer");
 
@@ -37,7 +30,7 @@ public class LShapedLineRenderer : MonoBehaviour
         {
             return renderer.bounds.size;
         }
-        return new Vector3(1, 0, 1);  // 기본 크기를 반환 (렌더러가 없는 경우)
+        return new Vector3(1, 0, 1);  // 疫꿸퀡????由곁몴?獄쏆꼹??(???쐭??? ??용뮉 野껋럩??
     }
 
     private void SetupLinePositions()
@@ -50,9 +43,7 @@ public class LShapedLineRenderer : MonoBehaviour
 
         if (deltaX == 0 || deltaZ == 0)
         {
-            lineRenderer.positionCount = 2;
-            lineRenderer.SetPosition(0, startPosition);
-            lineRenderer.SetPosition(1, endPosition);
+            
             PlaceTilesAlongLine(startPosition, endPosition, false);
         }
         else
@@ -71,10 +62,7 @@ public class LShapedLineRenderer : MonoBehaviour
                 intermediate2 = new Vector3(endPosition.x, endPosition.y, midPoint.z);
             }
 
-            lineRenderer.SetPosition(0, startPosition);
-            lineRenderer.SetPosition(1, intermediate1);
-            lineRenderer.SetPosition(2, intermediate2);
-            lineRenderer.SetPosition(3, endPosition);
+            
 
             DetermineAndPlaceCornerObjects(deltaX, deltaZ, intermediate1, intermediate2);
             Vector3 cornerKMJ = new Vector3(2, 0, 6);
