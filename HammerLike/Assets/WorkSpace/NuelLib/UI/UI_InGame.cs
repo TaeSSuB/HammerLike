@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Rewired;
 
 public class UI_InGame : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class UI_InGame : MonoBehaviour
     [Header("Map UI")]
     [SerializeField] protected GameObject mapUI;
 
+    [SerializeField] private B_Player player;
     private SO_PlayerStatus playerStatus;
 
     private void Start()
@@ -37,18 +39,26 @@ public class UI_InGame : MonoBehaviour
         StartCoroutine(CoInitialize());
     }
 
-    private void OnDisable()
+    private void OnApplicationQuit()
     {
         // 메모리 해제. a.HG
-        B_Player player = GameManager.instance.Player;
+        //B_Player player = GameManager.Instance.Player; // 메모리 해제 이슈로 주석 처리. a.HG
+        Debug.Log("UI_InGame OnApplicationQuit");
+
+        if (player == null)
+        {
+            Debug.Log("UI_InGame OnDisable - player is null");
+            player = FindObjectOfType<B_Player>();
+        }
+
         player.OnHPChanged -= UpdateHP;
         player.OnChargeChanged -= UpdateGauge;
     }
 
     public void Initialize()
     {
-        Debug.Log("UI_InGame Initialize");
-        B_Player player = GameManager.instance.Player;
+        //Debug.Log("UI_InGame Initialize");
+        player = GameManager.Instance.Player;
         playerStatus = player.UnitStatus as SO_PlayerStatus;
 
         hpBarRctTR = hpBarImg.gameObject.GetComponent<RectTransform>();
@@ -90,7 +100,7 @@ public class UI_InGame : MonoBehaviour
 
     private IEnumerator CoInitialize()
     {
-        yield return new WaitUntil(() => GameManager.instance.Player != null);
+        yield return new WaitUntil(() => GameManager.Instance.Player != null);
 
         Initialize();
     }

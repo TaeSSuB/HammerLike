@@ -23,24 +23,33 @@ public class B_Slime : B_Enemy
         StartCoroutine(CoSlimeDead());
     }
 
-    protected override void Attack()
+    public override void Attack()
     {
         Debug.Log("Slime Attack");
         //base.Attack();
-        AIStateManager?.SetState(AIStateType.IDLE);
+        //AIStateManager?.SetState(AIStateType.IDLE);
 
-        if (UnitStatus.currentAttackCooltime <= 0)
-        {
-            StartCoroutine(CoSlimeAttack());
+        StartCoroutine(CoSlimeAttack());
 
-            // Attack
-            UnitStatus.currentAttackCooltime = UnitStatus.maxAttackCooltime;
-        }   
+        //if (UnitStatus.currentAttackCooltime <= 0)
+        //{
+        //    StartCoroutine(CoSlimeAttack());
+
+        //    // Attack
+        //    UnitStatus.currentAttackCooltime = UnitStatus.maxAttackCooltime;
+        //}   
+    }
+
+    public override void EndAttack()
+    {
+        base.EndAttack();
+
+        rigid.isKinematic = false;
     }
 
     IEnumerator CoSlimeAttack()
     {
-        var targetTr = GameManager.instance.Player.transform;
+        var targetTr = GameManager.Instance.Player.transform;
 
         // Shortest distance to the target
         float target_Distance = Vector3.Distance(transform.position, targetTr.position);
@@ -65,6 +74,7 @@ public class B_Slime : B_Enemy
         // Move projectile to the target and adjust height based on the cross product
         float elapse_time = 0;
 
+        agent.enabled = false;
         rigid.isKinematic = true;
         //rigid.mass = 100f;
 
@@ -90,12 +100,15 @@ public class B_Slime : B_Enemy
 
             elapse_time += Time.deltaTime;
 
+            unitStatus.currentAttackCooltime = unitStatus.maxAttackCooltime;
+
             yield return null;
         }
 
         // Reset height
-        transform.position = new Vector3(transform.position.x, targetTr.position.y, transform.position.z);
-
+        transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
+        agent.enabled = true;
+        rigid.velocity = Vector3.zero;
         rigid.isKinematic = false;
         //rigid.mass = unitStatus.mass;
 

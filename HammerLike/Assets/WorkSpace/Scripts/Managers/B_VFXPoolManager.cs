@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using NuelLib;
 
 // Temp 240408 - DB 구현 전까지 임시 할당, a.HG
 // Load VFX name by value. just use ex. hit = "Hit"
@@ -10,26 +11,17 @@ public struct VFXName
     public const string Heal = "Heal";
 }
 
-public class B_VFXPoolManager : MonoBehaviour
+public class B_VFXPoolManager : SingletonMonoBehaviour<B_VFXPoolManager>
 {
-    public static B_VFXPoolManager Instance;
 
     public VFXSet vfxSet; // Assign in the Unity editor
 
     private Dictionary<string, Queue<GameObject>> vfxPoolDictionary = new Dictionary<string, Queue<GameObject>>();
     private Dictionary<string, float> vfxDurationDictionary = new Dictionary<string, float>();
 
-    private void Awake()
+    protected override void Awake()
     {
-        if(Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        else
-        {
-            Instance = this;
-        }
+        base.Awake();
 
         foreach (var vfxData in vfxSet.vfxDatas)
         {

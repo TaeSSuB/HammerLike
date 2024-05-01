@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using NuelLib;
 
 // singleton pattern
-public class GameManager : MonoBehaviour
+public class GameManager : SingletonMonoBehaviour<GameManager>
 {
-    public static GameManager instance;
-
     [Header("Player")]
     [SerializeField] private B_Player player;
 
@@ -40,22 +39,15 @@ public class GameManager : MonoBehaviour
     public Vector3 CoordScale { get => systemSettings.CoordinateScale; }
     public float TimeScale { get => systemSettings.TimeScale; }
 
-    private void Awake()
+    protected override void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
+        base.Awake();
 
-            var resetTextObj = Instantiate(textPrefab, textTR);
-            resetTextObj.GetComponent<TextMeshProUGUI>().text = "Reset - " + resetKey.ToString();
-            devModeTextObj = Instantiate(textPrefab, textTR);
-            devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();
-            ResetTester();
-        }
-        else
-        {
-            Destroy(this.gameObject);
-        }
+        var resetTextObj = Instantiate(textPrefab, textTR);
+        resetTextObj.GetComponent<TextMeshProUGUI>().text = "Reset - " + resetKey.ToString();
+        devModeTextObj = Instantiate(textPrefab, textTR);
+        devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();
+        ResetTester();
     }
 
     private void Update()
@@ -103,6 +95,7 @@ public class GameManager : MonoBehaviour
     public float CalcCoordScale(Vector3 inVector)
     {
         inVector.y = 0;
+        inVector.Normalize();
 
         var coordVecMag = new Vector3(
             inVector.x * CoordScale.x,
@@ -112,6 +105,7 @@ public class GameManager : MonoBehaviour
 
         return coordVecMag;
     }
+
     #endregion
 
     #region Dev Mode

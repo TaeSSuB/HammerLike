@@ -6652,11 +6652,11 @@ GameObject:
   - component: {fileID: 8995942570513142287}
   - component: {fileID: 8995942570513142284}
   - component: {fileID: 8995942570513142280}
-  - component: {fileID: 8995942570513142275}
   - component: {fileID: 8995942570513142293}
   - component: {fileID: 6351146761269656495}
   - component: {fileID: 7728055365080933140}
   - component: {fileID: 1183918704893762077}
+  - component: {fileID: 3775784216780814669}
   m_Layer: 8
   m_Name: Skeleton_Prisoner
   m_TagString: Enemy
@@ -6755,26 +6755,6 @@ Rigidbody:
   m_Interpolate: 2
   m_Constraints: 116
   m_CollisionDetection: 1
---- !u!114 &8995942570513142275
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8995942570513142273}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6c1c360019cf4368a4302b85327a3e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 8995942570513142287}
-  puppetMaster: {fileID: 8995942569657533122}
-  leftLeg:
-  - {fileID: 8995942570061169837}
-  - {fileID: 8995942569248218822}
-  rightLeg:
-  - {fileID: 8995942568699085886}
-  - {fileID: 8995942570497553234}
 --- !u!114 &8995942570513142293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6914,6 +6894,7 @@ MonoBehaviour:
   isInvincible: 0
   unitType: 0
   anim: {fileID: 8995942570513142287}
+  agent: {fileID: 0}
   knockBackMultiplier: 5
   puppet: {fileID: 8995942570625409004}
   remainKnockBackDir: {x: 0, y: 0, z: 0}
@@ -6927,6 +6908,28 @@ MonoBehaviour:
   hpPosTR: {fileID: 4266959465240773480}
   chasingStartDis: 20
   isTester: 0
+--- !u!195 &3775784216780814669
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8995942570513142273}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.75
+  m_Speed: 3.5
+  m_Acceleration: 100
+  avoidancePriority: 50
+  m_AngularSpeed: 360
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &8995942570552095039
 GameObject:
   m_ObjectHideFlags: 0

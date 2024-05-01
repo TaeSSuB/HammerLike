@@ -13,6 +13,7 @@ public class B_Player : B_UnitBase
     // Temp 20240426 - 임시.., a.HG
     [SerializeField] private GameObject chargeVFXObj;
     [SerializeField] private GameObject weaponObj;
+    [SerializeField] private WeaponOrbit weaponOrbit;
     [SerializeField] private Camera zoomCam;
 
     [SerializeField] private float zoomAmount;
@@ -23,7 +24,7 @@ public class B_Player : B_UnitBase
 
     protected override void ApplyStatus()
     {
-        unitStatus = Instantiate(GameManager.instance.PlayerStatus);
+        unitStatus = Instantiate(GameManager.Instance.PlayerStatus);
     }
 
     //init override
@@ -31,8 +32,10 @@ public class B_Player : B_UnitBase
     {
         base.Init();
         // Init logic
-        GameManager.instance.SetPlayer(this);
+        GameManager.Instance.SetPlayer(this);
         chargeVFXObj.SetActive(false);
+        weaponCollider.enabled = false;
+        weaponCollider.isTrigger = true;
 
         startZoom = zoomCam.orthographicSize;
     }
@@ -55,14 +58,14 @@ public class B_Player : B_UnitBase
         Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         moveDir.Normalize();
 
-        var move = Move(moveDir);
+        var move = Move(transform.position + moveDir);
         //Debug.Log("Move - " + move);
         //Debug.Log("ACSN - " + GameManager.instance.ApplyCoordScaleNormalize(moveDir));
         MoveAnim(moveDir);
 
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            Dash(move);
+            Dash(moveDir);
         }
 
         return moveDir;
@@ -82,7 +85,9 @@ public class B_Player : B_UnitBase
     void Dash(Vector3 inDir)
     {
         if (inDir == Vector3.zero)
-            return;
+        {
+            inDir = transform.forward;
+        }
 
         StartCoroutine(DashCoroutine(inDir));
     }
@@ -94,10 +99,14 @@ public class B_Player : B_UnitBase
 
         StartDash();
 
-        Vector3 coordDir = GameManager.instance.ApplyCoordScaleNormalize(inDir);
+        Vector3 coordDir = GameManager.Instance.ApplyCoordScaleNormalize(inDir);
         //transform.LookAt(coordDir + transform.position);
 
         Debug.DrawLine(transform.position, coordDir + transform.position, Color.red, 3f);
+
+        agent.isStopped = true;
+        agent.enabled = false;
+        rigid.velocity = Vector3.zero;
 
         while (dashTime > 0)
         {
@@ -107,6 +116,10 @@ public class B_Player : B_UnitBase
             dashTime -= Time.deltaTime;
             yield return null;
         }
+        
+        rigid.velocity = Vector3.zero;
+        agent.enabled = true;
+        agent.isStopped = false;
 
         EndDash();
     }
@@ -133,7 +146,7 @@ public class B_Player : B_UnitBase
     #endregion
     
     #region Damage
-    void Attack()
+    public override void Attack()
     {
         // Attack logic
         Anim.SetBool("bAttack", true);
@@ -198,6 +211,7 @@ public class B_Player : B_UnitBase
                 Attack();
             }
 
+            OnChargeChanged?.Invoke(0f);
             (unitStatus as SO_PlayerStatus).chargeRate = 1f;
         }
     }
@@ -240,12 +254,13 @@ public class B_Player : B_UnitBase
     #endregion
 
     #region Animation Event
-    protected override void StartAttack()
+    public override void StartAttack()
     {
-
+        base.StartAttack();
     }
-    protected override void EndAttack()
+    public override void EndAttack()
     {
+        base.EndAttack();
         // End attack logic
         Anim.SetBool("bAttack", false);
         Anim.SetTrigger("tIdle");
@@ -260,12 +275,15 @@ public class B_Player : B_UnitBase
 
     void EnableWeaponCollider()
     {
+        weaponOrbit.trailRenderer.emitting = true;
         // Enable weapon collider logic
         weaponCollider.enabled = true;
     }
     void DisableWeaponCollider()
     {
         // Disable weapon collider logic
+        weaponOrbit.trailRenderer.emitting = false;
+        weaponOrbit.trailRenderer.Clear();
         weaponCollider.enabled = false;
     }
 
@@ -280,12 +298,11 @@ public class B_Player : B_UnitBase
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, 100))
+        if (Physics.Raycast(ray, out hit, 100, groundLayer))
         {
             Vector3 lookAt = hit.point;
             lookAt.y = transform.position.y;
             transform.LookAt(lookAt);
         }
     }
-
 }
