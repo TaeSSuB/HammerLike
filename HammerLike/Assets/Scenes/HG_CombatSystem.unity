@@ -1283,7 +1283,12 @@ PrefabInstance:
     - target: {fileID: 745235999134340653, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
         type: 3}
       propertyPath: followOption
-      value: 2
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 745235999396732622, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
+        type: 3}
+      propertyPath: orthographic size
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 2089743045744522957, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
         type: 3}
@@ -2093,27 +2098,27 @@ PrefabInstance:
     - target: {fileID: 1768623637981744526, guid: ca6bc6a7961f4e249a99966978999eb6,
         type: 3}
       propertyPath: outlineTargets.Array.data[0].IsVisible
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1768623637981744526, guid: ca6bc6a7961f4e249a99966978999eb6,
         type: 3}
       propertyPath: outlineTargets.Array.data[1].IsVisible
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1768623637981744526, guid: ca6bc6a7961f4e249a99966978999eb6,
         type: 3}
       propertyPath: outlineTargets.Array.data[2].IsVisible
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1768623637981744526, guid: ca6bc6a7961f4e249a99966978999eb6,
         type: 3}
       propertyPath: outlineTargets.Array.data[3].IsVisible
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1768623637981744526, guid: ca6bc6a7961f4e249a99966978999eb6,
         type: 3}
       propertyPath: outlineTargets.Array.data[4].IsVisible
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1768623638462056358, guid: ca6bc6a7961f4e249a99966978999eb6,
         type: 3}
@@ -2175,36 +2180,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: B_Player
       objectReference: {fileID: 0}
-    - target: {fileID: 3484366558814721814, guid: ca6bc6a7961f4e249a99966978999eb6,
-        type: 3}
-      propertyPath: m_Intensity
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3484366558814721814, guid: ca6bc6a7961f4e249a99966978999eb6,
-        type: 3}
-      propertyPath: m_SpotAngle
-      value: 80
-      objectReference: {fileID: 0}
-    - target: {fileID: 3484366558814721814, guid: ca6bc6a7961f4e249a99966978999eb6,
-        type: 3}
-      propertyPath: m_RenderMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3484366558814721814, guid: ca6bc6a7961f4e249a99966978999eb6,
-        type: 3}
-      propertyPath: m_InnerSpotAngle
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 3484366558814721814, guid: ca6bc6a7961f4e249a99966978999eb6,
-        type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 536872704
-      objectReference: {fileID: 0}
-    - target: {fileID: 4313188254355159387, guid: ca6bc6a7961f4e249a99966978999eb6,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4550365487089323415, guid: ca6bc6a7961f4e249a99966978999eb6,
         type: 3}
       propertyPath: m_Center.y
@@ -2235,7 +2210,8 @@ PrefabInstance:
       propertyPath: zoomCam
       value: 
       objectReference: {fileID: 1831550543}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2429223032665612088, guid: ca6bc6a7961f4e249a99966978999eb6, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -3066,7 +3042,7 @@ PrefabInstance:
     - target: {fileID: 2722200154925960889, guid: 18a51807200c62a47b4b030933d7c22b,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 22.01
       objectReference: {fileID: 0}
     - target: {fileID: 2722200154925960889, guid: 18a51807200c62a47b4b030933d7c22b,
         type: 3}
@@ -3151,7 +3127,7 @@ PrefabInstance:
     - target: {fileID: 3885285349297787788, guid: 18a51807200c62a47b4b030933d7c22b,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 22.01
       objectReference: {fileID: 0}
     - target: {fileID: 3885285349297787788, guid: 18a51807200c62a47b4b030933d7c22b,
         type: 3}
@@ -3716,7 +3692,7 @@ PrefabInstance:
     - target: {fileID: 6552960034510685777, guid: 18a51807200c62a47b4b030933d7c22b,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 22.01
       objectReference: {fileID: 0}
     - target: {fileID: 6552960034510685777, guid: 18a51807200c62a47b4b030933d7c22b,
         type: 3}

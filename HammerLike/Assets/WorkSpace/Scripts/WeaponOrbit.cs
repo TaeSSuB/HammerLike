@@ -45,7 +45,7 @@ public class WeaponOrbit : MonoBehaviour
         {
             player = GameObject.FindGameObjectWithTag("Player");
         }
-
+        trailRenderer.emitting = false;
     }
 
     private void Update()

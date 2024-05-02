@@ -18,6 +18,7 @@ public class B_Player : B_UnitBase
 
     [SerializeField] private float zoomAmount;
     [SerializeField] private float startZoom;
+    [SerializeField] private float rotDeadZone = 0.1f;
 
     public event Action<int> OnHPChanged;
     public event Action<float> OnChargeChanged;
@@ -302,7 +303,10 @@ public class B_Player : B_UnitBase
         {
             Vector3 lookAt = hit.point;
             lookAt.y = transform.position.y;
-            transform.LookAt(lookAt);
+
+            // DeadZone
+            if (Vector3.Distance(transform.position, lookAt) > rotDeadZone)
+                transform.LookAt(lookAt);
         }
     }
 }
