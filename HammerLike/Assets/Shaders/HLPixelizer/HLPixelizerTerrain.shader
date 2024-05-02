@@ -97,9 +97,9 @@ Shader "HLPixelizer/SRP/HLPixelizerTerrain"
 
 			HLSLPROGRAM
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Assets/ProPixelizer/SRP/ShaderLibrary/PixelUtils.hlsl"
-            #include "Assets/ProPixelizer/SRP/ShaderLibrary/PackingUtils.hlsl"
-            #include "Assets/ProPixelizer/SRP/ShaderLibrary/ScreenUtils.hlsl"
+            #include "Assets/External Assets/ProPixelizer/SRP/ShaderLibrary/PixelUtils.hlsl"
+            #include "Assets/External Assets/ProPixelizer/SRP/ShaderLibrary/PackingUtils.hlsl"
+            #include "Assets/External Assets/ProPixelizer/SRP/ShaderLibrary/ScreenUtils.hlsl"
 			#pragma vertex outline_vert
 			#pragma fragment outline_frag
 			#pragma target 2.5
@@ -224,7 +224,7 @@ Shader "HLPixelizer/SRP/HLPixelizerTerrain"
             TEXTURE2D(_Normal_1);
             SAMPLER(sampler_Normal_1);
 
-			#include "Assets/ProPixelizer/SRP/ShaderLibrary/OutlinePass.hlsl"
+			#include "Assets/External Assets/ProPixelizer/SRP/ShaderLibrary/OutlinePass.hlsl"
 			ENDHLSL
 		}
      }
