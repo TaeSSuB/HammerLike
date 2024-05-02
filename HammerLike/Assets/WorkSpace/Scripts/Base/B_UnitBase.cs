@@ -96,13 +96,17 @@ public class B_UnitBase : B_Entity
         UnitManager.instance.AddUnit(this);
 
         InitHP();
-        InitAttack();
 
         // Get the Animator component if it's not already assigned
         if (Anim == null)
         {
             anim = GetComponent<Animator>();
         }
+    }
+
+    protected virtual void UpdateAttackCoolTime()
+    {
+        UnitStatus.currentAttackCooltime -= Time.deltaTime;
     }
 
     // Update is called once per frame
@@ -116,8 +120,9 @@ public class B_UnitBase : B_Entity
 
         if (UnitStatus.currentAttackCooltime > 0)
         {
-            UnitStatus.currentAttackCooltime -= Time.deltaTime;
-            Anim.SetFloat("fRemainShot", UnitStatus.currentAttackCooltime);
+            UpdateAttackCoolTime();
+            //UnitStatus.currentAttackCooltime -= Time.deltaTime;
+            //Anim.SetFloat("fRemainShot", UnitStatus.currentAttackCooltime);
 
             // Init - On Attack State
             // current Attack -> Max Attack Cooltime
@@ -144,7 +149,7 @@ public class B_UnitBase : B_Entity
     /// <returns>Agent 목표 위치</returns>
     public virtual Vector3 Move(Vector3 inPos)
     {
-        if (!isGrounded || isLockMove)
+        if (!isGrounded || isLockMove || !agent.enabled)
             return Vector3.zero;
 
         var targetDir = inPos - transform.position;
@@ -175,10 +180,6 @@ public class B_UnitBase : B_Entity
     public void InitHP()
     {
         UnitStatus.currentHP = UnitStatus.maxHP;
-    }
-    public void InitAttack()
-    {
-        UnitStatus.atkDamageOrigin = UnitStatus.atkDamage;
     }
 
     public void RestoreHP(int hpRate = 0)

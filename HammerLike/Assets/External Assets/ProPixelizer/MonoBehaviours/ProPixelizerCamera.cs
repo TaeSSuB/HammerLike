@@ -1,5 +1,4 @@
-﻿// Copyright Elliot Bentine, 2018-
-using Codice.CM.Common.Tree;
+// Copyright Elliot Bentine, 2018-
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;

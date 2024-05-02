@@ -8,7 +8,11 @@ using UnityEngine;
 
 public class B_Player : B_UnitBase
 {
-    [SerializeField] private Collider weaponCollider;
+    [Header("Player Settings")]
+    // a.HG - 240502 콜라이더를 특정해야 사이즈 변경 가능.. 일단 박스 사용
+    [SerializeField] private BoxCollider weaponCollider;
+    [SerializeField] private Vector3 initWeaponColliderScale;
+    [SerializeField] private Vector3 initWeaponColliderCenter;
 
     // Temp 20240426 - 임시.., a.HG
     [SerializeField] private GameObject chargeVFXObj;
@@ -35,8 +39,12 @@ public class B_Player : B_UnitBase
         // Init logic
         GameManager.Instance.SetPlayer(this);
         chargeVFXObj.SetActive(false);
+        
+        // Get Weapon Collider Component
         weaponCollider.enabled = false;
         weaponCollider.isTrigger = true;
+        initWeaponColliderScale = weaponCollider.size;
+        initWeaponColliderCenter = weaponCollider.center;
 
         startZoom = zoomCam.orthographicSize;
     }
@@ -48,8 +56,14 @@ public class B_Player : B_UnitBase
         InputMovement();
         LookAtMouse();
         CheckCharge();
+
+        Vector3 forward = transform.forward;
+        float coordScale = GameManager.Instance.CalcCoordScale(forward);
+
+        weaponCollider.size = initWeaponColliderScale * coordScale;
+        weaponCollider.center = initWeaponColliderCenter * coordScale;
     }
-    
+
     private Vector3 InputMovement()
     {
         if(isLockMove)
@@ -64,7 +78,7 @@ public class B_Player : B_UnitBase
         //Debug.Log("ACSN - " + GameManager.instance.ApplyCoordScaleNormalize(moveDir));
         MoveAnim(moveDir);
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
         {
             Dash(moveDir);
         }
@@ -80,6 +94,14 @@ public class B_Player : B_UnitBase
         Vector3 localDir = transform.InverseTransformDirection(inDir);
         Anim.SetFloat("MoveX", localDir.x);
         Anim.SetFloat("MoveZ", localDir.z);
+        if(inDir != Vector3.zero)
+        {
+            Anim.SetBool("IsMoving", true);
+        }
+        else
+        {
+            Anim.SetBool("IsMoving", false);
+        }
     }
 
     #region Dash
@@ -151,7 +173,7 @@ public class B_Player : B_UnitBase
     {
         // Attack logic
         Anim.SetBool("bAttack", true);
-
+        Anim.SetBool("IsInWardAttack", true);
         // Attack damage = Original attack damage
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
@@ -173,9 +195,14 @@ public class B_Player : B_UnitBase
             {
                 Anim.SetBool("IsCharge", true);
 
+                // VFX
                 chargeVFXObj.SetActive(true);
                 weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", normalizeChargeRate * 4f);
 
+                // Move Speed Reduce
+                UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin - (unitStatus as SO_PlayerStatus).MoveSpeedOrigin * normalizeChargeRate;
+
+                // Cam Zoom
                 zoomCam.orthographicSize = startZoom - (zoomAmount * normalizeChargeRate);
             }
 
@@ -214,12 +241,15 @@ public class B_Player : B_UnitBase
 
             OnChargeChanged?.Invoke(0f);
             (unitStatus as SO_PlayerStatus).chargeRate = 1f;
+
+            UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin;
         }
     }
     void ChargeAttack()
     {
         // Charge attack logic
         Anim.SetBool("bAttack", true);
+        Anim.SetBool("IsOutWardAttack", true);
 
         ApplyChargeDamage();
 
@@ -229,6 +259,7 @@ public class B_Player : B_UnitBase
     {
         // Maximum charge attack logic
         Anim.SetBool("bAttack", true);
+        Anim.SetBool("IsOutWardAttack", true);
 
         ApplyChargeDamage();
 
@@ -242,7 +273,7 @@ public class B_Player : B_UnitBase
     }
     void ResetDamage()
     {
-        (unitStatus as SO_PlayerStatus).atkDamage = (unitStatus as SO_PlayerStatus).atkDamageOrigin;
+        (unitStatus as SO_PlayerStatus).atkDamage = (unitStatus as SO_PlayerStatus).AtkDamageOrigin;
     }
 
     public override void TakeDamage(Vector3 damageDir, int damage = 0, bool knockBack = true)
@@ -264,6 +295,9 @@ public class B_Player : B_UnitBase
         base.EndAttack();
         // End attack logic
         Anim.SetBool("bAttack", false);
+        Anim.SetBool("IsOutWardAttack", false);
+        Anim.SetBool("IsInWardAttack", false);
+
         Anim.SetTrigger("tIdle");
         Anim.speed = 1f;//(unitStatus as SO_PlayerStatus).atkSpeed;
 
@@ -276,6 +310,7 @@ public class B_Player : B_UnitBase
 
     void EnableWeaponCollider()
     {
+        weaponOrbit.trailRenderer.Clear();
         weaponOrbit.trailRenderer.emitting = true;
         // Enable weapon collider logic
         weaponCollider.enabled = true;
@@ -284,7 +319,6 @@ public class B_Player : B_UnitBase
     {
         // Disable weapon collider logic
         weaponOrbit.trailRenderer.emitting = false;
-        weaponOrbit.trailRenderer.Clear();
         weaponCollider.enabled = false;
     }
 

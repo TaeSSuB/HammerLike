@@ -19,4 +19,10 @@ public class B_Skeleton_Archer : B_Enemy
         base.EndAttack();
         Shot();
     }
+
+    protected override void UpdateAttackCoolTime()
+    {
+        base.UpdateAttackCoolTime();
+        Anim.SetFloat("fRemainShot", UnitStatus.currentAttackCooltime);
+    }
 }

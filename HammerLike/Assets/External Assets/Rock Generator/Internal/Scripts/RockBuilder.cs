@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+#if UNITY_EDITOR
+
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace JPBotelho
@@ -64,3 +66,4 @@ namespace JPBotelho
         }
     }
 }
+#endif

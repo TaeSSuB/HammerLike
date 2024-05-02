@@ -89,6 +89,8 @@ MonoBehaviour:
   player: {fileID: 1768623638817304503}
   startWidthScale: 0.3
   endWidthScale: 0.1
+  debugMode: 0
+  edgeCount: 24
 --- !u!96 &576635233718691163
 TrailRenderer:
   serializedVersion: 3
@@ -441,6 +443,7 @@ MonoBehaviour:
   isGrounded: 0
   isKnockback: 0
   weaponCollider: {fileID: 8092900079886501016}
+  initWeaponColliderScale: {x: 0, y: 0, z: 0}
   chargeVFXObj: {fileID: 4313188254355159387}
   weaponObj: {fileID: 4389952972687816322}
   weaponOrbit: {fileID: 1952734946970189571}
@@ -814,7 +817,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 1, y: 2.5, z: 1}
+  m_Size: {x: 1, y: 3, z: 1}
   m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &3484366558637496217
 GameObject:

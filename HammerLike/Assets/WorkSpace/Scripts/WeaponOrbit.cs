@@ -34,6 +34,10 @@ public class WeaponOrbit : MonoBehaviour
     public float startWidthScale = 0.1f;  // 트레일 시작 폭
     public float endWidthScale = 0.05f;  // 트레일 끝 폭
 
+    [Header("Debug")]
+    public bool debugMode = false;
+    public int edgeCount = 32;  // 궤도 기즈모 각
+
 
     void Start()
     {
@@ -191,4 +195,34 @@ public class WeaponOrbit : MonoBehaviour
         // 물체의 위치 설정
         transform.position = new Vector3(x, 0, z) + player.transform.position + offset;
     }
+
+    /// <summary>
+    /// TrackDirBasedPoint2 Based 궤도 위치와 가장 가까운 궤도 위치를 시각화
+    /// </summary>
+    private void OnDrawGizmos()
+    {
+        // TrackNearPoint
+        //Gizmos.color = Color.green;
+        //Gizmos.DrawWireSphere(closestPoint, 0.5f);
+
+        // TrackDirBasedPoint2
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(bestMatchPoint, 0.5f);
+
+        // 타원 궤도 시각화
+        Gizmos.color = Color.blue;
+        
+        if(edgeCount < 3) edgeCount = 3;
+        else if (edgeCount > 100) edgeCount = 100;
+
+        float step = 2 * Mathf.PI / edgeCount;
+        Vector3 playerPosition = player.transform.position;
+        for (float t = 0; t < 2 * Mathf.PI; t += step)
+        {
+            Vector3 orbitPoint = new Vector3(playerPosition.x + a * Mathf.Cos(t), playerPosition.y, playerPosition.z + b * Mathf.Sin(t));
+            Gizmos.DrawSphere(orbitPoint, 0.1f);
+        }
+
+    }
+    
 }

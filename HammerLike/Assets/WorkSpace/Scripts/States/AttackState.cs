@@ -25,7 +25,7 @@ public class AttackState : IAIState
     public void OnExit()
     {
         //Debug.Log("AttackState OnExit");
-        unitBase.EndAttack();
+        //unitBase.EndAttack();
         unitBase.isAttacking = false;
     }
 

@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+
+#if UNITY_EDITOR
+
+using UnityEngine;
 using System.IO;
 using System.Text;
 using System.Collections;
@@ -152,3 +155,4 @@ namespace JPBotelho
 
     }
 }
+#endif

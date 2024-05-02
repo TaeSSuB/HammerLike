@@ -26,6 +26,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     public KeyCode resetKey = KeyCode.F5;
     public KeyCode devModeKey = KeyCode.F2;
     private GameObject devModeTextObj;
+    private GameObject resetTextObj;
 
     public B_Player Player { get => player; }
     public void SetPlayer(B_Player inPlayer)
@@ -43,10 +44,10 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     {
         base.Awake();
 
-        var resetTextObj = Instantiate(textPrefab, textTR);
-        resetTextObj.GetComponent<TextMeshProUGUI>().text = "Reset - " + resetKey.ToString();
         devModeTextObj = Instantiate(textPrefab, textTR);
         devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();
+        resetTextObj = Instantiate(textPrefab, textTR);
+        resetTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Reset - " : "Destroy - ")}" + resetKey.ToString();
         ResetTester();
     }
 
@@ -60,6 +61,8 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         {
             isDevMode = !isDevMode;
             devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();
+            resetTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Reset - " : "Destroy - " )}" + resetKey.ToString();
+
         }
     }
 
@@ -111,12 +114,12 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     #region Dev Mode
     public void ResetTester()
     {
+        if (currentTempCombatTestGroup != null)
+            Destroy(currentTempCombatTestGroup);
+
         //isDevMode = inIsTester;
         if (isDevMode)
         {
-            if (currentTempCombatTestGroup != null)
-                Destroy(currentTempCombatTestGroup);
-
             currentTempCombatTestGroup = Instantiate(tempCombatTestGroupPrefab);
         }
     }
