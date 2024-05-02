@@ -15,6 +15,7 @@ public class B_Entity : MonoBehaviour
 
     public GameObject RootObj { get => rootObj; }
     public GameObject MeshObj { get => meshObj; }
+    public Collider Col { get => col; }
 
 
     protected virtual void Awake()

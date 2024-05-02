@@ -47,6 +47,7 @@ public class B_UnitBase : B_Entity
 
     public SO_UnitStatus UnitStatus { get => unitStatus;}
     public Animator Anim { get => anim;}
+    public NavMeshAgent Agent { get => agent;}
 
     private bool isAlive = true;
     public bool IsAlive { get => isAlive; }

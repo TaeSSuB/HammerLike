@@ -17,8 +17,10 @@ public class DeadState : IAIState
     {
         Debug.Log("DeadState OnEnter");
 
-        // Dead logic
+        // 240502 a.HG : Dead logic Unit에 포함 시켜야..
         unitBase.DisableMovementAndRotation();
+        unitBase.Col.enabled = false;
+        unitBase.Agent.enabled = false;
         unitBase.Anim.SetTrigger("tDead");
         //unitBase.Anim.SetTrigger("Dead");
     }
@@ -37,9 +39,11 @@ public class DeadState : IAIState
         deadTime -= Time.deltaTime;
         if (deadTime <= 0)
         {
-            (unitBase as B_Enemy).AIStateManager.SetState(AIStateType.IDLE);
             //unitBase.Init();
             unitBase.RootObj.SetActive(false);
+            unitBase.Col.enabled = true;
+            unitBase.Agent.enabled = true;
+            (unitBase as B_Enemy).AIStateManager.SetState(AIStateType.IDLE);
         }
 
     }
