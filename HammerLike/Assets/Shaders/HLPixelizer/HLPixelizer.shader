@@ -81,9 +81,9 @@ Shader "HLPixelizer/SRP/HLPixelizer"
 
 			HLSLPROGRAM
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Assets/ProPixelizer/SRP/ShaderLibrary/PixelUtils.hlsl"
-            #include "Assets/ProPixelizer/SRP/ShaderLibrary/PackingUtils.hlsl"
-            #include "Assets/ProPixelizer/SRP/ShaderLibrary/ScreenUtils.hlsl"
+            #include "Assets/External Assets/ProPixelizer/SRP/ShaderLibrary/PixelUtils.hlsl"
+            #include "Assets/External Assets/ProPixelizer/SRP/ShaderLibrary/PackingUtils.hlsl"
+            #include "Assets/External Assets/ProPixelizer/SRP/ShaderLibrary/ScreenUtils.hlsl"
 			#pragma vertex outline_vert
 			#pragma fragment outline_frag
 			#pragma target 2.5
@@ -161,8 +161,7 @@ Shader "HLPixelizer/SRP/HLPixelizer"
             float _DiffuseVertexColorWeight;
             float _EmissiveVertexColorWeight;
             SAMPLER(SamplerState_Point_Repeat);
-
-			#include "Assets/ProPixelizer/SRP/ShaderLibrary/OutlinePass.hlsl"
+			#include "Assets/External Assets/ProPixelizer/SRP/ShaderLibrary/OutlinePass.hlsl"
 			ENDHLSL
 		}
      }
