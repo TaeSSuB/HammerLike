@@ -11,13 +11,19 @@ public class DatabaseFromNotion : MonoBehaviour
 {
     private string apiKey = "secret_bUwCv2kPZmbMpwVzdzClGoGGj837Fl9skoLNN4nMfB1";    // HammerLike API
     private string database_id = "b20a40046f3c442e82456b0bd5cd8cf1"; //Entity Database
-    [SerializeField] private FilterConfig filterConfig;
+    private string database_id2 = "2602de8a1c1d4153ad132ad206bcd45d"; //Item Database
+    public bool onlyBuildable = false;
+    public static readonly List<string> PropertyNames = new List<string>
+    {
+        "armor", "detectRange", "knockbackPower", "movementSpeed",
+        "healthPoint", "attackSpeed", "attackRange", "knockbackResistance",
+        "index", "attackPower", "weight"
+    };
+    [SerializeField] public FilterConfig filterConfig;
     private IEnumerator Start()
     {
         var api = new NotionAPI(apiKey);
-
-
-        yield return api.QueryDatabase<DatabaseSchema>(database_id, db =>
+        yield return api.QueryDatabase<EntityDatabase>(database_id, db =>
         {
             var records = db.results.AsEnumerable();
 
@@ -27,9 +33,17 @@ public class DatabaseFromNotion : MonoBehaviour
                 records = FilterByProperty(records, condition.propertyName, condition.threshold, condition.comparator.ToString().ToLower());
             }
 
-            // Optional: Further processing like sorting or filtering by name
-            // records = SortByProperty(records, "healthPoint", "desc");
-            // records = FilterByEntityName(records, "The");
+            // Apply sorting
+            if (filterConfig.sortConfig != null && !string.IsNullOrEmpty(filterConfig.sortConfig.sortByProperty))
+            {
+                records = SortByProperty(records, filterConfig.sortConfig.sortByProperty, filterConfig.sortConfig.ascending);
+            }
+
+            // Filter records where 'Build' is true, if onlyBuildable is checked
+            if (onlyBuildable)
+            {
+                records = records.Where(record => record.properties.Build.Value);
+            }
 
             foreach (var record in records)
             {
@@ -38,7 +52,19 @@ public class DatabaseFromNotion : MonoBehaviour
         });
     }
 
-    private IEnumerable<Page<DatabaseSchema>> FilterByProperty(IEnumerable<Page<DatabaseSchema>> records, string propertyName, float threshold, string comparisonType)
+    private IEnumerable<Page<EntityDatabase>> SortByProperty(IEnumerable<Page<EntityDatabase>> records, string propertyName, bool ascending)
+    {
+        if (ascending)
+        {
+            return records.OrderBy(r => GetPropertyValue(r, propertyName));
+        }
+        else
+        {
+            return records.OrderByDescending(r => GetPropertyValue(r, propertyName));
+        }
+    }
+
+    private IEnumerable<Page<EntityDatabase>> FilterByProperty(IEnumerable<Page<EntityDatabase>> records, string propertyName, float threshold, string comparisonType)
     {
         return records.Where(record => EvaluateCondition(record, new FilterCondition { propertyName = propertyName, comparator = (FilterCondition.Comparator)Enum.Parse(typeof(FilterCondition.Comparator), comparisonType, true), threshold = threshold }));
     }
@@ -59,7 +85,7 @@ public class DatabaseFromNotion : MonoBehaviour
         }
     }*/
 
-    private bool EvaluateCondition(Page<DatabaseSchema> record, FilterCondition condition)
+    private bool EvaluateCondition(Page<EntityDatabase> record, FilterCondition condition)
     {
         float value = GetPropertyValue(record, condition.propertyName);
         switch (condition.comparator)
@@ -79,20 +105,20 @@ public class DatabaseFromNotion : MonoBehaviour
         }
     }
 
-    private IEnumerable<Page<DatabaseSchema>> SortByProperty(IEnumerable<Page<DatabaseSchema>> records, string propertyName, string order)
+    private IEnumerable<Page<EntityDatabase>> SortByProperty(IEnumerable<Page<EntityDatabase>> records, string propertyName, string order)
     {
         return order == "asc" ?
             records.OrderBy(r => GetPropertyValue(r, propertyName)) :
             records.OrderByDescending(r => GetPropertyValue(r, propertyName));
     }
 
-    private IEnumerable<Page<DatabaseSchema>> FilterByEntityName(IEnumerable<Page<DatabaseSchema>> records, string name)
+    private IEnumerable<Page<EntityDatabase>> FilterByEntityName(IEnumerable<Page<EntityDatabase>> records, string name)
     {
         return records.Where(r => r.properties.entityName.title.FirstOrDefault()?.text.content.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0);
     }
 
 
-    private float GetPropertyValue(Page<DatabaseSchema> record, string propertyName)
+    private float GetPropertyValue(Page<EntityDatabase> record, string propertyName)
     {
         switch (propertyName)
         {
@@ -124,7 +150,7 @@ public class DatabaseFromNotion : MonoBehaviour
         }
     }
 
-    private void LogDatabaseRecord(Page<DatabaseSchema> record)
+    private void LogDatabaseRecord(Page<EntityDatabase> record)
     {
         string entityName = record.properties.entityName.title.FirstOrDefault()?.text.content ?? "No Name";
         Debug.Log($"Index: {record.properties.index.Value}, Name: {entityName}, Armor: {record.properties.armor.Value}, " +

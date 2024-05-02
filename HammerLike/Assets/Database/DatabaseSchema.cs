@@ -2,7 +2,7 @@ using BennyKok.NotionAPI;
 using System;
 
 [Serializable]
-public class DatabaseSchema
+public class EntityDatabase
 {
     public NumberProperty armor;
     public MultiSelectProperty _type;
@@ -21,3 +21,4 @@ public class DatabaseSchema
     public NumberProperty weight;
     public TitleProperty entityName;
 }
+

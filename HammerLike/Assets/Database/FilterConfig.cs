@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
+public class SortConfig
+{
+    public string sortByProperty;
+    public bool ascending = true; // true for ascending, false for descending
+}
+
+[System.Serializable]
 public class FilterCondition
 {
     public string propertyName;
@@ -15,4 +22,5 @@ public class FilterCondition
 public class FilterConfig
 {
     public List<FilterCondition> conditions = new List<FilterCondition>();
+    public SortConfig sortConfig;
 }
