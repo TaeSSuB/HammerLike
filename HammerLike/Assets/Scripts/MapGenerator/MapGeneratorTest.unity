@@ -392,7 +392,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &622626815
 Transform:
   m_ObjectHideFlags: 0
@@ -420,11 +420,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8c72167e1af7bb44a73fd136d24c3e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startRoomPrefab: {fileID: 8160915383364398885, guid: b7d3b7659d3e6a6458435bb3ec8e5c03,
+  startRoomPrefab: {fileID: 4101402467137686423, guid: f4ddf8d314b6d5e438c774dee76e81eb,
     type: 3}
-  bossRoomPrefab: {fileID: 4101402467137686423, guid: 845dc21316a812c43b081508fb862b74,
+  bossRoomPrefab: {fileID: 4101402467137686423, guid: f4ddf8d314b6d5e438c774dee76e81eb,
     type: 3}
-  eliteRoomPrefab: {fileID: 4101402467137686423, guid: d88fd8b8c326be84c9cb6f56cab25e32,
+  eliteRoomPrefab: {fileID: 4101402467137686423, guid: f4ddf8d314b6d5e438c774dee76e81eb,
     type: 3}
   normalRoomPrefabs:
   - {fileID: 4101402467137686423, guid: f4ddf8d314b6d5e438c774dee76e81eb, type: 3}
@@ -1366,6 +1366,62 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c691644217a2a1e4da456d83fc7603a3, type: 3}
+--- !u!1 &2145648585
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2145648587}
+  - component: {fileID: 2145648586}
+  m_Layer: 0
+  m_Name: GameObject (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2145648586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145648585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 619ec1c26c5cc1c4886f943303870d12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onlyBuildable: 0
+  filterConfig:
+    conditions:
+    - propertyName: healthPoint
+      comparator: 0
+      threshold: 50
+    - propertyName: armor
+      comparator: 0
+      threshold: 0
+    sortConfig:
+      sortByProperty: attackPower
+      ascending: 1
+--- !u!4 &2145648587
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145648585}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 485.01926, y: 352.1918, z: -12.094256}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1377,3 +1433,4 @@ SceneRoots:
   - {fileID: 122584773}
   - {fileID: 622626815}
   - {fileID: 1952236285}
+  - {fileID: 2145648587}
