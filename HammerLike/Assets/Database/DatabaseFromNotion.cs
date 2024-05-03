@@ -27,19 +27,19 @@ public class DatabaseFromNotion : MonoBehaviour
         {
             var records = db.results.AsEnumerable();
 
-            // Apply all filter conditions
+            // 조건에 맞는 모든 데이터베이스 수집
             foreach (var condition in filterConfig.conditions)
             {
                 records = FilterByProperty(records, condition.propertyName, condition.threshold, condition.comparator.ToString().ToLower());
             }
 
-            // Apply sorting
+            // 정렬
             if (filterConfig.sortConfig != null && !string.IsNullOrEmpty(filterConfig.sortConfig.sortByProperty))
             {
                 records = SortByProperty(records, filterConfig.sortConfig.sortByProperty, filterConfig.sortConfig.ascending);
             }
 
-            // Filter records where 'Build' is true, if onlyBuildable is checked
+            // 노션의 Checkbox인 Build 가 true인 애들만 색인
             if (onlyBuildable)
             {
                 records = records.Where(record => record.properties.Build.Value);
@@ -47,7 +47,8 @@ public class DatabaseFromNotion : MonoBehaviour
 
             foreach (var record in records)
             {
-                LogDatabaseRecord(record);
+                //LogDatabaseRecord(record);
+                Debug.Log(GetPropertyValue(record, "healthPoint"));
             }
         });
     }
@@ -69,21 +70,7 @@ public class DatabaseFromNotion : MonoBehaviour
         return records.Where(record => EvaluateCondition(record, new FilterCondition { propertyName = propertyName, comparator = (FilterCondition.Comparator)Enum.Parse(typeof(FilterCondition.Comparator), comparisonType, true), threshold = threshold }));
     }
 
-    /*private IEnumerable<Page<DatabaseSchema>> FilterByProperty(IEnumerable<Page<DatabaseSchema>> records, string propertyName, float threshold, string comparisonType)
-    {
-        foreach (var record in records)
-        {
-            float propertyValue = GetPropertyValue(record, propertyName);
-            if (comparisonType == "greater" && propertyValue > threshold ||
-                comparisonType == "greaterOrEqual" && propertyValue >= threshold ||
-                comparisonType == "less" && propertyValue < threshold ||
-                comparisonType == "lessOrEqual" && propertyValue <= threshold ||
-                comparisonType == "equal" && Math.Abs(propertyValue - threshold) < float.Epsilon)
-            {
-                yield return record;
-            }
-        }
-    }*/
+    
 
     private bool EvaluateCondition(Page<EntityDatabase> record, FilterCondition condition)
     {
@@ -146,7 +133,7 @@ public class DatabaseFromNotion : MonoBehaviour
                 return record.properties.weight.Value;
             default:
                 Debug.LogError($"Property {propertyName} not found.");
-                return 0; // LogError 말고 비슷한 이름 찾는것도 생각중
+                return 0; 
         }
     }
 
