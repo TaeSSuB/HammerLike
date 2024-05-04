@@ -39,8 +39,17 @@ public class B_Player : B_UnitBase
 
     void TrackWeaponDirXZ()
     {
-        Quaternion newRot = Quaternion.LookRotation(weaponOrbit.gameObject.transform.position - weaponCollider.gameObject.transform.position);
+        Vector3 dir = weaponOrbit.gameObject.transform.position - weaponCollider.gameObject.transform.position;
+        float coordScale = GameManager.Instance.CalcCoordScale(dir);
+
+        Quaternion newRot = Quaternion.LookRotation(dir);
         weaponCollider.gameObject.transform.rotation = Quaternion.Euler(0, newRot.eulerAngles.y, 0);
+
+        weaponCollider.gameObject.transform.localScale = new Vector3(1, 1, coordScale);
+        //weaponCollider.size = new Vector3(initWeaponColliderScale.x, initWeaponColliderScale.y * coordScale, initWeaponColliderScale.z);
+        //weaponCollider.center = new Vector3(initWeaponColliderCenter.x, initWeaponColliderCenter.y * coordScale, initWeaponColliderCenter.z);
+        //weaponCollider.size = initWeaponColliderScale * coordScale;
+        //weaponCollider.center = initWeaponColliderCenter * coordScale;
     }
 
     //init override
@@ -69,8 +78,6 @@ public class B_Player : B_UnitBase
         CheckCharge();
         TrackWeaponDirXZ();
 
-        Vector3 forward = transform.forward;
-        float coordScale = GameManager.Instance.CalcCoordScale(forward);
 
         // Y Scale
         //weaponCollider.size = new Vector3(initWeaponColliderScale.x, initWeaponColliderScale.y * coordScale, initWeaponColliderScale.z);
