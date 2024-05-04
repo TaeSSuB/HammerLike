@@ -20,6 +20,8 @@ public class SO_SystemSettings : ScriptableObject
 
     public Vector3 CoordinateScale { get => coordinateScale; }
     public float TimeScale { get => timeScale; }
+    public float SetTimeScale { set => timeScale = value; }
+
     public float KnockBackScale { get => knockBackScale; }
     //public float Gravity { get => gravity; }
     public bool IsDebugMode { get => isDebugMode; }

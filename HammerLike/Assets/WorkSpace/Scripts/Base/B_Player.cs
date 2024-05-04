@@ -11,14 +11,16 @@ using UnityEngine;
 public class B_Player : B_UnitBase
 {
     [Header("Player Settings")]
-    // a.HG - 240502 콜라이더를 특정해야 사이즈 변경 가능.. 일단 박스 사용
-    [SerializeField] private BoxCollider weaponCollider;
-    private Vector3 initWeaponColliderScale;
-    private Vector3 initWeaponColliderCenter;
-
-    // Temp 20240426 - 임시.., a.HG
+    
     [SerializeField] private GameObject chargeVFXObj;
     [SerializeField] private GameObject weaponObj;
+
+    // a.HG - 240505 무기 콜라이더 오브젝트 배치 및 회전 값으로 일괄 처리
+    //[SerializeField] private GameObject weaponTrackObj;
+    [SerializeField] private BoxCollider weaponCollider;
+    //private Vector3 initWeaponColliderScale;
+    //private Vector3 initWeaponColliderCenter;
+
     [SerializeField] private WeaponOrbit weaponOrbit;
 
     [Header("Camera Settings")]
@@ -35,6 +37,12 @@ public class B_Player : B_UnitBase
         unitStatus = Instantiate(GameManager.Instance.PlayerStatus);
     }
 
+    void TrackWeaponDirXZ()
+    {
+        Quaternion newRot = Quaternion.LookRotation(weaponOrbit.gameObject.transform.position - weaponCollider.gameObject.transform.position);
+        weaponCollider.gameObject.transform.rotation = Quaternion.Euler(0, newRot.eulerAngles.y, 0);
+    }
+
     //init override
     public override void Init()
     {
@@ -44,10 +52,10 @@ public class B_Player : B_UnitBase
         chargeVFXObj.SetActive(false);
         
         // Get Weapon Collider Component
-        weaponCollider.enabled = false;
-        weaponCollider.isTrigger = true;
-        initWeaponColliderScale = weaponCollider.size;
-        initWeaponColliderCenter = weaponCollider.center;
+        //weaponCollider.enabled = false;
+        //weaponCollider.isTrigger = true;
+        //initWeaponColliderScale = weaponCollider.size;
+        //initWeaponColliderCenter = weaponCollider.center;
 
         startZoom = zoomCam.orthographicSize;
     }
@@ -59,12 +67,16 @@ public class B_Player : B_UnitBase
         InputMovement();
         LookAtMouse();
         CheckCharge();
+        TrackWeaponDirXZ();
 
         Vector3 forward = transform.forward;
         float coordScale = GameManager.Instance.CalcCoordScale(forward);
 
-        weaponCollider.size = initWeaponColliderScale * coordScale;
-        weaponCollider.center = initWeaponColliderCenter * coordScale;
+        // Y Scale
+        //weaponCollider.size = new Vector3(initWeaponColliderScale.x, initWeaponColliderScale.y * coordScale, initWeaponColliderScale.z);
+        //weaponCollider.center = new Vector3(initWeaponColliderCenter.x, initWeaponColliderCenter.y * coordScale, initWeaponColliderCenter.z);
+        //weaponCollider.size = initWeaponColliderScale * coordScale;
+        //weaponCollider.center = initWeaponColliderCenter * coordScale;
     }
 
     private Vector3 InputMovement()
@@ -83,6 +95,7 @@ public class B_Player : B_UnitBase
 
         if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
         {
+            ResetAttack();
             Dash(moveDir);
         }
 
@@ -323,6 +336,24 @@ public class B_Player : B_UnitBase
         // Disable weapon collider logic
         weaponOrbit.trailRenderer.emitting = false;
         weaponCollider.enabled = false;
+    }
+
+    /// <summary>
+    /// 240505 a.HG : 임시 공격 리셋 메서드
+    /// </summary>
+    void ResetAttack()
+    {
+        // Reset attack logic
+        isAttacking = false;
+        Anim.SetBool("bAttack", false);
+        Anim.SetBool("IsOutWardAttack", false);
+        Anim.SetBool("IsInWardAttack", false);
+        weaponOrbit.trailRenderer.Clear();
+        DisableWeaponCollider();
+        chargeVFXObj.SetActive(false);
+        weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", 0f);
+        zoomCam.orthographicSize = startZoom;
+        ResetDamage();
     }
 
     #endregion

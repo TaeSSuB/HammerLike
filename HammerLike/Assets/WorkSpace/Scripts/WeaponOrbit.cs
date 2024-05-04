@@ -80,6 +80,8 @@ public class WeaponOrbit : MonoBehaviour
         trailRenderer.endWidth = weaponLength * endWidthScale;  // 트레일의 끝 폭 설정
     }
 
+
+
     void TrackDirBasedPoint()
     {
         Vector3 playerPosition = player.transform.position;

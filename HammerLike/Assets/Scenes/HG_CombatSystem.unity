@@ -1470,6 +1470,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hpWorldUIPrefab: {fileID: 6063730466102454155, guid: a4df4cdc36c99044b88a5c628e1f8a9d,
     type: 3}
+  inventoryObj: {fileID: 1077057251}
+  inventoryKey: 105
 --- !u!1001 &313549706
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3493,16 +3495,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -11.005
       objectReference: {fileID: 0}
-    - target: {fileID: 6717976993795999578, guid: 18a51807200c62a47b4b030933d7c22b,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: -17
-      objectReference: {fileID: 0}
-    - target: {fileID: 6717976993795999578, guid: 18a51807200c62a47b4b030933d7c22b,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 281
-      objectReference: {fileID: 0}
     - target: {fileID: 6778401085870354699, guid: 18a51807200c62a47b4b030933d7c22b,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -4094,23 +4086,7 @@ PrefabInstance:
       value: -175
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 101619610726754045, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 9082144742992380014, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 6356445641157107713, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 6187674129631953047, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 2172851162081596331, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 1079274549568765723, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 4440745615991686187, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 3297479869456533297, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 5892554302715372063, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 7849517613027043893, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 1921542344644919069, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 3910089666011189593, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 1774579098663583946, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 485035800564348893, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 2438227534777226815, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
-    - {fileID: 8990078380464783230, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 18a51807200c62a47b4b030933d7c22b, type: 3}
@@ -4369,6 +4345,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1066952639}
   m_Mesh: {fileID: 4300000, guid: dc50968a1b7fd3e448d49fe8e300039d, type: 2}
+--- !u!1 &1077057251 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 395141103800076142, guid: 18a51807200c62a47b4b030933d7c22b,
+    type: 3}
+  m_PrefabInstance: {fileID: 671413645}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1119972239
 PrefabInstance:
   m_ObjectHideFlags: 0

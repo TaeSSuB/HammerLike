@@ -28,7 +28,10 @@ public class GroundItem : MonoBehaviour, ISerializationCallbackReceiver
     private void OnDisable()
     {
         // disable vfx
-        B_VFXPoolManager.Instance.PlayVFX(VFXName.PickUp, transform.position);
-        B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.PickUp);
+        if (!B_VFXPoolManager.isQuit)
+            B_VFXPoolManager.Instance?.PlayVFX(VFXName.PickUp, transform.position);
+
+        if (!B_AudioManager.isQuit)
+            B_AudioManager.Instance?.PlaySound(AudioCategory.SFX, AudioTag.PickUp);
     }
 }

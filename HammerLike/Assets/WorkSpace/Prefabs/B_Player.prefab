@@ -360,6 +360,7 @@ Transform:
   - {fileID: 3484366558637496198}
   - {fileID: 3484366558814721832}
   - {fileID: 8158478015098429755}
+  - {fileID: 3180815732852435168}
   - {fileID: 3301569359029119071}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -446,7 +447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rootObj: {fileID: 1768623638817304503}
-  meshObj: {fileID: 0}
+  meshObj: {fileID: 4716837519280517602}
   col: {fileID: 3484366558637496199}
   rigid: {fileID: 7190315784335179458}
   isInvincible: 0
@@ -460,9 +461,10 @@ MonoBehaviour:
     m_Bits: 2147483648
   groundCheckDistance: 0.1
   isKnockback: 0
-  weaponCollider: {fileID: 8092900079886501016}
   chargeVFXObj: {fileID: 4313188254355159387}
   weaponObj: {fileID: 4389952972687816322}
+  weaponTrackObj: {fileID: 421241350792236095}
+  weaponCollider: {fileID: 4939906264136678488}
   weaponOrbit: {fileID: 1952734946970189571}
   zoomCam: {fileID: 0}
   zoomAmount: 15
@@ -769,10 +771,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6890217952169371145}
-  - component: {fileID: 8092900079886501016}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: mixamorig:RightWeapon
-  m_TagString: WeaponCollider
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -793,27 +794,6 @@ Transform:
   - {fileID: 4761890177331708341}
   m_Father: {fileID: 5961300941906238797}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &8092900079886501016
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3390375666078707877}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Size: {x: 1, y: 3, z: 1}
-  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &3484366558637496217
 GameObject:
   m_ObjectHideFlags: 0
@@ -1126,7 +1106,7 @@ GameObject:
   - component: {fileID: 4761890177331708341}
   - component: {fileID: 325186012286737142}
   - component: {fileID: 7927657473104004988}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Test_Hammer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1822,9 +1802,9 @@ GameObject:
   - component: {fileID: 5855659359285085396}
   - component: {fileID: 5855659359285085402}
   - component: {fileID: 5855659359285085405}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Trail
-  m_TagString: WeaponCollider
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2219,6 +2199,59 @@ Transform:
   - {fileID: 6290197040290200455}
   m_Father: {fileID: 4827017108620331682}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6216769536219332503
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3180815732852435168}
+  - component: {fileID: 4939906264136678488}
+  m_Layer: 6
+  m_Name: WeaponCollider
+  m_TagString: WeaponCollider
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3180815732852435168
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6216769536219332503}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1768623638817304500}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+--- !u!65 &4939906264136678488
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6216769536219332503}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 4.4}
+  m_Center: {x: 0, y: 0, z: 2.2}
 --- !u!1 &6907096301426027828
 GameObject:
   m_ObjectHideFlags: 0
@@ -2916,6 +2949,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4761890177331708341}
     m_Modifications:
+    - target: {fileID: 948235440351101783, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1537263030022973322, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2966,6 +3009,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3188451598014364552, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 4129143764995221178, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
         type: 3}
       propertyPath: m_BoundingSphereOverride.w
@@ -2985,6 +3033,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ChargeEffect_Test_Hammer
+      objectReference: {fileID: 0}
+    - target: {fileID: 6350607959677043808, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6350607959677043808, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
         type: 3}

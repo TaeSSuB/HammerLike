@@ -33,6 +33,12 @@ public class B_VFXPoolManager : SingletonMonoBehaviour<B_VFXPoolManager>
     {
         base.Awake();
 
+        if( vfxSet == null)
+        {
+            Debug.LogWarning("VFXSet is not assigned in VFXPoolManager");
+            return;
+        }
+
         foreach (var vfxData in vfxSet.vfxDatas)
         {
             Queue<GameObject> vfxPool = new Queue<GameObject>();
@@ -90,6 +96,9 @@ public class B_VFXPoolManager : SingletonMonoBehaviour<B_VFXPoolManager>
     public void PlayVFX(string vfxName, Vector3 position)
     {
         GameObject vfx = GetVFX(vfxName);
+
+        if(vfx == null) return;
+
         vfx.transform.position = position;
         vfx.SetActive(true);
         StartCoroutine(DeactivateVFX(vfxName, vfx, vfxDurationDictionary[vfxName]));

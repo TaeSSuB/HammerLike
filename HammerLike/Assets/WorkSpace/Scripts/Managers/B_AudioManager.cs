@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Linq;
+using NuelLib;
 public enum AudioCategory { BGM, SFX }
 public enum AudioTag 
 { 
@@ -11,10 +12,8 @@ public enum AudioTag
     PickUp
 }
 
-public class B_AudioManager : MonoBehaviour
+public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
 {
-    public static B_AudioManager Instance;
-
     public SO_AudioSet audioSet; // Assign in the Unity editor
 
     // BGM, SFX source
@@ -22,17 +21,9 @@ public class B_AudioManager : MonoBehaviour
     private AudioSource[] audioSourceOnces;
     private AudioSource audioSourceLoop;
 
-    private void Awake()
+    protected override void Awake()
     {
-        if(Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        else
-        {
-            Instance = this;
-        }
+        base.Awake();
 
         audioSourceOnces = new AudioSource[audioSourceOnceCount];
         // Component Self
@@ -64,7 +55,7 @@ public class B_AudioManager : MonoBehaviour
             // for Play Once (VFX)
             if(!audioInfo.loop)
             {
-                AudioSource audioSourceOnce = audioSourceOnces.FirstOrDefault(source => !source.isPlaying);
+                AudioSource audioSourceOnce = audioSourceOnces.FirstOrDefault(source => source && !source.isPlaying);
 
                 // When all audioSourceOnce is playing
                 if(audioSourceOnce == null)
