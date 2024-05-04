@@ -28,9 +28,6 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
 
     public float mass = 1f;
 
-    public AnimationCurve knockbackCurve;
-    public AnimationCurve partsBreakForceCurve;
-
     public float MoveSpeedOrigin { get => moveSpeedOrigin;}
     public int AtkDamageOrigin { get => atkDamageOrigin;}
 

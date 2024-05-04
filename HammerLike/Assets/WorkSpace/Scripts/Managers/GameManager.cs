@@ -33,7 +33,6 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     {
         player = inPlayer;
     }
-
     public SO_PlayerStatus PlayerStatus { get => playerStatus; }
     public SO_SystemSettings SystemSettings { get => systemSettings; }
 

@@ -1,16 +1,25 @@
 using UnityEngine;
 using System.Linq;
 public enum AudioCategory { BGM, SFX }
-public enum AudioTag { MainMenu, Battle, Ambient, UI , Death}
+public enum AudioTag 
+{ 
+    MainMenu, 
+    Battle, 
+    Ambient, 
+    UI, 
+    Death,
+    PickUp
+}
 
 public class B_AudioManager : MonoBehaviour
 {
     public static B_AudioManager Instance;
 
     public SO_AudioSet audioSet; // Assign in the Unity editor
-    
+
     // BGM, SFX source
-    private AudioSource audioSourceOnce;
+    [SerializeField] private int audioSourceOnceCount = 5;
+    private AudioSource[] audioSourceOnces;
     private AudioSource audioSourceLoop;
 
     private void Awake()
@@ -25,8 +34,20 @@ public class B_AudioManager : MonoBehaviour
             Instance = this;
         }
 
-        audioSourceOnce = gameObject.AddComponent<AudioSource>();
+        audioSourceOnces = new AudioSource[audioSourceOnceCount];
+        // Component Self
+        for (int i = 0; i < audioSourceOnceCount; i++)
+        {
+            audioSourceOnces[i] = gameObject.AddComponent<AudioSource>();
+        }
+
         audioSourceLoop = gameObject.AddComponent<AudioSource>();
+
+        // Audio Source Object
+        //GameObject sfxPlayerObj = new GameObject("AudioSource");
+
+        //audioSourceOnce = sfxPlayerObj.AddComponent<AudioSource>();
+        //audioSourceLoop = sfxPlayerObj.AddComponent<AudioSource>();
     }
 
     private void Start()
@@ -43,6 +64,13 @@ public class B_AudioManager : MonoBehaviour
             // for Play Once (VFX)
             if(!audioInfo.loop)
             {
+                AudioSource audioSourceOnce = audioSourceOnces.FirstOrDefault(source => !source.isPlaying);
+
+                // When all audioSourceOnce is playing
+                if(audioSourceOnce == null)
+                {
+                    audioSourceOnce = audioSourceOnces[0];
+                }
                 audioSourceOnce.clip = audioInfo.clip;
                 audioSourceOnce.volume = audioInfo.volume;
                 audioSourceOnce.loop = audioInfo.loop;

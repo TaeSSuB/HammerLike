@@ -6,20 +6,23 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
+// Player Unit
+
 public class B_Player : B_UnitBase
 {
     [Header("Player Settings")]
     // a.HG - 240502 콜라이더를 특정해야 사이즈 변경 가능.. 일단 박스 사용
     [SerializeField] private BoxCollider weaponCollider;
-    [SerializeField] private Vector3 initWeaponColliderScale;
-    [SerializeField] private Vector3 initWeaponColliderCenter;
+    private Vector3 initWeaponColliderScale;
+    private Vector3 initWeaponColliderCenter;
 
     // Temp 20240426 - 임시.., a.HG
     [SerializeField] private GameObject chargeVFXObj;
     [SerializeField] private GameObject weaponObj;
     [SerializeField] private WeaponOrbit weaponOrbit;
-    [SerializeField] private Camera zoomCam;
 
+    [Header("Camera Settings")]
+    [SerializeField] private Camera zoomCam;
     [SerializeField] private float zoomAmount;
     [SerializeField] private float startZoom;
     [SerializeField] private float rotDeadZone = 0.1f;
@@ -341,6 +344,25 @@ public class B_Player : B_UnitBase
             // DeadZone
             if (Vector3.Distance(transform.position, lookAt) > rotDeadZone)
                 transform.LookAt(lookAt);
+        }
+    }
+
+    protected override void OnTriggerEnter(Collider other)
+    {
+        base.OnTriggerEnter(other);
+
+        if (other.CompareTag("Item"))
+        {
+            var item = other.GetComponent<GroundItem>();
+
+            var inventory = B_InventoryManager.Instance.playerInventory;
+
+            if (inventory.AddItem(new B_Item(item.item), 1))
+                Destroy(other.gameObject);
+            //Item _item = new Item(item.item);
+            //Debug.Log(_item.Id);
+            //inventory.AddItem(_item, 1);
+            //Destroy(other.gameObject);
         }
     }
 }

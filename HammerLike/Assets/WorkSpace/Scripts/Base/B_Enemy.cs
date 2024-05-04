@@ -123,10 +123,9 @@ public class B_Enemy : B_UnitBase
 
             // Get hit dir from player
             Vector3 hitDir = (transform.position - player.transform.position).normalized;
-            Vector3 coordDir = GameManager.Instance.ApplyCoordScaleNormalize(hitDir);
 
             // Take Damage and Knockback dir from player
-            TakeDamage(coordDir, player.UnitStatus.atkDamage);
+            TakeDamage(hitDir, player.UnitStatus.atkDamage);
 
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
@@ -165,9 +164,8 @@ public class B_Enemy : B_UnitBase
 
             // Get hit dir from another enemy
             Vector3 hitDir = (transform.position - collision.transform.position).normalized;
-            Vector3 coordDir = GameManager.Instance.ApplyCoordScaleNormalize(hitDir);
 
-            TakeDamage(coordDir, (int)(other.rigid.velocity.magnitude * other.rigid.mass / 4f), true);
+            TakeDamage(hitDir, (int)(other.rigid.velocity.magnitude * other.rigid.mass / 4f), true);
 
             var vfxPos = collision.contacts[0].point;
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);

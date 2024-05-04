@@ -9,6 +9,16 @@ public struct VFXName
     public const string Hit = "Hit";
     public const string Explosion = "Explosion";
     public const string Heal = "Heal";
+    public const string Buff = "Buff";
+    public const string Debuff = "Debuff";
+    public const string Shield = "Shield";
+    public const string Teleport = "Teleport";
+    public const string ItemOra = "IdleItem";
+    public const string PickUp = "GetItem";
+    public const string DropItem = "DropItem";
+    public const string LevelUp = "LevelUp";
+    public const string QuestComplete = "QuestComplete";
+    public const string QuestFail = "QuestFail";
 }
 
 public class B_VFXPoolManager : SingletonMonoBehaviour<B_VFXPoolManager>
@@ -38,9 +48,18 @@ public class B_VFXPoolManager : SingletonMonoBehaviour<B_VFXPoolManager>
             Queue<GameObject> vfxPool = vfxPoolDictionary[vfxName];
             if (vfxPool.Count == 0)
             {
-                GameObject newVFX = Instantiate(vfxSet.vfxDatas[0].vfxPrefab);
-                newVFX.SetActive(false);
-                vfxPool.Enqueue(newVFX);
+                //GameObject newVFX = Instantiate(vfxSet.vfxDatas[0].vfxPrefab);
+
+                foreach (var vfxData in vfxSet.vfxDatas)
+                {
+                    if(vfxData.name == vfxName)
+                    {
+                        GameObject newVFX = Instantiate(vfxData.vfxPrefab);
+                        newVFX.SetActive(false);
+                        vfxPool.Enqueue(newVFX);
+                        break;
+                    }
+                }
             }
 
             GameObject vfx = vfxPool.Dequeue();

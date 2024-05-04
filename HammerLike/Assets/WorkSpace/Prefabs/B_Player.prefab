@@ -335,8 +335,8 @@ GameObject:
   - component: {fileID: 1768623638817304500}
   - component: {fileID: 7190315784335179458}
   - component: {fileID: 1768623639919925977}
-  - component: {fileID: 8957840737876896812}
   - component: {fileID: 1106441370747417219}
+  - component: {fileID: 8957840737876896812}
   m_Layer: 9
   m_Name: B_Player
   m_TagString: Player
@@ -411,46 +411,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &8957840737876896812
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1768623638817304503}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52d3c7810508c534daf67b3eb220ca2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rootObj: {fileID: 1768623638817304503}
-  meshObj: {fileID: 0}
-  col: {fileID: 3484366558637496199}
-  rigid: {fileID: 7190315784335179458}
-  isInvincible: 0
-  unitType: 0
-  anim: {fileID: 1768623639919925977}
-  agent: {fileID: 0}
-  isAttacking: 0
-  knockBackMultiplier: 10
-  puppet: {fileID: 0}
-  remainKnockBackDir: {x: 0, y: 0, z: 0}
-  remainKnockBackForce: 0
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 2147483648
-  groundCheckDistance: 0.1
-  isGrounded: 0
-  isKnockback: 0
-  weaponCollider: {fileID: 8092900079886501016}
-  initWeaponColliderScale: {x: 0, y: 0, z: 0}
-  chargeVFXObj: {fileID: 4313188254355159387}
-  weaponObj: {fileID: 4389952972687816322}
-  weaponOrbit: {fileID: 1952734946970189571}
-  zoomCam: {fileID: 0}
-  zoomAmount: 15
-  startZoom: 0
-  rotDeadZone: 0.5
 --- !u!195 &1106441370747417219
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -473,6 +433,41 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &8957840737876896812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1768623638817304503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52d3c7810508c534daf67b3eb220ca2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootObj: {fileID: 1768623638817304503}
+  meshObj: {fileID: 0}
+  col: {fileID: 3484366558637496199}
+  rigid: {fileID: 7190315784335179458}
+  isInvincible: 0
+  unitType: 0
+  anim: {fileID: 1768623639919925977}
+  agent: {fileID: 0}
+  isAttacking: 0
+  puppet: {fileID: 0}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 2147483648
+  groundCheckDistance: 0.1
+  isKnockback: 0
+  weaponCollider: {fileID: 8092900079886501016}
+  chargeVFXObj: {fileID: 4313188254355159387}
+  weaponObj: {fileID: 4389952972687816322}
+  weaponOrbit: {fileID: 1952734946970189571}
+  zoomCam: {fileID: 0}
+  zoomAmount: 15
+  startZoom: 0
+  rotDeadZone: 0.5
 --- !u!1 &2110469650803552666
 GameObject:
   m_ObjectHideFlags: 0
