@@ -9,6 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: New Material
   m_Shader: {fileID: 4800000, guid: d766f21a08a9362468fb17420927adb8, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - RECEIVE_SHADOWS_ON
   - USE_OBJECT_POSITION_ON
@@ -19,6 +21,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -104,10 +107,14 @@ Material:
     - PROPIXELIZER_DITHERING: 0
     - RECEIVE_SHADOWS: 1
     - USE_OBJECT_POSITION: 1
+    - _Additional_Shadow: 0
     - _AlphaClip: 0
     - _AlphaClipThreshold: 0.5
+    - _AlphaToMask: 0
     - _Blend: 0
+    - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
+    - _ChargeAmount: 0
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Contrast: 1
@@ -117,14 +124,18 @@ Material:
     - _DetailNormalMapScale: 1
     - _DiffuseVertexColorWeight: 0
     - _DstBlend: 0
+    - _DstBlendAlpha: 0
+    - _Edge_Bevel_Weight: 0
     - _EmissiveVertexColorWeight: 0
-    - _EnableDynamicLights: 1
+    - _EnableDynamicLights: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _HitAmount: 0
     - _Hue: 0
     - _ID: 1
+    - _Lighting_Step: 25
     - _Metallic: 0
     - _Normal_Strength: 1
     - _OcclusionStrength: 1
@@ -135,9 +146,10 @@ Material:
     - _ReceiveShadows: 1
     - _ReflectionLight: 0
     - _ReflectionLightPower: 0.43
-    - _RimLight: 1
+    - _RimLight: 0
     - _RimLightPower: 0.87
     - _Saturation: 1
+    - _ShadowPower: 3
     - _Show_Vertex_Color_Weight: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
@@ -145,19 +157,29 @@ Material:
     - _SpecularHighlights: 1
     - _SpecularPower: 10
     - _SrcBlend: 1
+    - _SrcBlendAlpha: 1
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _AmbientLight: {r: 0.09999997, g: 0.09999997, b: 0.09999997, a: 0.5019608}
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Albedo_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Albedo_Tiling: {r: 1, g: 1, b: 0, a: 0}
+    - _AmbientLight: {r: 0.59748423, g: 0.59748423, b: 0.59748423, a: 0.5019608}
+    - _BaseColor: {r: 0.72955966, g: 0.72955966, b: 0.72955966, a: 1}
+    - _ChargeColor: {r: 1, g: 0.5037829, b: 0, a: 1}
+    - _Color: {r: 0, g: 0, b: 0, a: 1}
     - _EdgeHighlightColor: {r: 1, g: 1, b: 1, a: 0.5019608}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _Emission_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Emission_Tiling: {r: 1, g: 1, b: 0, a: 0}
+    - _HitColor: {r: 1, g: 0, b: 0, a: 1}
+    - _Normal_Map_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Normal_Map_Tiling: {r: 1, g: 1, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 0.5019608}
     - _PixelGridOrigin: {r: 0, g: 0, b: 0, a: 0}
     - _ReflectionLightColor: {r: 0, g: 0.7186146, b: 1, a: 1}
     - _RimLightColor: {r: 0.72505856, g: 0, b: 1, a: 1}
+    - _ShadowColor: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
