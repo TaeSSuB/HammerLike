@@ -2364,6 +2364,7 @@ GameObject:
   - component: {fileID: 6266812155113483453}
   - component: {fileID: 7536291519061573817}
   - component: {fileID: 2505145306526970958}
+  - component: {fileID: 7977219591623078285}
   m_Layer: 8
   m_Name: Skeleton_Archer
   m_TagString: Enemy
@@ -2763,6 +2764,7 @@ MonoBehaviour:
   isInvincible: 0
   unitType: 1
   anim: {fileID: 6266812155113483443}
+  agent: {fileID: 0}
   knockBackMultiplier: 5
   puppet: {fileID: 6266812155327914425}
   remainKnockBackDir: {x: 0, y: 0, z: 0}
@@ -2779,6 +2781,28 @@ MonoBehaviour:
   muzzleTR: {fileID: 6266812155247929620}
   projectilePrefab: {fileID: 3696216365482091258, guid: ddfd7f51f57f7c84f82a8be0cfab2978,
     type: 3}
+--- !u!195 &7977219591623078285
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6266812155113483445}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.75
+  m_Speed: 3.5
+  m_Acceleration: 100
+  avoidancePriority: 50
+  m_AngularSpeed: 360
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &6266812155119616431
 GameObject:
   m_ObjectHideFlags: 0

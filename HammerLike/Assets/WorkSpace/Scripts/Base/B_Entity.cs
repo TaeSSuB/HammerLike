@@ -13,7 +13,10 @@ public class B_Entity : MonoBehaviour
 
     [SerializeField] protected bool isInvincible;
 
+    public GameObject RootObj { get => rootObj; }
     public GameObject MeshObj { get => meshObj; }
+    public Collider Col { get => col; }
+
 
     protected virtual void Awake()
     {

@@ -14,9 +14,15 @@ public class B_Skeleton_Archer : B_Enemy
         //projectile.GetComponent<B_Projectile>().Init(unitStatus.projectileSpeed, transform.forward);
     }
 
-    protected override void EndAttack()
+    public override void EndAttack()
     {
         base.EndAttack();
         Shot();
+    }
+
+    protected override void UpdateAttackCoolTime()
+    {
+        base.UpdateAttackCoolTime();
+        Anim.SetFloat("fRemainShot", UnitStatus.currentAttackCooltime);
     }
 }

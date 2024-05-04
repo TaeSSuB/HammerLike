@@ -20,7 +20,7 @@ public class B_Projectile : MonoBehaviour
     {
         // 투사체 초기화
         Rigidbody rigid = GetComponent<Rigidbody>();
-        var resultforward = GameManager.instance.ApplyCoordScaleNormalize(transform.forward);
+        var resultforward = GameManager.Instance.ApplyCoordScaleNormalize(transform.forward);
         //rigid.velocity = resultforward * projectileSpeed;
         rigid.velocity = transform.forward * projectileSpeed * resultforward.magnitude;
     }
@@ -29,7 +29,7 @@ public class B_Projectile : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            B_Player targetPlayer = GameManager.instance.Player;
+            B_Player targetPlayer = GameManager.Instance.Player;
 
             if (targetPlayer != null)
             {

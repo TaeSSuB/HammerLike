@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3322791005281189985}
   - component: {fileID: 768189508231330638}
   - component: {fileID: 8118150639109912133}
+  - component: {fileID: 5370779692064943989}
   m_Layer: 10
   m_Name: B_Pillar_Variate_01
   m_TagString: KnockBackable
@@ -125,7 +126,7 @@ MonoBehaviour:
   col: {fileID: 2861687493986609313}
   rigid: {fileID: 8118150639109912133}
   isInvincible: 0
-  hp: 1
+  hp: 2
   CutCascades: 4
   ExplodeForce: 10
   deathTime: 10
@@ -171,3 +172,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!208 &5370779692064943989
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3057628500611423473}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.108, y: 3.0140002, z: 1.128}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 3.0140002, z: -0.013}
+  m_TimeToStationary: 0.5

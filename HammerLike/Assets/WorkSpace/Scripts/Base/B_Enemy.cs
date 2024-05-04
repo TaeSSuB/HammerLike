@@ -2,6 +2,7 @@ using Language.Lua;
 using RootMotion.Dynamics;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 // require ai state manager
@@ -45,22 +46,27 @@ public class B_Enemy : B_UnitBase
         DisconnectMusclesRecursive();
         //Invoke(nameof(DisconnectMusclesRecursive), 0.1f);
     }
+    
+    #region Attack
 
-    protected override void StartAttack()
+    public override void Attack()
     {
+        base.Attack();
 
+        transform.LookAt(GameManager.Instance.Player.transform);
     }
 
-    protected override void EndAttack()
+    public override void StartAttack()
     {
-        aIStateManager.SetState(AIStateType.IDLE);
+        base.StartAttack();
     }
 
-    protected virtual void Attack()
+    public override void EndAttack()
     {
-        aIStateManager?.SetState(AIStateType.ATTACK);
-
+        base.EndAttack();
     }
+
+    #endregion
 
     // Update
     protected override void Update()
@@ -77,20 +83,29 @@ public class B_Enemy : B_UnitBase
         // Temp - Set Chasing
         if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
         {
-            var targetDis = Vector3.Distance(transform.position, GameManager.instance.Player.transform.position);
+            var moveDir = GameManager.Instance.Player.transform.position - transform.position;
+
+            float applyCoordScale = GameManager.Instance.CalcCoordScale(moveDir);
+            var targetDis = moveDir.magnitude / applyCoordScale;
 
             if (targetDis <= chasingStartDis)
             {
                 if (targetDis <= unitStatus.atkRange)
                 {
-                    //aIStateManager?.SetState(AIStateType.ATTACK);
-                    Attack();
+                    aIStateManager?.SetState(AIStateType.ATTACK);
+                    //Attack();
                 }
-                else if(aIStateManager?.CurrentStateType != AIStateType.ATTACK)
+                else
                 {
-                    aIStateManager?.SetState(AIStateType.CHASE);
+                    if(!isAttacking)
+                        aIStateManager?.SetState(AIStateType.CHASE);
                 }
             }
+            else
+            {
+                aIStateManager?.SetState(AIStateType.IDLE);
+            }
+
         }
     }
 
@@ -108,7 +123,7 @@ public class B_Enemy : B_UnitBase
 
             // Get hit dir from player
             Vector3 hitDir = (transform.position - player.transform.position).normalized;
-            Vector3 coordDir = GameManager.instance.ApplyCoordScaleNormalize(hitDir);
+            Vector3 coordDir = GameManager.Instance.ApplyCoordScaleNormalize(hitDir);
 
             // Take Damage and Knockback dir from player
             TakeDamage(coordDir, player.UnitStatus.atkDamage);
@@ -150,7 +165,7 @@ public class B_Enemy : B_UnitBase
 
             // Get hit dir from another enemy
             Vector3 hitDir = (transform.position - collision.transform.position).normalized;
-            Vector3 coordDir = GameManager.instance.ApplyCoordScaleNormalize(hitDir);
+            Vector3 coordDir = GameManager.Instance.ApplyCoordScaleNormalize(hitDir);
 
             TakeDamage(coordDir, (int)(other.rigid.velocity.magnitude * other.rigid.mass / 4f), true);
 
