@@ -33,7 +33,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: _Color
+  m_LockedProperties: _Alpha _Color
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -55,10 +55,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 0
-    - _ChargeAmount: 0.89
-    - _Smooth: 0.02
+    - _Alpha: 1
+    - _ChargeAmount: 1.5
+    - _NoiseAmount: 10
+    - _ParticleAmount: 10
+    - _ParticleSpeed: 1
+    - _Power: 5
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _Radius: 1
+    - _Smooth: 10
     m_Colors:
-    - _Color: {r: 1, g: 0.429396, b: 0, a: 0}
-    - _Width_Height_Ratio: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _Color: {r: 1, g: 0.529451, b: 0, a: 1}
+    - _Width_Height_Ratio: {r: 0.63, g: 0.61, b: 0, a: 0}
   m_BuildTextureStacks: []
