@@ -320,7 +320,9 @@ public class CamCtrl : MonoBehaviour
         ManageZoomCamera();
         HandleZoomWithMouseWheel();
 
-        if(Input.GetKeyDown(KeyCode.T)&& cursorFollow)
+        
+
+        if (Input.GetKeyDown(KeyCode.T)&& cursorFollow)
         {
             cursorFollow = false;
         }
@@ -343,6 +345,7 @@ public class CamCtrl : MonoBehaviour
         if (cursorFollow)
         {
             CursorFollowMode();
+            
         }
         else
         {
@@ -411,8 +414,11 @@ public class CamCtrl : MonoBehaviour
     {
 
         Vector3 mousePos = mainCam.ScreenToViewportPoint(Input.mousePosition);
+        
+
+
         Vector3 cursorPos = (new Vector3(mousePos.x, 0, mousePos.y) - new Vector3(0.5f, 0, 0.5f)) * 2f*cursorFollowThreshold;
-        Debug.Log(cursorPos);
+        
         Vector3 targetPos = followObjTr.position + cursorPos;
 
         targetPos.x = Mathf.Clamp(targetPos.x, -cursorFollowThreshold + followObjTr.position.x, cursorFollowThreshold + followObjTr.position.x);
@@ -422,10 +428,12 @@ public class CamCtrl : MonoBehaviour
         targetPos.z += cameraOffset.z;
 
         float speed = followSpdCurve.Evaluate(curveTime) * followSpd;
-        Debug.Log(targetPos);
+        
         // 카메라를 목표 위치로 부드럽게 이동
         mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, targetPos, speed * Time.deltaTime);
     }
+
+ 
 
 
     private void OnDrawGizmosSelected()
