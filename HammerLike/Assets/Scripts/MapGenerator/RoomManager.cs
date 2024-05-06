@@ -73,7 +73,7 @@ public class RoomManager : MonoBehaviour
     {
         int monsterCount = CountMonstersInRoom(room);
         room.monsterCount = monsterCount;
-        Debug.Log($"{room.gameObject.name} currently has {monsterCount} monsters.");
+        //Debug.Log($"{room.gameObject.name} currently has {monsterCount} monsters.");
         if (monsterCount > 0)   // TODO) ?꾪닾以?
         {
             camCtrl.followOption = FollowOption.LimitedInRoom;

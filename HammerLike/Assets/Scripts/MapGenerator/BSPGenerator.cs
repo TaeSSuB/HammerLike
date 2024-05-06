@@ -53,7 +53,7 @@ public class BSPGenerator : MonoBehaviour
         {
             return renderer.bounds.size;
         }
-        return new Vector3(1, 0, 1);  // ??れ삀??????源껎뗰쭗??袁⑸즵???(??????? ????몄툗 ?濡ろ뜑???
+        return new Vector3(1, 0, 1);  
     }
 
     public void ReGenerator()
@@ -63,15 +63,42 @@ public class BSPGenerator : MonoBehaviour
 
     private IEnumerator ReGenerateCoroutine()
     {
+        // 모든 자식 객체 제거 (BSPGenerator 자신은 제외)
+        List<Transform> children = new List<Transform>();
         foreach (Transform child in transform)
         {
-            Destroy(child.gameObject);
+            children.Add(child);
         }
+
+        // 모든 자식 제거
+        foreach (Transform child in children)
+        {
+            DestroyImmediate(child.gameObject);
+        }
+
+        ResetNodes();
 
         yield return null;
 
+        // 던전 재생성
         GenerateBSPDungeon();
     }
+
+    private void ResetNodes()
+    {
+        void ClearNode(BSPNode node)
+        {
+            if (node == null) return;
+            node.roomObject = null;
+            ClearNode(node.leftChild);
+            ClearNode(node.rightChild);
+        }
+
+        // 노드 트리를 순회하여 각 노드의 `roomObject` 속성을 초기화합니다.
+        BSPNode rootNode = new BSPNode { room = new Rect(0, 0, mapWidth, mapHeight) };
+        ClearNode(rootNode);
+    }
+
 
     void GenerateBSPDungeon()
     {
@@ -205,6 +232,9 @@ public class BSPGenerator : MonoBehaviour
 
     void CreatePathBetweenRooms(BSPNode nodeA, BSPNode nodeB)
     {
+
+        if (nodeA == null || nodeB == null || nodeA.roomObject == null || nodeB.roomObject == null) return;
+
         RoomPrefab roomPrefabA = nodeA.roomObject.GetComponent<RoomPrefab>();
         RoomPrefab roomPrefabB = nodeB.roomObject.GetComponent<RoomPrefab>();
 
@@ -244,9 +274,12 @@ public class BSPGenerator : MonoBehaviour
             start = startEntrance.transform.position;
             end = endEntrance.transform.position;
             CreateLShapedPath(start, end);
+            if(startEntrance != null || endEntrance != null)
+            {
 
             startEntrance.SetActive(false);
             endEntrance.SetActive(false);
+            }
         }
     }
 
@@ -256,11 +289,11 @@ public class BSPGenerator : MonoBehaviour
         float deltaX = endPosition.x - startPosition.x;
         float deltaZ = endPosition.z - startPosition.z;
 
-        if (deltaX != 0 && deltaZ != 0 && Mathf.Abs(deltaX) < 9 && Mathf.Abs(deltaZ) < 9)
+        /*if (deltaX != 0 && deltaZ != 0 && Mathf.Abs(deltaX) < 9 && Mathf.Abs(deltaZ) < 9)
         {
             ReGenerator(); // x좌표 혹은 z좌표로 9이하면 다시 배치
             return;     // 더 이쁘게 배치할려면 시간이 좀 걸릴듯
-        }
+        }*/
 
         if (deltaX == 0 || deltaZ == 0)
         {
@@ -269,6 +302,13 @@ public class BSPGenerator : MonoBehaviour
         }
         else
         {
+            if(Mathf.Abs(deltaX) < 10 || Mathf.Abs(deltaZ) < 10)
+            {
+
+                ReGenerator(); 
+                return;
+            }
+
             Vector3 midPoint = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, (startPosition.z + endPosition.z) / 2);
             Vector3 intermediate1, intermediate2;
 
@@ -513,20 +553,31 @@ public class BSPGenerator : MonoBehaviour
 
     private GameObject EnsureParentStructure()
     {
-        GameObject tileAndCornerParent = GameObject.Find("TileAndCorner") ?? new GameObject("TileAndCorner");
-        GameObject tileParent = GameObject.Find("Tile") ?? new GameObject("Tile");
-        GameObject cornerParent = GameObject.Find("Corner") ?? new GameObject("Corner");
+        // "TileAndCorner" 오브젝트를 찾거나 새로 생성
+        GameObject tileAndCornerParent = transform.Find("TileAndCorner")?.gameObject ?? new GameObject("TileAndCorner");
 
-        // Check if the Tile and Corner are already child objects, if not, set them
-        if (tileParent.transform.parent == null)
+        // "TileAndCorner" 오브젝트를 BSPGenerator의 하위로 설정
+        if (tileAndCornerParent.transform.parent != transform)
+        {
+            tileAndCornerParent.transform.parent = transform;
+        }
+
+        // "Tile"과 "Corner" 자식 오브젝트를 찾거나 생성
+        GameObject tileParent = tileAndCornerParent.transform.Find("Tile")?.gameObject ?? new GameObject("Tile");
+        GameObject cornerParent = tileAndCornerParent.transform.Find("Corner")?.gameObject ?? new GameObject("Corner");
+
+        // "Tile"과 "Corner"를 "TileAndCorner"의 하위로 설정
+        if (tileParent.transform.parent != tileAndCornerParent.transform)
         {
             tileParent.transform.parent = tileAndCornerParent.transform;
         }
-        if (cornerParent.transform.parent == null)
+        if (cornerParent.transform.parent != tileAndCornerParent.transform)
         {
             cornerParent.transform.parent = tileAndCornerParent.transform;
         }
 
-        return tileAndCornerParent; // Return the main parent object for reference
+        // "TileAndCorner" 오브젝트 반환
+        return tileAndCornerParent;
     }
+
 }
