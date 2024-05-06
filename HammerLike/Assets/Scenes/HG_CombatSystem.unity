@@ -2193,12 +2193,12 @@ PrefabInstance:
     - target: {fileID: 904213477915090238, guid: 18a51807200c62a47b4b030933d7c22b,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 84.8
+      value: 43.8
       objectReference: {fileID: 0}
     - target: {fileID: 904213477915090238, guid: 18a51807200c62a47b4b030933d7c22b,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -18
+      value: -11.005
       objectReference: {fileID: 0}
     - target: {fileID: 904213478121500712, guid: 18a51807200c62a47b4b030933d7c22b,
         type: 3}
@@ -2440,6 +2440,11 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 893895502}
+    - target: {fileID: 904213478528202063, guid: 18a51807200c62a47b4b030933d7c22b,
+        type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 904213478528202064, guid: 18a51807200c62a47b4b030933d7c22b,
         type: 3}
       propertyPath: m_Name
@@ -4502,6 +4507,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1226239415}
+  - component: {fileID: 1226239416}
   m_Layer: 0
   m_Name: --------------------------System
   m_TagString: Untagged
@@ -4524,6 +4530,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1226239416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1226239414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 619ec1c26c5cc1c4886f943303870d12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onlyBuildable: 0
+  filterConfig:
+    conditions:
+    - propertyName: healthPoint
+      comparator: 0
+      threshold: 40
+    sortConfig:
+      sortByProperty: healthPoint
+      ascending: 1
 --- !u!1001 &1331148207
 PrefabInstance:
   m_ObjectHideFlags: 0
