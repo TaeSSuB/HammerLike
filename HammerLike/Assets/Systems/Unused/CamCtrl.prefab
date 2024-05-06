@@ -314,6 +314,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b1f70cf606ce241b86b6d3990c4be2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cursorFollowThreshold: 10
+  viewportThreshold: 0.3
   mainCam: {fileID: 745235998095987422}
   subCam: {fileID: 745235999396732622}
   renderTex: {fileID: 8400000, guid: 55c3fcd2fc450744b9748b79695356b3, type: 2}
@@ -350,6 +352,7 @@ MonoBehaviour:
   followDistOffset: 0.1
   currentRoom: {fileID: 0}
   zoomOption: 1
+  cursorFollow: 0
   zoomCam: {fileID: 745235999396732656}
   zoomMin: 10
   zoomMax: 45
