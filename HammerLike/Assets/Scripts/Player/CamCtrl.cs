@@ -5,6 +5,8 @@ using UnityEngine;
 
 using Johnson;
 using Unity.VisualScripting;
+using static Rewired.ComponentControls.Effects.RotateAroundAxis;
+using TMPro;
 
 public enum eBoundary
 {
@@ -38,24 +40,18 @@ public class CameraBounds
 }
 
 
-//231025 1152 移대찓???ㅻⅨ ?곗텧???덉뼱??
-//???묒뾽 ?덊빐??????
-
 public class CamCtrl : MonoBehaviour
 {
 
-    /// <summary>
-    /// 231025 1152
-    /// ?뚯뒪?몄슜 ?ㅽ겕由쏀듃??!!!
-    /// ?섏쨷??移대찓?????묒뾽?좊븣???명븯寃?吏?곌굅???섏젙?댁꽌 ?곗떗??
-    /// </summary>
+    public float cursorFollowThreshold = 5.0f;
+    public float viewportThreshold = 0.3f;
 
 
     [Header("Cams")]
     public Camera mainCam;  //For RenderTex = mainCam
     public Camera subCam;
 
-
+    private Vector3 lastCursorPosition;
     [Space(10f)]
     [Header("Resolution")]
     public RenderTexture renderTex; //Only control zoom using Height vari, For Screen Render
@@ -69,11 +65,12 @@ public class CamCtrl : MonoBehaviour
     private float curveTime = 0f;
     public float followSpd;
     public float followDistOffset;
-    public GameObject currentRoom; // ?몄뒪?숉꽣?먯꽌 ?꾩옱 諛⑹쓣 蹂????덈룄濡?
+    public GameObject currentRoom; 
 
     [Space(10f)]
     [Header("Zoom")]
     public bool zoomOption;
+    public bool cursorFollow=false;
     public PixelPerfectCamera zoomCam; //Only control zoom using Height vari, For Screen Render
     public float zoomMin;
     public float zoomMax;
@@ -82,13 +79,13 @@ public class CamCtrl : MonoBehaviour
     private float zoomCurveTime = 0f;
     private Bounds roomBounds;
     //private PlayerAtk playerAtk;
-    public float initialZoom; // 珥덇린 以?媛???μ쓣 ?꾪븳 蹂??
-    private bool shouldReturnToInitialZoom = false; // 珥덇린 以?媛믪쑝濡??뚯븘媛?붿? ?щ?
+    public float initialZoom; 
+    private bool shouldReturnToInitialZoom = false; 
     private float returnZoomStartTime;
     [Space(10f)]
     [Header("ETC")]
     public Vector3 worldScaleCrt;
-    //public Vector3[] boundaryDir; //移대찓?쇱쓽 紐⑥꽌由?以묒븰 Direction 
+
     public float distToGround;
 
     [Space(10f)]
@@ -97,10 +94,9 @@ public class CamCtrl : MonoBehaviour
 
     private Vector3 cameraOffset;
 
-    //MainCam??諛붾떏???용뒗 4援곕? 紐⑥꽌由?
+    
     public Vector3[] boundaryPosToRay = new Vector3[(int)eBoundary.End];
-    //public Vector3[] boundaryDirToRay;
-    //public Vector3[] boundaryPosToView;
+    
 
     public void CameraCallibration(Vector3 centerPos)
     {
@@ -120,8 +116,7 @@ public class CamCtrl : MonoBehaviour
         }
         else
         {
-            //留뚯빟 諛붾떏 泥댄겕 ?덈릺硫?洹몃깷 ?꾩떆濡??섎굹 留뚮뱾怨?泥댄겕?섍퀬 ?섏꽌 ?놁븷????
-
+            
 
         }
     }
@@ -141,7 +136,7 @@ public class CamCtrl : MonoBehaviour
         }
     }
 
-    // ?꾩옱 移대찓?쇨? 鍮꾩텛怨??덈뒗 諛?媛먯?
+ 
     void DetectCurrentRoom()
     {
 
@@ -154,7 +149,7 @@ public class CamCtrl : MonoBehaviour
                 CalculateRoomBounds();
             }
         }
-        //Debug.Log("?꾩옱 諛?:" + currentRoom);
+        
     }
 
     void CalculateRoomBounds()
@@ -202,76 +197,7 @@ public class CamCtrl : MonoBehaviour
         mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, targetPosition, speed * Time.deltaTime);
 
     }
-    public void Zoom()
-    {
-        /*bool isLeftMouseDown = Input.GetMouseButton(0);
-
-        if (!isLeftMouseDown && !shouldReturnToInitialZoom)
-        {
-            // 留덉슦???쇱そ 踰꾪듉???볦뿬吏怨? ?꾩쭅 珥덇린 以뚯쑝濡??뚯븘媛??怨쇱젙???쒖옉?섏? ?딆븯?ㅻ㈃
-            shouldReturnToInitialZoom = true;
-            returnZoomStartTime = Time.time;
-        }
-
-        if (shouldReturnToInitialZoom)
-        {
-            // 珥덇린 以?媛믪쑝濡??뚯븘媛??怨쇱젙
-            float timeSinceReturnStart = Time.time - returnZoomStartTime;
-            float t = timeSinceReturnStart / 1.0f; // 1珥??숈븞??蹂?붾? 怨꾩궛
-
-            if (t >= 1.0f)
-            {
-                t = 1.0f;
-                shouldReturnToInitialZoom = false; // ?뚯븘媛??怨쇱젙 ?꾨즺
-            }
-
-            zoomCam.targetCameraHalfHeight = Mathf.Lerp(zoomCam.targetCameraHalfHeight, initialZoom, t);
-            zoomCam.adjustCameraFOV();
-
-            return; // 異붽??곸씤 以?議곗젙??以묐떒?⑸땲??
-        }
-
-        if (isLeftMouseDown)
-        {
-            // 留덉슦???쇱そ 踰꾪듉???뚮젮?덉쑝硫?以?議곗젅
-            zoomCurveTime += Time.deltaTime;
-            float zoomSpdValue = zoomSpdCrv.Evaluate(zoomCurveTime) * zoomSpd;
-            //float zoomSpdValue = zoomSpd;
-            float zoomVal = (-1f * 0.5f * zoomSpdValue) + zoomCam.targetCameraHalfHeight;
-
-            zoomCam.targetCameraHalfHeight = Mathf.Clamp(zoomVal, zoomMin, zoomCam.maxCameraHalfHeight);
-            zoomCam.adjustCameraFOV();
-        }*/
-    }
-    /*public void Zoom()
-    {
-        bool isLeftMouseDown = Input.GetMouseButton(0);
-
-        if (!isLeftMouseDown)
-        {
-            // 留덉슦???쇱そ 踰꾪듉???뚮젮?덉? ?딆쑝硫?而ㅻ툕 ?쒓컙 珥덇린??
-            zoomCurveTime = 0f;
-
-            // 移대찓??以뚯쓣 珥덇린 媛믪쑝濡?蹂듭썝
-            zoomCam.targetCameraHalfHeight = initialZoom;
-            zoomCam.adjustCameraFOV(); // 移대찓??FOV瑜?議곗젙?⑸땲??
-            return; // 異붽??곸씤 以?議곗젙??以묐떒?⑸땲??
-        }
-        else
-        {
-            // 留덉슦???쇱そ 踰꾪듉???뚮젮?덉쑝硫?而ㅻ툕 ?쒓컙 ?낅뜲?댄듃
-            zoomCurveTime += Time.deltaTime;
-        }
-
-
-        float zoomSpdValue = zoomSpdCrv.Evaluate(zoomCurveTime) * zoomSpd;
-        //float zoomSpdValue = zoomSpd;
-        float zoomVal = (-1f * 1f * zoomSpdValue) + zoomCam.targetCameraHalfHeight;
-
-        zoomCam.targetCameraHalfHeight = Mathf.Clamp(zoomVal, zoomMin, zoomCam.maxCameraHalfHeight);
-
-        zoomCam.adjustCameraFOV();
-    }*/
+    
 
 
     private void Awake()
@@ -283,7 +209,7 @@ public class CamCtrl : MonoBehaviour
 
         if (mainCam != null && renderTex != null)
         {
-            mainCam.targetTexture = renderTex; // RenderTexture瑜?移대찓?쇱쓽 targetTexture濡??ㅼ젙
+            mainCam.targetTexture = renderTex; 
         }
 
 
@@ -295,8 +221,7 @@ public class CamCtrl : MonoBehaviour
 
                 if (child.name.Equals("Zoom Camera"))
                 {
-                    //?댁감????珥덇린???④퀎?먯꽌 李얜뒗嫄곌린???ш쾶 ?좉꼍 ?덉벐????
-                    //string?뺤쑝濡??ㅻ툕?앺듃 李얜뒗嫄??꾩???紐살갭??寃쎌슦 ?놁븷??臾대갑.
+                    
                     zoomCam = child.GetComponent<PixelPerfectCamera>();
                 }
 
@@ -316,18 +241,12 @@ public class CamCtrl : MonoBehaviour
 
 
 
-        //boundaryPosToRay = new Vector3[4];
-        //boundaryDirToRay = new Vector3[4];
-        //boundaryPosToView = new Vector3[4];
-
     }
 
     void Start()
     {
-        //1. ?뚮젅?댁뼱瑜?以묒븰???먮뒗 ?꾩튂濡?移대찓???대룞
-        /*if (followOption == FollowOption.FollowToObject)
-            CameraCallibration(followObjTr.position);
-*/
+
+        lastCursorPosition = Input.mousePosition;
         resolutionRef.width = renderTex.width;
         resolutionRef.height = renderTex.height;
         cameraOffset = mainCam.transform.position;
@@ -341,16 +260,16 @@ public class CamCtrl : MonoBehaviour
     {
         if (zoomOption)
         {
-            // ZoomOption??true??寃쎌슦, PixelPerfectCamera 而댄룷?뚰듃 異붽?
+            
             if (!zoomCam)
             {
                 zoomCam = gameObject.AddComponent<PixelPerfectCamera>();
-                // ?꾩슂??寃쎌슦, zoomCam 蹂?섏쓽 珥덇린 ?ㅼ젙???ш린???섑뻾
+                
             }
         }
         else
         {
-            // ZoomOption??false??寃쎌슦, PixelPerfectCamera 而댄룷?뚰듃 ?쒓굅
+            
             if (zoomCam)
             {
                 Destroy(zoomCam);
@@ -400,24 +319,43 @@ public class CamCtrl : MonoBehaviour
     {
         ManageZoomCamera();
         HandleZoomWithMouseWheel();
+
+        
+
+        if (Input.GetKeyDown(KeyCode.T)&& cursorFollow)
+        {
+            cursorFollow = false;
+        }
+        else if (Input.GetKeyDown(KeyCode.T) && !cursorFollow)
+        {
+            cursorFollow = true;
+        }
     }
 
     private void LateUpdate()
     {
         DetectCurrentRoom();
-        //?뚮젅?댁뼱 ?대룞蹂대떎 ?먮━寃??긱꽦
+
 
         for (int i = 0; i < (int)eBoundary.End; ++i)
         {
             ComputeCamBoundaryRay(Defines.ViewportPos[i], ref boundaryPosToRay[i]);
         }
-        Zoom();
-        if (followOption == FollowOption.FollowToObject)
-            Following();
-        if (followOption == FollowOption.LimitedInRoom)
-            LimitedInRoomFollow();
-        if (followOption == FollowOption.DirectFollow)
-            DirectFollow();
+
+        if (cursorFollow)
+        {
+            CursorFollowMode();
+            
+        }
+        else
+        {
+            if (followOption == FollowOption.FollowToObject)
+                Following();
+            if (followOption == FollowOption.LimitedInRoom)
+                LimitedInRoomFollow();
+            if (followOption == FollowOption.DirectFollow)
+                DirectFollow();
+        }
     }
 
     public void DirectFollow()
@@ -471,6 +409,31 @@ public class CamCtrl : MonoBehaviour
     {
 
     }
+
+    private void CursorFollowMode()
+    {
+
+        Vector3 mousePos = mainCam.ScreenToViewportPoint(Input.mousePosition);
+        
+
+
+        Vector3 cursorPos = (new Vector3(mousePos.x, 0, mousePos.y) - new Vector3(0.5f, 0, 0.5f)) * 2f*cursorFollowThreshold;
+        
+        Vector3 targetPos = followObjTr.position + cursorPos;
+
+        targetPos.x = Mathf.Clamp(targetPos.x, -cursorFollowThreshold + followObjTr.position.x, cursorFollowThreshold + followObjTr.position.x);
+        targetPos.y = cameraOffset.y;
+        targetPos.z = Mathf.Clamp(targetPos.z, -cursorFollowThreshold + followObjTr.position.z, cursorFollowThreshold + followObjTr.position.z);
+
+        targetPos.z += cameraOffset.z;
+
+        float speed = followSpdCurve.Evaluate(curveTime) * followSpd;
+        
+        // 카메라를 목표 위치로 부드럽게 이동
+        mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, targetPos, speed * Time.deltaTime);
+    }
+
+ 
 
 
     private void OnDrawGizmosSelected()

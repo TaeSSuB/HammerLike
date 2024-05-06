@@ -84,12 +84,16 @@ public class CamCtrlEditor : Editor
             if (zoomOptionProperty.boolValue) // ZoomOption이 true일 때만 PixelPerfectCamera 옵션 표시
             {
                 SerializedProperty zoomCam = serializedCamCtrl.FindProperty("zoomCam");
+                SerializedProperty cursorFollow = serializedCamCtrl.FindProperty("cursorFollow");
+                SerializedProperty cursorFollowThreshold = serializedCamCtrl.FindProperty("cursorFollowThreshold");
                 SerializedProperty zoomMin = serializedCamCtrl.FindProperty("zoomMin");
                 SerializedProperty zoomMax = serializedCamCtrl.FindProperty("zoomMax");
                 SerializedProperty zoomSpd = serializedCamCtrl.FindProperty("zoomSpd");
                 SerializedProperty zoomSpdCrv = serializedCamCtrl.FindProperty("zoomSpdCrv");
 
                 EditorGUILayout.PropertyField(zoomCam);
+                EditorGUILayout.PropertyField(cursorFollow);
+                EditorGUILayout.PropertyField(cursorFollowThreshold);
                 EditorGUILayout.PropertyField(zoomMin);
                 EditorGUILayout.PropertyField(zoomMax);
                 EditorGUILayout.PropertyField(zoomSpd);
