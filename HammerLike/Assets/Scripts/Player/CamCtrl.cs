@@ -49,7 +49,7 @@ public class CamCtrl : MonoBehaviour
 
     [Header("Cams")]
     public Camera mainCam;  //For RenderTex = mainCam
-    public Camera subCam;
+    //public Camera subCam; // Delete Zoom Camera
 
     private Vector3 lastCursorPosition;
     [Space(10f)]
@@ -69,8 +69,10 @@ public class CamCtrl : MonoBehaviour
 
     [Space(10f)]
     [Header("Zoom")]
-    public bool zoomOption;
     public bool cursorFollow=false;
+    public bool zoomOption;
+    private float maximumZoomSize = 0.3f;
+    private float orthographicSize;
     public PixelPerfectCamera zoomCam; //Only control zoom using Height vari, For Screen Render
     public float zoomMin;
     public float zoomMax;
@@ -245,7 +247,7 @@ public class CamCtrl : MonoBehaviour
 
     void Start()
     {
-
+        orthographicSize = mainCam.orthographicSize;
         lastCursorPosition = Input.mousePosition;
         resolutionRef.width = renderTex.width;
         resolutionRef.height = renderTex.height;
@@ -263,7 +265,7 @@ public class CamCtrl : MonoBehaviour
             
             if (!zoomCam)
             {
-                zoomCam = gameObject.AddComponent<PixelPerfectCamera>();
+                //zoomCam = gameObject.AddComponent<PixelPerfectCamera>();
                 
             }
         }
@@ -276,6 +278,8 @@ public class CamCtrl : MonoBehaviour
                 zoomCam = null;
             }
         }
+
+
     }
 
     public void ChangeFollowOption()
@@ -302,16 +306,7 @@ public class CamCtrl : MonoBehaviour
 
     void Zoom(float scrollAmount)
     {
-        // subCam??projection size瑜?留덉슦?????낅젰???곕씪 議곗젅?⑸땲??
-        if (subCam != null)
-        {
-            // ?꾩옱 ?ъ씠利덉뿉 ?낅젰 媛믪뿉 ?곕Ⅸ 蹂?붾웾??異붽??⑸땲?? scrollAmount媛 ?묒닔硫??뺣?, ?뚯닔硫?異뺤냼
-            float newSize = subCam.orthographicSize - scrollAmount * zoomSpd;
-            // newSize媛 理쒖냼媛믨낵 理쒕?媛??ъ씠???덈뒗吏 ?뺤씤?섍퀬 議곗젅?⑸땲??
-            newSize = Mathf.Clamp(newSize, zoomMin, zoomMax);
-            // 怨꾩궛?????ъ씠利덈? subCam??projection size濡??ㅼ젙?⑸땲??
-            subCam.orthographicSize = newSize;
-        }
+        
     }
 
     // Update is called once per frame
@@ -322,11 +317,11 @@ public class CamCtrl : MonoBehaviour
 
         
 
-        if (Input.GetKeyDown(KeyCode.T)&& cursorFollow)
+        if (Input.GetMouseButtonUp(0)&& cursorFollow)
         {
             cursorFollow = false;
         }
-        else if (Input.GetKeyDown(KeyCode.T) && !cursorFollow)
+        else if (Input.GetMouseButton(0) && !cursorFollow)
         {
             cursorFollow = true;
         }

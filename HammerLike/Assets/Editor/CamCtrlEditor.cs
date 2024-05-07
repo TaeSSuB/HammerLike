@@ -33,17 +33,14 @@ public class CamCtrlEditor : Editor
         if (showCamsSection)
         {
             SerializedProperty mainCam = serializedCamCtrl.FindProperty("mainCam");
-            SerializedProperty subCam = serializedCamCtrl.FindProperty("subCam");
+           
 
             if (mainCam != null)
             {
                 EditorGUILayout.PropertyField(mainCam);
             }
 
-            if (subCam != null)
-            {
-                EditorGUILayout.PropertyField(subCam);
-            }
+            
         }
 
         // 'Resolution' 섹션
@@ -91,9 +88,9 @@ public class CamCtrlEditor : Editor
                 SerializedProperty zoomSpd = serializedCamCtrl.FindProperty("zoomSpd");
                 SerializedProperty zoomSpdCrv = serializedCamCtrl.FindProperty("zoomSpdCrv");
 
-                EditorGUILayout.PropertyField(zoomCam);
                 EditorGUILayout.PropertyField(cursorFollow);
                 EditorGUILayout.PropertyField(cursorFollowThreshold);
+                EditorGUILayout.PropertyField(zoomCam);
                 EditorGUILayout.PropertyField(zoomMin);
                 EditorGUILayout.PropertyField(zoomMax);
                 EditorGUILayout.PropertyField(zoomSpd);

@@ -17,6 +17,10 @@ public class UI_InGame : MonoBehaviour
     [SerializeField] protected Image chargeBarImg;
     protected RectTransform chargeBarRctTR;
     [SerializeField] protected GameObject chargeParticle;
+    [SerializeField] private float decreaseSpeed = 1f;
+    [SerializeField] Image chargeScreen;
+    private float maximumChargeAmount;
+    
 
     [Header("Gold UI")]
     [SerializeField] protected TMP_Text goldText;
@@ -33,10 +37,14 @@ public class UI_InGame : MonoBehaviour
     [SerializeField] private B_Player player;
     private SO_PlayerStatus playerStatus;
 
+    private Coroutine chargeCoroutine;
+    
+
     private void Start()
     {
         // Start 이후 실행 초기화 메서드. a.HG
         StartCoroutine(CoInitialize());
+        
     }
 
     private void OnApplicationQuit()
@@ -65,8 +73,9 @@ public class UI_InGame : MonoBehaviour
 
         chargeBarRctTR = chargeBarImg.gameObject.GetComponent<RectTransform>();
         chargeParticle.SetActive(false);
-
+        maximumChargeAmount = chargeScreen.material.GetFloat("_MaxChargeAmount");
         UpdateHP(playerStatus.maxHP);
+        UpdateGauge(playerStatus.chargeRate);
 
         // 이벤트 등록. 메모리 해제 주의. a.HG
         player.OnHPChanged += UpdateHP;
@@ -75,19 +84,43 @@ public class UI_InGame : MonoBehaviour
 
     private void UpdateGauge(float chargeRate)
     {
-        float chargeRatio = Mathf.Clamp(chargeRate, 0f, 1f); // 0 ~ 1 사이의 값
-        chargeBarRctTR.anchorMax = new Vector2(chargeBarRctTR.anchorMax.x, chargeRatio);
+        if (chargeCoroutine != null)
+            StopCoroutine(chargeCoroutine);
 
-        // 파티클 이미지 활성화/비활성화
-        if (chargeRatio >= 1f)
+        chargeCoroutine = StartCoroutine(SmoothChange(chargeRate));
+    }
+
+    private IEnumerator SmoothChange(float targetRate)
+    {
+        float currentRate = chargeBarRctTR.anchorMax.y;
+        float timeToReachTarget = Mathf.Abs(currentRate - targetRate) / decreaseSpeed;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < timeToReachTarget)
         {
-            chargeParticle.SetActive(true);
+            elapsedTime += Time.deltaTime;
+            float newRate = Mathf.Lerp(currentRate, targetRate, elapsedTime / timeToReachTarget);
+            chargeBarRctTR.anchorMax = new Vector2(chargeBarRctTR.anchorMax.x, newRate);
+
+            // Material에 ChargeAmount 값을 업데이트
+            if (chargeScreen.material != null)
+            {
+                chargeScreen.material.SetFloat("_ChargeAmount", newRate*maximumChargeAmount);
+            }
+
+            yield return null;
         }
-        else
+
+        chargeBarRctTR.anchorMax = new Vector2(chargeBarRctTR.anchorMax.x, targetRate);
+        chargeParticle.SetActive(targetRate >= 1f);
+
+        // 최종 값도 설정
+        if (chargeScreen.material != null)
         {
-            chargeParticle.SetActive(false);
+            chargeScreen.material.SetFloat("_ChargeAmount", targetRate* maximumChargeAmount);
         }
     }
+
 
     private void UpdateHP(int hp)
     {
@@ -104,4 +137,6 @@ public class UI_InGame : MonoBehaviour
 
         Initialize();
     }
+
+    
 }
