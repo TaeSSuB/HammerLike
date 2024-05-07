@@ -143,6 +143,7 @@ Transform:
   m_Children:
   - {fileID: 7694012040184570831}
   - {fileID: 1010054233868788792}
+  - {fileID: 4138437372281481108}
   - {fileID: 6271083023624452756}
   m_Father: {fileID: 2173788121208908483}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -249,18 +250,14 @@ MonoBehaviour:
   unitType: 5
   anim: {fileID: 7344168283046424172}
   agent: {fileID: 0}
-  knockBackMultiplier: 10
+  isAttacking: 0
   puppet: {fileID: 0}
-  remainKnockBackDir: {x: 0, y: 0, z: 0}
-  remainKnockBackForce: 0
   groundLayer:
     serializedVersion: 2
     m_Bits: 2147483648
   groundCheckDistance: 0.1
-  isGrounded: 0
   isKnockback: 0
   hpPosTR: {fileID: 6271083023624452756}
-  chasingStartDis: 20
   isTester: 0
   duration: 1
   multiplier: 1.5
@@ -1608,6 +1605,124 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.00000047683716, y: 0.9257046, z: 0.8149757}
     m_Extent: {x: 1.0000165, y: 0.99005723, z: 0.38242954}
   m_DirtyAABB: 0
+--- !u!1 &7648793322306808756
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4138437372281481108}
+  - component: {fileID: 6422679441633134583}
+  - component: {fileID: 3200675582481101349}
+  m_Layer: 8
+  m_Name: Monster Light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4138437372281481108
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7648793322306808756}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 5.714286, z: 0}
+  m_LocalScale: {x: 1.2857143, y: 1.2857144, z: 1.2857144}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 985795359630169132}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!108 &6422679441633134583
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7648793322306808756}
+  m_Enabled: 1
+  serializedVersion: 10
+  m_Type: 0
+  m_Shape: 0
+  m_Color: {r: 1, g: 0.8958334, b: 0.75, a: 1}
+  m_Intensity: 10
+  m_Range: 10
+  m_SpotAngle: 63
+  m_InnerSpotAngle: 15
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 2
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 0.4
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.1
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 1
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 536872704
+  m_RenderingLayerMask: 1
+  m_Lightmapping: 4
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 1
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 3.306078e-39, y: 1.561203e-39, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+--- !u!114 &3200675582481101349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7648793322306808756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 1
 --- !u!1 &8051326934404149942
 GameObject:
   m_ObjectHideFlags: 0
