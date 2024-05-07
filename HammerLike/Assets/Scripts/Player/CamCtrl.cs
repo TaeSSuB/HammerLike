@@ -89,12 +89,14 @@ public class CamCtrl : MonoBehaviour
     public Vector3 worldScaleCrt;
 
     public float distToGround;
-
+    private int initialCullingMask;
     [Space(10f)]
     [Header("Camera Limits")]
     public CameraBounds cameraBounds;
 
     private Vector3 cameraOffset;
+
+
 
     
     public Vector3[] boundaryPosToRay = new Vector3[(int)eBoundary.End];
@@ -213,7 +215,8 @@ public class CamCtrl : MonoBehaviour
         {
             mainCam.targetTexture = renderTex; 
         }
-
+        
+        initialCullingMask = mainCam.cullingMask;
 
         if (!zoomCam)
         {
@@ -315,7 +318,24 @@ public class CamCtrl : MonoBehaviour
         ManageZoomCamera();
         HandleZoomWithMouseWheel();
 
-        
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+            RemoveLayerFromCullingMask("Player");
+        }
+        else if (Input.GetKeyDown(KeyCode.Y))
+        {
+            AddLayerToCullingMask("Player");
+        }
+        else if (Input.GetKeyDown(KeyCode.U))
+        {
+            ResetCullingMask();
+        }
+        else if (Input.GetKeyDown(KeyCode.I))
+        {
+            ExcludeAllLayers();
+        }
+
+
 
         if (Input.GetMouseButtonUp(0)&& cursorFollow)
         {
@@ -428,8 +448,40 @@ public class CamCtrl : MonoBehaviour
         mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, targetPos, speed * Time.deltaTime);
     }
 
- 
+    public void AddLayerToCullingMask(string layerName)
+    {
+        int layer = LayerMask.NameToLayer(layerName);
+        if (layer == -1)
+        {
+            Debug.LogError("Layer not found: " + layerName);
+            return;
+        }
+        mainCam.cullingMask |= (1 << layer);
+    }
 
+
+    public void RemoveLayerFromCullingMask(string layerName)
+    {
+        int layer = LayerMask.NameToLayer(layerName);
+        if (layer == -1)
+        {
+            Debug.LogError("Layer not found: " + layerName);
+            return;
+        }
+        mainCam.cullingMask &= ~(1 << layer);
+    }
+
+    public void ExcludeAllLayers()
+    {
+        mainCam.cullingMask = 0; // 모든 레이어 제외
+    }
+
+
+
+    public void ResetCullingMask()
+    {
+        mainCam.cullingMask = initialCullingMask; // 초기 상태로 복원
+    }
 
     private void OnDrawGizmosSelected()
     {
