@@ -1200,30 +1200,15 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 745235998095987419, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
+    - target: {fileID: 745235998064124708, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
         type: 3}
-      propertyPath: PixelSize
-      value: 0.08
-      objectReference: {fileID: 0}
-    - target: {fileID: 745235998095987422, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
-        type: 3}
-      propertyPath: near clip plane
-      value: -5
-      objectReference: {fileID: 0}
-    - target: {fileID: 745235998095987422, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
-        type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 2684364767
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 745235999134340651, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
         type: 3}
       propertyPath: m_Name
       value: CamCtrl
-      objectReference: {fileID: 0}
-    - target: {fileID: 745235999134340652, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 745235999134340652, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
         type: 3}
@@ -1275,49 +1260,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 745235999134340653, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
-        type: 3}
-      propertyPath: followObjTr
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 745235999134340653, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
-        type: 3}
-      propertyPath: followOption
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 745235999396732622, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
-        type: 3}
-      propertyPath: orthographic size
-      value: 45
-      objectReference: {fileID: 0}
-    - target: {fileID: 2089743045744522957, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 2089743045744522957, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4222593640898889074, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
-        type: 3}
-      propertyPath: m_HDR
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4222593640898889074, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
-        type: 3}
-      propertyPath: m_AllowMSAA
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4222593640898889074, guid: 46fa629f9b9f2a64fb25644ae91d8b1e,
-        type: 3}
-      propertyPath: m_TargetTexture
-      value: 
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 745235998064124708, guid: 46fa629f9b9f2a64fb25644ae91d8b1e, type: 3}
-    - {fileID: 745235998064124706, guid: 46fa629f9b9f2a64fb25644ae91d8b1e, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -4270,7 +4213,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 74648a27eed86b643a13eacc493029f0, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: a283fcf60cc49414ea5c42e18f166a3f, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &1066952639
 GameObject:
@@ -4542,14 +4485,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 619ec1c26c5cc1c4886f943303870d12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onlyBuildable: 0
+  onlyBuildable: 1
   filterConfig:
-    conditions:
-    - propertyName: healthPoint
-      comparator: 0
-      threshold: 40
+    conditions: []
     sortConfig:
-      sortByProperty: healthPoint
+      sortByProperty: armor
       ascending: 1
 --- !u!1001 &1331148207
 PrefabInstance:
@@ -5516,10 +5456,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitList: []
-  baseUnitStatus: {fileID: 11400000, guid: 3e94b9645ccb9e546afcc1b49cd7791b, type: 2}
-  slimeStatus: {fileID: 11400000, guid: 8a547c304dfc98949b6c5fdccbeeb758, type: 2}
-  rangerUnitStatus: {fileID: 11400000, guid: d3fa066df6473e54fb5c3776a840de0f, type: 2}
-  devUnitStatus: {fileID: 11400000, guid: e50a83e614043774db11dc09ece4f36b, type: 2}
+  pathDB: Assets/WorkSpace/Scripts/Scriptable/Unit/Scripts/SO_UnitDB.asset
+  unitDataBase: {fileID: 11400000, guid: 737d17c1c119f44498ee36a55e512608, type: 2}
 --- !u!23 &1932748685111125
 MeshRenderer:
   m_ObjectHideFlags: 0

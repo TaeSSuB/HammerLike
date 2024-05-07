@@ -1,26 +1,44 @@
+using NuelLib;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 // singleton class
-public class UnitManager : MonoBehaviour
+public class UnitManager : SingletonMonoBehaviour<UnitManager>
 {
-    public static UnitManager instance;
-
     public List<B_UnitBase> unitList = new List<B_UnitBase>();
 
-    // Temp 20240425 - UnitStatus DB 생성 및 관리 예정, a.HG
-    public SO_UnitStatus baseUnitStatus;
-    public SO_UnitStatus slimeStatus;
-    public SO_RangerUnitStatus rangerUnitStatus;
-    public SO_UnitStatus devUnitStatus;
+    public string pathDB = "Assets/WorkSpace/Scripts/Scriptable/Unit/Scripts/SO_UnitDB.asset";
+    public SO_UnitDB unitDataBase;
 
-    private void Awake()
+    // Temp 20240425 - UnitStatus DB 생성 및 관리 예정, a.HG
+    //public SO_UnitStatus baseUnitStatus;
+    //public SO_UnitStatus slimeStatus;
+    //public SO_RangerUnitStatus rangerUnitStatus;
+    //public SO_UnitStatus devUnitStatus;
+
+    protected override void Awake()
     {
-        if (instance == null)
+        base.Awake();
+
+        if (unitDataBase == null)
         {
-            instance = this;
+            unitDataBase = (SO_UnitDB)UnityEditor.AssetDatabase.LoadAssetAtPath(pathDB, typeof(SO_UnitDB));
         }
+    }
+
+    // Get Status
+    public SO_UnitStatus GetUnitStatus(int index)
+    {
+        foreach (var unitData in unitDataBase.unitDataList)
+        {
+            if (unitData.index == index)
+            {
+                return unitData.unitStatus;
+            }
+        }
+
+        return null;
     }
 
     public void AddUnit(B_UnitBase unit)
@@ -30,25 +48,5 @@ public class UnitManager : MonoBehaviour
         {
             unitList.Add(unit);
         }
-    }
-
-    public void RemoveUnit(B_UnitBase unit)
-    {
-        unitList.Remove(unit);
-    }
-
-    public void RemoveAllUnit()
-    {
-        unitList.Clear();
-    }
-
-    public B_UnitBase GetUnit(int index)
-    {
-        return unitList[index];
-    }
-
-    public int GetUnitCount()
-    {
-        return unitList.Count;
     }
 }

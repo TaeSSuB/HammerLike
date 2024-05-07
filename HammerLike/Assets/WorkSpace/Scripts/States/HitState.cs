@@ -16,7 +16,7 @@ public class HitState : IAIState
 
     public void OnEnter()
     {
-        Debug.Log("HitState OnEnter");
+        //Debug.Log("HitState OnEnter");
         unitBase.SetInvincible(true);
         unitBase.Anim.SetTrigger("tHit");
 
@@ -27,7 +27,7 @@ public class HitState : IAIState
 
     public void OnExit()
     {
-        Debug.Log("HitState OnExit");
+        //Debug.Log("HitState OnExit");
 
         HitEvent(0f);
         unitBase.SetInvincible(false);
@@ -35,7 +35,7 @@ public class HitState : IAIState
 
     public void OnUpdate()
     {
-        Debug.Log("HitState OnUpdate");
+        //Debug.Log("HitState OnUpdate");
 
         invincibleTime -= Time.deltaTime;
 

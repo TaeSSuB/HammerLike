@@ -6650,8 +6650,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8995942570513142274}
   - component: {fileID: 8995942570513142287}
-  - component: {fileID: 8995942570513142284}
   - component: {fileID: 8995942570513142280}
+  - component: {fileID: 8995942570513142284}
   - component: {fileID: 8995942570513142293}
   - component: {fileID: 6351146761269656495}
   - component: {fileID: 7728055365080933140}
@@ -6705,29 +6705,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!136 &8995942570513142284
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8995942570513142273}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.6
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
 --- !u!54 &8995942570513142280
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6754,7 +6731,30 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 2
   m_Constraints: 116
-  m_CollisionDetection: 1
+  m_CollisionDetection: 3
+--- !u!136 &8995942570513142284
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8995942570513142273}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.6
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &8995942570513142293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6805,7 +6805,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -6821,7 +6821,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -6895,15 +6895,12 @@ MonoBehaviour:
   unitType: 0
   anim: {fileID: 8995942570513142287}
   agent: {fileID: 0}
-  knockBackMultiplier: 5
+  isAttacking: 0
   puppet: {fileID: 8995942570625409004}
-  remainKnockBackDir: {x: 0, y: 0, z: 0}
-  remainKnockBackForce: 0
   groundLayer:
     serializedVersion: 2
     m_Bits: 2147483648
   groundCheckDistance: 0.1
-  isGrounded: 0
   isKnockback: 0
   hpPosTR: {fileID: 4266959465240773480}
   chasingStartDis: 20

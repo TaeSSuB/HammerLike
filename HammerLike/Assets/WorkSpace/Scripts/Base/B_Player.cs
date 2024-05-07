@@ -34,7 +34,8 @@ public class B_Player : B_UnitBase
 
     protected override void ApplyStatus()
     {
-        unitStatus = Instantiate(GameManager.Instance.PlayerStatus);
+        //unitStatus = Instantiate(GameManager.Instance.PlayerStatus);
+        unitStatus = (GameManager.Instance.PlayerStatus);
     }
 
     void TrackWeaponDirXZ()
@@ -299,9 +300,9 @@ public class B_Player : B_UnitBase
         (unitStatus as SO_PlayerStatus).atkDamage = (unitStatus as SO_PlayerStatus).AtkDamageOrigin;
     }
 
-    public override void TakeDamage(Vector3 damageDir, int damage = 0, bool knockBack = true)
+    public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true)
     {
-        base.TakeDamage(damageDir, damage, knockBack);
+        base.TakeDamage(damageDir, damage, knockBackPower, knockBack);
 
         OnHPChanged?.Invoke(unitStatus.currentHP);
     }

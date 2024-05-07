@@ -6,6 +6,8 @@ using BennyKok.NotionAPI;
 using static BennyKok.NotionAPI.NotionAPITest;
 using Unity.VisualScripting;
 using System.Collections.Generic;
+using UnityEditor;
+using System.Threading.Tasks;
 
 public class DatabaseFromNotion : MonoBehaviour
 {
@@ -20,7 +22,12 @@ public class DatabaseFromNotion : MonoBehaviour
         "index", "attackPower", "weight"
     };
     [SerializeField] public FilterConfig filterConfig;
-    private IEnumerator Start()
+    private void Start()
+    {
+        StartCoroutine(LoadDatas());
+    }
+
+    public IEnumerator LoadDatas()
     {
         var api = new NotionAPI(apiKey);
         yield return api.QueryDatabase<EntityDatabase>(database_id, db =>
@@ -146,6 +153,78 @@ public class DatabaseFromNotion : MonoBehaviour
                   $"Attack Speed: {record.properties.attackSpeed.Value}, Attack Range: {record.properties.attackRange.Value}, " +
                   $"Knockback Resistance: {record.properties.knockbackResistance.Value}, Index: {record.properties.index.Value}, " +
                   $"Attack Power: {record.properties.attackPower.Value}, Weight: {record.properties.weight.Value}");
+
+        // ScriptableObject 생성
+        SO_UnitStatus newSO = CreateAndSaveSOFromEntity(record);
+
+        // 생성된 ScriptableObject 정보 로깅
+        Debug.Log($"Created SO with Index: {newSO.index} and Name: {newSO.entityName}");
+    }
+
+    // ScriptableObject를 생성하고 데이터를 할당하는 메서드
+    public SO_UnitStatus CreateAndSaveSOFromEntity(Page<EntityDatabase> record)
+    {
+        string assetPath = "Assets/WorkSpace/Scripts/Scriptable/Unit";
+
+        string fullPath = $"{assetPath}/{record.properties.entityName.title.FirstOrDefault()?.text.content ?? "UnnamedEntity"}_SO.asset";
+
+        SO_UnitStatus unitStatus = AssetDatabase.LoadAssetAtPath<SO_UnitStatus>(fullPath);
+
+        if (unitStatus == null)
+        {
+            // 새 ScriptableObject 인스턴스 생성
+            unitStatus = ScriptableObject.CreateInstance<SO_UnitStatus>();
+            AssetDatabase.CreateAsset(unitStatus, fullPath);
+            Debug.Log("Created new SO_UnitStatus");
+        }
+        else
+        {
+            Debug.Log("Updating existing SO_UnitStatus");
+        }
+
+        // EntityDatabase에서 데이터를 읽어와 SO_UnitStatus에 할당
+        unitStatus.index = (int)record.properties.index.Value;
+        unitStatus.entityName = record.properties.entityName.title.FirstOrDefault()?.text.content ?? "";
+        unitStatus._koreanName = record.properties._koreanName.Value;
+        unitStatus.mass = record.properties.weight.Value;
+        unitStatus.armor = record.properties.armor.Value;
+        unitStatus.detectRange = record.properties.detectRange.Value;
+        unitStatus.moveSpeed = record.properties.movementSpeed.Value;
+        unitStatus.maxHP = (int)record.properties.healthPoint.Value;
+        unitStatus.atkDamage = (int)record.properties.attackPower.Value;
+        unitStatus.atkRange = record.properties.attackRange.Value;
+        unitStatus.atkSpeed = record.properties.attackSpeed.Value;
+        unitStatus.knockbackPower = record.properties.knockbackPower.Value;
+        unitStatus.knockbackResistance = record.properties.knockbackResistance.Value;
+
+        // 파일 시스템에 변경사항 저장
+        EditorUtility.SetDirty(unitStatus);
+        AssetDatabase.SaveAssets();
+
+        // create DB or Load DB
+        SO_UnitDB unitDB = AssetDatabase.LoadAssetAtPath<SO_UnitDB>("Assets/WorkSpace/Scripts/Scriptable/Unit/Scripts/SO_UnitDB.asset");
+
+        if (unitDB == null)
+        {
+            unitDB = ScriptableObject.CreateInstance<SO_UnitDB>();
+            AssetDatabase.CreateAsset(unitDB, "Assets/WorkSpace/Scripts/Scriptable/Unit/Scripts/SO_UnitDB.asset");
+        }
+
+        IndexWithUnitStatus indexWithUnitStatus = new IndexWithUnitStatus(unitStatus, unitStatus.index);
+
+        foreach (var unitData in unitDB.unitDataList)
+        {
+            if (unitData.index == unitStatus.index)
+            {
+                Debug.Log(unitStatus.entityName + " is Already Bind!!");
+                return unitData.unitStatus;
+            }
+        }
+
+        unitDB.unitDataList.Add(indexWithUnitStatus);
+        AssetDatabase.Refresh();
+
+        return unitStatus;
     }
 
 }
