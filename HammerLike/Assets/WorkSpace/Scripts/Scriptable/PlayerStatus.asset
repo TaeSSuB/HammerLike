@@ -13,37 +13,32 @@ MonoBehaviour:
   m_Name: PlayerStatus
   m_EditorClassIdentifier: 
   unitSprite: {fileID: 0}
+  index: 0
+  entityName: 
+  _koreanName: 
+  mass: 10
+  armor: 1
+  detectRange: 10
+  moveSpeed: 12
   currentHP: 100
   maxHP: 100
   restoreHP: 0
   restoreHPCooltime: 0
   currentRestoreHPCooltime: 0
-  moveSpeed: 12
-  atkDamage: 20
+  atkDamage: 10
   atkRange: 25
   atkSpeed: 2
+  knockbackPower: 10
+  knockbackResistance: 0
   maxAttackCooltime: 1
-  currentAttackCooltime: 1
-  mass: 10
-  knockbackCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  partsBreakForceCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  currentAttackCooltime: 0.98
   dashSpeed: 10
   dashDuration: 0.5
   dashCooldown: 1
   chargeRate: 1
   minChargeRate: 1.5
-  maxChargeRate: 8
-  chargeRateIncrease: 5
+  maxChargeRate: 3
+  chargeRateIncrease: 3
   currentStamina: 100
   maxStamina: 100
   staminaRegenRate: 1

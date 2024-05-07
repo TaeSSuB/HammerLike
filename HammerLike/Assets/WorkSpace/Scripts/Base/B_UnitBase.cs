@@ -30,6 +30,8 @@ public class B_UnitBase : B_Entity
 
     [Header("Knockback")]
     protected float knockBackMultiplier = 1f;
+    protected float maxKnockBackForce = 100f;
+    protected float maxPartsBreakForce = 100f;
     protected AnimationCurve knockbackCurve;
     protected AnimationCurve partsBreakForceCurve;
 
@@ -62,25 +64,35 @@ public class B_UnitBase : B_Entity
         switch (unitType)
         {
             case UnitType.Melee:
-                unitStatus = Instantiate(UnitManager.instance.baseUnitStatus);
+                unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(2));
                 break;
             case UnitType.Range:
-                unitStatus = Instantiate(UnitManager.instance.rangerUnitStatus); break;
+                unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(3)); 
+                break;
             case UnitType.Magic:
                 // add please
                 break;
             case UnitType.Slime:
-                unitStatus = Instantiate(UnitManager.instance.slimeStatus);
+                unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(5));
                 break;
             case UnitType.Boss:
                 // add please
                 break;
             case UnitType.Develop:
-                unitStatus = Instantiate(UnitManager.instance.devUnitStatus);
+                unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(99));
                 break;
         }
 
         rigid.mass = UnitStatus.mass;
+    }
+
+    protected virtual void ApplySystemSettings()
+    {
+        knockBackMultiplier = GameManager.Instance.SystemSettings.KnockBackScale;
+        maxKnockBackForce = GameManager.Instance.SystemSettings.MaxKnockBackForce;
+        maxPartsBreakForce = GameManager.Instance.SystemSettings.MaxPartsBreakForce;
+        knockbackCurve = GameManager.Instance.SystemSettings.KnockbackCurve;
+        partsBreakForceCurve = GameManager.Instance.SystemSettings.PartsBreakForceCurve;
     }
 
     //init override
@@ -92,19 +104,16 @@ public class B_UnitBase : B_Entity
 
         ApplyStatus();
 
-        UnitManager.instance.AddUnit(this);
+        UnitManager.Instance.AddUnit(this);
 
         InitHP();
+        ApplySystemSettings();
 
         // Get the Animator component if it's not already assigned
         if (Anim == null)
         {
             anim = GetComponent<Animator>();
         }
-
-        knockBackMultiplier = GameManager.Instance.SystemSettings.KnockBackScale;
-        knockbackCurve = GameManager.Instance.SystemSettings.KnockbackCurve;
-        partsBreakForceCurve = GameManager.Instance.SystemSettings.PartsBreakForceCurve;
     }
 
     protected virtual void UpdateAttackCoolTime()
@@ -163,17 +172,6 @@ public class B_UnitBase : B_Entity
 
         agent.speed = unitStatus.moveSpeed * coordScale;
 
-        //if (agent.velocity == Vector3.zero)
-        //{
-        //    //agent.isStopped = true;
-        //}
-        //else
-        //{
-        //    //agent.isStopped = false;
-        //    agent.speed = unitStatus.moveSpeed;
-        //    agent.SetDestination(transform.position + moveDir);
-        //}
-
         return agent.nextPosition;
     }
 
@@ -191,12 +189,16 @@ public class B_UnitBase : B_Entity
         ClampHP();
     }
 
-    public virtual void TakeDamage(Vector3 damageDir, int damage = 0, bool knockBack = true)
+    public virtual void TakeDamage(Vector3 damageDir, int damage, float knockBackPower, bool knockBack = true)
     {
         if (isInvincible)
         {
             return;
         }
+
+#if UNITY_EDITOR
+        ApplySystemSettings();
+#endif
 
         UnitStatus.currentHP = UnitStatus.currentHP - damage;
 
@@ -208,15 +210,14 @@ public class B_UnitBase : B_Entity
 
         if (knockBack)
         {
-            //Knockback(damageDir, Mathf.Clamp(damage, 0f, 15f));
             remainKnockBackDir = damageDir;
-            remainKnockBackForce = damage;
+            remainKnockBackForce = knockBackPower;
 
 
             if (!CheckDead())
             {
                 // If the unit is not dead, apply smooth knockback
-                Knockback(damageDir, Mathf.Clamp(damage, 0f, 30f));
+                Knockback(damageDir, remainKnockBackForce);
             }
         }
     }
@@ -277,8 +278,10 @@ public class B_UnitBase : B_Entity
         // Apply Coord Scale inDir
         inDir = GameManager.Instance.ApplyCoordScaleNormalize(inDir);
 
-        // Apply a smoothed knockback over time rather than as an impulse
-        StartCoroutine(SmoothKnockback(inDir, force, rigid, knockbackCurve));
+        var resultKnockPower = Mathf.Clamp(force * knockBackMultiplier, 0f, maxKnockBackForce);
+        Debug.Log(this.gameObject.name + " Knockback : " + resultKnockPower);
+        
+        StartCoroutine(SmoothKnockback(inDir, resultKnockPower, rigid, knockbackCurve));
     }
 
     // Temp 240402 - Puppet 테스트 목적, a.HG
@@ -296,7 +299,7 @@ public class B_UnitBase : B_Entity
             inRigid = rigid;
         }
 
-        Vector3 knockbackVelocity = inDir * force / unitStatus.mass * knockBackMultiplier;
+        Vector3 knockbackVelocity = inDir * force / unitStatus.mass;
 
         // 초기 속도를 저장합니다.
         Vector3 initialVelocity = inRigid.velocity;
@@ -313,7 +316,7 @@ public class B_UnitBase : B_Entity
             // Apply the force using the animation curve
             //inRigid.velocity = Vector3.Lerp(initialVelocity, knockbackVelocity, inCurve.Evaluate(elapsed));
 
-            inRigid.AddForce(knockbackVelocity * knockBackMultiplier * inCurve.Evaluate(elapsed), ForceMode.Force);
+            inRigid.AddForce(knockbackVelocity * inCurve.Evaluate(elapsed), ForceMode.Force);
 
             yield return null;
         }
@@ -379,7 +382,7 @@ public class B_UnitBase : B_Entity
                     Vector3 dir = (muscleRigid.transform.position - GameManager.Instance.Player.transform.position).normalized;
                     dir = GameManager.Instance.ApplyCoordScaleNormalize(dir);
 
-                    remainKnockBackForce = Mathf.Clamp(remainKnockBackForce, 0f, 15f);
+                    remainKnockBackForce = Mathf.Clamp(remainKnockBackForce, 0f, maxPartsBreakForce);
 
                     StartCoroutine(SmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime));
                 }
