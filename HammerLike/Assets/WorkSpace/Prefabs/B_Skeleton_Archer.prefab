@@ -2462,7 +2462,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 2
   m_Constraints: 116
-  m_CollisionDetection: 1
+  m_CollisionDetection: 3
 --- !u!114 &4974608637681736320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2765,15 +2765,12 @@ MonoBehaviour:
   unitType: 1
   anim: {fileID: 6266812155113483443}
   agent: {fileID: 0}
-  knockBackMultiplier: 5
+  isAttacking: 0
   puppet: {fileID: 6266812155327914425}
-  remainKnockBackDir: {x: 0, y: 0, z: 0}
-  remainKnockBackForce: 0
   groundLayer:
     serializedVersion: 2
     m_Bits: 2147483648
   groundCheckDistance: 0.1
-  isGrounded: 0
   isKnockback: 0
   hpPosTR: {fileID: 3586195826296895627}
   chasingStartDis: 20

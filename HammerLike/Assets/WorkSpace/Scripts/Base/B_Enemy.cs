@@ -15,8 +15,6 @@ public class B_Enemy : B_UnitBase
     [Header("HP UI")]
     [SerializeField] Transform hpPosTR;
 
-    // Temp - Chasing
-    [SerializeField] private float chasingStartDis = 20f;
     // Temp - Dev
     [SerializeField] private bool isTester = false;
 
@@ -88,7 +86,7 @@ public class B_Enemy : B_UnitBase
             float applyCoordScale = GameManager.Instance.CalcCoordScale(moveDir);
             var targetDis = moveDir.magnitude / applyCoordScale;
 
-            if (targetDis <= chasingStartDis)
+            if (targetDis <= unitStatus.detectRange)
             {
                 if (targetDis <= unitStatus.atkRange)
                 {
@@ -124,8 +122,10 @@ public class B_Enemy : B_UnitBase
             // Get hit dir from player
             Vector3 hitDir = (transform.position - player.transform.position).normalized;
 
+            var chargeAmount = player.UnitStatus.atkDamage / player.UnitStatus.AtkDamageOrigin;
+            
             // Take Damage and Knockback dir from player
-            TakeDamage(hitDir, player.UnitStatus.atkDamage);
+            TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount);
 
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
@@ -165,7 +165,7 @@ public class B_Enemy : B_UnitBase
             // Get hit dir from another enemy
             Vector3 hitDir = (transform.position - collision.transform.position).normalized;
 
-            TakeDamage(hitDir, (int)(other.rigid.velocity.magnitude * other.rigid.mass / 4f), true);
+            TakeDamage(hitDir, (int)(other.rigid.mass / 2f), other.rigid.mass / 2f);
 
             var vfxPos = collision.contacts[0].point;
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);

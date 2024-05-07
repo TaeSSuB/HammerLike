@@ -7,6 +7,20 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
 {
     public Sprite unitSprite;
 
+    public int index = 0;
+
+    public string entityName = "";
+    public string _koreanName = "";
+
+    public float mass = 1f;
+
+    public float armor = 1f; // temp data
+
+    public float detectRange = 10f;
+
+    public float moveSpeed = 5f;
+    protected float moveSpeedOrigin = 5f;
+
     public int currentHP = 100;
     public int maxHP = 100;
 
@@ -14,19 +28,16 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
     public float restoreHPCooltime = 0f;
     public float currentRestoreHPCooltime = 0f;
 
-    public float moveSpeed = 5f;
-    protected float moveSpeedOrigin = 5f;
-
     public int atkDamage = 10;
     protected int atkDamageOrigin = 10;
-
     public float atkRange = 1f;
     public float atkSpeed = 1f;
 
+    public float knockbackPower = 1f;
+    public float knockbackResistance = 0f;
+
     public float maxAttackCooltime = 1f;
     public float currentAttackCooltime = 0f;
-
-    public float mass = 1f;
 
     public float MoveSpeedOrigin { get => moveSpeedOrigin;}
     public int AtkDamageOrigin { get => atkDamageOrigin;}
