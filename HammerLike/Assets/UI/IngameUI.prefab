@@ -4717,12 +4717,19 @@ MonoBehaviour:
   hpBarImg: {fileID: 3737163953957366830}
   hpMaxText: {fileID: 9064182485791886813}
   hpCurrentText: {fileID: 265384407558088577}
-  chargeBarImg: {fileID: 0}
-  chargeParticle: {fileID: 0}
+  chargeBarImg: {fileID: 5591478997998377883}
+  chargeParticle: {fileID: 8534382393604130650}
+  decreaseSpeed: 1
+  chargeScreen: {fileID: 3815698295848596487}
   goldText: {fileID: 6355496386352388789}
   inventoryUI: {fileID: 0}
   quickSlotUI: {fileID: 0}
   mapUI: {fileID: 0}
+  topPanel: {fileID: 6317513633472948627}
+  topPanelPos: {x: 640, y: -20}
+  bottomPanel: {fileID: 5381321136150677550}
+  bottomPanelPos: {x: 640, y: -700}
+  duration: 2
   player: {fileID: 0}
 --- !u!1 &1325444278519722530
 GameObject:
@@ -18921,7 +18928,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 640, y: -20}
+  m_AnchoredPosition: {x: 640, y: 80}
   m_SizeDelta: {x: 1240, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &24257449075925770
@@ -36091,7 +36098,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 640, y: -700}
+  m_AnchoredPosition: {x: 640, y: -900}
   m_SizeDelta: {x: 1240, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &3223003047075397786

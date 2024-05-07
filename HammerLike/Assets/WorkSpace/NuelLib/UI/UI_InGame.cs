@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Rewired;
+using DG.Tweening;
+using Broccoli.Utils;
 
 public class UI_InGame : MonoBehaviour
 {
@@ -20,7 +22,7 @@ public class UI_InGame : MonoBehaviour
     [SerializeField] private float decreaseSpeed = 1f;
     [SerializeField] Image chargeScreen;
     private float maximumChargeAmount;
-    
+
 
     [Header("Gold UI")]
     [SerializeField] protected TMP_Text goldText;
@@ -34,17 +36,43 @@ public class UI_InGame : MonoBehaviour
     [Header("Map UI")]
     [SerializeField] protected GameObject mapUI;
 
+
+    [Header("Move Panel")]
+    [SerializeField] protected RectTransform topPanel;
+    [SerializeField] private Vector2 topPanelPos;
+    [SerializeField] protected RectTransform bottomPanel;
+    [SerializeField] private Vector2 bottomPanelPos;
+    [SerializeField] private float duration;
+    private Vector2 disableTopPanelPos;
+    private Vector2 disableBottomPanelPos;
+    private bool isPanelOn = false;
+
     [SerializeField] private B_Player player;
     private SO_PlayerStatus playerStatus;
 
     private Coroutine chargeCoroutine;
-    
+
+    private void Awake()
+    {
+        disableTopPanelPos = topPanel.anchoredPosition;
+        disableBottomPanelPos = bottomPanel.anchoredPosition;
+    }
+
 
     private void Start()
     {
         // Start 이후 실행 초기화 메서드. a.HG
         StartCoroutine(CoInitialize());
-        
+        EnablePanel();
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.N))
+        {
+            
+            OnOffPanel();
+        }
     }
 
     private void OnApplicationQuit()
@@ -138,5 +166,29 @@ public class UI_InGame : MonoBehaviour
         Initialize();
     }
 
-    
+    private void EnablePanel()
+    {
+        isPanelOn = true;
+        topPanel.DOAnchorPos(topPanelPos, duration);
+        bottomPanel.DOAnchorPos(bottomPanelPos, duration);
+    }
+
+    private void DisablePanel()
+    {
+        isPanelOn = false;
+        topPanel.DOAnchorPos(disableTopPanelPos, duration);
+        bottomPanel.DOAnchorPos(disableBottomPanelPos, duration);
+    }
+
+    private void OnOffPanel()
+    {
+        if (isPanelOn)
+            DisablePanel();
+        else
+            EnablePanel();
+    }
+
+
+
+
 }

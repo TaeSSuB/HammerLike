@@ -48,25 +48,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cursorFollowThreshold: 5
   viewportThreshold: 0.3
-  mainCam: {fileID: 0}
-  subCam: {fileID: 0}
-  renderTex: {fileID: 0}
+  mainCam: {fileID: 2813656274905827397}
+  renderTex: {fileID: 8400000, guid: 55c3fcd2fc450744b9748b79695356b3, type: 2}
   resolutionRef:
     width: 0
     height: 0
-  followOption: 0
+  followOption: 2
   followObjTr: {fileID: 0}
   followSpdCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  followSpd: 0
-  followDistOffset: 0
+  followSpd: 5
+  followDistOffset: 0.1
   currentRoom: {fileID: 0}
-  zoomOption: 0
   cursorFollow: 0
+  zoomOption: 0
   zoomCam: {fileID: 0}
   zoomMin: 0
   zoomMax: 0
