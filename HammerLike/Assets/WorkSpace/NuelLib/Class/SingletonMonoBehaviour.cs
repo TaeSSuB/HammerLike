@@ -6,11 +6,13 @@ namespace NuelLib
     {
         private static T instance;
 
+        public static bool isQuit = false;
+
         public static T Instance
         {
             get
             {
-                if (instance == null)
+                if (instance == null && !isQuit)
                 {
                     instance = FindObjectOfType<T>();
                     if (instance == null)
@@ -30,6 +32,7 @@ namespace NuelLib
             if (instance == null)
             {
                 instance = this as T;
+                isQuit= false;
                 DontDestroyOnLoad(gameObject);
             }
             else
@@ -39,11 +42,12 @@ namespace NuelLib
         }
 
         /// <summary>
-        /// ¡æ∑· Ω√ ø°∑Ø øπø‹√≥∏Æ
+        /// Ï¢ÖÎ£å Ïãú ÏóêÎü¨ ÏòàÏô∏Ï≤òÎ¶¨
         /// </summary>
         private void OnApplicationQuit()
         {
-            Time.timeScale = 0;
+            isQuit = true;
+            Destroy(gameObject);
         }
     }
 }

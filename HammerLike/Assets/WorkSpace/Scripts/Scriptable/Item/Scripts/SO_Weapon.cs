@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Weapon", menuName = "Inventory/Equip/Weapon")]
+[CreateAssetMenu(fileName = "New Weapon", menuName = "B_ScriptableObjects/Inventory/Equip/Weapon")]
 public class SO_Weapon : SO_Equipment
 {
     // 필요한 추가적인 무기 특성

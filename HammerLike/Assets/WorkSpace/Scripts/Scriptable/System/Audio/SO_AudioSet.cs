@@ -7,6 +7,7 @@ public class SO_AudioSet : ScriptableObject
     [System.Serializable]
     public class AudioInfo
     {
+        public string name;
         public AudioClip clip;
         public AudioCategory category;
         public List<AudioTag> tags;

@@ -29,21 +29,20 @@ public class B_UnitBase : B_Entity
     public bool isAttacking = false;
 
     [Header("Knockback")]
-    // animation curve for knockback
-    //[SerializeField] protected AnimationCurve knockbackCurve;
-    //[SerializeField] protected AnimationCurve partsBreakForceCurve;
-    [SerializeField] protected float knockBackMultiplier = 10f;
+    protected float knockBackMultiplier = 1f;
+    protected AnimationCurve knockbackCurve;
+    protected AnimationCurve partsBreakForceCurve;
 
     // Temp 240402 - Puppet 테스트 목적, a.HG
     public BehaviourPuppet puppet;
-    public Vector3 remainKnockBackDir;
-    public float remainKnockBackForce = 0f;
+    protected Vector3 remainKnockBackDir;
+    protected float remainKnockBackForce = 0f;
 
     // Ground check variables
     [Header("Ground Check")]
     public LayerMask groundLayer; // Define which layer is considered as ground
     public float groundCheckDistance = 0.1f; // Distance to check for ground
-    [SerializeField] protected bool isGrounded; // Variable to store if unit is grounded
+    protected bool isGrounded; // Variable to store if unit is grounded
 
     public SO_UnitStatus UnitStatus { get => unitStatus;}
     public Animator Anim { get => anim;}
@@ -102,6 +101,10 @@ public class B_UnitBase : B_Entity
         {
             anim = GetComponent<Animator>();
         }
+
+        knockBackMultiplier = GameManager.Instance.SystemSettings.KnockBackScale;
+        knockbackCurve = GameManager.Instance.SystemSettings.KnockbackCurve;
+        partsBreakForceCurve = GameManager.Instance.SystemSettings.PartsBreakForceCurve;
     }
 
     protected virtual void UpdateAttackCoolTime()
@@ -271,8 +274,11 @@ public class B_UnitBase : B_Entity
     // knockback function with mass
     public void Knockback(Vector3 inDir, float force)
     {
+        // Apply Coord Scale inDir
+        inDir = GameManager.Instance.ApplyCoordScaleNormalize(inDir);
+
         // Apply a smoothed knockback over time rather than as an impulse
-        StartCoroutine(SmoothKnockback(inDir, force, rigid, unitStatus.knockbackCurve));
+        StartCoroutine(SmoothKnockback(inDir, force, rigid, knockbackCurve));
     }
 
     // Temp 240402 - Puppet 테스트 목적, a.HG
@@ -375,7 +381,7 @@ public class B_UnitBase : B_Entity
 
                     remainKnockBackForce = Mathf.Clamp(remainKnockBackForce, 0f, 15f);
 
-                    StartCoroutine(SmoothKnockback(dir, remainKnockBackForce, muscleRigid, unitStatus.partsBreakForceCurve, partsKnockBackTime));
+                    StartCoroutine(SmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime));
                 }
 
                 puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Sever);

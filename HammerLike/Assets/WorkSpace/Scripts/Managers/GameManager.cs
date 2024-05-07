@@ -33,12 +33,23 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     {
         player = inPlayer;
     }
-
     public SO_PlayerStatus PlayerStatus { get => playerStatus; }
     public SO_SystemSettings SystemSettings { get => systemSettings; }
 
     public Vector3 CoordScale { get => systemSettings.CoordinateScale; }
     public float TimeScale { get => systemSettings.TimeScale; }
+    public float SetTimeScale(float inTimeScale = 1f)
+    {
+        // 0 ~ 2
+        inTimeScale = Mathf.Clamp(inTimeScale, 0, 2);
+        
+        if(SystemSettings != null)
+            SystemSettings.SetTimeScale = inTimeScale;
+        
+        Time.timeScale = inTimeScale;
+        
+        return systemSettings.TimeScale;
+    }
 
     protected override void Awake()
     {

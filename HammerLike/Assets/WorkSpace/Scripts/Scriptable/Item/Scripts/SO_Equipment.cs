@@ -10,7 +10,7 @@ public enum EquipmentCategory
     Accessory
 }
 
-[CreateAssetMenu(fileName = "New EquipItem", menuName = "Inventory/Equip")]
+[CreateAssetMenu(fileName = "New EquipItem", menuName = "B_ScriptableObjects/Inventory/Equip")]
 public class SO_Equipment : SO_Item
 {
     [Header("Equipment")]
