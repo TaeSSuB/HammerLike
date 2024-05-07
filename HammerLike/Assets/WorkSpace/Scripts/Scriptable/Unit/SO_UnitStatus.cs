@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "UnitStatus", menuName = "B_ScriptableObjects/Unit/UnitStatus", order = 1)]
-public class SO_UnitStatus : ScriptableObject
+public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
 {
     public Sprite unitSprite;
 
@@ -15,16 +15,52 @@ public class SO_UnitStatus : ScriptableObject
     public float currentRestoreHPCooltime = 0f;
 
     public float moveSpeed = 5f;
+    protected float moveSpeedOrigin = 5f;
 
     public int atkDamage = 10;
-    public int atkDamageOrigin = 10;
+    protected int atkDamageOrigin = 10;
+
     public float atkRange = 1f;
     public float atkSpeed = 1f;
+
     public float maxAttackCooltime = 1f;
     public float currentAttackCooltime = 0f;
 
     public float mass = 1f;
 
-    public AnimationCurve knockbackCurve;
-    public AnimationCurve partsBreakForceCurve;
+    public float MoveSpeedOrigin { get => moveSpeedOrigin;}
+    public int AtkDamageOrigin { get => atkDamageOrigin;}
+
+    /// <summary>
+    /// a.HG 240503 - 스탯 Initialize, 일관화 필요
+    /// </summary>
+    public void Init()
+    {
+        currentHP = maxHP;
+
+        currentRestoreHPCooltime = restoreHPCooltime;
+        currentAttackCooltime = maxAttackCooltime;
+        
+        moveSpeedOrigin = moveSpeed;
+        atkDamageOrigin = atkDamage;
+    }
+
+    /// <summary>
+    /// 데이터 수정 이후 실행
+    /// </summary>
+    /// <exception cref="System.NotImplementedException"></exception>
+    public void OnAfterDeserialize()
+    {
+        Init();
+        //throw new System.NotImplementedException();
+    }
+
+    /// <summary>
+    /// 데이터 수정 이전 지속 실행
+    /// </summary>
+    /// <exception cref="System.NotImplementedException"></exception>
+    public void OnBeforeSerialize()
+    {
+
+    }
 }

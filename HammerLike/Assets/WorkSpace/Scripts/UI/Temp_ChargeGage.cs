@@ -31,7 +31,7 @@ public class Temp_ChargeGage : MonoBehaviour
         if(playerStatus != null)
             UpdateGauge();
         else
-            playerStatus = GameManager.instance.Player.UnitStatus as SO_PlayerStatus;
+            playerStatus = GameManager.Instance.Player.UnitStatus as SO_PlayerStatus;
     }
 
     private void UpdateGauge()

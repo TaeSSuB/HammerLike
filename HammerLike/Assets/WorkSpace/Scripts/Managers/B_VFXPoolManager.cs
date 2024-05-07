@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using NuelLib;
 
 // Temp 240408 - DB 구현 전까지 임시 할당, a.HG
 // Load VFX name by value. just use ex. hit = "Hit"
@@ -8,27 +9,34 @@ public struct VFXName
     public const string Hit = "Hit";
     public const string Explosion = "Explosion";
     public const string Heal = "Heal";
+    public const string Buff = "Buff";
+    public const string Debuff = "Debuff";
+    public const string Shield = "Shield";
+    public const string Teleport = "Teleport";
+    public const string ItemOra = "IdleItem";
+    public const string PickUp = "GetItem";
+    public const string DropItem = "DropItem";
+    public const string LevelUp = "LevelUp";
+    public const string QuestComplete = "QuestComplete";
+    public const string QuestFail = "QuestFail";
 }
 
-public class B_VFXPoolManager : MonoBehaviour
+public class B_VFXPoolManager : SingletonMonoBehaviour<B_VFXPoolManager>
 {
-    public static B_VFXPoolManager Instance;
 
     public VFXSet vfxSet; // Assign in the Unity editor
 
     private Dictionary<string, Queue<GameObject>> vfxPoolDictionary = new Dictionary<string, Queue<GameObject>>();
     private Dictionary<string, float> vfxDurationDictionary = new Dictionary<string, float>();
 
-    private void Awake()
+    protected override void Awake()
     {
-        if(Instance != null)
+        base.Awake();
+
+        if( vfxSet == null)
         {
-            Destroy(gameObject);
+            Debug.LogWarning("VFXSet is not assigned in VFXPoolManager");
             return;
-        }
-        else
-        {
-            Instance = this;
         }
 
         foreach (var vfxData in vfxSet.vfxDatas)
@@ -46,9 +54,18 @@ public class B_VFXPoolManager : MonoBehaviour
             Queue<GameObject> vfxPool = vfxPoolDictionary[vfxName];
             if (vfxPool.Count == 0)
             {
-                GameObject newVFX = Instantiate(vfxSet.vfxDatas[0].vfxPrefab);
-                newVFX.SetActive(false);
-                vfxPool.Enqueue(newVFX);
+                //GameObject newVFX = Instantiate(vfxSet.vfxDatas[0].vfxPrefab);
+
+                foreach (var vfxData in vfxSet.vfxDatas)
+                {
+                    if(vfxData.name == vfxName)
+                    {
+                        GameObject newVFX = Instantiate(vfxData.vfxPrefab);
+                        newVFX.SetActive(false);
+                        vfxPool.Enqueue(newVFX);
+                        break;
+                    }
+                }
             }
 
             GameObject vfx = vfxPool.Dequeue();
@@ -79,6 +96,9 @@ public class B_VFXPoolManager : MonoBehaviour
     public void PlayVFX(string vfxName, Vector3 position)
     {
         GameObject vfx = GetVFX(vfxName);
+
+        if(vfx == null) return;
+
         vfx.transform.position = position;
         vfx.SetActive(true);
         StartCoroutine(DeactivateVFX(vfxName, vfx, vfxDurationDictionary[vfxName]));

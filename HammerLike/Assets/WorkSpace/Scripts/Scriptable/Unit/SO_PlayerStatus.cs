@@ -21,33 +21,4 @@ public class SO_PlayerStatus : SO_UnitStatus
     public float currentStamina = 100f;
     public float maxStamina = 100f;
     public float staminaRegenRate = 1f;
-
-    public new SO_PlayerStatus MakeCopyStatus()
-    {
-        SO_PlayerStatus newStatus = CreateInstance<SO_PlayerStatus>();
-
-        newStatus.currentHP = currentHP;
-        newStatus.maxHP = maxHP;
-        newStatus.moveSpeed = moveSpeed;
-        newStatus.atkDamage = atkDamage;
-        newStatus.atkRange = atkRange;
-        newStatus.atkSpeed = atkSpeed;
-        newStatus.mass = mass;
-
-        newStatus.dashSpeed = dashSpeed;
-        newStatus.dashDuration = dashDuration;
-        newStatus.dashCooldown = dashCooldown;
-
-        newStatus.chargeRate = chargeRate;
-        newStatus.minChargeRate = minChargeRate;
-        newStatus.maxChargeRate = maxChargeRate;
-        newStatus.chargeRateIncrease = chargeRateIncrease;
-
-        newStatus.currentStamina = currentStamina;
-        newStatus.maxStamina = maxStamina;
-        newStatus.staminaRegenRate = staminaRegenRate;
-
-        return newStatus;
-    }
-
 }

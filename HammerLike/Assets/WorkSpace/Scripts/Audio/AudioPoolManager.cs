@@ -1,10 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using static SO_AudioSet;
 
 public class AudioPoolManager : MonoBehaviour
 {
     public static AudioPoolManager Instance;
-    public AudioSet audioSet;
+    public SO_AudioSet audioSet;
     [SerializeField] private AudioPoolItem audioPoolItemPrefab;
     private List<AudioPoolItem> pool = new List<AudioPoolItem>();
 
@@ -16,7 +17,7 @@ public class AudioPoolManager : MonoBehaviour
 
     private void InitializePool()
     {
-        // ÃÊ±â Ç® »çÀÌÁî´Â ÇÁ·ÎÁ§Æ®ÀÇ ÇÊ¿ä¿¡ µû¶ó Á¶Á¤
+        // ì´ˆê¸° í’€ ì‚¬ì´ì¦ˆëŠ” í”„ë¡œì íŠ¸ì˜ í•„ìš”ì— ë”°ë¼ ì¡°ì •
         for (int i = 0; i < 10; i++)
         {
             AddItemToPool();
@@ -33,7 +34,9 @@ public class AudioPoolManager : MonoBehaviour
 
     public void PlaySound(string audioName)
     {
-        AudioData audioData = System.Array.Find(audioSet.audioDatas, item => item.name == audioName);
+        // array to list
+        //AudioInfo audioData = System.Array.Find(audioSet.audioInfos, item => item.name == audioName);
+        AudioInfo audioData = audioSet.audioInfos.Find(item => item.name == audioName);
         if (audioData != null)
         {
             AudioPoolItem item = GetAvailableItem();

@@ -1,4 +1,5 @@
 using UnityEngine;
+using static SO_AudioSet;
 
 public class AudioPoolItem : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class AudioPoolItem : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    public void PlayAudio(AudioData audioData)
+    public void PlayAudio(AudioInfo audioData)
     {
         audioSource.clip = audioData.clip;
         audioSource.volume = audioData.volume;
