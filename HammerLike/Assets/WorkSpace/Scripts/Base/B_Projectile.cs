@@ -7,7 +7,7 @@ using UnityEngine.ProBuilder;
 public enum ProjectileType
 {
     Default,    // 기본 직선형
-    Parabola,   // 유도탄 
+    Parabola,   // 포물선 
     Missile
 }
 
