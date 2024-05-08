@@ -1,8 +1,11 @@
-using HutongGames.PlayMaker.Actions;
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
+/// <summary>
+/// B_Entity : Entity Base Class
+/// - Entity의 기본적인 정보를 담고 있는 클래스
+/// - 초기화 및 기본 기능들을 상속 받아 사용
+/// </summary>
 public class B_Entity : MonoBehaviour
 {
     [Header("Base Object Info")]
@@ -17,7 +20,7 @@ public class B_Entity : MonoBehaviour
     public GameObject MeshObj { get => meshObj; }
     public Collider Col { get => col; }
 
-
+    #region Unity Callbacks & Init
     protected virtual void Awake()
     {
         //Init();
@@ -76,9 +79,18 @@ public class B_Entity : MonoBehaviour
             }
         }
     }
+    #endregion
 
+    #region Check or Update State
+    
+    /// <summary>
+    /// SetInvincible : 무적 상태 설정
+    /// </summary>
+    /// <param name="inIsInvincible"></param>
     public void SetInvincible(bool inIsInvincible)
     {
         isInvincible = inIsInvincible;
     }
+
+    #endregion
 }

@@ -1,13 +1,10 @@
-using HutongGames.PlayMaker.Actions;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
-// Player Unit
-
+/// <summary>
+/// B_Player : Player Base Class
+/// </summary>
 public class B_Player : B_UnitBase
 {
     [Header("Player Settings")]
@@ -15,18 +12,11 @@ public class B_Player : B_UnitBase
     [SerializeField] private GameObject chargeVFXObj;
     [SerializeField] private GameObject weaponObj;
 
-    // a.HG - 240505 무기 콜라이더 오브젝트 배치 및 회전 값으로 일괄 처리
-    //[SerializeField] private GameObject weaponTrackObj;
     [SerializeField] private BoxCollider weaponCollider;
-    //private Vector3 initWeaponColliderScale;
-    //private Vector3 initWeaponColliderCenter;
 
     [SerializeField] private WeaponOrbit weaponOrbit;
 
     [Header("Camera Settings")]
-    [SerializeField] private Camera zoomCam;
-    [SerializeField] private float zoomAmount;
-    [SerializeField] private float startZoom;
     [SerializeField] private float rotDeadZone = 0.1f;
 
     public event Action<int> OnHPChanged;
@@ -35,7 +25,7 @@ public class B_Player : B_UnitBase
     protected override void ApplyStatus()
     {
         //unitStatus = Instantiate(GameManager.Instance.PlayerStatus);
-        unitStatus = (GameManager.Instance.PlayerStatus);
+        unitStatus = GameManager.Instance.PlayerStatus;
     }
 
     void TrackWeaponDirXZ()
@@ -47,10 +37,6 @@ public class B_Player : B_UnitBase
         weaponCollider.gameObject.transform.rotation = Quaternion.Euler(0, newRot.eulerAngles.y, 0);
 
         weaponCollider.gameObject.transform.localScale = new Vector3(1, 1, coordScale);
-        //weaponCollider.size = new Vector3(initWeaponColliderScale.x, initWeaponColliderScale.y * coordScale, initWeaponColliderScale.z);
-        //weaponCollider.center = new Vector3(initWeaponColliderCenter.x, initWeaponColliderCenter.y * coordScale, initWeaponColliderCenter.z);
-        //weaponCollider.size = initWeaponColliderScale * coordScale;
-        //weaponCollider.center = initWeaponColliderCenter * coordScale;
     }
 
     //init override
@@ -60,14 +46,6 @@ public class B_Player : B_UnitBase
         // Init logic
         GameManager.Instance.SetPlayer(this);
         chargeVFXObj.SetActive(false);
-        
-        // Get Weapon Collider Component
-        //weaponCollider.enabled = false;
-        //weaponCollider.isTrigger = true;
-        //initWeaponColliderScale = weaponCollider.size;
-        //initWeaponColliderCenter = weaponCollider.center;
-
-        startZoom = zoomCam.orthographicSize;
     }
 
     protected override void Update()
@@ -79,12 +57,6 @@ public class B_Player : B_UnitBase
         CheckCharge();
         TrackWeaponDirXZ();
 
-
-        // Y Scale
-        //weaponCollider.size = new Vector3(initWeaponColliderScale.x, initWeaponColliderScale.y * coordScale, initWeaponColliderScale.z);
-        //weaponCollider.center = new Vector3(initWeaponColliderCenter.x, initWeaponColliderCenter.y * coordScale, initWeaponColliderCenter.z);
-        //weaponCollider.size = initWeaponColliderScale * coordScale;
-        //weaponCollider.center = initWeaponColliderCenter * coordScale;
     }
 
     private Vector3 InputMovement()
@@ -146,7 +118,7 @@ public class B_Player : B_UnitBase
 
         StartDash();
 
-        Vector3 coordDir = GameManager.Instance.ApplyCoordScaleNormalize(inDir);
+        Vector3 coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDir);
         //transform.LookAt(coordDir + transform.position);
 
         Debug.DrawLine(transform.position, coordDir + transform.position, Color.red, 3f);
@@ -227,7 +199,7 @@ public class B_Player : B_UnitBase
                 UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin - (unitStatus as SO_PlayerStatus).MoveSpeedOrigin * normalizeChargeRate;
 
                 // Cam Zoom
-                zoomCam.orthographicSize = startZoom - (zoomAmount * normalizeChargeRate);
+                //zoomCam.orthographicSize = startZoom - (zoomAmount * normalizeChargeRate);
             }
 
             // 확장성을 위해 폐기
@@ -327,7 +299,7 @@ public class B_Player : B_UnitBase
 
         chargeVFXObj.SetActive(false);
         weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", 0f);
-        zoomCam.orthographicSize = startZoom;
+        //zoomCam.orthographicSize = startZoom;
 
         ResetDamage();
     }
@@ -360,7 +332,7 @@ public class B_Player : B_UnitBase
         DisableWeaponCollider();
         chargeVFXObj.SetActive(false);
         weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", 0f);
-        zoomCam.orthographicSize = startZoom;
+        //zoomCam.orthographicSize = startZoom;
         ResetDamage();
     }
 
@@ -398,10 +370,6 @@ public class B_Player : B_UnitBase
 
             if (inventory.AddItem(new B_Item(item.item), 1))
                 Destroy(other.gameObject);
-            //Item _item = new Item(item.item);
-            //Debug.Log(_item.Id);
-            //inventory.AddItem(_item, 1);
-            //Destroy(other.gameObject);
         }
     }
 }

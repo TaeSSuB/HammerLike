@@ -1,29 +1,25 @@
 using RootMotion.Dynamics;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+
 using UnityEngine;
 using UnityEngine.AI;
 
-// enum for types unit
-public enum UnitType
-{
-    Melee,
-    Range,
-    Magic,
-    Boss,
-    Develop,
-    Slime  // Temp..
-}
-
+/// <summary>
+/// B_UnitBase : 유닛 베이스 클래스
+/// - 동적 Entity인 '유닛'의 BaseClass
+/// - unitIndex를 통해 UnitStatus를 할당
+///     - UnitManager를 통한 생성시 DB를 통해 자동으로 할당
+///     - 씬 배치 시 직접 할당 필요
+/// - 유닛의 기본적인 동작을 정의
+/// - NavMeshAgent를 이용한 이동 로직
+/// </summary>
 [RequireComponent(typeof(NavMeshAgent))]
 public class B_UnitBase : B_Entity
 {
     protected SO_UnitStatus unitStatus;
 
     [Header("Unit Data")]
-    [SerializeField] private UnitType unitType = UnitType.Melee;
-    // Anim
+    [SerializeField] protected int unitIndex = -1;
     [SerializeField] private Animator anim;
     [SerializeField] protected NavMeshAgent agent;
     public bool isAttacking = false;
@@ -57,45 +53,16 @@ public class B_UnitBase : B_Entity
     public bool isLockRotate { get; private set; }
     public bool isKnockback;
 
-
-
-    protected virtual void ApplyStatus()
+    public int SetUnitIndex
     {
-        switch (unitType)
+        set
         {
-            case UnitType.Melee:
-                unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(2));
-                break;
-            case UnitType.Range:
-                unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(3)); 
-                break;
-            case UnitType.Magic:
-                // add please
-                break;
-            case UnitType.Slime:
-                unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(5));
-                break;
-            case UnitType.Boss:
-                // add please
-                break;
-            case UnitType.Develop:
-                unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(99));
-                break;
+            unitIndex = value;
+            ApplyStatus();
         }
-
-        rigid.mass = UnitStatus.mass;
     }
 
-    protected virtual void ApplySystemSettings()
-    {
-        knockBackMultiplier = GameManager.Instance.SystemSettings.KnockBackScale;
-        maxKnockBackForce = GameManager.Instance.SystemSettings.MaxKnockBackForce;
-        maxPartsBreakForce = GameManager.Instance.SystemSettings.MaxPartsBreakForce;
-        knockbackCurve = GameManager.Instance.SystemSettings.KnockbackCurve;
-        partsBreakForceCurve = GameManager.Instance.SystemSettings.PartsBreakForceCurve;
-    }
-
-    //init override
+    #region Unity Callbacks & Init
     public override void Init()
     {
         base.Init();
@@ -103,8 +70,6 @@ public class B_UnitBase : B_Entity
         agent = GetComponent<NavMeshAgent>();
 
         ApplyStatus();
-
-        UnitManager.Instance.AddUnit(this);
 
         InitHP();
         ApplySystemSettings();
@@ -114,11 +79,6 @@ public class B_UnitBase : B_Entity
         {
             anim = GetComponent<Animator>();
         }
-    }
-
-    protected virtual void UpdateAttackCoolTime()
-    {
-        UnitStatus.currentAttackCooltime -= Time.deltaTime;
     }
 
     // Update is called once per frame
@@ -153,30 +113,43 @@ public class B_UnitBase : B_Entity
 
     }
 
-    /// <summary>
-    /// 유닛 이동 함수
-    /// a.HG : 240501 - NavMesh 도입. 위치 기반으로 변경. inDir -> inPos
-    /// </summary>
-    /// <param name="inPos">타겟 포지션</param>
-    /// <returns>Agent 목표 위치</returns>
-    public virtual Vector3 Move(Vector3 inPos)
+    protected override void OnTriggerEnter(Collider other)
     {
-        if (!isGrounded || isLockMove || !agent.enabled)
-            return Vector3.zero;
 
-        var targetDir = inPos - transform.position;
-
-        agent.SetDestination(inPos);
-
-        var coordScale = GameManager.Instance.CalcCoordScale(targetDir);
-
-        agent.speed = unitStatus.moveSpeed * coordScale;
-
-        return agent.nextPosition;
     }
 
+    #endregion
 
-    #region HP
+    #region Apply Data
+    protected virtual void ApplyStatus()
+    {
+        if(unitStatus != null)
+        {
+            Debug.Log("Unit Status is already set");
+            return;
+        }
+
+        if(unitIndex == -1)
+        {
+            Debug.LogError("Unit Index is not set");
+            return;
+        }
+        unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(unitIndex));
+
+        rigid.mass = UnitStatus.mass;
+    }
+
+    protected virtual void ApplySystemSettings()
+    {
+        knockBackMultiplier = GameManager.Instance.SystemSettings.KnockBackScale;
+        maxKnockBackForce = GameManager.Instance.SystemSettings.MaxKnockBackForce;
+        maxPartsBreakForce = GameManager.Instance.SystemSettings.MaxPartsBreakForce;
+        knockbackCurve = GameManager.Instance.SystemSettings.KnockbackCurve;
+        partsBreakForceCurve = GameManager.Instance.SystemSettings.PartsBreakForceCurve;
+    }
+    #endregion
+
+    #region Control Health Point
 
     public void InitHP()
     {
@@ -229,6 +202,7 @@ public class B_UnitBase : B_Entity
     }
     #endregion
 
+    #region Check or Update State
     private void CheckGrounded()
     {
 
@@ -257,42 +231,87 @@ public class B_UnitBase : B_Entity
         }
     }
 
+    protected virtual void UpdateAttackCoolTime()
+    {
+        UnitStatus.currentAttackCooltime -= Time.deltaTime;
+    }
+
+    public virtual void DisableMovementAndRotation()
+    {
+        // Disable movement and rotation logic
+        // For example, you can set a flag to prevent movement and rotation
+        // or disable specific components responsible for movement and rotation
+        isLockMove = true;
+        isLockRotate = true;
+
+        //Debug.Log("DisableMovementAndRotation()");
+    }
+
+    public virtual void EnableMovementAndRotation()
+    {
+        // Enable movement and rotation logic
+        // For example, you can reset the flag to allow movement and rotation
+        // or enable the disabled components responsible for movement and rotation
+        isLockMove = false;
+        isLockRotate = false;
+
+        //Debug.Log("EnableMovementAndRotation()");
+    }
+
+    #endregion
+
+    #region Action
+
+        /// <summary>
+    /// 유닛 이동 함수
+    /// a.HG : 240501 - NavMesh 도입. 위치 기반으로 변경. inDir -> inPos
+    /// </summary>
+    /// <param name="inPos">타겟 포지션</param>
+    /// <returns>Agent 목표 위치</returns>
+    public virtual Vector3 Move(Vector3 inPos)
+    {
+        if (!isGrounded || isLockMove || !agent.enabled)
+            return Vector3.zero;
+
+        var targetDir = inPos - transform.position;
+
+        agent.SetDestination(inPos);
+
+        var coordScale = GameManager.Instance.CalcCoordScale(targetDir);
+
+        agent.speed = unitStatus.moveSpeed * coordScale;
+
+        return agent.nextPosition;
+    }
+
     public virtual void Attack()
     {
         isAttacking = true;
     }
 
-    public virtual void StartAttack()
-    {
-        
-    }
-
-    public virtual void EndAttack()
-    {
-        isAttacking = false;
-    }
-
+    #region Knockback    
     // knockback function with mass
     public void Knockback(Vector3 inDir, float force)
     {
         // Apply Coord Scale inDir
-        inDir = GameManager.Instance.ApplyCoordScaleNormalize(inDir);
+        inDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDir);
 
         var resultKnockPower = Mathf.Clamp(force * knockBackMultiplier, 0f, maxKnockBackForce);
         Debug.Log(this.gameObject.name + " Knockback : " + resultKnockPower);
         
-        StartCoroutine(SmoothKnockback(inDir, resultKnockPower, rigid, knockbackCurve));
+        StartCoroutine(CoSmoothKnockback(inDir, resultKnockPower, rigid, knockbackCurve));
     }
 
-    // Temp 240402 - Puppet 테스트 목적, a.HG
-    public void ImpulseKnockbackToPuppet(Vector3 inDir, float force, Rigidbody rigid)
-    {
-        Debug.Log("Add force!!");
-        rigid.velocity = (inDir * force * knockBackMultiplier);
-    }
-
-    // knockback coroutine with animation curve
-    private IEnumerator SmoothKnockback(Vector3 inDir, float force, Rigidbody inRigid, AnimationCurve inCurve, float inDuration = 0.5f)
+    /// <summary>
+    /// CoSmoothKnockback : 부드러운 넉백 적용 코루틴
+    /// </summary>
+    /// <param name="inDir"></param>
+    /// <param name="force"></param>
+    /// <param name="inRigid"></param>
+    /// <param name="inCurve"></param>
+    /// <param name="inDuration"></param>
+    /// <returns></returns>
+    private IEnumerator CoSmoothKnockback(Vector3 inDir, float force, Rigidbody inRigid, AnimationCurve inCurve, float inDuration = 0.5f)
     {
         if(inRigid == null)
         {
@@ -324,7 +343,11 @@ public class B_UnitBase : B_Entity
         isKnockback = false;
         EnableMovementAndRotation();
     }
+    #endregion
 
+    /// <summary>
+    /// Dead : 유닛 사망 함수
+    /// </summary>
     protected virtual void Dead()
     {
         //Destroy(gameObject);
@@ -333,36 +356,32 @@ public class B_UnitBase : B_Entity
         DisableMovementAndRotation();
     }
 
-    public virtual void DisableMovementAndRotation()
-    {
-        // Disable movement and rotation logic
-        // For example, you can set a flag to prevent movement and rotation
-        // or disable specific components responsible for movement and rotation
-        isLockMove = true;
-        isLockRotate = true;
+    #endregion
 
-        //Debug.Log("DisableMovementAndRotation()");
+    #region Animation Event
+    /// <summary>
+    /// StartAttack : 공격 시작 애니메이션 이벤트 함수
+    /// </summary>
+    public virtual void StartAttack()
+    {
+        
     }
 
-    public virtual void EnableMovementAndRotation()
+    /// <summary>
+    /// EndAttack : 공격 종료 애니메이션 이벤트 함수
+    /// </summary>
+    public virtual void EndAttack()
     {
-        // Enable movement and rotation logic
-        // For example, you can reset the flag to allow movement and rotation
-        // or enable the disabled components responsible for movement and rotation
-        isLockMove = false;
-        isLockRotate = false;
-
-        //Debug.Log("EnableMovementAndRotation()");
+        isAttacking = false;
     }
+    #endregion
 
-    protected override void OnTriggerEnter(Collider other)
-    {
-
-    }
-
-    // Temp 240402 - Puppet 테스트 목적, a.HG
-    // From Monster.DisconnectMusclesRecursive()
-    protected void DisconnectMusclesRecursive()
+    #region PuppetMaster
+    /// <summary>
+    /// DisconnectMusclesRecursive : PuppetMaster의 Muscle을 해제 및 넉백 적용
+    /// </summary>
+    /// <param name="inPos">넉백 기준점</param>
+    protected void DisconnectMusclesRecursive(Vector3 inPos, bool isSelf = false)
     {
         if (puppet != null && puppet.puppetMaster != null)
         {
@@ -377,14 +396,14 @@ public class B_UnitBase : B_Entity
                 // 2. ImpulseKnockbackToPuppet
                 // 3. AddForce Each (Loop)
 
-                if (muscleRigid != null)
+                if (muscleRigid != null && !isSelf)
                 {
-                    Vector3 dir = (muscleRigid.transform.position - GameManager.Instance.Player.transform.position).normalized;
-                    dir = GameManager.Instance.ApplyCoordScaleNormalize(dir);
+                    Vector3 dir = (muscleRigid.transform.position - inPos).normalized;
+                    dir = GameManager.Instance.ApplyCoordScaleAfterNormalize(dir);
 
                     remainKnockBackForce = Mathf.Clamp(remainKnockBackForce, 0f, maxPartsBreakForce);
 
-                    StartCoroutine(SmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime));
+                    StartCoroutine(CoSmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime));
                 }
 
                 puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Sever);
@@ -395,4 +414,5 @@ public class B_UnitBase : B_Entity
             }
         }
     }
+    #endregion
 }

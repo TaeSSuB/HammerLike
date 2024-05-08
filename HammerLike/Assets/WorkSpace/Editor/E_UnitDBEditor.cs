@@ -13,13 +13,5 @@ public class E_UnitDBEditor : Editor
         base.OnInspectorGUI();
 
         SO_UnitDB unitDB = (SO_UnitDB)target;
-
-        if (GUILayout.Button("Add Unit"))
-        {
-            DatabaseFromNotion databaseFromNotion = new DatabaseFromNotion();
-
-            EditorCoroutineUtility.StartCoroutineOwnerless(databaseFromNotion.LoadDatas());
-        }
-
     }
 }
