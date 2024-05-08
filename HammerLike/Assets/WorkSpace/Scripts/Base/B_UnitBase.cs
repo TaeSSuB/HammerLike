@@ -120,7 +120,8 @@ public class B_UnitBase : B_Entity
 
     #endregion
 
-    #region Apply Data
+    #region Control & Apply Status Data
+
     protected virtual void ApplyStatus()
     {
         if(unitStatus != null)
@@ -147,9 +148,6 @@ public class B_UnitBase : B_Entity
         knockbackCurve = GameManager.Instance.SystemSettings.KnockbackCurve;
         partsBreakForceCurve = GameManager.Instance.SystemSettings.PartsBreakForceCurve;
     }
-    #endregion
-
-    #region Control Health Point
 
     public void InitHP()
     {
