@@ -16,6 +16,7 @@ public class B_Player : B_UnitBase
 
     [Header("Player Settings")]
     [SerializeField] private GameObject chargeVFXObj;
+    [SerializeField] private float minChargeMoveRate = 0.1f;
 
     [SerializeField] private GameObject weaponObj;
     [SerializeField] private BoxCollider weaponCollider;
@@ -175,7 +176,7 @@ public class B_Player : B_UnitBase
             weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", normalizeChargeRate * 4f);
 
             // Move Speed Reduce
-            UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin - (unitStatus as SO_PlayerStatus).MoveSpeedOrigin * normalizeChargeRate;
+            UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin - (unitStatus as SO_PlayerStatus).MoveSpeedOrigin * Mathf.Clamp(normalizeChargeRate, 0f, 1f - minChargeMoveRate);
 
             // Cam Zoom
             //zoomCam.orthographicSize = startZoom - (zoomAmount * normalizeChargeRate);

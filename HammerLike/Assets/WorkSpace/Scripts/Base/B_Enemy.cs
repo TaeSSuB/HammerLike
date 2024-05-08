@@ -133,7 +133,7 @@ public class B_Enemy : B_UnitBase
             // Get hit dir from another enemy
             Vector3 hitDir = (transform.position - collision.transform.position).normalized;
 
-            TakeDamage(hitDir, (int)(other.rigid.mass / 2f), other.rigid.mass / 2f);
+            TakeDamage(hitDir, (int)(other.rigid.mass / 2f), other.rigid.mass);
 
             var vfxPos = collision.contacts[0].point;
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);

@@ -25,7 +25,7 @@ public class B_Skeleton_Archer : B_Enemy
         GameObject projectile = Instantiate(projectilePrefab, muzzleTR.position, transform.localRotation);
         //projectile.GetComponent<B_Projectile>().Init(unitStatus.projectileSpeed, transform.forward);
     }
-
+    
     public override void EndAttack()
     {
         base.EndAttack();

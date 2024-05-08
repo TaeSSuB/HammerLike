@@ -26,6 +26,7 @@ public class B_UnitBase : B_Entity
 
     [Header("Knockback")]
     protected float knockBackMultiplier = 1f;
+    protected float partsKnockBackMultiplier = 1f;
     protected float maxKnockBackForce = 100f;
     protected float maxPartsBreakForce = 100f;
     protected AnimationCurve knockbackCurve;
@@ -144,8 +145,10 @@ public class B_UnitBase : B_Entity
     {
         knockBackMultiplier = GameManager.Instance.SystemSettings.KnockBackScale;
         maxKnockBackForce = GameManager.Instance.SystemSettings.MaxKnockBackForce;
-        maxPartsBreakForce = GameManager.Instance.SystemSettings.MaxPartsBreakForce;
         knockbackCurve = GameManager.Instance.SystemSettings.KnockbackCurve;
+
+        partsKnockBackMultiplier = GameManager.Instance.SystemSettings.PartsKnockBackScale;
+        maxPartsBreakForce = GameManager.Instance.SystemSettings.MaxPartsBreakForce;
         partsBreakForceCurve = GameManager.Instance.SystemSettings.PartsBreakForceCurve;
     }
 
@@ -295,7 +298,7 @@ public class B_UnitBase : B_Entity
         inDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDir);
 
         var resultKnockPower = Mathf.Clamp(force * knockBackMultiplier, 0f, maxKnockBackForce);
-        Debug.Log(this.gameObject.name + " Knockback : " + resultKnockPower);
+        //Debug.Log(this.gameObject.name + " Knockback : " + resultKnockPower);
         
         StartCoroutine(CoSmoothKnockback(inDir, resultKnockPower, rigid, knockbackCurve));
     }
@@ -309,7 +312,7 @@ public class B_UnitBase : B_Entity
     /// <param name="inCurve"></param>
     /// <param name="inDuration"></param>
     /// <returns></returns>
-    private IEnumerator CoSmoothKnockback(Vector3 inDir, float force, Rigidbody inRigid, AnimationCurve inCurve, float inDuration = 0.5f)
+    private IEnumerator CoSmoothKnockback(Vector3 inDir, float force, Rigidbody inRigid, AnimationCurve inCurve, float inDuration = 0.5f, ForceMode inForceMode = ForceMode.VelocityChange)
     {
         if(inRigid == null)
         {
@@ -333,7 +336,7 @@ public class B_UnitBase : B_Entity
             // Apply the force using the animation curve
             //inRigid.velocity = Vector3.Lerp(initialVelocity, knockbackVelocity, inCurve.Evaluate(elapsed));
 
-            inRigid.AddForce(knockbackVelocity * inCurve.Evaluate(elapsed), ForceMode.Force);
+            inRigid.AddForce(knockbackVelocity * inCurve.Evaluate(elapsed), inForceMode);
 
             yield return null;
         }
@@ -399,9 +402,9 @@ public class B_UnitBase : B_Entity
                     Vector3 dir = (muscleRigid.transform.position - inPos).normalized;
                     dir = GameManager.Instance.ApplyCoordScaleAfterNormalize(dir);
 
-                    remainKnockBackForce = Mathf.Clamp(remainKnockBackForce, 0f, maxPartsBreakForce);
+                    remainKnockBackForce = Mathf.Clamp(remainKnockBackForce * partsKnockBackMultiplier, 0f, maxPartsBreakForce);
 
-                    StartCoroutine(CoSmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime));
+                    StartCoroutine(CoSmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime, ForceMode.Impulse));
                 }
 
                 puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Sever);

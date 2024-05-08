@@ -10,6 +10,8 @@ using UnityEngine;
 public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
 {
     #region Variables
+
+    [Header("Unit Status")]
     public Sprite unitSprite;
 
     public int index = 0;
@@ -23,26 +25,31 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
 
     public float detectRange = 10f;
 
+    [Header("Health Point")]
     public float moveSpeed = 5f;
     protected float moveSpeedOrigin = 5f;
 
+    [Header("Health Point")]
     public int currentHP = 100;
     public int maxHP = 100;
-
     public int restoreHP = 0;
     public float restoreHPCooltime = 0f;
     public float currentRestoreHPCooltime = 0f;
-
+    
+    [Header("Attack")]
     public int atkDamage = 10;
     protected int atkDamageOrigin = 10;
     public float atkRange = 1f;
     public float atkSpeed = 1f;
 
+    [Header("Attack Cooltime")]
+    public float maxAttackCooltime = 1f;
+    public float currentAttackCooltime = 0f;
+
+    [Header("KnockBack")]
     public float knockbackPower = 1f;
     public float knockbackResistance = 0f;
 
-    public float maxAttackCooltime = 1f;
-    public float currentAttackCooltime = 0f;
 
     #endregion
 

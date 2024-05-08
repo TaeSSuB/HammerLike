@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class B_Skeleton_Prisoner : B_Enemy
-{    
+{
     /// <summary>
     /// Dead : 유닛 사망 함수. 스켈레톤은 퍼펫 분리 추가
     /// </summary>

@@ -19,10 +19,14 @@ public class SO_SystemSettings : ScriptableObject
     [SerializeField] private float timeScale = 1f;
 
     [Header("Gameplay Settings")]
+    [Space(10)]
+    [Header("KnockBack Settings")]
     [SerializeField] private float knockBackScale = 10f;
     [SerializeField] private float maxKnockBackForce = 100f;
-    [SerializeField] private float maxPartsBreakForce = 100f;
     [SerializeField] private AnimationCurve knockbackCurve;
+    [Space(10)]
+    [SerializeField] private float partsKnockBackScale = 10f;
+    [SerializeField] private float maxPartsBreakForce = 100f;
     [SerializeField] private AnimationCurve partsBreakForceCurve;
     //[SerializeField] private float gravity = 9.8f;
 
@@ -34,6 +38,7 @@ public class SO_SystemSettings : ScriptableObject
     public float SetTimeScale { set => timeScale = value; }
 
     public float KnockBackScale { get => knockBackScale; }
+    public float PartsKnockBackScale { get => partsKnockBackScale; }
     public float MaxKnockBackForce { get => maxKnockBackForce; }
     public float MaxPartsBreakForce { get => maxPartsBreakForce; }
     //public float Gravity { get => gravity; }
