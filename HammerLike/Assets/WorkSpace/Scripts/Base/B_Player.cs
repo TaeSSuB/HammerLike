@@ -7,16 +7,28 @@ using UnityEngine;
 /// </summary>
 public class B_Player : B_UnitBase
 {
+    public enum RotateType
+    {
+        None,
+        LookAtMouse,
+        LookAtMouseSmooth
+    }
+
     [Header("Player Settings")]
     [SerializeField] private GameObject chargeVFXObj;
-    [SerializeField] private GameObject weaponObj;
 
+    [SerializeField] private GameObject weaponObj;
     [SerializeField] private BoxCollider weaponCollider;
 
     [SerializeField] private WeaponOrbit weaponOrbit;
 
+
     [Header("Camera Settings")]
+    [SerializeField] private RotateType rotateType = RotateType.LookAtMouseSmooth;
+    [SerializeField] private float rotSpeed = 10f;
     [SerializeField] private float rotDeadZone = 0.1f;
+    [SerializeField] private bool AllowRotate_L = true;
+    [SerializeField] private bool AllowRotate_R = true;
 
     public event Action<int> OnHPChanged;
     public event Action<float> OnChargeChanged;
@@ -101,7 +113,11 @@ public class B_Player : B_UnitBase
         }
     }
 
-    // lookat mouse position
+    /// <summary>
+    /// LookAtMouse : 마우스 방향으로 캐릭터 회전
+    /// - 마우스의 위치를 기준으로 캐릭터를 회전
+    /// - LookAtMouseSmooth : 부드러운 회전
+    /// </summary>
     protected void LookAtMouse()
     {
         if(isLockRotate)
@@ -117,7 +133,22 @@ public class B_Player : B_UnitBase
 
             // DeadZone
             if (Vector3.Distance(transform.position, lookAt) > rotDeadZone)
-                transform.LookAt(lookAt);
+            {
+                switch (rotateType)
+                {
+                    case RotateType.LookAtMouse:
+                        transform.LookAt(lookAt);
+                        break;
+                    case RotateType.LookAtMouseSmooth:
+                        Quaternion targetRotation = Quaternion.LookRotation(lookAt - transform.position);
+                        Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotSpeed);
+                        transform.rotation = newRot;
+                        break;
+                    default:
+                        break;
+                }
+                //transform.LookAt(lookAt);
+            }
         }
     }
 
@@ -125,7 +156,6 @@ public class B_Player : B_UnitBase
 
     #region Action
 
-    
     void Charging()
     {
         (unitStatus as SO_PlayerStatus).chargeRate += Time.deltaTime * (unitStatus as SO_PlayerStatus).chargeRateIncrease;
@@ -196,6 +226,9 @@ public class B_Player : B_UnitBase
         // Attack damage = Original attack damage
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
+
+        // Temp 240508
+        AllowRotate_R = false;
     }
 
     void ChargeAttack()
@@ -207,6 +240,9 @@ public class B_Player : B_UnitBase
         ApplyChargeDamage();
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
+
+        // Temp 240508
+        AllowRotate_L = false;
     }
 
     void MaximumChargeAttack()
@@ -218,6 +254,9 @@ public class B_Player : B_UnitBase
         ApplyChargeDamage();
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
+
+        // Temp 240508
+        AllowRotate_L = false;
     }
 
     /// <summary>
@@ -236,6 +275,9 @@ public class B_Player : B_UnitBase
         weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", 0f);
         //zoomCam.orthographicSize = startZoom;
         ResetDamage();
+
+        AllowRotate_L = true;
+        AllowRotate_R = true;
     }
 
     #region .Movement
@@ -374,6 +416,9 @@ public class B_Player : B_UnitBase
         //zoomCam.orthographicSize = startZoom;
 
         ResetDamage();
+
+        AllowRotate_L = true;
+        AllowRotate_R = true;
     }
 
     void EnableWeaponCollider()
