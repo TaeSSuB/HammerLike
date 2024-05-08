@@ -1,14 +1,21 @@
 using UnityEngine;
 
+/// <summary>
+/// WeaponOrbit : 무기 궤도 클래스
+/// </summary>
 public class WeaponOrbit : MonoBehaviour
 {
+    /// <summary>
+    /// 궤도 트래킹 타입
+    /// </summary>
     public enum TrackType
     {
         None,
         NearPoint,
-        DirBasedPoint,
-        DirBasedPoint2
+        DirBasedPoint_Legacy,
+        DirBasedPoint
     }
+
     [Header("Orbit Settings")]
     public float a = 5.0f;  // 타원의 긴 축
     public float b = 3.0f;  // 타원의 짧은 축
@@ -64,15 +71,18 @@ public class WeaponOrbit : MonoBehaviour
             case TrackType.NearPoint:
                 TrackNearPoint();
                 break;
+            case TrackType.DirBasedPoint_Legacy:
+                TrackDirBasedPoint_Legacy();
+                break;
             case TrackType.DirBasedPoint:
                 TrackDirBasedPoint();
-                break;
-            case TrackType.DirBasedPoint2:
-                TrackDirBasedPoint2();
                 break;
         }
     }
 
+    /// <summary>
+    /// 트레일 폭 조정
+    /// </summary>
     void AdjustTrailWidth()
     {
         float weaponLength = weaponMesh.GetComponent<Renderer>().bounds.size.magnitude;  // 무기의 길이 계산
@@ -80,45 +90,11 @@ public class WeaponOrbit : MonoBehaviour
         trailRenderer.endWidth = weaponLength * endWidthScale;  // 트레일의 끝 폭 설정
     }
 
-
-
-    void TrackDirBasedPoint()
-    {
-        Vector3 playerPosition = player.transform.position;
-        Vector3 weaponPosition = targetObj.transform.position;
-        Vector3 dir = weaponPosition - playerPosition;
-
-        float step = 2 * Mathf.PI / resolution;
-        closestDistance = Mathf.Infinity;
-
-        for (float t = 0; t < 2 * Mathf.PI; t += step)
-        {
-            Vector3 orbitPoint = new Vector3(playerPosition.x + a * Mathf.Cos(t), playerPosition.y, playerPosition.z + b * Mathf.Sin(t));
-            float distance = Vector3.Distance(targetObj.transform.position, orbitPoint);
-            float angle = Vector3.Angle(dir, orbitPoint - playerPosition);
-
-            if (angle < smallestAngle)
-            {
-                smallestAngle = angle;
-                bestMatchPoint = orbitPoint;
-            }
-
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestPoint = orbitPoint;
-            }
-        }
-
-        // 업데이트된 가장 가까운 궤도 위치로 이동
-        transform.position = closestPoint + offset;
-    }
-
     /// <summary>
     /// 방향 벡터를 이용한 궤도 위치 추적
     /// 무기-플레이어 방향 벡터를 계산, 궤도 위치와 방향 벡터 사이 각도 계산 및 가장 근접한 궤도 계산.
     /// </summary>
-    void TrackDirBasedPoint2()
+    void TrackDirBasedPoint()
     {
         // 해상도 값으로 디테일 조정. resolution 값이 클수록 정확도가 높아진다. 성능 영향 주의.
         float step = 2 * Mathf.PI / resolution;
@@ -150,6 +126,40 @@ public class WeaponOrbit : MonoBehaviour
 
         // 가장 방향이 일치하는 궤도 위치로 이동
         transform.position = bestMatchPoint + offset;
+    }
+
+    #region Legacy
+
+    void TrackDirBasedPoint_Legacy()
+    {
+        Vector3 playerPosition = player.transform.position;
+        Vector3 weaponPosition = targetObj.transform.position;
+        Vector3 dir = weaponPosition - playerPosition;
+
+        float step = 2 * Mathf.PI / resolution;
+        closestDistance = Mathf.Infinity;
+
+        for (float t = 0; t < 2 * Mathf.PI; t += step)
+        {
+            Vector3 orbitPoint = new Vector3(playerPosition.x + a * Mathf.Cos(t), playerPosition.y, playerPosition.z + b * Mathf.Sin(t));
+            float distance = Vector3.Distance(targetObj.transform.position, orbitPoint);
+            float angle = Vector3.Angle(dir, orbitPoint - playerPosition);
+
+            if (angle < smallestAngle)
+            {
+                smallestAngle = angle;
+                bestMatchPoint = orbitPoint;
+            }
+
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestPoint = orbitPoint;
+            }
+        }
+
+        // 업데이트된 가장 가까운 궤도 위치로 이동
+        transform.position = closestPoint + offset;
     }
 
     /// <summary>
@@ -185,6 +195,9 @@ public class WeaponOrbit : MonoBehaviour
         transform.position = closestPoint + offset;
     }
 
+    /// <summary>
+    /// 일반적인 원형 궤도
+    /// </summary>
     void UpdateOrbit()
     {
         // 각도 업데이트
@@ -198,8 +211,10 @@ public class WeaponOrbit : MonoBehaviour
         transform.position = new Vector3(x, 0, z) + player.transform.position + offset;
     }
 
+    #endregion
+
     /// <summary>
-    /// TrackDirBasedPoint2 Based 궤도 위치와 가장 가까운 궤도 위치를 시각화
+    /// TrackDirBasedPoint Based 궤도 위치와 가장 가까운 궤도 위치를 시각화
     /// </summary>
     private void OnDrawGizmos()
     {

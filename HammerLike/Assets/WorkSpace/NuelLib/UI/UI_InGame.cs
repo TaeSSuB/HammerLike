@@ -6,6 +6,7 @@ using TMPro;
 using Rewired;
 using DG.Tweening;
 using Broccoli.Utils;
+using Unity.VisualScripting;
 
 public class UI_InGame : MonoBehaviour
 {
@@ -16,13 +17,10 @@ public class UI_InGame : MonoBehaviour
     protected RectTransform hpBarRctTR;
 
     [Header("Charge UI")]
-    [SerializeField] protected Image chargeBarImg;
-    protected RectTransform chargeBarRctTR;
+    [SerializeField] protected Slider chargeSlider;
     [SerializeField] protected GameObject chargeParticle;
-    [SerializeField] private float decreaseSpeed = 1f;
     [SerializeField] Image chargeScreen;
     private float maximumChargeAmount;
-
 
     [Header("Gold UI")]
     [SerializeField] protected TMP_Text goldText;
@@ -62,6 +60,7 @@ public class UI_InGame : MonoBehaviour
     private void Start()
     {
         // Start 이후 실행 초기화 메서드. a.HG
+        chargeSlider.value = 0;
         StartCoroutine(CoInitialize());
         EnablePanel();
     }
@@ -95,15 +94,14 @@ public class UI_InGame : MonoBehaviour
     {
         //Debug.Log("UI_InGame Initialize");
         player = GameManager.Instance.Player;
-        playerStatus = player.UnitStatus as SO_PlayerStatus;
+        // playerStatus = player.UnitStatus as SO_PlayerStatus;
 
         hpBarRctTR = hpBarImg.gameObject.GetComponent<RectTransform>();
 
-        chargeBarRctTR = chargeBarImg.gameObject.GetComponent<RectTransform>();
         chargeParticle.SetActive(false);
         maximumChargeAmount = chargeScreen.material.GetFloat("_MaxChargeAmount");
-        UpdateHP(playerStatus.maxHP);
-        UpdateGauge(playerStatus.chargeRate);
+        // UpdateHP(playerStatus.maxHP);
+        // UpdateGauge(playerStatus.chargeRate);
 
         // 이벤트 등록. 메모리 해제 주의. a.HG
         player.OnHPChanged += UpdateHP;
@@ -120,15 +118,15 @@ public class UI_InGame : MonoBehaviour
 
     private IEnumerator SmoothChange(float targetRate)
     {
-        float currentRate = chargeBarRctTR.anchorMax.y;
-        float timeToReachTarget = Mathf.Abs(currentRate - targetRate) / decreaseSpeed;
+        float currentRate = chargeSlider.value;
+        float timeToReachTarget = Mathf.Abs(currentRate - targetRate);
 
         float elapsedTime = 0f;
         while (elapsedTime < timeToReachTarget)
         {
             elapsedTime += Time.deltaTime;
             float newRate = Mathf.Lerp(currentRate, targetRate, elapsedTime / timeToReachTarget);
-            chargeBarRctTR.anchorMax = new Vector2(chargeBarRctTR.anchorMax.x, newRate);
+            chargeSlider.value = newRate;
 
             // Material에 ChargeAmount 값을 업데이트
             if (chargeScreen.material != null)
@@ -139,7 +137,7 @@ public class UI_InGame : MonoBehaviour
             yield return null;
         }
 
-        chargeBarRctTR.anchorMax = new Vector2(chargeBarRctTR.anchorMax.x, targetRate);
+        //chargeSlider.value = newRate;
         chargeParticle.SetActive(targetRate >= 1f);
 
         // 최종 값도 설정

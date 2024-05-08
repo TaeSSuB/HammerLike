@@ -2,9 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 유닛 스테이터스 오브젝트
+/// - 유닛의 스테이터스 데이터를 담은 ScriptableObject
+/// </summary>
 [CreateAssetMenu(fileName = "UnitStatus", menuName = "B_ScriptableObjects/Unit/UnitStatus", order = 1)]
 public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
 {
+    #region Variables
     public Sprite unitSprite;
 
     public int index = 0;
@@ -39,11 +44,14 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
     public float maxAttackCooltime = 1f;
     public float currentAttackCooltime = 0f;
 
+    #endregion
+
     public float MoveSpeedOrigin { get => moveSpeedOrigin;}
     public int AtkDamageOrigin { get => atkDamageOrigin;}
 
     /// <summary>
-    /// a.HG 240503 - 스탯 Initialize, 일관화 필요
+    /// 스탯 Initialize
+    /// ..일관화 필요
     /// </summary>
     public void Init()
     {
@@ -57,7 +65,8 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
     }
 
     /// <summary>
-    /// 데이터 수정 이후 실행
+    /// OnAfterDeserialize
+    /// - 데이터 수정 이후 초기화 실행
     /// </summary>
     /// <exception cref="System.NotImplementedException"></exception>
     public void OnAfterDeserialize()
@@ -67,7 +76,8 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
     }
 
     /// <summary>
-    /// 데이터 수정 이전 지속 실행
+    /// OnBeforeSerialize
+    /// - 데이터 수정 이전 지속 실행
     /// </summary>
     /// <exception cref="System.NotImplementedException"></exception>
     public void OnBeforeSerialize()

@@ -1,11 +1,9 @@
-using Language.Lua;
-using RootMotion.Dynamics;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-// require ai state manager
+/// <summary>
+/// B_Enemy : 적 유닛 클래스
+/// - 모든 적 유닛은 AI를 가진다고 가정, AIStateManager 필수
+/// </summary>
 [RequireComponent(typeof(AIStateManager))]
 public class B_Enemy : B_UnitBase
 {
@@ -21,7 +19,8 @@ public class B_Enemy : B_UnitBase
     // get aIStateManager
     public AIStateManager AIStateManager => aIStateManager;
 
-    // override Init() method
+    #region Unity Callbacks & Init
+
     public override void Init()
     {
         base.Init();
@@ -34,37 +33,6 @@ public class B_Enemy : B_UnitBase
 
         FindObjectOfType<B_UIManager>().CreateHPWorldUI(hpPosTR, this);
     }
-
-    // override Dead() method
-    protected override void Dead()
-    {
-        base.Dead();
-        //aIStateManager.SetState(AIStateType.DEAD);
-
-        DisconnectMusclesRecursive();
-        //Invoke(nameof(DisconnectMusclesRecursive), 0.1f);
-    }
-    
-    #region Attack
-
-    public override void Attack()
-    {
-        base.Attack();
-
-        transform.LookAt(GameManager.Instance.Player.transform);
-    }
-
-    public override void StartAttack()
-    {
-        base.StartAttack();
-    }
-
-    public override void EndAttack()
-    {
-        base.EndAttack();
-    }
-
-    #endregion
 
     // Update
     protected override void Update()
@@ -185,6 +153,45 @@ public class B_Enemy : B_UnitBase
 
 
     }
+
+    #endregion
+    
+    #region Check or Update State
+
+    protected override void Dead()
+    {
+        base.Dead();
+        //aIStateManager.SetState(AIStateType.DEAD);
+
+        //DisconnectMusclesRecursive(GameManager.Instance.Player.transform.position);
+        //Invoke(nameof(DisconnectMusclesRecursive), 0.1f);
+    }
+    #endregion
+    
+    #region Action
+
+    public override void Attack()
+    {
+        base.Attack();
+
+        transform.LookAt(GameManager.Instance.Player.transform);
+    }    
+    #endregion
+
+    #region Animation Event
+
+    public override void StartAttack()
+    {
+        base.StartAttack();
+    }
+
+    public override void EndAttack()
+    {
+        base.EndAttack();
+    }
+
+    #endregion
+
 
 
 }
