@@ -44,7 +44,7 @@ public class B_Slime : B_Enemy
     {
         base.EndAttack();
 
-        rigid.isKinematic = false;
+        Rigid.isKinematic = false;
     }
 
     IEnumerator CoSlimeAttack()
@@ -75,7 +75,7 @@ public class B_Slime : B_Enemy
         float elapse_time = 0;
 
         agent.enabled = false;
-        rigid.isKinematic = true;
+        Rigid.isKinematic = true;
         //rigid.mass = 100f;
 
         Vector3 dir = targetTr.position - transform.position;
@@ -108,8 +108,8 @@ public class B_Slime : B_Enemy
         // Reset height
         transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
         agent.enabled = true;
-        rigid.velocity = Vector3.zero;
-        rigid.isKinematic = false;
+        Rigid.velocity = Vector3.zero;
+        Rigid.isKinematic = false;
         //rigid.mass = unitStatus.mass;
 
     }

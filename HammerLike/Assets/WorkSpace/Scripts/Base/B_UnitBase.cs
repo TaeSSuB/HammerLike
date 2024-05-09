@@ -26,6 +26,7 @@ public class B_UnitBase : B_Entity
 
     [Header("Knockback")]
     protected float knockBackMultiplier = 1f;
+    protected float partsKnockBackMultiplier = 1f;
     protected float maxKnockBackForce = 100f;
     protected float maxPartsBreakForce = 100f;
     protected AnimationCurve knockbackCurve;
@@ -137,15 +138,17 @@ public class B_UnitBase : B_Entity
         }
         unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(unitIndex));
 
-        rigid.mass = UnitStatus.mass;
+        Rigid.mass = UnitStatus.mass;
     }
 
     protected virtual void ApplySystemSettings()
     {
         knockBackMultiplier = GameManager.Instance.SystemSettings.KnockBackScale;
         maxKnockBackForce = GameManager.Instance.SystemSettings.MaxKnockBackForce;
-        maxPartsBreakForce = GameManager.Instance.SystemSettings.MaxPartsBreakForce;
         knockbackCurve = GameManager.Instance.SystemSettings.KnockbackCurve;
+
+        partsKnockBackMultiplier = GameManager.Instance.SystemSettings.PartsKnockBackScale;
+        maxPartsBreakForce = GameManager.Instance.SystemSettings.MaxPartsBreakForce;
         partsBreakForceCurve = GameManager.Instance.SystemSettings.PartsBreakForceCurve;
     }
 
@@ -194,9 +197,11 @@ public class B_UnitBase : B_Entity
     }
 
     // Clamp hp between 0 and maxHP
-    protected float ClampHP()
+    protected int ClampHP()
     {
-        return Mathf.Clamp(UnitStatus.currentHP, 0f, UnitStatus.maxHP);
+        UnitStatus.currentHP = Mathf.Clamp(UnitStatus.currentHP, 0, UnitStatus.maxHP);
+        
+        return UnitStatus.currentHP;
     }
     #endregion
 
@@ -295,9 +300,9 @@ public class B_UnitBase : B_Entity
         inDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDir);
 
         var resultKnockPower = Mathf.Clamp(force * knockBackMultiplier, 0f, maxKnockBackForce);
-        Debug.Log(this.gameObject.name + " Knockback : " + resultKnockPower);
+        //Debug.Log(this.gameObject.name + " Knockback : " + resultKnockPower);
         
-        StartCoroutine(CoSmoothKnockback(inDir, resultKnockPower, rigid, knockbackCurve));
+        StartCoroutine(CoSmoothKnockback(inDir, resultKnockPower, Rigid, knockbackCurve));
     }
 
     /// <summary>
@@ -309,11 +314,11 @@ public class B_UnitBase : B_Entity
     /// <param name="inCurve"></param>
     /// <param name="inDuration"></param>
     /// <returns></returns>
-    private IEnumerator CoSmoothKnockback(Vector3 inDir, float force, Rigidbody inRigid, AnimationCurve inCurve, float inDuration = 0.5f)
+    private IEnumerator CoSmoothKnockback(Vector3 inDir, float force, Rigidbody inRigid, AnimationCurve inCurve, float inDuration = 0.5f, ForceMode inForceMode = ForceMode.VelocityChange)
     {
         if(inRigid == null)
         {
-            inRigid = rigid;
+            inRigid = Rigid;
         }
 
         Vector3 knockbackVelocity = inDir * force / unitStatus.mass;
@@ -333,7 +338,7 @@ public class B_UnitBase : B_Entity
             // Apply the force using the animation curve
             //inRigid.velocity = Vector3.Lerp(initialVelocity, knockbackVelocity, inCurve.Evaluate(elapsed));
 
-            inRigid.AddForce(knockbackVelocity * inCurve.Evaluate(elapsed), ForceMode.Force);
+            inRigid.AddForce(knockbackVelocity * inCurve.Evaluate(elapsed), inForceMode);
 
             yield return null;
         }
@@ -399,15 +404,15 @@ public class B_UnitBase : B_Entity
                     Vector3 dir = (muscleRigid.transform.position - inPos).normalized;
                     dir = GameManager.Instance.ApplyCoordScaleAfterNormalize(dir);
 
-                    remainKnockBackForce = Mathf.Clamp(remainKnockBackForce, 0f, maxPartsBreakForce);
+                    remainKnockBackForce = Mathf.Clamp(remainKnockBackForce * partsKnockBackMultiplier, 0f, maxPartsBreakForce);
 
-                    StartCoroutine(CoSmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime));
+                    StartCoroutine(CoSmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime, ForceMode.Impulse));
                 }
 
                 puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Sever);
 
                 // root RigidBody 물리력 고정 및 콜라이더 비활성화
-                rigid.isKinematic = true;
+                Rigid.isKinematic = true;
                 col.enabled = false;
             }
         }

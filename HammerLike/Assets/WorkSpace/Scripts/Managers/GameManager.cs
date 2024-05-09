@@ -111,6 +111,15 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         return coordVector;
     }
 
+    public Vector3 ApplyCoordDivide(Vector3 inVector)
+    {
+        inVector.y = 0;
+
+        var coordVector = inVector / CalcCoordScale(inVector);
+
+        return coordVector;
+    }
+
     /// <summary>
     /// ApplyCoordScaleAfterNormalize : 정규화된 벡터에 대한 xz 좌표 상의 스케일링 
     /// </summary>
@@ -127,6 +136,29 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
             inVector.x * CoordScale.x,
             inVector.y * CoordScale.y,
             inVector.z * CoordScale.z
+            );
+
+        return coordVector;
+    }
+
+    /// <summary>
+    /// ApplyCoordDivideAfterNormalize : 정규화된 벡터에 대한 xz 좌표 상의 스케일링 해제
+    /// - 주로 이동 벡터에 대한 스케일링 해제에 활용
+    /// - ex. 스케일링으로 인한 방향 벡터 오차 해결
+    /// </summary>
+    /// <param name="inVector"></param>
+    /// <returns></returns>
+    public Vector3 ApplyCoordDivideAfterNormalize(Vector3 inVector)
+    {
+        inVector.y = 0;
+        inVector.Normalize();
+
+        //var coordVector = inVector * CalcCoordScale(inVector);
+
+        var coordVector = new Vector3(
+            inVector.x / CoordScale.x,
+            inVector.y / CoordScale.y,
+            inVector.z / CoordScale.z
             );
 
         return coordVector;

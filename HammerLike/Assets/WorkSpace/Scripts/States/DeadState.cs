@@ -15,7 +15,7 @@ public class DeadState : IAIState
 
     public void OnEnter()
     {
-        Debug.Log("DeadState OnEnter");
+        //Debug.Log("DeadState OnEnter");
 
         // 240502 a.HG : Dead logic Unit에 포함 시켜야..
         unitBase.DisableMovementAndRotation();
@@ -27,7 +27,7 @@ public class DeadState : IAIState
 
     public void OnExit()
     {
-        Debug.Log("DeadState OnExit()");
+        //Debug.Log("DeadState OnExit()");
 
 
     }

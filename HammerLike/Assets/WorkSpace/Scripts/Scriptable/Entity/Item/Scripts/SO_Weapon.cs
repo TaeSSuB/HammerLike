@@ -20,4 +20,13 @@ public class SO_Weapon : SO_Equipment
     //public Skill unlockableSkill; // 추가 스킬 해금. Skill은 별도로 정의된 ScriptableObject가 될 수 있습니다.
 
     // Weapon 클래스의 기능 구현...
+
+    public override void Use()
+    {
+        base.Use();
+        // Equip the item
+        // Remove it from the inventory
+
+        GameManager.Instance.Player.EquipWeapon(this);
+    }
 }
