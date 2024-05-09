@@ -12,13 +12,14 @@ public class B_Entity : MonoBehaviour
     [SerializeField] protected GameObject rootObj;
     [SerializeField] protected GameObject meshObj;
     [SerializeField] protected Collider col;
-    [SerializeField] protected Rigidbody rigid;
+    [SerializeField] private Rigidbody rigid;
 
     [SerializeField] protected bool isInvincible;
 
     public GameObject RootObj { get => rootObj; }
     public GameObject MeshObj { get => meshObj; }
     public Collider Col { get => col; }
+    public Rigidbody Rigid { get => rigid;}
 
     #region Unity Callbacks & Init
     protected virtual void Awake()

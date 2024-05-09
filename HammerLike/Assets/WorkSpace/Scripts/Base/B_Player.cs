@@ -341,18 +341,18 @@ public class B_Player : B_UnitBase
 
         agent.isStopped = true;
         agent.enabled = false;
-        rigid.velocity = Vector3.zero;
+        Rigid.velocity = Vector3.zero;
 
         while (dashTime > 0)
         {
             transform.LookAt(coordDir + transform.position);
             // move with rigid body
-            rigid.velocity = coordDir * dashSpeed;
+            Rigid.velocity = coordDir * dashSpeed;
             dashTime -= Time.deltaTime;
             yield return null;
         }
         
-        rigid.velocity = Vector3.zero;
+        Rigid.velocity = Vector3.zero;
         agent.enabled = true;
         agent.isStopped = false;
 

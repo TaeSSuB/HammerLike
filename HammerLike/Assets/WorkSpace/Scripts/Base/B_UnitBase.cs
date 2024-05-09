@@ -138,7 +138,7 @@ public class B_UnitBase : B_Entity
         }
         unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(unitIndex));
 
-        rigid.mass = UnitStatus.mass;
+        Rigid.mass = UnitStatus.mass;
     }
 
     protected virtual void ApplySystemSettings()
@@ -302,7 +302,7 @@ public class B_UnitBase : B_Entity
         var resultKnockPower = Mathf.Clamp(force * knockBackMultiplier, 0f, maxKnockBackForce);
         //Debug.Log(this.gameObject.name + " Knockback : " + resultKnockPower);
         
-        StartCoroutine(CoSmoothKnockback(inDir, resultKnockPower, rigid, knockbackCurve));
+        StartCoroutine(CoSmoothKnockback(inDir, resultKnockPower, Rigid, knockbackCurve));
     }
 
     /// <summary>
@@ -318,7 +318,7 @@ public class B_UnitBase : B_Entity
     {
         if(inRigid == null)
         {
-            inRigid = rigid;
+            inRigid = Rigid;
         }
 
         Vector3 knockbackVelocity = inDir * force / unitStatus.mass;
@@ -412,7 +412,7 @@ public class B_UnitBase : B_Entity
                 puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Sever);
 
                 // root RigidBody 물리력 고정 및 콜라이더 비활성화
-                rigid.isKinematic = true;
+                Rigid.isKinematic = true;
                 col.enabled = false;
             }
         }
