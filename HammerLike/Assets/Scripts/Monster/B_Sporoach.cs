@@ -8,6 +8,8 @@ public class B_Sporoach : B_Enemy
     [SerializeField] private GameObject projectilePrefab;
 
     // Start is called before the first frame update
+    
+
     protected void Shot()
     {
        

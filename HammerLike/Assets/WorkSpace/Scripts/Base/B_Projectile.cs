@@ -8,6 +8,7 @@ public enum ProjectileType
 {
     Default,    // 기본 직선형
     Parabola,   // 포물선 
+    Launch,
     Missile
 }
 
@@ -23,11 +24,14 @@ public class B_Projectile : MonoBehaviour
     [SerializeField] LayerMask layerMask=0;
     float currentSpeed=0f;
     Transform target;
+    [SerializeField] private float fallVelocity;
+    [SerializeField] private float delay;
     void Start()
     {
         Init();
         // 일정 시간 후에 자동 파괴
-        Destroy(gameObject, 5f);
+        if (projecType !=ProjectileType.Launch)
+            Destroy(gameObject, 5f);
     }
 
     
@@ -44,7 +48,7 @@ public class B_Projectile : MonoBehaviour
         else if(projecType == ProjectileType.Parabola)
         {
             ///
-            /// 포물선을 이용하는 방법은 DOTween을 사용하는 방법과 
+            /// 포물선을 이용하는 방법은 DOTween을 사용하는 방법과 Rigidbody 있는데 고민중
             ///
             Vector3 startPos = transform.position; // 발사구의 위치를 시작점으로 사용
             Vector3 goalPos = GameManager.Instance.Player.transform.position; // 플레이어의 위치를 목표점으로 사용
@@ -57,8 +61,16 @@ public class B_Projectile : MonoBehaviour
         else if(projecType == ProjectileType.Missile)
         {
             rigid = GetComponent<Rigidbody>();
-            rigid.velocity = Vector3.up * 5f;
+            rigid.velocity = Vector3.up * 10f;
             StartCoroutine(LaunchDelay());
+        }
+        else if(projecType == ProjectileType.Launch)
+        {
+            rigid = GetComponent<Rigidbody>();
+            rigid.velocity = Vector3.up * 30f;
+            StartCoroutine(LaunchDelay(delay));
+
+
         }
     }
 
@@ -100,20 +112,31 @@ public class B_Projectile : MonoBehaviour
 
     void SearchEnemy()
     {
-        Collider[] cols = Physics.OverlapSphere(transform.position, 100f, layerMask);
+
+
+            
+            Vector3 newPosition = new Vector3(target.position.x, transform.position.y, target.position.z);
+            transform.position = newPosition;
+            rigid.useGravity = true;
+            rigid.velocity = Vector3.down * fallVelocity;
+        
+    }
+
+    IEnumerator LaunchDelay(float delay=0.1f)
+    {
+        yield return new WaitUntil(() => rigid.velocity.y < 0f);
+        rigid.useGravity = false;
+        yield return new WaitForSeconds(delay);
+        Destroy(gameObject, delay);
+
+        Collider[] cols = Physics.OverlapSphere(transform.position, 10000f, layerMask);
 
         if (cols.Length > 0)
         {
             target = cols[Random.Range(0, cols.Length)].transform;
         }
-    }
-
-    IEnumerator LaunchDelay()
-    {
-        yield return new WaitUntil(() => rigid.velocity.y < 0f);
-        yield return new WaitForSeconds(0.1f);
-
-        SearchEnemy();
+        if (projecType == ProjectileType.Launch)
+            SearchEnemy();
     }
 
 }
