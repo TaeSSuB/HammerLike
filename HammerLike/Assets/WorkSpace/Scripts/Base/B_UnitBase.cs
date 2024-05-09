@@ -197,9 +197,11 @@ public class B_UnitBase : B_Entity
     }
 
     // Clamp hp between 0 and maxHP
-    protected float ClampHP()
+    protected int ClampHP()
     {
-        return Mathf.Clamp(UnitStatus.currentHP, 0f, UnitStatus.maxHP);
+        UnitStatus.currentHP = Mathf.Clamp(UnitStatus.currentHP, 0, UnitStatus.maxHP);
+        
+        return UnitStatus.currentHP;
     }
     #endregion
 

@@ -84,8 +84,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0.5, z: 0}
   trackType: 3
   trailRenderer: {fileID: 576635233718691163}
-  targetObj: {fileID: 4313188254355159387}
-  weaponMesh: {fileID: 4389952972687816322}
+  b_Weapon: {fileID: 0}
   player: {fileID: 1768623638817304503}
   startWidthScale: 0.3
   endWidthScale: 0.1
@@ -451,7 +450,7 @@ MonoBehaviour:
   col: {fileID: 3484366558637496199}
   rigid: {fileID: 7190315784335179458}
   isInvincible: 0
-  unitType: 0
+  unitIndex: -1
   anim: {fileID: 1768623639919925977}
   agent: {fileID: 0}
   isAttacking: 0
@@ -462,13 +461,17 @@ MonoBehaviour:
   groundCheckDistance: 0.1
   isKnockback: 0
   chargeVFXObj: {fileID: 4313188254355159387}
+  minChargeMoveRate: 0.1
   weaponObj: {fileID: 4389952972687816322}
+  weaponTR: {fileID: 6890217952169371145}
+  weaponData: {fileID: 0}
   weaponCollider: {fileID: 4939906264136678488}
   weaponOrbit: {fileID: 1952734946970189571}
-  zoomCam: {fileID: 0}
-  zoomAmount: 15
-  startZoom: 0
+  rotateType: 2
+  rotSpeed: 10
   rotDeadZone: 0.5
+  AllowRotate_L: 1
+  AllowRotate_R: 1
 --- !u!1 &2110469650803552666
 GameObject:
   m_ObjectHideFlags: 0

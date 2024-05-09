@@ -19,6 +19,8 @@ public class B_Player : B_UnitBase
     [SerializeField] private float minChargeMoveRate = 0.1f;
 
     [SerializeField] private GameObject weaponObj;
+    [SerializeField] private Transform weaponTR;
+    [SerializeField] private SO_Weapon weaponData;
     [SerializeField] private BoxCollider weaponCollider;
 
     [SerializeField] private WeaponOrbit weaponOrbit;
@@ -33,6 +35,9 @@ public class B_Player : B_UnitBase
 
     public event Action<int> OnHPChanged;
     public event Action<float> OnChargeChanged;
+
+    // OnWeaponEquipped
+    public event Action<B_Weapon> OnWeaponEquipped;
 
 
     #region Unity Callbacks & Init
@@ -69,8 +74,19 @@ public class B_Player : B_UnitBase
 
             var inventory = B_InventoryManager.Instance.playerInventory;
 
-            if (inventory.AddItem(new B_Item(item.item), 1))
-                Destroy(other.gameObject);
+            if(item == null) return;
+            
+            if(item.canPickUp)
+            {
+                inventory.AddItem(new B_Item(item.item), 1);
+            }
+            else
+            {
+                Debug.Log("Directly Use Item : " + item.item.name);
+                item.item.Use();
+            }
+
+            Destroy(other.gameObject);
         }
     }
 
@@ -372,8 +388,8 @@ public class B_Player : B_UnitBase
 
     protected override void ApplyStatus()
     {
-        //unitStatus = Instantiate(GameManager.Instance.PlayerStatus);
-        unitStatus = GameManager.Instance.PlayerStatus;
+        unitStatus = Instantiate(GameManager.Instance.PlayerStatus);
+        //unitStatus = GameManager.Instance.PlayerStatus;
     }
 
     void ApplyChargeDamage()
@@ -384,7 +400,7 @@ public class B_Player : B_UnitBase
     }
     void ResetDamage()
     {
-        (unitStatus as SO_PlayerStatus).atkDamage = (unitStatus as SO_PlayerStatus).AtkDamageOrigin;
+        (unitStatus as SO_PlayerStatus).atkDamage = (unitStatus as SO_PlayerStatus).AtkDamageOrigin + (weaponData == null ? 0 : weaponData.attackPower);
     }
 
     public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true)
@@ -392,6 +408,55 @@ public class B_Player : B_UnitBase
         base.TakeDamage(damageDir, damage, knockBackPower, knockBack);
 
         OnHPChanged?.Invoke(unitStatus.currentHP);
+    }
+
+    public void EquipWeapon(SO_Weapon inWeapon)
+    {
+        UnEquipWeapon();
+
+        weaponData = Instantiate(inWeapon);
+        
+        weaponObj = Instantiate(weaponData.prefab, weaponTR);
+        
+        B_Weapon b_Weapon = weaponObj.GetComponent<B_Weapon>();
+        weaponOrbit.ApplyWeapon(b_Weapon);
+        
+        if(b_Weapon == null)
+            b_Weapon = weaponObj.GetComponentInChildren<B_Weapon>();
+        
+        if(b_Weapon == null)
+        {
+            Debug.LogError("WeaponObj is not B_Weapon or B_Weapon is not in child.");
+            return;
+        }
+
+        chargeVFXObj = b_Weapon.VFXObj;
+
+        // Status Apply
+        (unitStatus as SO_PlayerStatus).atkDamage += weaponData.attackPower;
+        (unitStatus as SO_PlayerStatus).knockbackPower += weaponData.knockbackPower;
+        
+        (unitStatus as SO_PlayerStatus).atkRange = weaponData.weaponRange;
+        (unitStatus as SO_PlayerStatus).atkSpeed = weaponData.attackSpeed;
+
+        OnWeaponEquipped?.Invoke(b_Weapon);
+    }
+
+    public void UnEquipWeapon()
+    {
+        Destroy(weaponObj);
+        weaponObj = null;
+
+        weaponData = null;
+
+        // Status Apply
+        (unitStatus as SO_PlayerStatus).atkDamage = (unitStatus as SO_PlayerStatus).AtkDamageOrigin;
+        (unitStatus as SO_PlayerStatus).knockbackPower = (unitStatus as SO_PlayerStatus).KnockbackPowerOrigin;
+        
+        (unitStatus as SO_PlayerStatus).atkRange = 1f;
+        (unitStatus as SO_PlayerStatus).atkSpeed = 1f;
+
+        OnWeaponEquipped?.Invoke(null);
     }
 
     #endregion

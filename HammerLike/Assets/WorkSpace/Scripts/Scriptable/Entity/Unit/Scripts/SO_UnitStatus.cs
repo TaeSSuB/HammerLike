@@ -48,6 +48,7 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
 
     [Header("KnockBack")]
     public float knockbackPower = 1f;
+    protected float knockbackPowerOrigin = 1f;
     public float knockbackResistance = 0f;
 
 
@@ -55,6 +56,7 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
 
     public float MoveSpeedOrigin { get => moveSpeedOrigin;}
     public int AtkDamageOrigin { get => atkDamageOrigin;}
+    public float KnockbackPowerOrigin { get => knockbackPowerOrigin;}
 
     /// <summary>
     /// 스탯 Initialize
@@ -69,6 +71,7 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
         
         moveSpeedOrigin = moveSpeed;
         atkDamageOrigin = atkDamage;
+        knockbackPowerOrigin = knockbackPower;
     }
 
     /// <summary>
@@ -76,7 +79,7 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
     /// - 데이터 수정 이후 초기화 실행
     /// </summary>
     /// <exception cref="System.NotImplementedException"></exception>
-    public void OnAfterDeserialize()
+    public virtual void OnAfterDeserialize()
     {
         Init();
         //throw new System.NotImplementedException();
@@ -87,8 +90,15 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
     /// - 데이터 수정 이전 지속 실행
     /// </summary>
     /// <exception cref="System.NotImplementedException"></exception>
-    public void OnBeforeSerialize()
+    public virtual void OnBeforeSerialize()
     {
 
+    }
+
+    public void OnApplicationQuit()
+    {
+        moveSpeed = moveSpeedOrigin;
+        atkDamage = atkDamageOrigin;
+        knockbackPower = knockbackPowerOrigin;
     }
 }

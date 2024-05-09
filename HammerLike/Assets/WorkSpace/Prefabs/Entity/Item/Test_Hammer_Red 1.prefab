@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 3335218119157696859}
   - component: {fileID: 7557031529425588760}
   - component: {fileID: 168885740712087442}
+  - component: {fileID: -8042049412715137946}
   m_Layer: 6
-  m_Name: Test_Hammer
+  m_Name: Test_Hammer_Red 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54,7 +55,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4f81b56997ca0e34e8041e20c9e20317, type: 2}
+  - {fileID: 2100000, guid: b0463d0c957c25244a87e1249dbef0e9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -135,6 +136,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-8042049412715137946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5814301255281557100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd354a6bd2cb7ba448e09456d06d58f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vfxObj: {fileID: 6307070323030880693}
+  meshObj: {fileID: 5814301255281557100}
 --- !u!1001 &1127821029506840021
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -206,6 +221,12 @@ PrefabInstance:
 --- !u!4 &1767096817108022626 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1667227351710826679, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
+    type: 3}
+  m_PrefabInstance: {fileID: 1127821029506840021}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6307070323030880693 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6350607959677043808, guid: 4f05bfe5c15a1f24aa242bbfe43928e7,
     type: 3}
   m_PrefabInstance: {fileID: 1127821029506840021}
   m_PrefabAsset: {fileID: 0}

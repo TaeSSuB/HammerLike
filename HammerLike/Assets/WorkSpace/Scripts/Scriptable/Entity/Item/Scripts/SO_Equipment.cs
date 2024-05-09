@@ -14,6 +14,7 @@ public enum EquipmentCategory
 public class SO_Equipment : SO_Item
 {
     [Header("Equipment")]
+    public GameObject prefab;
     public int maxUpgrade = 0;
     public EquipmentCategory equipmentCategory;
 }

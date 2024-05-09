@@ -11,6 +11,9 @@ public enum Attributes
     Health,
     Stamina,
     Damage,
+    ChargeRate,
+    AttackRange,
+    AttackSpeed,
     Armor
 }
 
@@ -74,7 +77,7 @@ public abstract class SO_Item : ScriptableObject
     // 아이템이 인벤토리에서 사용될 때 호출되는 메소드
     public virtual void Use()
     {
-        Debug.Log("Used!");
+        Debug.Log("Used " + name);
     }
 
 }

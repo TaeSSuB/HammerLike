@@ -35,9 +35,10 @@ public class WeaponOrbit : MonoBehaviour
 
     [Header("References")]
     public TrailRenderer trailRenderer;  // 트레일 렌더러 컴포넌트
-    public GameObject targetObj;  // 추적할 오브젝트
-    public GameObject weaponMesh;  // 무기 오브젝트
-    public GameObject player;  // 플레이어 오브젝트
+    public B_Weapon b_Weapon;  // 무기 컴포넌트
+    private GameObject targetObj;  // 추적할 오브젝트
+    private GameObject weaponMesh;  // 무기 오브젝트
+    public B_Player player;  // 플레이어 오브젝트
     public float startWidthScale = 0.1f;  // 트레일 시작 폭
     public float endWidthScale = 0.05f;  // 트레일 끝 폭
 
@@ -45,6 +46,32 @@ public class WeaponOrbit : MonoBehaviour
     public bool debugMode = false;
     public int edgeCount = 32;  // 궤도 기즈모 각
 
+    void OnEnable()
+    {
+        if(player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player").GetComponent<B_Player>();
+            //player = GameManager.Instance.Player;
+        }
+
+        player.OnWeaponEquipped += ApplyWeapon;
+    }
+
+    void OnDisable()
+    {
+        player.OnWeaponEquipped -= ApplyWeapon;
+    }
+
+    public void ApplyWeapon(B_Weapon inWeapon)
+    {
+        b_Weapon = inWeapon;
+
+        if (b_Weapon != null)
+        {
+            targetObj = b_Weapon.VFXObj;
+            weaponMesh = b_Weapon.MeshObj;
+        }
+    }
 
     void Start()
     {
@@ -54,9 +81,11 @@ public class WeaponOrbit : MonoBehaviour
         }
         if(player == null)
         {
-            player = GameObject.FindGameObjectWithTag("Player");
+            //player = GameObject.FindGameObjectWithTag("Player");
+            player = GameManager.Instance.Player;
         }
         trailRenderer.emitting = false;
+        ApplyWeapon(b_Weapon);
     }
 
     private void Update()
