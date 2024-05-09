@@ -23,7 +23,6 @@ public struct VFXName
 
 public class B_VFXPoolManager : SingletonMonoBehaviour<B_VFXPoolManager>
 {
-
     public VFXSet vfxSet; // Assign in the Unity editor
 
     private Dictionary<string, Queue<GameObject>> vfxPoolDictionary = new Dictionary<string, Queue<GameObject>>();

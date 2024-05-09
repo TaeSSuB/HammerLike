@@ -4,7 +4,12 @@ using UnityEngine;
 using TMPro;
 using NuelLib;
 
-// singleton pattern
+/// <summary>
+/// GameManager : 게임 매니저 클래스 (Singleton MonoBehavior)
+/// - 플레이어 정보, 시스템 설정 정보 관리
+/// - 개발 모드 설정 및 임시 테스트 그룹 생성 스크립트 포함
+/// - 좌표 스케일링 및 시간 스케일링 기능 포함
+/// </summary>
 public class GameManager : SingletonMonoBehaviour<GameManager>
 {
     [Header("Player")]
@@ -38,19 +43,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     public Vector3 CoordScale { get => systemSettings.CoordinateScale; }
     public float TimeScale { get => systemSettings.TimeScale; }
-    public float SetTimeScale(float inTimeScale = 1f)
-    {
-        // 0 ~ 2
-        inTimeScale = Mathf.Clamp(inTimeScale, 0, 2);
-        
-        if(SystemSettings != null)
-            SystemSettings.SetTimeScale = inTimeScale;
-        
-        Time.timeScale = inTimeScale;
-        
-        return systemSettings.TimeScale;
-    }
+    
 
+    #region Unity Callbacks
     protected override void Awake()
     {
         base.Awake();
@@ -76,22 +71,52 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
         }
     }
+    #endregion
+
+    #region Set System Settings
+
+    /// <summary>
+    /// SetTimeScale : TimeScale 설정
+    /// </summary>
+    /// <param name="inTimeScale"></param>
+    /// <returns></returns>
+    public float SetTimeScale(float inTimeScale = 1f)
+    {
+        // 0 ~ 2
+        inTimeScale = Mathf.Clamp(inTimeScale, 0, 2);
+        
+        if(SystemSettings != null)
+            SystemSettings.SetTimeScale = inTimeScale;
+        
+        Time.timeScale = inTimeScale;
+        
+        return systemSettings.TimeScale;
+    }
+
+    #endregion
 
     #region Coordinate Scale
+    
+    /// <summary>
+    /// ApplyCoordScale : 벡터에 대한 xz 좌표 상의 스케일링 적용
+    /// </summary>
+    /// <param name="inVector"></param>
+    /// <returns></returns>
     public Vector3 ApplyCoordScale(Vector3 inVector)
     {
-        //return new Vector3(
-        //    inVector.x * CoordScale.x,
-        //    inVector.y * CoordScale.y,
-        //    inVector.z * CoordScale.z
-        //    );
         inVector.y = 0;
 
         var coordVector = inVector * CalcCoordScale(inVector);
 
         return coordVector;
     }
-    public Vector3 ApplyCoordScaleNormalize(Vector3 inVector)
+
+    /// <summary>
+    /// ApplyCoordScaleAfterNormalize : 정규화된 벡터에 대한 xz 좌표 상의 스케일링 
+    /// </summary>
+    /// <param name="inVector"></param>
+    /// <returns></returns>
+    public Vector3 ApplyCoordScaleAfterNormalize(Vector3 inVector)
     {
         inVector.y = 0;
         inVector.Normalize();
@@ -106,6 +131,15 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
         return coordVector;
     }
+
+    /// <summary>
+    /// CalcCoordScale : xz 좌표 상의 좌표계 상수 계산
+    /// - inVector의 xz 좌표 정규화 및 x,z 축에 대한 지향도 계산
+    /// - 계산된 좌표계 상수 출력
+    /// - 스케일링에 활용
+    /// </summary>
+    /// <param name="inVector"></param>
+    /// <returns></returns>
     public float CalcCoordScale(Vector3 inVector)
     {
         inVector.y = 0;

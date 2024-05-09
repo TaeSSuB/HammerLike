@@ -1,57 +1,40 @@
-using HutongGames.PlayMaker.Actions;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
-// Player Unit
-
+/// <summary>
+/// B_Player : Player Base Class
+/// </summary>
 public class B_Player : B_UnitBase
 {
-    [Header("Player Settings")]
-    
-    [SerializeField] private GameObject chargeVFXObj;
-    [SerializeField] private GameObject weaponObj;
+    public enum RotateType
+    {
+        None,
+        LookAtMouse,
+        LookAtMouseSmooth
+    }
 
-    // a.HG - 240505 무기 콜라이더 오브젝트 배치 및 회전 값으로 일괄 처리
-    //[SerializeField] private GameObject weaponTrackObj;
+    [Header("Player Settings")]
+    [SerializeField] private GameObject chargeVFXObj;
+
+    [SerializeField] private GameObject weaponObj;
     [SerializeField] private BoxCollider weaponCollider;
-    //private Vector3 initWeaponColliderScale;
-    //private Vector3 initWeaponColliderCenter;
 
     [SerializeField] private WeaponOrbit weaponOrbit;
 
+
     [Header("Camera Settings")]
-    [SerializeField] private Camera zoomCam;
-    [SerializeField] private float zoomAmount;
-    [SerializeField] private float startZoom;
+    [SerializeField] private RotateType rotateType = RotateType.LookAtMouseSmooth;
+    [SerializeField] private float rotSpeed = 10f;
     [SerializeField] private float rotDeadZone = 0.1f;
+    [SerializeField] private bool AllowRotate_L = true;
+    [SerializeField] private bool AllowRotate_R = true;
 
     public event Action<int> OnHPChanged;
     public event Action<float> OnChargeChanged;
 
-    protected override void ApplyStatus()
-    {
-        //unitStatus = Instantiate(GameManager.Instance.PlayerStatus);
-        unitStatus = (GameManager.Instance.PlayerStatus);
-    }
 
-    void TrackWeaponDirXZ()
-    {
-        Vector3 dir = weaponOrbit.gameObject.transform.position - weaponCollider.gameObject.transform.position;
-        float coordScale = GameManager.Instance.CalcCoordScale(dir);
-
-        Quaternion newRot = Quaternion.LookRotation(dir);
-        weaponCollider.gameObject.transform.rotation = Quaternion.Euler(0, newRot.eulerAngles.y, 0);
-
-        weaponCollider.gameObject.transform.localScale = new Vector3(1, 1, coordScale);
-        //weaponCollider.size = new Vector3(initWeaponColliderScale.x, initWeaponColliderScale.y * coordScale, initWeaponColliderScale.z);
-        //weaponCollider.center = new Vector3(initWeaponColliderCenter.x, initWeaponColliderCenter.y * coordScale, initWeaponColliderCenter.z);
-        //weaponCollider.size = initWeaponColliderScale * coordScale;
-        //weaponCollider.center = initWeaponColliderCenter * coordScale;
-    }
+    #region Unity Callbacks & Init
 
     //init override
     public override void Init()
@@ -60,32 +43,39 @@ public class B_Player : B_UnitBase
         // Init logic
         GameManager.Instance.SetPlayer(this);
         chargeVFXObj.SetActive(false);
-        
-        // Get Weapon Collider Component
-        //weaponCollider.enabled = false;
-        //weaponCollider.isTrigger = true;
-        //initWeaponColliderScale = weaponCollider.size;
-        //initWeaponColliderCenter = weaponCollider.center;
-
-        startZoom = zoomCam.orthographicSize;
     }
 
     protected override void Update()
     {
         base.Update();
 
-        InputMovement();
         LookAtMouse();
-        CheckCharge();
+
+        InputMovement();
+        InputCharge();
+
         TrackWeaponDirXZ();
-
-
-        // Y Scale
-        //weaponCollider.size = new Vector3(initWeaponColliderScale.x, initWeaponColliderScale.y * coordScale, initWeaponColliderScale.z);
-        //weaponCollider.center = new Vector3(initWeaponColliderCenter.x, initWeaponColliderCenter.y * coordScale, initWeaponColliderCenter.z);
-        //weaponCollider.size = initWeaponColliderScale * coordScale;
-        //weaponCollider.center = initWeaponColliderCenter * coordScale;
     }
+
+    
+    protected override void OnTriggerEnter(Collider other)
+    {
+        base.OnTriggerEnter(other);
+
+        if (other.CompareTag("Item"))
+        {
+            var item = other.GetComponent<GroundItem>();
+
+            var inventory = B_InventoryManager.Instance.playerInventory;
+
+            if (inventory.AddItem(new B_Item(item.item), 1))
+                Destroy(other.gameObject);
+        }
+    }
+
+    #endregion
+
+    #region Input
 
     private Vector3 InputMovement()
     {
@@ -110,6 +100,187 @@ public class B_Player : B_UnitBase
         return moveDir;
     }
 
+    void InputCharge()
+    {
+        // Charge attack logic
+        if (Input.GetMouseButton(0))
+        {
+            Charging();
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            AttackSwitch();
+        }
+    }
+
+    /// <summary>
+    /// LookAtMouse : 마우스 방향으로 캐릭터 회전
+    /// - 마우스의 위치를 기준으로 캐릭터를 회전
+    /// - LookAtMouseSmooth : 부드러운 회전
+    /// </summary>
+    protected void LookAtMouse()
+    {
+        if(isLockRotate)
+            return;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 100, groundLayer))
+        {
+            Vector3 lookAt = hit.point;
+            lookAt.y = transform.position.y;
+
+            // DeadZone
+            if (Vector3.Distance(transform.position, lookAt) > rotDeadZone)
+            {
+                switch (rotateType)
+                {
+                    case RotateType.LookAtMouse:
+                        transform.LookAt(lookAt);
+                        break;
+                    case RotateType.LookAtMouseSmooth:
+                        Quaternion targetRotation = Quaternion.LookRotation(lookAt - transform.position);
+                        Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotSpeed);
+                        transform.rotation = newRot;
+                        break;
+                    default:
+                        break;
+                }
+                //transform.LookAt(lookAt);
+            }
+        }
+    }
+
+    #endregion
+
+    #region Action
+
+    void Charging()
+    {
+        (unitStatus as SO_PlayerStatus).chargeRate += Time.deltaTime * (unitStatus as SO_PlayerStatus).chargeRateIncrease;
+
+        // clamp charge
+        (unitStatus as SO_PlayerStatus).chargeRate = Mathf.Clamp((unitStatus as SO_PlayerStatus).chargeRate, 1f, (unitStatus as SO_PlayerStatus).maxChargeRate);
+
+        // 0 ~ 1 사이의 값으로 정규화
+        float normalizeChargeRate = ((unitStatus as SO_PlayerStatus).chargeRate - 1) / ((unitStatus as SO_PlayerStatus).maxChargeRate - 1);
+
+        if ((unitStatus as SO_PlayerStatus).chargeRate > (unitStatus as SO_PlayerStatus).minChargeRate)
+        {
+            Anim.SetBool("IsCharge", true);
+
+            // VFX
+            chargeVFXObj.SetActive(true);
+            weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", normalizeChargeRate * 4f);
+
+            // Move Speed Reduce
+            UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin - (unitStatus as SO_PlayerStatus).MoveSpeedOrigin * normalizeChargeRate;
+
+            // Cam Zoom
+            //zoomCam.orthographicSize = startZoom - (zoomAmount * normalizeChargeRate);
+        }
+
+        // 확장성을 위해 폐기
+        // Init 해두고 재사용하기엔 편할 듯
+        //Anim.SetFloat("fAttackSpd", (unitStatus as SO_PlayerStatus).atkSpeed);
+        OnChargeChanged?.Invoke(normalizeChargeRate);
+    }
+
+    void AttackSwitch()
+    {
+        Anim.SetBool("IsCharge", false);
+
+        var chargeRate = (unitStatus as SO_PlayerStatus).chargeRate;
+        var minChargeRate = (unitStatus as SO_PlayerStatus).minChargeRate;
+        var maxChargeRate = (unitStatus as SO_PlayerStatus).maxChargeRate;
+
+        if (chargeRate >= minChargeRate)
+        {
+            if (chargeRate >= maxChargeRate)
+            {
+                // Max charge attack logic
+                MaximumChargeAttack();
+            }
+            else
+            {
+                ChargeAttack();
+            }
+        }
+        else
+        {
+            Attack();
+        }
+
+        OnChargeChanged?.Invoke(0f);
+        (unitStatus as SO_PlayerStatus).chargeRate = 1f;
+
+        UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin;
+    }
+
+    public override void Attack()
+    {
+        // Attack logic
+        Anim.SetBool("bAttack", true);
+        Anim.SetBool("IsInWardAttack", true);
+        // Attack damage = Original attack damage
+
+        Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
+
+        // Temp 240508
+        AllowRotate_R = false;
+    }
+
+    void ChargeAttack()
+    {
+        // Charge attack logic
+        Anim.SetBool("bAttack", true);
+        Anim.SetBool("IsOutWardAttack", true);
+
+        ApplyChargeDamage();
+
+        Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
+
+        // Temp 240508
+        AllowRotate_L = false;
+    }
+
+    void MaximumChargeAttack()
+    {
+        // Maximum charge attack logic
+        Anim.SetBool("bAttack", true);
+        Anim.SetBool("IsOutWardAttack", true);
+
+        ApplyChargeDamage();
+
+        Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
+
+        // Temp 240508
+        AllowRotate_L = false;
+    }
+
+    /// <summary>
+    /// 240505 a.HG : 임시 공격 리셋 메서드
+    /// </summary>
+    void ResetAttack()
+    {
+        // Reset attack logic
+        isAttacking = false;
+        Anim.SetBool("bAttack", false);
+        Anim.SetBool("IsOutWardAttack", false);
+        Anim.SetBool("IsInWardAttack", false);
+        weaponOrbit.trailRenderer.Clear();
+        DisableWeaponCollider();
+        chargeVFXObj.SetActive(false);
+        weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", 0f);
+        //zoomCam.orthographicSize = startZoom;
+        ResetDamage();
+
+        AllowRotate_L = true;
+        AllowRotate_R = true;
+    }
+
+    #region .Movement
     private void MoveAnim(Vector3 inDir)
     {
         // Move animation logic
@@ -128,7 +299,7 @@ public class B_Player : B_UnitBase
         }
     }
 
-    #region Dash
+    #region ..Dash
     void Dash(Vector3 inDir)
     {
         if (inDir == Vector3.zero)
@@ -146,7 +317,7 @@ public class B_Player : B_UnitBase
 
         StartDash();
 
-        Vector3 coordDir = GameManager.Instance.ApplyCoordScaleNormalize(inDir);
+        Vector3 coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDir);
         //transform.LookAt(coordDir + transform.position);
 
         Debug.DrawLine(transform.position, coordDir + transform.position, Color.red, 3f);
@@ -192,103 +363,18 @@ public class B_Player : B_UnitBase
 
     #endregion
     
-    #region Damage
-    public override void Attack()
+    #endregion
+    
+    #endregion
+
+    #region Control & Apply Status Data
+
+    protected override void ApplyStatus()
     {
-        // Attack logic
-        Anim.SetBool("bAttack", true);
-        Anim.SetBool("IsInWardAttack", true);
-        // Attack damage = Original attack damage
-
-        Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
+        //unitStatus = Instantiate(GameManager.Instance.PlayerStatus);
+        unitStatus = GameManager.Instance.PlayerStatus;
     }
-    void CheckCharge()
-    {
-        // Charge attack logic
-        if (Input.GetMouseButton(0))
-        {
-            (unitStatus as SO_PlayerStatus).chargeRate += Time.deltaTime * (unitStatus as SO_PlayerStatus).chargeRateIncrease;
 
-            // clamp charge
-            (unitStatus as SO_PlayerStatus).chargeRate = Mathf.Clamp((unitStatus as SO_PlayerStatus).chargeRate, 1f, (unitStatus as SO_PlayerStatus).maxChargeRate);
-
-            // 0 ~ 1 사이의 값으로 정규화
-            float normalizeChargeRate = ((unitStatus as SO_PlayerStatus).chargeRate - 1) / ((unitStatus as SO_PlayerStatus).maxChargeRate - 1);
-
-            if ((unitStatus as SO_PlayerStatus).chargeRate > (unitStatus as SO_PlayerStatus).minChargeRate)
-            {
-                Anim.SetBool("IsCharge", true);
-
-                // VFX
-                chargeVFXObj.SetActive(true);
-                weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", normalizeChargeRate * 4f);
-
-                // Move Speed Reduce
-                UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin - (unitStatus as SO_PlayerStatus).MoveSpeedOrigin * normalizeChargeRate;
-
-                // Cam Zoom
-                zoomCam.orthographicSize = startZoom - (zoomAmount * normalizeChargeRate);
-            }
-
-            // 확장성을 위해 폐기
-            // Init 해두고 재사용하기엔 편할 듯
-            //Anim.SetFloat("fAttackSpd", (unitStatus as SO_PlayerStatus).atkSpeed);
-
-            OnChargeChanged?.Invoke(normalizeChargeRate);
-
-            // zoom
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            Anim.SetBool("IsCharge", false);
-
-            var chargeRate = (unitStatus as SO_PlayerStatus).chargeRate;
-            var minChargeRate = (unitStatus as SO_PlayerStatus).minChargeRate;
-            var maxChargeRate = (unitStatus as SO_PlayerStatus).maxChargeRate;
-
-            if (chargeRate >= minChargeRate)
-            {
-                if (chargeRate >= maxChargeRate)
-                {
-                    // Max charge attack logic
-                    MaximumChargeAttack();
-                }
-                else
-                {
-                    ChargeAttack();
-                }
-            }
-            else
-            {
-                Attack();
-            }
-
-            OnChargeChanged?.Invoke(0f);
-            (unitStatus as SO_PlayerStatus).chargeRate = 1f;
-
-            UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin;
-        }
-    }
-    void ChargeAttack()
-    {
-        // Charge attack logic
-        Anim.SetBool("bAttack", true);
-        Anim.SetBool("IsOutWardAttack", true);
-
-        ApplyChargeDamage();
-
-        Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
-    }
-    void MaximumChargeAttack()
-    {
-        // Maximum charge attack logic
-        Anim.SetBool("bAttack", true);
-        Anim.SetBool("IsOutWardAttack", true);
-
-        ApplyChargeDamage();
-
-        Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
-    }
     void ApplyChargeDamage()
     {
         var resultAtk = (unitStatus as SO_PlayerStatus).atkDamage * (unitStatus as SO_PlayerStatus).chargeRate;
@@ -327,9 +413,12 @@ public class B_Player : B_UnitBase
 
         chargeVFXObj.SetActive(false);
         weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", 0f);
-        zoomCam.orthographicSize = startZoom;
+        //zoomCam.orthographicSize = startZoom;
 
         ResetDamage();
+
+        AllowRotate_L = true;
+        AllowRotate_R = true;
     }
 
     void EnableWeaponCollider()
@@ -346,62 +435,25 @@ public class B_Player : B_UnitBase
         weaponCollider.enabled = false;
     }
 
+    #endregion
+
+    #region Weapon
+
     /// <summary>
-    /// 240505 a.HG : 임시 공격 리셋 메서드
+    /// TrackWeaponDirXZ : 무기의 방향을 XZ축으로 추적
+    /// - weaponOrbit의 위치를 기준으로 무기의 방향을 Tracking
     /// </summary>
-    void ResetAttack()
+    void TrackWeaponDirXZ()
     {
-        // Reset attack logic
-        isAttacking = false;
-        Anim.SetBool("bAttack", false);
-        Anim.SetBool("IsOutWardAttack", false);
-        Anim.SetBool("IsInWardAttack", false);
-        weaponOrbit.trailRenderer.Clear();
-        DisableWeaponCollider();
-        chargeVFXObj.SetActive(false);
-        weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", 0f);
-        zoomCam.orthographicSize = startZoom;
-        ResetDamage();
+        Vector3 dir = weaponOrbit.gameObject.transform.position - weaponCollider.gameObject.transform.position;
+        float coordScale = GameManager.Instance.CalcCoordScale(dir);
+
+        Quaternion newRot = Quaternion.LookRotation(dir);
+        weaponCollider.gameObject.transform.rotation = Quaternion.Euler(0, newRot.eulerAngles.y, 0);
+
+        weaponCollider.gameObject.transform.localScale = new Vector3(1, 1, coordScale);
     }
 
     #endregion
 
-    // lookat mouse position
-    protected void LookAtMouse()
-    {
-        if(isLockRotate)
-            return;
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, 100, groundLayer))
-        {
-            Vector3 lookAt = hit.point;
-            lookAt.y = transform.position.y;
-
-            // DeadZone
-            if (Vector3.Distance(transform.position, lookAt) > rotDeadZone)
-                transform.LookAt(lookAt);
-        }
-    }
-
-    protected override void OnTriggerEnter(Collider other)
-    {
-        base.OnTriggerEnter(other);
-
-        if (other.CompareTag("Item"))
-        {
-            var item = other.GetComponent<GroundItem>();
-
-            var inventory = B_InventoryManager.Instance.playerInventory;
-
-            if (inventory.AddItem(new B_Item(item.item), 1))
-                Destroy(other.gameObject);
-            //Item _item = new Item(item.item);
-            //Debug.Log(_item.Id);
-            //inventory.AddItem(_item, 1);
-            //Destroy(other.gameObject);
-        }
-    }
 }

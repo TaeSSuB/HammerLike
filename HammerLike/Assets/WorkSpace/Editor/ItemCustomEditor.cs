@@ -1,6 +1,10 @@
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// ItemCustomEditor : 아이템 데이터 에디터 커스텀
+/// - 아이템 데이터의 아이콘을 에디터 상에서 미리보기 가능하도록 구현
+/// </summary>
 [CustomEditor(typeof(SO_Item), true)]
 public class ItemCustomEditor : Editor
 {
