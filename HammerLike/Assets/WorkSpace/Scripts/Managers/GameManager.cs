@@ -26,6 +26,8 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     [SerializeField] private bool isDevMode;
     [SerializeField] private GameObject tempCombatTestGroupPrefab;
     private GameObject currentTempCombatTestGroup;
+    [SerializeField] private TMP_Text fpsText;
+    [SerializeField] private float fpsInterval = 0.5f;
     [SerializeField] private GameObject textPrefab;
     [SerializeField] private Transform textTR;
     public KeyCode resetKey = KeyCode.F5;
@@ -55,6 +57,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         resetTextObj = Instantiate(textPrefab, textTR);
         resetTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Reset - " : "Destroy - ")}" + resetKey.ToString();
         ResetTester();
+
+
+        StartCoroutine(GetFPSRoutine());
     }
 
     private void Update()
@@ -66,9 +71,16 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         if(Input.GetKeyDown(devModeKey))
         {
             isDevMode = !isDevMode;
+
             devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();
             resetTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Reset - " : "Destroy - " )}" + resetKey.ToString();
 
+        }
+
+        if(Input.GetKeyDown(KeyCode.F1))
+        {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = 60;
         }
     }
     #endregion
@@ -200,7 +212,21 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
             currentTempCombatTestGroup = Instantiate(tempCombatTestGroupPrefab);
         }
     }
+
+    // public void GetFPS()
+    // {
+    //     StartCoroutine(GetFPSRoutine());
+    // }
+
+    private IEnumerator GetFPSRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(fpsInterval);
+            fpsText.text = $"FPS : {1f / Time.deltaTime}";
+        }
+    }
+
     #endregion
+
 }
-
-
