@@ -71,6 +71,8 @@ public class WeaponOrbit : MonoBehaviour
             targetObj = b_Weapon.VFXObj;
             weaponMesh = b_Weapon.MeshObj;
         }
+
+        AdjustTrailWidth();
     }
 
     void Start()
@@ -90,8 +92,6 @@ public class WeaponOrbit : MonoBehaviour
 
     private void Update()
     {
-        AdjustTrailWidth();
-
         switch (trackType)
         {
             case TrackType.None:
@@ -114,7 +114,15 @@ public class WeaponOrbit : MonoBehaviour
     /// </summary>
     void AdjustTrailWidth()
     {
-        float weaponLength = weaponMesh.GetComponent<Renderer>().bounds.size.magnitude;  // 무기의 길이 계산
+        var weaponRenderer = weaponMesh.GetComponent<Renderer>();
+        
+        if(weaponRenderer == null)
+            weaponRenderer = weaponMesh.GetComponentInChildren<Renderer>();
+
+        if(weaponRenderer == null)
+            return;
+
+        float weaponLength = weaponRenderer.bounds.size.magnitude;  // 무기의 길이 계산
         trailRenderer.startWidth = weaponLength * startWidthScale;  // 트레일의 시작 폭 설정
         trailRenderer.endWidth = weaponLength * endWidthScale;  // 트레일의 끝 폭 설정
     }

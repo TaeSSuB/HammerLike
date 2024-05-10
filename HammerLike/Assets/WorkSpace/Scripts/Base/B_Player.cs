@@ -19,6 +19,7 @@ public class B_Player : B_UnitBase
     [SerializeField] private float minChargeMoveRate = 0.1f;
 
     [SerializeField] private GameObject weaponObj;
+    [SerializeField] private Renderer weaponRenderer;
     [SerializeField] private Transform weaponTR;
     [SerializeField] private SO_Weapon weaponData;
     [SerializeField] private BoxCollider weaponCollider;
@@ -189,7 +190,7 @@ public class B_Player : B_UnitBase
 
             // VFX
             chargeVFXObj.SetActive(true);
-            weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", normalizeChargeRate * 4f);
+            weaponRenderer.material.SetFloat("_ChargeAmount", normalizeChargeRate * 4f);
 
             // Move Speed Reduce
             UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin - (unitStatus as SO_PlayerStatus).MoveSpeedOrigin * Mathf.Clamp(normalizeChargeRate, 0f, 1f - minChargeMoveRate);
@@ -289,7 +290,7 @@ public class B_Player : B_UnitBase
         weaponOrbit.trailRenderer.Clear();
         DisableWeaponCollider();
         chargeVFXObj.SetActive(false);
-        weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", 0f);
+        weaponRenderer.material.SetFloat("_ChargeAmount", 0f);
         //zoomCam.orthographicSize = startZoom;
         ResetDamage();
 
@@ -419,16 +420,28 @@ public class B_Player : B_UnitBase
         weaponObj = Instantiate(weaponData.prefab, weaponTR);
         
         B_Weapon b_Weapon = weaponObj.GetComponent<B_Weapon>();
-        weaponOrbit.ApplyWeapon(b_Weapon);
         
         if(b_Weapon == null)
             b_Weapon = weaponObj.GetComponentInChildren<B_Weapon>();
         
         if(b_Weapon == null)
         {
-            Debug.LogError("WeaponObj is not B_Weapon or B_Weapon is not in child.");
+            Debug.LogError("WeaponObj is not B_Weapon or is not in child.");
             return;
         }
+
+        weaponRenderer = b_Weapon.MeshObj.GetComponent<Renderer>();
+
+        if(weaponRenderer == null)
+            weaponRenderer = b_Weapon.MeshObj.GetComponentInChildren<Renderer>();
+
+        if(weaponRenderer == null)
+        {
+            Debug.LogError("weaponRenderer is not in B_Weapon.MeshObj or is not in child.");
+            return;
+        }
+
+        weaponOrbit.ApplyWeapon(b_Weapon);
 
         chargeVFXObj = b_Weapon.VFXObj;
 
@@ -446,6 +459,7 @@ public class B_Player : B_UnitBase
     {
         Destroy(weaponObj);
         weaponObj = null;
+        weaponRenderer = null;
 
         weaponData = null;
 
@@ -478,7 +492,7 @@ public class B_Player : B_UnitBase
         Anim.speed = 1f;//(unitStatus as SO_PlayerStatus).atkSpeed;
 
         chargeVFXObj.SetActive(false);
-        weaponObj.GetComponent<Renderer>().material.SetFloat("_ChargeAmount", 0f);
+        weaponRenderer.material.SetFloat("_ChargeAmount", 0f);
         //zoomCam.orthographicSize = startZoom;
 
         ResetDamage();
