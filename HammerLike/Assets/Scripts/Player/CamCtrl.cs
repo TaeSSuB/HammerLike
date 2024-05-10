@@ -81,7 +81,6 @@ public class CamCtrl : MonoBehaviour
     private float zoomCurveTime = 0f;
     private Bounds roomBounds;
     //private PlayerAtk playerAtk;
-    public float initialZoom; 
     private bool shouldReturnToInitialZoom = false; 
     private float returnZoomStartTime;
     [Space(10f)]
@@ -257,7 +256,7 @@ public class CamCtrl : MonoBehaviour
         cameraOffset = mainCam.transform.position;
         if (zoomCam != null)
         {
-            initialZoom = zoomCam.targetCameraHalfHeight;
+            //initialZoom = zoomCam.targetCameraHalfHeight;
         }
     }
 
@@ -309,8 +308,34 @@ public class CamCtrl : MonoBehaviour
 
     void Zoom(float scrollAmount)
     {
-        
+
     }
+
+    void ZoomIn()
+    {
+        if (zoomOption)
+        {
+            float targetZoom = Mathf.Max(mainCam.orthographicSize - zoomSpd, zoomMin);
+            mainCam.orthographicSize = Mathf.Lerp(mainCam.orthographicSize, targetZoom, Time.deltaTime * zoomSpd);
+        }
+    }
+
+    void ZoomOut()
+    {
+        if (zoomOption && shouldReturnToInitialZoom)
+        {
+            if (Mathf.Abs(mainCam.orthographicSize - orthographicSize) < 0.01f)
+            {
+                mainCam.orthographicSize = orthographicSize; 
+                shouldReturnToInitialZoom = false; 
+            }
+            else
+            {
+                mainCam.orthographicSize = Mathf.Lerp(mainCam.orthographicSize, orthographicSize, Time.deltaTime * zoomSpd);
+            }
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
@@ -318,32 +343,23 @@ public class CamCtrl : MonoBehaviour
         ManageZoomCamera();
         HandleZoomWithMouseWheel();
 
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            RemoveLayerFromCullingMask("Player");
-        }
-        else if (Input.GetKeyDown(KeyCode.Y))
-        {
-            AddLayerToCullingMask("Player");
-        }
-        else if (Input.GetKeyDown(KeyCode.U))
-        {
-            ResetCullingMask();
-        }
-        else if (Input.GetKeyDown(KeyCode.I))
-        {
-            ExcludeAllLayers();
-        }
 
 
-
-        if (Input.GetMouseButtonUp(0)&& cursorFollow)
+        if (Input.GetMouseButtonUp(0) && cursorFollow)
         {
             cursorFollow = false;
+            shouldReturnToInitialZoom = true; // Start zooming out
         }
-        else if (Input.GetMouseButton(0) && !cursorFollow)
+        else if (Input.GetMouseButton(0))
         {
-            cursorFollow = true;
+            ZoomIn();
+            if (!cursorFollow)
+                cursorFollow = true;
+        }
+
+        if (shouldReturnToInitialZoom)
+        {
+            ZoomOut();
         }
     }
 
