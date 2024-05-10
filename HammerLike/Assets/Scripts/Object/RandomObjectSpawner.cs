@@ -7,7 +7,7 @@ public class RandomObjectSpawner : MonoBehaviour
     public class PrefabProbability
     {
         public GameObject prefab;
-        public float probability; // ÀÌ ºñÀ²Àº ÀüÃ¼ ÇÕ°è°¡ 1ÀÌ µÇ¾î¾ß ÇÔ
+        public float probability; // ì´ ë¹„ìœ¨ì€ ì „ì²´ í•©ê³„ê°€ 1ì´ ë˜ì–´ì•¼ í•¨
     }
 
     public List<PrefabProbability> prefabsWithProbability;
@@ -19,6 +19,11 @@ public class RandomObjectSpawner : MonoBehaviour
     private void Start()
     {
         ReplaceObject();
+        MeshBakerManager bakerManager = FindObjectOfType<MeshBakerManager>();
+        if (bakerManager != null)
+        {
+            bakerManager.BakeMeshes(); // ë©”ì‹œ ë³‘í•©
+        }
     }
 
     public void ReplaceObject()
@@ -38,18 +43,18 @@ public class RandomObjectSpawner : MonoBehaviour
             position = transform.position + (selectedPrefab.transform.position);
         }
 
-        // »õ ¿ÀºêÁ§Æ®¸¦ »ı¼ºÇÏ°í ºÎ¸ğ ¿ÀºêÁ§Æ®¿¡ ¿¬°á
+        // ìƒˆ ì˜¤ë¸Œì íŠ¸ë¥¼ ìƒì„±í•˜ê³  ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸ì— ì—°ê²°
         GameObject spawnedObject = Instantiate(selectedPrefab, position, rotation, transform.parent);
         spawnedObject.transform.localScale = scale;
 
-        // ¿øº» ¿ÀºêÁ§Æ® Ã³¸®
+        // ì›ë³¸ ì˜¤ë¸Œì íŠ¸ ì²˜ë¦¬
         if (destroyOriginal)
         {
             Destroy(gameObject);
         }
         else
         {
-            // ¿øº» ¿ÀºêÁ§Æ®¸¦ ºñÈ°¼ºÈ­ÇÏÁö ¾Ê°í ±×´ë·Î µÒ
+            // ì›ë³¸ ì˜¤ë¸Œì íŠ¸ë¥¼ ë¹„í™œì„±í™”í•˜ì§€ ì•Šê³  ê·¸ëŒ€ë¡œ ë‘ 
         }
     }
 
@@ -59,10 +64,10 @@ public class RandomObjectSpawner : MonoBehaviour
         float total = 0;
         foreach (var item in prefabsWithProbability)
         {
-            total += item.probability; // ¸ğµç È®·üÀÇ ÇÕÀ» °è»ê
+            total += item.probability; // ëª¨ë“  í™•ë¥ ì˜ í•©ì„ ê³„ì‚°
         }
 
-        float randomPoint = Random.value * total; // 0°ú total »çÀÌÀÇ ¹«ÀÛÀ§ °ªÀ» ¼±ÅÃ
+        float randomPoint = Random.value * total; // 0ê³¼ total ì‚¬ì´ì˜ ë¬´ì‘ìœ„ ê°’ì„ ì„ íƒ
 
         foreach (var item in prefabsWithProbability)
         {
@@ -72,7 +77,7 @@ public class RandomObjectSpawner : MonoBehaviour
                 randomPoint -= item.probability;
         }
 
-        return null; // ÀÌ °æ¿ì´Â ¹ß»ıÇÏÁö ¾Ê¾Æ¾ß ÇÔ
+        return null; // ì´ ê²½ìš°ëŠ” ë°œìƒí•˜ì§€ ì•Šì•„ì•¼ í•¨
     }
 
 }

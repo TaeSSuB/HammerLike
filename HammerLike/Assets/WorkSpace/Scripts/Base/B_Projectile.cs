@@ -21,31 +21,37 @@ public class B_Projectile : MonoBehaviour
     [SerializeField] protected ProjectileType projecType;
 
     [Header("Missile")]
-    [SerializeField] LayerMask layerMask=0;
-    float currentSpeed=0f;
+    [SerializeField] LayerMask layerMask = 0;
+    float currentSpeed = 0f;
     Transform target;
-    [SerializeField] private float fallVelocity;
+
+    [Header("Launch")]
+    [SerializeField] private float yOffset;
+    [SerializeField] private float upTime;
+    [SerializeField] private float fallTime;
     [SerializeField] private float delay;
+    [SerializeField] private GameObject sprite;
+
     void Start()
     {
         Init();
         // 일정 시간 후에 자동 파괴
-        if (projecType !=ProjectileType.Launch)
+        if (projecType != ProjectileType.Launch)
             Destroy(gameObject, 5f);
     }
 
-    
+
     public void Init()
     {
-        if(projecType==ProjectileType.Default)
+        if (projecType == ProjectileType.Default)
         {
-        // 투사체 초기화
-        Rigidbody rigid = GetComponent<Rigidbody>();
-        var resultforward = GameManager.Instance.ApplyCoordScaleAfterNormalize(transform.forward);
-        //rigid.velocity = resultforward * projectileSpeed;
-        rigid.velocity = transform.forward * projectileSpeed * resultforward.magnitude;
+            // 투사체 초기화
+            Rigidbody rigid = GetComponent<Rigidbody>();
+            var resultforward = GameManager.Instance.ApplyCoordScaleAfterNormalize(transform.forward);
+            //rigid.velocity = resultforward * projectileSpeed;
+            rigid.velocity = transform.forward * projectileSpeed * resultforward.magnitude;
         }
-        else if(projecType == ProjectileType.Parabola)
+        else if (projecType == ProjectileType.Parabola)
         {
             ///
             /// 포물선을 이용하는 방법은 DOTween을 사용하는 방법과 Rigidbody 있는데 고민중
@@ -58,25 +64,23 @@ public class B_Projectile : MonoBehaviour
             transform.DOPath(new[] { startPos, middlePos, goalPos }, 1f, PathType.CatmullRom)
                 .SetEase(Ease.OutQuad); // 이징 함수 조정
         }
-        else if(projecType == ProjectileType.Missile)
+        else if (projecType == ProjectileType.Missile)
         {
             rigid = GetComponent<Rigidbody>();
             rigid.velocity = Vector3.up * 10f;
             StartCoroutine(LaunchDelay());
         }
-        else if(projecType == ProjectileType.Launch)
+        else if (projecType == ProjectileType.Launch)
         {
             rigid = GetComponent<Rigidbody>();
-            rigid.velocity = Vector3.up * 30f;
-            StartCoroutine(LaunchDelay(delay));
-
-
+            rigid.isKinematic = true; // 물리 엔진의 영향을 받지 않도록 설정
+            StartCoroutine(LaunchMovement());
         }
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player")&& projecType!=ProjectileType.Launch)
         {
             B_Player targetPlayer = GameManager.Instance.Player;
 
@@ -90,6 +94,7 @@ public class B_Projectile : MonoBehaviour
             }
 
         }
+       
     }
     private void DestroyProjectile()
     {
@@ -98,7 +103,7 @@ public class B_Projectile : MonoBehaviour
 
     private void Update()
     {
-        if(target != null && projecType == ProjectileType.Missile)
+        if (target != null && projecType == ProjectileType.Missile)
         {
             if (currentSpeed <= projectileSpeed)
                 currentSpeed += projectileSpeed * Time.deltaTime;
@@ -114,15 +119,16 @@ public class B_Projectile : MonoBehaviour
     {
 
 
-            
-            Vector3 newPosition = new Vector3(target.position.x, transform.position.y, target.position.z);
-            transform.position = newPosition;
-            rigid.useGravity = true;
-            rigid.velocity = Vector3.down * fallVelocity;
-        
+        Vector3 newPosition = new Vector3(target.position.x, transform.position.y, target.position.z);
+        GameObject range = Instantiate(sprite, new Vector3(target.position.x, 0, target.position.z), Quaternion.identity);
+        Destroy(range, 3f);
+        transform.position = newPosition;
+        rigid.useGravity = true;
+        rigid.velocity = Vector3.down * yOffset / fallTime;
+
     }
 
-    IEnumerator LaunchDelay(float delay=0.1f)
+    IEnumerator LaunchDelay(float delay = 0.1f)
     {
         yield return new WaitUntil(() => rigid.velocity.y < 0f);
         rigid.useGravity = false;
@@ -137,6 +143,35 @@ public class B_Projectile : MonoBehaviour
         }
         if (projecType == ProjectileType.Launch)
             SearchEnemy();
+    }
+
+    IEnumerator LaunchMovement()
+    {
+        Vector3 startPosition = transform.position;
+        Vector3 endPosition = new Vector3(startPosition.x, startPosition.y + yOffset, startPosition.z);
+        float elapsedTime = 0;
+
+        while (elapsedTime < upTime)
+        {
+            float ratio = elapsedTime / upTime;
+            transform.position = Vector3.Lerp(startPosition, endPosition, ratio);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Vector3 targetPosition = new Vector3(GameManager.Instance.Player.transform.position.x, endPosition.y, GameManager.Instance.Player.transform.position.z);
+        transform.position = endPosition; // 최종 위치 보정
+        yield return new WaitForSeconds(delay); // 지정된 지연 시간을 기다림
+        GameObject range = Instantiate(sprite, new Vector3(targetPosition.x, 0, targetPosition.z), Quaternion.identity);
+        //Destroy(range, fallTime);
+        transform.position = targetPosition;
+        // 하강 시작
+        rigid.isKinematic = false; // 물리 엔진 재활성화
+        float initialDownSpeed = yOffset / fallTime;
+        rigid.velocity = Vector3.down * initialDownSpeed; // 하강 속도 설정
+
+        yield return new WaitForSeconds(fallTime+0.5f); // 하강 시간 동안 기다림
+        Destroy(gameObject); // 투사체 제거
     }
 
 }

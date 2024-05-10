@@ -21,7 +21,7 @@ namespace DigitalOpus.MB.MBEditor
     {
 
         MB3_TextureBakerEditorInternal tbe = new MB3_TextureBakerEditorInternal();
-
+            
         void OnEnable()
         {
             tbe.OnEnable(serializedObject);
