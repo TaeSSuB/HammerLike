@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MonsterLight : MonoBehaviour
+public class FreezeTransform : MonoBehaviour
 {
     private Vector3 fixedPosition;
     private Quaternion fixedRotation;

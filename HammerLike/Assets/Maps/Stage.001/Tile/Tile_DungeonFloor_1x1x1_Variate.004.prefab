@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1171441580100822564}
   - component: {fileID: 6716327354213815202}
   - component: {fileID: 4730984318963737146}
+  - component: {fileID: -8201732601902164220}
   m_Layer: 0
   m_Name: Tile_DungeonFloor_1x1x1_Variate.004
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 2043231585562933464}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.12654738, z: 0}
+  m_LocalPosition: {x: 0, y: -0.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -61,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 417de88e453685843b199b8912bcba8e, type: 2}
+  - {fileID: 2100000, guid: 1feb08a4b02544542b70f7eeb774e536, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -83,3 +84,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-8201732601902164220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043231585562933464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8e4dccdac17acf4d873a6b056ad2c15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textureColumns: 4
+  textureRows: 4
