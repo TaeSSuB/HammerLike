@@ -1,30 +1,37 @@
 using UnityEngine;
 
+[RequireComponent(typeof(MeshFilter))]
 public class RandomTiling : MonoBehaviour
 {
-    public Material material; // 사용할 Material
     public int textureColumns = 2; // 텍스쳐를 나눌 열의 수
     public int textureRows = 2; // 텍스쳐를 나눌 행의 수
 
     void Start()
     {
-        UpdateMaterialProperties();
+        RandomizeUVs();
     }
 
-    void UpdateMaterialProperties()
+    void RandomizeUVs()
     {
-        if (material == null)
+        Mesh mesh = GetComponent<MeshFilter>().mesh;
+        Vector2[] uvs = mesh.uv;
+
+        // 랜덤한 타일 선택
+        int tileX = Random.Range(0, textureColumns);
+        int tileY = Random.Range(0, textureRows);
+
+        // 새 UV 좌표 계산
+        float tileSizeX = 1f / textureColumns;
+        float tileSizeY = 1f / textureRows;
+        float minX = tileX * tileSizeX;
+        float minY = tileY * tileSizeY;
+
+        for (int i = 0; i < uvs.Length; i++)
         {
-            Debug.LogError("Material is not assigned.");
-            return;
+            uvs[i] = new Vector2(minX + uvs[i].x * tileSizeX, minY + uvs[i].y * tileSizeY);
         }
 
-        // Tiling 값 설정
-        material.mainTextureScale = new Vector2(1f / textureColumns, 1f / textureRows);
-
-        // Offset 값 랜덤 설정
-        float offsetX = Random.Range(0, textureColumns) * (1f / textureColumns);
-        float offsetY = Random.Range(0, textureRows) * (1f / textureRows);
-        material.mainTextureOffset = new Vector2(offsetX, offsetY);
+        // 새로운 UV 좌표를 Mesh에 적용
+        mesh.uv = uvs;
     }
 }
