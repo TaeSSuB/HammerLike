@@ -530,7 +530,8 @@ public class BSPGenerator : MonoBehaviour
         Vector3 direction = (end - start).normalized;
         float distance = Vector3.Distance(start, end);
         float tileStep = tileSize.x;
-        int tileCount = Mathf.FloorToInt(distance / tileStep);
+        int tileCount = Mathf.CeilToInt(distance / tileStep);
+
 
         if (skipLastTile)
             tileCount--;

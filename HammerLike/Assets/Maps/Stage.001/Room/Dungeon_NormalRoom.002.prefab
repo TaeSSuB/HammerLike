@@ -1643,6 +1643,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1964456393541936818}
   - component: {fileID: 6298453238154600493}
+  - component: {fileID: 1876159376324400013}
+  - component: {fileID: 4628658563259183532}
   m_Layer: 0
   m_Name: Dungeon_NormalRoom.002
   m_TagString: Untagged
@@ -1686,6 +1688,67 @@ MonoBehaviour:
   systemSettings: {fileID: 11400000, guid: f90dd2497e9748144930a65da7efc0ae, type: 2}
   editorMode: 1
   reset: 1
+--- !u!114 &1876159376324400013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5153031965794867070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e64da21211d3624cacbc6abe688e843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EntranceN: {fileID: 532812777549237494}
+  EntranceE: {fileID: 2123533310418425822}
+  EntranceW: {fileID: 2579826870694552119}
+  EntranceS: {fileID: 7373040572041165180}
+  monsterCount: 0
+  Ground: {fileID: 0}
+  monsterParent: {fileID: 0}
+--- !u!23 &4628658563259183532
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5153031965794867070}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7373040572041165180
 GameObject:
   m_ObjectHideFlags: 0
