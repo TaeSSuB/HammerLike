@@ -56,6 +56,13 @@ public class B_Player : B_UnitBase
     {
         base.Update();
 
+        // if Dead return
+        if (unitStatus.currentHP <= 0)
+        {
+            //DisableMovementAndRotation();
+            return;
+        }
+
         LookAtMouse();
 
         InputMovement();
@@ -88,6 +95,36 @@ public class B_Player : B_UnitBase
             }
 
             Destroy(other.gameObject);
+        }
+
+        if(other.CompareTag("WeaponCollider") && UnitStatus.currentHP > 0)
+        {
+            if(isInvincible) return;
+
+            // Get other B_Enemy or B_Boss Class
+            B_UnitBase unit = other.GetComponentInParent<B_UnitBase>();
+            
+            if (!(unit as B_Enemy || unit as B_Boss)) return;
+
+            // Get hit dir from player
+            Vector3 hitDir = (transform.position - unit.transform.position).normalized;
+
+            // Take Damage and Knockback dir from player
+            TakeDamage(hitDir, unit.UnitStatus.atkDamage, unit.UnitStatus.knockbackPower);
+
+            Anim.SetTrigger("tHit");
+
+            var vfxPos = other.ClosestPointOnBounds(transform.position);
+            B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
+
+            if (unitStatus.currentHP > 0)
+            {
+                B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+            }
+            else
+            {
+                B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Death);
+            }
         }
     }
 
@@ -380,9 +417,15 @@ public class B_Player : B_UnitBase
     }
 
     #endregion
-    
+
     #endregion
-    
+
+    protected override void Dead()
+    {
+        base.Dead();
+        Anim.SetTrigger("tDeath");
+    }
+
     #endregion
 
     #region Control & Apply Status Data
