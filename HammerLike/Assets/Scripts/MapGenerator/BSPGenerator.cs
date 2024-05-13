@@ -18,10 +18,6 @@ public class BSPNode
     public Rect room;
     public RoomType roomType = RoomType.None;
     public GameObject roomObject; // 
-    public bool isConnectedNorth;
-    public bool isConnectedEast;
-    public bool isConnectedSouth;
-    public bool isConnectedWest;
 
 
 }
@@ -199,6 +195,8 @@ public class BSPGenerator : MonoBehaviour
             parent[leaf] = leaf; // Initially, each node is its own parent
         }
 
+        List<KeyValuePair<BSPNode, BSPNode>> roomConnections = new List<KeyValuePair<BSPNode, BSPNode>>();
+
         foreach (var edge in edges)
         {
             BSPNode rootA = Find(parent, edge.nodeA);
@@ -206,9 +204,17 @@ public class BSPGenerator : MonoBehaviour
             if (rootA != rootB)
             {
                 CreatePathBetweenRooms(edge.nodeA, edge.nodeB);
+                roomConnections.Add(new KeyValuePair<BSPNode, BSPNode>(edge.nodeA, edge.nodeB));
                 parent[rootA] = rootB; // Union the sets
             }
         }
+
+        // 연결된 방들의 순서를 출력하거나 다른 방식으로 사용
+        foreach (var connection in roomConnections)
+        {
+            Debug.Log($"Connected: {connection.Key.roomType} to {connection.Value.roomType}");
+        }
+
     }
 
     BSPNode Find(Dictionary<BSPNode, BSPNode> parent, BSPNode node)
