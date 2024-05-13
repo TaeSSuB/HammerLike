@@ -322,11 +322,13 @@ public class BSPGenerator : MonoBehaviour
             {
                 intermediate1 = new Vector3(midPoint.x, startPosition.y, startPosition.z);
                 intermediate2 = new Vector3(midPoint.x, endPosition.y, endPosition.z);
+                Debug.Log("X좌표가 Z좌표보다 절대값이 큼" + intermediate1+""+intermediate2);
             }
             else
             {
                 intermediate1 = new Vector3(startPosition.x, startPosition.y, midPoint.z);
                 intermediate2 = new Vector3(endPosition.x, endPosition.y, midPoint.z);
+                Debug.Log("Z좌표가 X좌표보다 절대값이 큼" + intermediate1 + "" + intermediate2);
             }
 
 
