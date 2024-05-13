@@ -22,6 +22,9 @@ public class ChasingBossState : IBossAIState
         b_Boss.Anim.SetTrigger("tPatternPlay");
         b_Boss.Anim.SetInteger("PatternIdx", patternIdx);
 
+        if(b_Boss as B_Boss_SkeletonTorturer)
+            (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.isTracking = false;
+
     }
 
     public void OnUpdate()

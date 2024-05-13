@@ -14,6 +14,10 @@ public class IdleBossState : IBossAIState
     public void OnEnter()
     {
         b_Boss.Anim.SetTrigger("tIdle");
+
+        if(b_Boss as B_Boss_SkeletonTorturer)
+            (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.isTracking = false;
+        
     }
 
     public void OnUpdate()

@@ -14,6 +14,12 @@ public class MeleeAttackBossState : IBossAIState
     
     public void OnEnter()
     {
+        if(b_Boss as B_Boss_SkeletonTorturer)
+        {
+            (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.trackType = WeaponOrbitCommon.TrackType.DirBasedPoint;
+            (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.isTracking = true;
+        }
+
         var xzPlayerPos = new Vector3(GameManager.Instance.Player.transform.position.x, b_Boss.transform.position.y, GameManager.Instance.Player.transform.position.z);
         b_Boss.transform.LookAt(xzPlayerPos);
 

@@ -8,9 +8,12 @@ using TMPro;
 
 public class B_Boss_SkeletonTorturer : B_Boss
 {
+    [SerializeField] private WeaponOrbitCommon weaponOrbitCommon;
     [SerializeField] private float distance = 0f;
-    [SerializeField] private GameObject weaponObj;
+    //[SerializeField] private GameObject weaponObj;
     [SerializeField] private TMP_Text devText;
+
+    public WeaponOrbitCommon WeaponOrbitCommon => weaponOrbitCommon;
 
     public override Vector3 Move(Vector3 inPos)
     {            
@@ -35,7 +38,7 @@ public class B_Boss_SkeletonTorturer : B_Boss
     {
         base.Start();
         
-        weaponObj.SetActive(false);
+        //weaponObj.SetActive(false);
     }
 
     protected override void Update()
