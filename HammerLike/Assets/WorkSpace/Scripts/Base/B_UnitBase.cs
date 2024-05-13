@@ -180,8 +180,6 @@ public class B_UnitBase : B_Entity
 
         Debug.Log(this.gameObject.name + " TakeDamage : " + damage);
 
-        //CheckDead();
-
         if (knockBack)
         {
             remainKnockBackDir = damageDir;
@@ -193,6 +191,10 @@ public class B_UnitBase : B_Entity
                 // If the unit is not dead, apply smooth knockback
                 Knockback(damageDir, remainKnockBackForce);
             }
+        }
+        else
+        {
+            CheckDead();
         }
     }
 
@@ -223,8 +225,11 @@ public class B_UnitBase : B_Entity
         // Dead if hp is 0
         if (UnitStatus.currentHP <= 0)
         {
-            Dead();
-            isAlive = false;
+            if(isAlive)
+            {
+                Dead();
+                isAlive = false;
+            }
             return true;
         }
         else

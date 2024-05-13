@@ -17,6 +17,7 @@ public class B_Projectile : MonoBehaviour
     [SerializeField] protected Rigidbody rigid;
     [SerializeField] protected Collider col;
 
+    public int projectileDamage;
     public float projectileSpeed;
     [SerializeField] protected ProjectileType projecType;
 
@@ -86,6 +87,9 @@ public class B_Projectile : MonoBehaviour
 
             if (targetPlayer != null)
             {
+                // 플레이어에게 데미지를 입힘
+                targetPlayer.TakeDamage(transform.forward, projectileDamage, 0f, false);
+
                 //SoundManager soundManager = SoundManager.Instance;
                 //soundManager.PlaySFX(soundManager.audioClip[8]);
 
@@ -93,6 +97,11 @@ public class B_Projectile : MonoBehaviour
                 DestroyProjectile();
             }
 
+        }
+        // Temp.. 나중에 수정
+        else if(other.gameObject.layer == LayerMask.NameToLayer("Object"))
+        {
+            DestroyProjectile();
         }
        
     }
