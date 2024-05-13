@@ -179,7 +179,7 @@ public class B_UnitBase : B_Entity
         ClampHP();
 
         Debug.Log(this.gameObject.name + " TakeDamage : " + damage);
-
+        ChangeCursor.Instance.SetCursorAttack();
         //CheckDead();
 
         if (knockBack)

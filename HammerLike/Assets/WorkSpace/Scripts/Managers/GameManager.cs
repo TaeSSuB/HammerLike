@@ -220,7 +220,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     private IEnumerator GetFPSRoutine()
     {
-        while (true)
+        while (true&&fpsText)
         {
             yield return new WaitForSeconds(fpsInterval);
             fpsText.text = $"FPS : {1f / Time.deltaTime}";

@@ -8,6 +8,8 @@ public class TestCutting : MonoBehaviour
     [SerializeField]
     GrassComputeScript grassComputeScript;
 
+    private B_Player player;
+
     [SerializeField]
     float radius = 1f;
 
@@ -17,13 +19,13 @@ public class TestCutting : MonoBehaviour
 
     private void Start()
     {
-              
+            
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (updateCuts && transform.position != cachedPos&& Input.GetMouseButton(0))
+        if (updateCuts && transform.position != cachedPos&& Input.GetMouseButtonUp(0))
         {
 
             grassComputeScript.UpdateCutBuffer(transform.position, radius);
@@ -31,16 +33,7 @@ public class TestCutting : MonoBehaviour
 
         }
 
-        if(Input.GetMouseButtonDown(1))
-        {
-            Vector3 currentPosition = transform.position;
-
-            // y좌표를 0.5만큼 증가시킵니다.
-            currentPosition.y += 0.5f;
-
-            // 변경된 위치를 오브젝트에 적용합니다.
-            transform.position = currentPosition;
-        }
+       
     }
 
     private void OnDrawGizmos()

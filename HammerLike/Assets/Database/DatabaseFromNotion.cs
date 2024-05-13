@@ -143,7 +143,7 @@ public class DatabaseFromNotion : MonoBehaviour
                 return 0; 
         }
     }
-
+#if UNITY_EDITOR
     private void LogDatabaseRecord(Page<EntityDatabase> record)
     {
         string entityName = record.properties.entityName.title.FirstOrDefault()?.text.content ?? "No Name";
@@ -226,5 +226,6 @@ public class DatabaseFromNotion : MonoBehaviour
 
         return unitStatus;
     }
+#endif
 
 }

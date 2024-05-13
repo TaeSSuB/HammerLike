@@ -39,7 +39,7 @@ public class LoadingSceneController : MonoBehaviour
             else
             {
                 timer += Time.unscaledDeltaTime;
-                progressBar.value = Mathf.Lerp(0.9f, 1f, timer / 10f); // 3초 동안 부드럽게 채우기
+                progressBar.value = Mathf.Lerp(0.9f, 1f, timer / 1f); // 3초 동안 부드럽게 채우기
                 if (timer > 10f) // 최소 3초 대기
                 {
                     op.allowSceneActivation = true;

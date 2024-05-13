@@ -24,11 +24,12 @@ public class UnitManager : SingletonMonoBehaviour<UnitManager>
     protected override void Awake()
     {
         base.Awake();
-
+#if UNITY_EDITOR
         if (unitDataBase == null)
         {
             unitDataBase = (SO_UnitDB)UnityEditor.AssetDatabase.LoadAssetAtPath(pathDB, typeof(SO_UnitDB));
         }
+#endif
     }
 
     /// <summary>
