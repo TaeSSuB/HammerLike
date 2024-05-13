@@ -10,6 +10,7 @@ public class PullBossState : IBossAIState
     private GameObject weaponObj;
 
     private float pullDelay = 0.5f;
+    private float startPullDelay = 0.5f;
     private float pullSpeed = 100f;
 
     public PullBossState(B_Boss boss, int patternIdx)
@@ -33,6 +34,8 @@ public class PullBossState : IBossAIState
 
         // b_Boss.Anim.SetTrigger("tPatternPlay");
         // b_Boss.Anim.SetInteger("PatternIdx", patternIdx);
+
+        pullDelay = startPullDelay;
     }
 
     public void OnUpdate()
@@ -49,7 +52,6 @@ public class PullBossState : IBossAIState
             {
                 if(Vector3.Distance(GameManager.Instance.Player.transform.position, b_Boss.transform.position) <= b_Boss.UnitStatus.atkRange * 1.5f)
                 {
-                    pullDelay = 0.5f;
                     // b_Boss.Anim.ResetTrigger("tPatternPlay");
                     b_Boss.BossController.SetState(BossAIStateType.ATTACK);
                 }
@@ -62,6 +64,7 @@ public class PullBossState : IBossAIState
         b_Boss.Anim.ResetTrigger("tPatternPlay");
         b_Boss.Anim.SetBool("bGrabbed", false);
         weaponObj.GetComponent<Rigidbody>().isKinematic = false;
+        weaponObj.transform.position = (b_Boss as B_Boss_SkeletonTorturer).WeaponInitPos;
     }
     
     private void PullWeapon()

@@ -25,8 +25,8 @@ public class SwingBossState : IBossAIState
             weaponObj.GetComponent<Rigidbody>().isKinematic = true;
         }
             
-        var xzPlayerPos = new Vector3(GameManager.Instance.Player.transform.position.x, b_Boss.transform.position.y, GameManager.Instance.Player.transform.position.z);
-        b_Boss.transform.LookAt(xzPlayerPos);
+        // var xzPlayerPos = new Vector3(GameManager.Instance.Player.transform.position.x, b_Boss.transform.position.y, GameManager.Instance.Player.transform.position.z);
+        // b_Boss.transform.LookAt(xzPlayerPos);
 
         b_Boss.Anim.SetTrigger("tPatternPlay");
         b_Boss.Anim.SetInteger("PatternIdx", patternIdx);

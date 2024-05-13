@@ -8,6 +8,8 @@ public class RoarBossState : IBossAIState
 
     private int patternIdx = -1;
 
+    private GameObject weaponObj;
+
     public RoarBossState(B_Boss boss, int patternIdx)
     {
         this.b_Boss = boss;
@@ -17,7 +19,12 @@ public class RoarBossState : IBossAIState
     public void OnEnter()
     {
         if(b_Boss as B_Boss_SkeletonTorturer)
+        {
             (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.isTracking = false;
+            weaponObj = (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.TargetObj;
+            weaponObj.transform.position = (b_Boss as B_Boss_SkeletonTorturer).WeaponInitPos;
+        }
+            
 
         var xzPlayerPos = new Vector3(GameManager.Instance.Player.transform.position.x, b_Boss.transform.position.y, GameManager.Instance.Player.transform.position.z);
         b_Boss.transform.LookAt(xzPlayerPos);

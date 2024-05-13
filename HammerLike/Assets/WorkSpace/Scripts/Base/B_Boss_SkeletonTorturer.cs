@@ -9,11 +9,13 @@ using TMPro;
 public class B_Boss_SkeletonTorturer : B_Boss
 {
     [SerializeField] private WeaponOrbitCommon weaponOrbitCommon;
+    [SerializeField] private Transform weaponInitPos;
     [SerializeField] private float distance = 0f;
     //[SerializeField] private GameObject weaponObj;
     [SerializeField] private TMP_Text devText;
 
     public WeaponOrbitCommon WeaponOrbitCommon => weaponOrbitCommon;
+    public Vector3 WeaponInitPos => weaponInitPos.position;
 
     public override Vector3 Move(Vector3 inPos)
     {            
