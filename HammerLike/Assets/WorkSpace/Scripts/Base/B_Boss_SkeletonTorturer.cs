@@ -1,115 +1,85 @@
+using HutongGames.PlayMaker.Actions;
+using RootMotion.Demos;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using TMPro;
 
 public class B_Boss_SkeletonTorturer : B_Boss
 {
-    [SerializeField] private GameObject weaponObj;
+    [SerializeField] private WeaponOrbitCommon weaponOrbitCommon;
+    [SerializeField] private Transform weaponInitPos;
+    [SerializeField] private float distance = 0f;
+    //[SerializeField] private GameObject weaponObj;
+    [SerializeField] private TMP_Text devText;
 
+    public WeaponOrbitCommon WeaponOrbitCommon => weaponOrbitCommon;
+    public Vector3 WeaponInitPos => weaponInitPos.position;
+
+    public override Vector3 Move(Vector3 inPos)
+    {            
+        float moveAmount = Agent.velocity.normalized.magnitude;
+            
+        Anim.SetFloat("MoveAmount", moveAmount);
+
+        return base.Move(inPos);
+    }
+
+    public override void EndAttack()
+    {
+        BossController.SetState(Thinking());
+    }
+
+    public override void Init()
+    {
+        base.Init();
+    }
+    
     protected override void Start()
     {
         base.Start();
-
-        weaponObj.SetActive(false);
-
-        // Add Boss Patterns
-        bossPatterns.Add(new B_BossPattern("Test_FirstPattern", 1, 3f, 3f, Pattern1, this));
-        bossPatterns.Add(new B_BossPattern("", 2, 5f, 3f, Pattern2, this));
-        bossPatterns.Add(new B_BossPattern("", 3, 7f, 3f, Pattern3, this));
+        
+        //weaponObj.SetActive(false);
     }
 
     protected override void Update()
     {
         base.Update();
 
-        if (!bossPatterns.Any(p => p.isCurrentlyActive))
+        // if Dead return
+        if (UnitStatus.currentHP <= 0)
         {
-            B_BossPattern nextPattern = bossPatterns
-                .Where(p => p.IsReadyToActivatePattern(lastPatternActivatedTime))
-                .OrderByDescending(p => p.priority)
-                .FirstOrDefault();
+            //DisableMovementAndRotation();
+            return;
+        }
 
-            if (nextPattern != null)
-            {
-                StartCoroutine(nextPattern.ActivatePattern()); // Coroutine 실행
-            }
+        if (BossController?.CurrentStateType != BossAIStateType.HIT && BossController?.CurrentStateType != BossAIStateType.DEAD)
+        {
+            BossController.SetState(Thinking());
+            // else
+            // {
+            //     BossController.SetState(BossAIStateType.IDLE);
+            // }
+            //BossController.SetState(BossAIStateType.IDLE);
         }
     }
 
-    private IEnumerator Pattern1(B_BossPattern pattern)
+    protected BossAIStateType Thinking()
     {
-        // Pattern 1
-        Debug.Log(this.gameObject.name + " : Pattern 1");
+        var moveDir = GameManager.Instance.Player.transform.position - transform.position;
 
-        var player = GameManager.Instance.Player;
+        float applyCoordScale = GameManager.Instance.CalcCoordScale(moveDir);
+        var targetDis = moveDir.magnitude / applyCoordScale;
 
-        while (pattern.isCurrentlyActive)  // 지속적인 추적 로직
+        if (targetDis <= unitStatus.detectRange)
         {
-            Anim.SetBool("IsChasing", true);
-            agent.SetDestination(player.gameObject.transform.position);
-            yield return null; // 매 프레임마다 위치 업데이트
+            return BossController.CheckPattern();
         }
-
-        Anim.SetBool("IsChasing", false);
-        yield return null;
-    }
-
-    private IEnumerator Pattern2(B_BossPattern pattern)
-    {
-        // Pattern 2
-        Debug.Log(this.gameObject.name + " : Pattern 2");
-        
-        // stop move agent
-        agent.SetDestination(transform.position);
-        weaponObj.SetActive(true);
-        weaponObj.transform.position = transform.position + Vector3.up * 1f;
-
-        var player = GameManager.Instance.Player;
-
-        while (pattern.isCurrentlyActive)  // 지속적인 추적 로직
+        else
         {
-            if(weaponObj.activeSelf == false)
-                weaponObj.SetActive(true);
-            // dir to player
-            var dir = player.transform.position - transform.position;
-            dir = GameManager.Instance.ApplyCoordDivideAfterNormalize(dir);
-            weaponObj.transform.rotation = Quaternion.LookRotation(dir);
-            
-            //agent.SetDestination(player.gameObject.transform.position);
-            yield return null; // 매 프레임마다 위치 업데이트
-        }        
-        
-        weaponObj.SetActive(false);
-        //Anim.SetBool("IsAttacking", false);
-        yield return null;
-    }
-
-    private IEnumerator Pattern3(B_BossPattern pattern)
-    {
-        // Pattern 3
-        Debug.Log(this.gameObject.name + " : Pattern 3");
-
-        // stop move agent
-        agent.SetDestination(transform.position);
-        weaponObj.SetActive(true);
-        weaponObj.transform.position = transform.position + Vector3.up * 1f;
-
-        while (pattern.isCurrentlyActive)  // 지속적인 추적 로직
-        {
-            //Anim.SetBool("IsAttacking", true);
-            if(weaponObj.activeSelf == false)
-                weaponObj.SetActive(true);
-
-            // wheelwind
-            weaponObj.transform.Rotate(Vector3.up, 360f * Time.deltaTime);
-
-            //agent.SetDestination(player.gameObject.transform.position);
-            yield return null; // 매 프레임마다 위치 업데이트
+            return BossAIStateType.CHASE;        
         }
-
-        weaponObj.SetActive(false);
-        //Anim.SetBool("IsAttacking", false);
-        yield return null;
     }
+
 }

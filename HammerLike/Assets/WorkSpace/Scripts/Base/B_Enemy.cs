@@ -87,6 +87,8 @@ public class B_Enemy : B_UnitBase
             // 현재는 B_Player지만, B_UnitBase를 상속받는 모든 유닛에게 적용 가능. a.HG
             B_Player player = other.GetComponentInParent<B_Player>();
 
+            if(player == null) return;
+            
             // Get hit dir from player
             Vector3 hitDir = (transform.position - player.transform.position).normalized;
 

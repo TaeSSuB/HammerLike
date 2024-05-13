@@ -11,10 +11,7 @@ using Unity.VisualScripting;
 public class UI_InGame : MonoBehaviour
 {
     [Header("HP UI")]
-    [SerializeField] protected Image hpBarImg;
-    [SerializeField] protected TMP_Text hpMaxText;
-    [SerializeField] protected TMP_Text hpCurrentText;
-    protected RectTransform hpBarRctTR;
+    [SerializeField] protected Slider hpSlider;
 
     [Header("Charge UI")]
     [SerializeField] protected Slider chargeSlider;
@@ -94,9 +91,7 @@ public class UI_InGame : MonoBehaviour
     {
         //Debug.Log("UI_InGame Initialize");
         player = GameManager.Instance.Player;
-        // playerStatus = player.UnitStatus as SO_PlayerStatus;
-
-        hpBarRctTR = hpBarImg.gameObject.GetComponent<RectTransform>();
+        playerStatus = player.UnitStatus as SO_PlayerStatus;
 
         chargeParticle.SetActive(false);
         maximumChargeAmount = chargeScreen.material.GetFloat("_MaxChargeAmount");
@@ -150,11 +145,8 @@ public class UI_InGame : MonoBehaviour
 
     private void UpdateHP(int hp)
     {
-        hpMaxText.text = playerStatus.maxHP.ToString();
-        hpCurrentText.text = hp.ToString();
-
         float hpRatio = (float)hp / playerStatus.maxHP;
-        hpBarRctTR.anchorMax = new Vector2(hpBarRctTR.anchorMax.x, hpRatio);
+        hpSlider.value = hpRatio;
     }
 
     private IEnumerator CoInitialize()

@@ -23,7 +23,7 @@ public class B_Skeleton_Archer : B_Enemy
     {
         // Shot logic
         GameObject projectile = Instantiate(projectilePrefab, muzzleTR.position, transform.localRotation);
-        //projectile.GetComponent<B_Projectile>().Init(unitStatus.projectileSpeed, transform.forward);
+        projectile.GetComponent<B_Projectile>().projectileDamage = UnitStatus.atkDamage;
     }
     
     public override void EndAttack()
