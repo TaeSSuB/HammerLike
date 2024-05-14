@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+using DG.Tweening;
 public class LoadingSceneController : MonoBehaviour
 {
     static string nextScene;
-
+    public Image image;
+    public float duration;
     [SerializeField]
     Slider progressBar;
 
@@ -19,6 +20,7 @@ public class LoadingSceneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        FadeOut();
         StartCoroutine(LoadSceneProcess());
     }
 
@@ -39,14 +41,27 @@ public class LoadingSceneController : MonoBehaviour
             else
             {
                 timer += Time.unscaledDeltaTime;
-                progressBar.value = Mathf.Lerp(0.9f, 1f, timer / 1f); // 3초 동안 부드럽게 채우기
-                if (timer > 10f) // 최소 3초 대기
+                progressBar.value = Mathf.Lerp(0.9f, 1f, timer / 3f); // 3초 동안 부드럽게 채우기
+                if (timer > 3f) // 최소 3초 대기
                 {
                     op.allowSceneActivation = true;
+                    FadeIn();
                     yield break;
                 }
             }
         }
+    }
+
+    public void FadeIn()
+    {
+        // DOTween을 사용한 페이드 인: 투명도를 0에서 1로 변경
+        image.DOFade(1, duration).SetEase(Ease.InOutQuad);
+    }
+
+    public void FadeOut()
+    {
+        // DOTween을 사용한 페이드 아웃: 투명도를 1에서 0으로 변경
+        image.DOFade(0, duration).SetEase(Ease.InOutQuad);
     }
 
     // Update is called once per frame
