@@ -22,6 +22,8 @@ public class SwingBossState : IBossAIState
 
     public void OnEnter()
     {
+        b_Boss.SetEnableHitEvent(false);        
+        
         if(b_Boss as B_Boss_SkeletonTorturer)
         {
             var targetBoss = b_Boss as B_Boss_SkeletonTorturer;

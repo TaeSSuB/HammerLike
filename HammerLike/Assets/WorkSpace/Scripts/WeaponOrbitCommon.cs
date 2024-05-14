@@ -47,7 +47,6 @@ public class WeaponOrbitCommon : MonoBehaviour
 
     private void Start()
     {
-
         targetCollider = targetObj.GetComponent<Collider>();
     }
 

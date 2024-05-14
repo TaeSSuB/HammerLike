@@ -336,6 +336,7 @@ public class B_UnitBase : B_Entity
 
         DisableMovementAndRotation();
         isKnockback = true;
+        isInvincible = true;
 
         while (Time.time < startTime + knockbackDuration)
         {
@@ -350,6 +351,8 @@ public class B_UnitBase : B_Entity
         }
 
         isKnockback = false;
+        isInvincible = false;
+        
         EnableMovementAndRotation();
     }
     #endregion

@@ -13,6 +13,8 @@ public class IdleBossState : IBossAIState
 
     public void OnEnter()
     {
+        b_Boss.SetEnableHitEvent(true);
+        
         b_Boss.Anim.SetTrigger("tIdle");
 
         if(b_Boss as B_Boss_SkeletonTorturer)

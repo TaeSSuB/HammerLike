@@ -1579,6 +1579,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hpWorldUIPrefab: {fileID: 6063730466102454155, guid: a4df4cdc36c99044b88a5c628e1f8a9d,
     type: 3}
+  ingameUI: {fileID: 637190828}
+  ingameUIPrefab: {fileID: 0}
+  ui_InGame: {fileID: 637190829}
   inventoryObj: {fileID: 1986976266}
   inventoryKey: 105
 --- !u!114 &250384305
@@ -2670,6 +2673,24 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 620564604}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &637190828 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1227852006820415342, guid: b84dc5605c8770540aa98cb56a63e2b3,
+    type: 3}
+  m_PrefabInstance: {fileID: 949103038}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &637190829 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3797685289193274847, guid: b84dc5605c8770540aa98cb56a63e2b3,
+    type: 3}
+  m_PrefabInstance: {fileID: 949103038}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637190828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7540073c55d440c499b75d613b97dc40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &658364749
 PrefabInstance:
   m_ObjectHideFlags: 0

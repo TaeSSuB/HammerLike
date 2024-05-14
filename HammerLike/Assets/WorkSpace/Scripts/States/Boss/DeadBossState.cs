@@ -13,6 +13,8 @@ public class DeadBossState : IBossAIState
 
     public void OnEnter()
     {
+        b_Boss.SetEnableHitEvent(false);        
+        
         b_Boss.DisableMovementAndRotation();
         b_Boss.Move(b_Boss.transform.position);
         b_Boss.Col.enabled = false;

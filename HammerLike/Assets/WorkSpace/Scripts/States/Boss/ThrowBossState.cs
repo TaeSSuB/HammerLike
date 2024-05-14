@@ -21,6 +21,8 @@ public class ThrowBossState : IBossAIState
     
     public void OnEnter()
     {
+        b_Boss.SetEnableHitEvent(false);
+        
         if(b_Boss as B_Boss_SkeletonTorturer)
         {
             (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.isTracking = false;

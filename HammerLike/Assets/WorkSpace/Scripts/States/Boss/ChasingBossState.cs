@@ -18,7 +18,9 @@ public class ChasingBossState : IBossAIState
     {
         //Debug.Log("ChaseState OnEnter");
         this.target = GameManager.Instance.Player.transform;
-
+        
+        b_Boss.SetEnableHitEvent(true);
+        
         b_Boss.Anim.SetTrigger("tPatternPlay");
         b_Boss.Anim.SetInteger("PatternIdx", patternIdx);
 

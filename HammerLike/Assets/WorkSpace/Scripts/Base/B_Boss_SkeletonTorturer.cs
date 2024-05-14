@@ -10,12 +10,14 @@ public class B_Boss_SkeletonTorturer : B_Boss
 {
     [SerializeField] private WeaponOrbitCommon weaponOrbitCommon;
     [SerializeField] private Transform weaponInitPos;
+
     [SerializeField] private float distance = 0f;
     //[SerializeField] private GameObject weaponObj;
     [SerializeField] private TMP_Text devText;
 
     public WeaponOrbitCommon WeaponOrbitCommon => weaponOrbitCommon;
     public Vector3 WeaponInitPos => weaponInitPos.position;
+
 
     public override Vector3 Move(Vector3 inPos)
     {            
@@ -47,13 +49,14 @@ public class B_Boss_SkeletonTorturer : B_Boss
     protected override void Start()
     {
         base.Start();
-        
         //weaponObj.SetActive(false);
     }
 
     protected override void Update()
     {
         base.Update();
+
+        B_UIManager.Instance.UI_InGame.UpdateBossHP(this);
 
         // if Dead return
         if (UnitStatus.currentHP <= 0)

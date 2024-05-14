@@ -21,6 +21,8 @@ public class PullBossState : IBossAIState
 
     public void OnEnter()
     {
+        b_Boss.SetEnableHitEvent(false);
+
         if(b_Boss as B_Boss_SkeletonTorturer)
         {            
             var targetBoss = b_Boss as B_Boss_SkeletonTorturer;
@@ -79,6 +81,11 @@ public class PullBossState : IBossAIState
         var weaponObj = weaponOrbitCommon.TargetObj;
         var weaponCollider = weaponOrbitCommon.TargetCollider;
         
+        var distance = Vector3.Distance(weaponObj.transform.position, b_Boss.transform.position);
+
+        if(distance <= 0.1f)
+            return;
+            
         var towardMovePos = Vector3.MoveTowards(weaponObj.transform.position, b_Boss.transform.position, pullSpeed * Time.deltaTime);
 
         weaponObj.transform.position = towardMovePos;

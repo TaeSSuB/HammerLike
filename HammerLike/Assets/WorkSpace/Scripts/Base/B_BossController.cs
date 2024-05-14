@@ -62,6 +62,7 @@ public class B_BossController : MonoBehaviour
 
     public void SetState(BossAIStateType newState)
     {
+        // 이전 상태와 같은 상태로 전환 시 리턴
         if(newState == currentStateType)
         {
             return;
@@ -69,14 +70,17 @@ public class B_BossController : MonoBehaviour
 
         if (currentState != null)
         {
-            currentState.OnExit();
+            currentState?.OnExit();
         }
+
+        // 상태 전환 시 이동 중지
+        if(b_Boss != null) b_Boss.Rigid.velocity = Vector3.zero;
 
         currentStateType = newState;
         currentState = states[currentStateType];
 
-        // 상태 전환시 초기화
-        currentState.OnEnter();
+        // 상태 전환 시 초기화
+        currentState?.OnEnter();
     }
 
     void Update()
