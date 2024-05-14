@@ -41,24 +41,26 @@ public class MeleeAttackBossState : IBossAIState
         // b_Boss.Anim.SetTrigger("tPatternPlay");
         // b_Boss.Anim.SetInteger("PatternIdx", patternIdx);
 
-        b_Boss.UnitStatus.currentAttackCooltime = b_Boss.UnitStatus.maxAttackCooltime;
+        // b_Boss.UnitStatus.currentAttackCooltime = b_Boss.UnitStatus.maxAttackCooltime;
 
         b_Boss.Anim.SetBool("bAttack", b_Boss.isAttacking);
         b_Boss.Anim.SetTrigger("tAttack");
+
+        b_Boss.Attack();
     }
 
     public void OnUpdate()
     {
-        b_Boss.UnitStatus.currentAttackCooltime -= Time.deltaTime;
+        // b_Boss.UnitStatus.currentAttackCooltime -= Time.deltaTime;
 
-        // Attack Cooltime
-        if (b_Boss.UnitStatus.currentAttackCooltime <= 0)
-        {
-            // Attack
-            b_Boss.UnitStatus.currentAttackCooltime = b_Boss.UnitStatus.maxAttackCooltime;
+        // // Attack Cooltime
+        // if (b_Boss.UnitStatus.currentAttackCooltime <= 0)
+        // {
+        //     // Attack
+        //     b_Boss.UnitStatus.currentAttackCooltime = b_Boss.UnitStatus.maxAttackCooltime;
 
-            b_Boss.Attack();
-        }
+        //     b_Boss.Attack();
+        // }
     }
 
     public void OnExit()
@@ -71,7 +73,7 @@ public class MeleeAttackBossState : IBossAIState
             weaponOrbitCommon.b = startB;
         }
 
-        b_Boss.UnitStatus.currentAttackCooltime = b_Boss.UnitStatus.maxAttackCooltime;
+        // b_Boss.UnitStatus.currentAttackCooltime = b_Boss.UnitStatus.maxAttackCooltime;
 
         b_Boss.isAttacking = false;
         b_Boss.Anim.ResetTrigger("tPatternPlay");

@@ -18,12 +18,12 @@ public class B_BossController : MonoBehaviour
     private Dictionary<BossAIStateType, float> minimumStateTimes = new Dictionary<BossAIStateType, float>()
     {
         { BossAIStateType.IDLE, 2f },
-        { BossAIStateType.CHASE, 99f },
-        { BossAIStateType.SWING, 5f },
+        { BossAIStateType.CHASE, 10f },
+        { BossAIStateType.SWING, 7f },
         { BossAIStateType.THROW, 4f },
-        { BossAIStateType.PULL, 6f },
+        { BossAIStateType.PULL, 5f },
         { BossAIStateType.ROAR, 5f },
-        { BossAIStateType.ATTACK, 3f } // 기본 공격도 최소 시간 설정 가능
+        { BossAIStateType.ATTACK, 4f } // 기본 공격도 최소 시간 설정 가능
     };
     private Dictionary<BossAIStateType, float> patternCooldowns = new Dictionary<BossAIStateType, float>()
     {

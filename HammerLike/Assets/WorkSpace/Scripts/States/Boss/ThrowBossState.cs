@@ -51,9 +51,8 @@ public class ThrowBossState : IBossAIState
 
             if(weaponObj != null)
             {
-                if(Vector3.Distance(weaponObj.transform.position, GameManager.Instance.Player.transform.position) <= 2f)
+                if(Vector3.Distance(weaponObj.transform.position, lastPlayerPos) <= 2f)
                 {
-                    // b_Boss.Anim.ResetTrigger("tPatternPlay");
                     b_Boss.BossController.SetState(BossAIStateType.PULL);
                 }
             }
@@ -77,7 +76,6 @@ public class ThrowBossState : IBossAIState
         if(weaponObj == null)
             return;
 
-    
         (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.TargetCollider.enabled = true;
         // Approach Player
         weaponObj.transform.position = Vector3.MoveTowards(weaponObj.transform.position, lastPlayerPos, throwSpeed * Time.deltaTime);

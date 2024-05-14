@@ -30,10 +30,6 @@ public class PullBossState : IBossAIState
             weaponOrbitCommon.SetRigidKinematic(true);
         }
 
-
-        var xzPlayerPos = new Vector3(GameManager.Instance.Player.transform.position.x, b_Boss.transform.position.y, GameManager.Instance.Player.transform.position.z);
-        b_Boss.transform.LookAt(xzPlayerPos);
-
         // b_Boss.Anim.SetTrigger("tPatternPlay");
         // b_Boss.Anim.SetInteger("PatternIdx", patternIdx);
 
@@ -81,14 +77,18 @@ public class PullBossState : IBossAIState
     private void PullWeapon()
     {
         var weaponObj = weaponOrbitCommon.TargetObj;
+        var weaponCollider = weaponOrbitCommon.TargetCollider;
         
         var towardMovePos = Vector3.MoveTowards(weaponObj.transform.position, b_Boss.transform.position, pullSpeed * Time.deltaTime);
 
         weaponObj.transform.position = towardMovePos;
 
-        if(Vector3.Distance(GameManager.Instance.Player.transform.position, b_Boss.transform.position) > b_Boss.UnitStatus.atkRange)
+        // if Player is Overlapped with Weapon, then Player will be moved to the Weapon's position
+        if(Vector3.Distance(GameManager.Instance.Player.transform.position, weaponObj.transform.position) < weaponCollider.bounds.size.magnitude / 2f)
+        {
             GameManager.Instance.Player.transform.position = towardMovePos;
-        
+        }
+
         // GameManager.Instance.Player.Rigid.AddForce((b_Boss.transform.position - GameManager.Instance.Player.transform.position).normalized * 100f);
 
     }
