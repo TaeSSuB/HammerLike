@@ -71,14 +71,14 @@ public class CamCtrl : MonoBehaviour
     [Header("Zoom")]
     public bool cursorFollow=false;
     public bool zoomOption;
-    private float maximumZoomSize = 0.3f;
+    private float zoomDuration = 2.0f;
     private float orthographicSize;
     public PixelPerfectCamera zoomCam; //Only control zoom using Height vari, For Screen Render
     public float zoomMin;
     public float zoomMax;
     public float zoomSpd;
     public AnimationCurve zoomSpdCrv;
-    private float zoomCurveTime = 0f;
+    private float zoomTimer  = 0f;
     private Bounds roomBounds;
     //private PlayerAtk playerAtk;
     private bool shouldReturnToInitialZoom = false; 
@@ -345,7 +345,7 @@ public class CamCtrl : MonoBehaviour
 
 
 
-        if (Input.GetMouseButtonUp(0) && cursorFollow)
+        /*if (Input.GetMouseButtonUp(0) && cursorFollow)
         {
             cursorFollow = false;
             shouldReturnToInitialZoom = true; // Start zooming out
@@ -360,6 +360,24 @@ public class CamCtrl : MonoBehaviour
         if (shouldReturnToInitialZoom)
         {
             ZoomOut();
+        }*/
+
+         if (Input.GetMouseButton(0))
+        {
+            ZoomIn();
+            if (!cursorFollow)
+                cursorFollow = true;
+        }
+        else if(Input.GetMouseButtonUp(0))
+        {
+            shouldReturnToInitialZoom = true;
+        }
+         else
+        {
+            ZoomOut();
+
+            if (cursorFollow)
+                cursorFollow= false;
         }
     }
 

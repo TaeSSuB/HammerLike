@@ -434,6 +434,66 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2069628939}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &679311103
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 679311105}
+  - component: {fileID: 679311104}
+  m_Layer: 0
+  m_Name: BSPGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &679311104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 679311103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8c72167e1af7bb44a73fd136d24c3e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startRoomPrefab: {fileID: 4283127677650684433, guid: b499961562d9dbf458254c22bc6eb119,
+    type: 3}
+  bossRoomPrefab: {fileID: 127028425297242327, guid: 6f65e3d5aecbaaa4aa77dae72784be40,
+    type: 3}
+  eliteRoomPrefab: {fileID: 5153031965794867070, guid: bc4a9962ed017874ca5f95ce07e34968,
+    type: 3}
+  normalRoomPrefabs:
+  - {fileID: 4101402467137686423, guid: f4ddf8d314b6d5e438c774dee76e81eb, type: 3}
+  tilePrefab: {fileID: 2667151682100083256, guid: 8011b52897f0ee741bd3c6d3ecc01ffc,
+    type: 3}
+  cornerPrefab: {fileID: 2667151682100083256, guid: ac4898946043c4d459d398038ac72660,
+    type: 3}
+  normalRoomCount: 4
+  mapWidth: 200
+  mapHeight: 200
+  divideCount: 3
+--- !u!4 &679311105
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 679311103}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 4, z: 0.0630002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &743621551
 GameObject:
   m_ObjectHideFlags: 0
@@ -600,7 +660,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1425896091
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2216,6 +2276,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sporoach
       objectReference: {fileID: 0}
+    - target: {fileID: 5530478148761614162, guid: 2c690ff82d01ea948bece1d38c3d9cf9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5983803411978379700, guid: 2c690ff82d01ea948bece1d38c3d9cf9,
         type: 3}
       propertyPath: ToOffset
@@ -2311,3 +2376,4 @@ SceneRoots:
   - {fileID: 583625965}
   - {fileID: 1425896094}
   - {fileID: 2069628939}
+  - {fileID: 679311105}

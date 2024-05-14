@@ -11,7 +11,7 @@ public class ChangeCursor : MonoBehaviour
         public int index;
         public Texture2D texture;
     }
-
+    public static ChangeCursor Instance { get; private set; }
     // 커서 텍스처 배열
     [SerializeField]
     private CursorTexture[] cursorTextures;
@@ -25,22 +25,47 @@ public class ChangeCursor : MonoBehaviour
             SetCursorByIndex(0);
         }
     }
-
-    // Update 메서드는 매 프레임마다 실행됨
-    void Update()
+    private void Awake()
     {
-        // 예시: 숫자 키(0-9)를 눌러 커서 이미지를 변경
-        for (int i = 0; i < cursorTextures.Length; i++)
+        if (Instance == null)
         {
-            if (Input.GetKeyDown(KeyCode.Alpha0 + i))
-            {
-                SetCursorByIndex(i);
-            }
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
-    // 주어진 인덱스에 해당하는 텍스처로 커서 이미지를 변경
-    public void SetCursorByIndex(int index)
+    public void SetCursorAttack()
+    {
+        StartCoroutine(SetCursorByAttack());
+    }
+
+    public IEnumerator SetCursorByAttack()
+    {
+        SetCursorByIndex(1);
+        yield return new WaitForSeconds(0.2f);
+
+        SetCursorByIndex(0);
+    }
+
+        // Update 메서드는 매 프레임마다 실행됨
+        /*void Update()
+        {
+            // 예시: 숫자 키(0-9)를 눌러 커서 이미지를 변경
+            for (int i = 0; i < cursorTextures.Length; i++)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha0 + i))
+                {
+                    SetCursorByIndex(i);
+                }
+            }
+        }*/
+
+        // 주어진 인덱스에 해당하는 텍스처로 커서 이미지를 변경
+        public void SetCursorByIndex(int index)
     {
         // 해당 인덱스에 일치하는 커서 텍스처 찾기
         foreach (var cursorTexture in cursorTextures)
