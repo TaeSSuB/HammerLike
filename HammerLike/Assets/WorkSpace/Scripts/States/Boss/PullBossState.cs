@@ -11,7 +11,7 @@ public class PullBossState : IBossAIState
 
     private float pullDelay = 0.5f;
     private float startPullDelay = 0.5f;
-    private float pullSpeed = 100f;
+    private float pullSpeed = 50f;
 
     public PullBossState(B_Boss boss, int patternIdx)
     {
@@ -72,7 +72,9 @@ public class PullBossState : IBossAIState
         if(weaponObj != null)
         {
             weaponObj.transform.position = Vector3.MoveTowards(weaponObj.transform.position, b_Boss.transform.position, pullSpeed * Time.deltaTime);
-            GameManager.Instance.Player.transform.position = Vector3.MoveTowards(GameManager.Instance.Player.transform.position, b_Boss.transform.position, pullSpeed * Time.deltaTime);
+
+            if(Vector3.Distance(GameManager.Instance.Player.transform.position, b_Boss.transform.position) > b_Boss.UnitStatus.atkRange * 1.5f)
+                GameManager.Instance.Player.transform.position = Vector3.MoveTowards(GameManager.Instance.Player.transform.position, b_Boss.transform.position, pullSpeed * Time.deltaTime);
             // GameManager.Instance.Player.Rigid.AddForce((b_Boss.transform.position - GameManager.Instance.Player.transform.position).normalized * 100f);
 
         }

@@ -113,7 +113,7 @@ public class B_Boss : B_UnitBase
     protected override void Dead()
     {
         base.Dead();
-        //aIStateManager.SetState(AIStateType.DEAD);
+        bossController.SetState(BossAIStateType.DEAD);
 
         //DisconnectMusclesRecursive(GameManager.Instance.Player.transform.position);
         //Invoke(nameof(DisconnectMusclesRecursive), 0.1f);

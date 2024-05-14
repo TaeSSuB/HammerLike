@@ -55,6 +55,7 @@ public class B_BossController : MonoBehaviour
         states[BossAIStateType.THROW] = new ThrowBossState(this.b_Boss, 2);
         states[BossAIStateType.PULL] = new PullBossState(this.b_Boss, 3);
         states[BossAIStateType.ROAR] = new RoarBossState(this.b_Boss, 4);
+        states[BossAIStateType.DEAD] = new DeadBossState(this.b_Boss);
 
         SetState(BossAIStateType.IDLE);
     }
