@@ -103,7 +103,7 @@ public class B_Player : B_UnitBase
 
             // Get other B_Enemy or B_Boss Class
             B_UnitBase unit = other.GetComponentInParent<B_UnitBase>();
-            
+
             if (!(unit as B_Enemy || unit as B_Boss)) return;
 
             // Get hit dir from player

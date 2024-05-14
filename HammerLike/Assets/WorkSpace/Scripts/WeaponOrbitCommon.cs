@@ -35,12 +35,20 @@ public class WeaponOrbitCommon : MonoBehaviour
     [Header("References")]
     [SerializeField] private GameObject centerObj;
     [SerializeField] private GameObject targetObj;  // 추적할 오브젝트. 철퇴 등 할당
+    [SerializeField] private Collider targetCollider;  // 추적할 오브젝트의 콜라이더
 
     [Header("Debug")]
     public bool debugMode = false;
     public int edgeCount = 32;  // 궤도 기즈모 각
 
     public GameObject TargetObj { get => targetObj; }
+    public GameObject CenterObj { get => centerObj; }
+    public Collider TargetCollider { get => targetCollider; }
+
+    private void Start()
+    {
+        targetCollider = targetObj.GetComponent<Collider>();
+    }
 
     private void Update()
     {
@@ -59,6 +67,35 @@ public class WeaponOrbitCommon : MonoBehaviour
             }
         }
         
+    }
+
+    public void DisableCollider()
+    {
+        targetCollider.enabled = false;
+    }
+
+    public void EnableCollider()
+    {
+        targetCollider.enabled = true;
+    }
+
+    public void SetRigidKinematic(bool isKinematic)
+    {
+        targetObj.GetComponent<Rigidbody>().isKinematic = isKinematic;
+    }
+
+    /// <summary>
+    /// 트래킹 활성화/비활성화
+    /// </summary>
+    /// <param name="isTracking"></param>
+    public void SetTracking(bool isTracking)
+    {
+        this.isTracking = isTracking;
+    }
+
+    public void SetWeaponPos(Vector3 inPos)
+    {
+        targetObj.transform.position = inPos;
     }
 
     /// <summary>

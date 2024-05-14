@@ -18,12 +18,12 @@ public class B_BossController : MonoBehaviour
     private Dictionary<BossAIStateType, float> minimumStateTimes = new Dictionary<BossAIStateType, float>()
     {
         { BossAIStateType.IDLE, 2f },
-        { BossAIStateType.CHASE, 99f },
-        { BossAIStateType.SWING, 5f },
+        { BossAIStateType.CHASE, 10f },
+        { BossAIStateType.SWING, 7f },
         { BossAIStateType.THROW, 4f },
-        { BossAIStateType.PULL, 6f },
+        { BossAIStateType.PULL, 5f },
         { BossAIStateType.ROAR, 5f },
-        { BossAIStateType.ATTACK, 3f } // 기본 공격도 최소 시간 설정 가능
+        { BossAIStateType.ATTACK, 4f } // 기본 공격도 최소 시간 설정 가능
     };
     private Dictionary<BossAIStateType, float> patternCooldowns = new Dictionary<BossAIStateType, float>()
     {
@@ -55,12 +55,14 @@ public class B_BossController : MonoBehaviour
         states[BossAIStateType.THROW] = new ThrowBossState(this.b_Boss, 2);
         states[BossAIStateType.PULL] = new PullBossState(this.b_Boss, 3);
         states[BossAIStateType.ROAR] = new RoarBossState(this.b_Boss, 4);
+        states[BossAIStateType.DEAD] = new DeadBossState(this.b_Boss);
 
         SetState(BossAIStateType.IDLE);
     }
 
     public void SetState(BossAIStateType newState)
     {
+        // 이전 상태와 같은 상태로 전환 시 리턴
         if(newState == currentStateType)
         {
             return;
@@ -68,14 +70,17 @@ public class B_BossController : MonoBehaviour
 
         if (currentState != null)
         {
-            currentState.OnExit();
+            currentState?.OnExit();
         }
+
+        // 상태 전환 시 이동 중지
+        if(b_Boss != null) b_Boss.Rigid.velocity = Vector3.zero;
 
         currentStateType = newState;
         currentState = states[currentStateType];
 
-        // 상태 전환시 초기화
-        currentState.OnEnter();
+        // 상태 전환 시 초기화
+        currentState?.OnEnter();
     }
 
     void Update()

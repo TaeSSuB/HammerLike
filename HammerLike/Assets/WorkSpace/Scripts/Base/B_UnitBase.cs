@@ -27,6 +27,7 @@ public class B_UnitBase : B_Entity
     [Header("Knockback")]
     protected float knockBackMultiplier = 1f;
     protected float partsKnockBackMultiplier = 1f;
+    public float knockbackDuration = 0.5f;
     protected float maxKnockBackForce = 100f;
     protected float maxPartsBreakForce = 100f;
     protected AnimationCurve knockbackCurve;
@@ -307,7 +308,7 @@ public class B_UnitBase : B_Entity
         var resultKnockPower = Mathf.Clamp(force * knockBackMultiplier, 0f, maxKnockBackForce);
         //Debug.Log(this.gameObject.name + " Knockback : " + resultKnockPower);
         
-        StartCoroutine(CoSmoothKnockback(inDir, resultKnockPower, Rigid, knockbackCurve));
+        StartCoroutine(CoSmoothKnockback(inDir, resultKnockPower, Rigid, knockbackCurve, knockbackDuration));
     }
 
     /// <summary>
@@ -335,6 +336,7 @@ public class B_UnitBase : B_Entity
 
         DisableMovementAndRotation();
         isKnockback = true;
+        isInvincible = true;
 
         while (Time.time < startTime + knockbackDuration)
         {
@@ -349,6 +351,8 @@ public class B_UnitBase : B_Entity
         }
 
         isKnockback = false;
+        isInvincible = false;
+        
         EnableMovementAndRotation();
     }
     #endregion

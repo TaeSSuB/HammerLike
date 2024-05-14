@@ -1,17 +1,35 @@
 using UnityEngine;
+using NuelLib;
 
-public class B_UIManager : MonoBehaviour
+public class B_UIManager : SingletonMonoBehaviour<B_UIManager>
 {
     [SerializeField] private GameObject hpWorldUIPrefab;
+
+    [Header("Ingame UI")]
+    [SerializeField] private GameObject ingameUI;
+    [SerializeField] private GameObject ingameUIPrefab;
+    [SerializeField] private UI_InGame ui_InGame;
 
     [Header("Inventory UI")]
     [SerializeField] private GameObject inventoryObj;
     [SerializeField] private KeyCode inventoryKey = KeyCode.I;
 
+    public UI_InGame UI_InGame { get => ui_InGame;}
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        if(ingameUI == null) 
+        {
+            ingameUI = Instantiate(ingameUIPrefab);
+            ingameUI.transform.SetParent(transform);
+            ui_InGame = ingameUI.GetComponent<UI_InGame>();
+        }
+        else
+        {
+            ingameUI.SetActive(true);
+            ui_InGame = ingameUI.GetComponent<UI_InGame>();
+        } 
     }
 
     // Update is called once per frame

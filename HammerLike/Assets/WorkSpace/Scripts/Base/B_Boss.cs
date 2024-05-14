@@ -13,6 +13,13 @@ public class B_Boss : B_UnitBase
     private B_BossController bossController;
 
     public B_BossController BossController => bossController;
+    [SerializeField] private bool enableHitEvent = false;
+    public bool EnableHitEvent => enableHitEvent;
+
+    public void SetEnableHitEvent(bool value)
+    {
+        enableHitEvent = value;
+    }
 
     #endregion
 
@@ -53,7 +60,8 @@ public class B_Boss : B_UnitBase
             // Take Damage and Knockback dir from player
             TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount);
 
-            Anim.SetTrigger("tHit");
+            if(EnableHitEvent)
+                Anim.SetTrigger("tHit");
 
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
@@ -87,9 +95,11 @@ public class B_Boss : B_UnitBase
             // Get hit dir from another enemy
             Vector3 hitDir = (transform.position - collision.transform.position).normalized;
 
-            TakeDamage(hitDir, (int)(other.Rigid.mass / 2f), other.Rigid.mass);
+            // Take Damage and Knockback dir from another enemy
+            TakeDamage(hitDir, (int)(other.Rigid.mass / 2f), other.Rigid.mass, false);
 
-            Anim.SetTrigger("tHit");
+            if(EnableHitEvent)
+                Anim.SetTrigger("tHit");
 
             var vfxPos = collision.contacts[0].point;
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
@@ -113,7 +123,7 @@ public class B_Boss : B_UnitBase
     protected override void Dead()
     {
         base.Dead();
-        //aIStateManager.SetState(AIStateType.DEAD);
+        bossController.SetState(BossAIStateType.DEAD);
 
         //DisconnectMusclesRecursive(GameManager.Instance.Player.transform.position);
         //Invoke(nameof(DisconnectMusclesRecursive), 0.1f);

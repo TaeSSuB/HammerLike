@@ -11,7 +11,8 @@ using Unity.VisualScripting;
 public class UI_InGame : MonoBehaviour
 {
     [Header("HP UI")]
-    [SerializeField] protected Slider hpSlider;
+    [SerializeField] protected Slider playerHPSlider;
+    [SerializeField] protected Slider bossHPSlider;
 
     [Header("Charge UI")]
     [SerializeField] protected Slider chargeSlider;
@@ -146,7 +147,7 @@ public class UI_InGame : MonoBehaviour
     private void UpdateHP(int hp)
     {
         float hpRatio = (float)hp / playerStatus.maxHP;
-        hpSlider.value = hpRatio;
+        playerHPSlider.value = hpRatio;
     }
 
     private IEnumerator CoInitialize()
@@ -178,7 +179,9 @@ public class UI_InGame : MonoBehaviour
             EnablePanel();
     }
 
-
-
+    public void UpdateBossHP(B_Boss b_boss)
+    {
+        bossHPSlider.value = (float)b_boss.UnitStatus.currentHP / b_boss.UnitStatus.maxHP;
+    }
 
 }
