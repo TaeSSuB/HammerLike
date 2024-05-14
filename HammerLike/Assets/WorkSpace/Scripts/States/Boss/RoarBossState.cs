@@ -20,9 +20,13 @@ public class RoarBossState : IBossAIState
     {
         if(b_Boss as B_Boss_SkeletonTorturer)
         {
-            (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.isTracking = false;
-            weaponObj = (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.TargetObj;
-            weaponObj.transform.position = (b_Boss as B_Boss_SkeletonTorturer).WeaponInitPos;
+            var targetBoss = b_Boss as B_Boss_SkeletonTorturer;
+            var weaponOrbitCommon = targetBoss.WeaponOrbitCommon;
+
+            weaponOrbitCommon.SetTracking(false);
+            weaponOrbitCommon.SetWeaponPos(targetBoss.WeaponInitPos);
+            weaponOrbitCommon.DisableCollider();
+            weaponOrbitCommon.SetRigidKinematic(true);
         }
             
 

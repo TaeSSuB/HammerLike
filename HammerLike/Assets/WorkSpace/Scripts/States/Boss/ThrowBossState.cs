@@ -27,6 +27,8 @@ public class ThrowBossState : IBossAIState
             weaponObj = (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.TargetObj;
             //weaponObj.transform.position = b_Boss.transform.position;
             weaponObj.GetComponent<Rigidbody>().isKinematic = true;
+            
+            (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.TargetCollider.enabled = false;
         }
             
 
@@ -75,6 +77,8 @@ public class ThrowBossState : IBossAIState
         if(weaponObj == null)
             return;
 
+    
+        (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.TargetCollider.enabled = true;
         // Approach Player
         weaponObj.transform.position = Vector3.MoveTowards(weaponObj.transform.position, lastPlayerPos, throwSpeed * Time.deltaTime);
     }
@@ -88,6 +92,7 @@ public class ThrowBossState : IBossAIState
         float distance = Vector3.Distance(weaponObj.transform.position, (b_Boss as B_Boss_SkeletonTorturer).WeaponInitPos);
         float speed = distance / delayTime;
         weaponObj.transform.position = Vector3.MoveTowards(weaponObj.transform.position, (b_Boss as B_Boss_SkeletonTorturer).WeaponInitPos, speed * Time.deltaTime);
+        
     }
 
 

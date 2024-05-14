@@ -7,7 +7,7 @@ public class PullBossState : IBossAIState
     private B_Boss b_Boss;
     private int patternIdx = -1;
 
-    private GameObject weaponObj;
+    private WeaponOrbitCommon weaponOrbitCommon;
 
     private float pullDelay = 0.5f;
     private float startPullDelay = 0.5f;
@@ -22,10 +22,12 @@ public class PullBossState : IBossAIState
     public void OnEnter()
     {
         if(b_Boss as B_Boss_SkeletonTorturer)
-        {
-            (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.isTracking = false;
-            weaponObj = (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.TargetObj;
-            weaponObj.GetComponent<Rigidbody>().isKinematic = true;
+        {            
+            var targetBoss = b_Boss as B_Boss_SkeletonTorturer;
+            weaponOrbitCommon = targetBoss.WeaponOrbitCommon;
+
+            weaponOrbitCommon.SetTracking(false);
+            weaponOrbitCommon.SetRigidKinematic(true);
         }
 
 
@@ -48,13 +50,10 @@ public class PullBossState : IBossAIState
 
             PullWeapon();
 
-            if(weaponObj != null)
+            if(Vector3.Distance(GameManager.Instance.Player.transform.position, b_Boss.transform.position) <= b_Boss.UnitStatus.atkRange)
             {
-                if(Vector3.Distance(GameManager.Instance.Player.transform.position, b_Boss.transform.position) <= b_Boss.UnitStatus.atkRange * 1.5f)
-                {
-                    // b_Boss.Anim.ResetTrigger("tPatternPlay");
-                    b_Boss.BossController.SetState(BossAIStateType.ATTACK);
-                }
+                // b_Boss.Anim.ResetTrigger("tPatternPlay");
+                b_Boss.BossController.SetState(BossAIStateType.ATTACK);
             }
         }
     }
@@ -63,21 +62,35 @@ public class PullBossState : IBossAIState
     {
         b_Boss.Anim.ResetTrigger("tPatternPlay");
         b_Boss.Anim.SetBool("bGrabbed", false);
-        weaponObj.GetComponent<Rigidbody>().isKinematic = false;
-        weaponObj.transform.position = (b_Boss as B_Boss_SkeletonTorturer).WeaponInitPos;
+
+        if(b_Boss as B_Boss_SkeletonTorturer)
+        { 
+            var targetBoss = b_Boss as B_Boss_SkeletonTorturer;
+
+            if(weaponOrbitCommon == null)
+            {
+                weaponOrbitCommon = targetBoss.WeaponOrbitCommon;
+            }
+
+            weaponOrbitCommon.SetRigidKinematic(false);
+            weaponOrbitCommon.SetWeaponPos(targetBoss.WeaponInitPos);
+        }
+
     }
     
     private void PullWeapon()
     {
-        if(weaponObj != null)
-        {
-            weaponObj.transform.position = Vector3.MoveTowards(weaponObj.transform.position, b_Boss.transform.position, pullSpeed * Time.deltaTime);
+        var weaponObj = weaponOrbitCommon.TargetObj;
+        
+        var towardMovePos = Vector3.MoveTowards(weaponObj.transform.position, b_Boss.transform.position, pullSpeed * Time.deltaTime);
 
-            if(Vector3.Distance(GameManager.Instance.Player.transform.position, b_Boss.transform.position) > b_Boss.UnitStatus.atkRange * 1.5f)
-                GameManager.Instance.Player.transform.position = Vector3.MoveTowards(GameManager.Instance.Player.transform.position, b_Boss.transform.position, pullSpeed * Time.deltaTime);
-            // GameManager.Instance.Player.Rigid.AddForce((b_Boss.transform.position - GameManager.Instance.Player.transform.position).normalized * 100f);
+        weaponObj.transform.position = towardMovePos;
 
-        }
+        if(Vector3.Distance(GameManager.Instance.Player.transform.position, b_Boss.transform.position) > b_Boss.UnitStatus.atkRange)
+            GameManager.Instance.Player.transform.position = towardMovePos;
+        
+        // GameManager.Instance.Player.Rigid.AddForce((b_Boss.transform.position - GameManager.Instance.Player.transform.position).normalized * 100f);
+
     }
 
 }

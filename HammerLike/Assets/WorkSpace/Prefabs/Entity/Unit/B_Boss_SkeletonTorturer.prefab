@@ -2140,6 +2140,7 @@ MonoBehaviour:
   isTracking: 1
   centerObj: {fileID: 8795609808597645721}
   targetObj: {fileID: 54336149500899996}
+  targetCollider: {fileID: 7579291344005218265}
   debugMode: 0
   edgeCount: 32
 --- !u!1 &7834971118364527604
@@ -3193,6 +3194,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 8041685753971723614, guid: c576e639900eafd419d81eb2820cba7d,
+        type: 3}
+      propertyPath: m_TagString
+      value: WeaponCollider
+      objectReference: {fileID: 0}
     - target: {fileID: 8410668976187505728, guid: c576e639900eafd419d81eb2820cba7d,
         type: 3}
       propertyPath: m_ExcludeLayers.m_Bits
@@ -3217,6 +3223,12 @@ GameObject:
 --- !u!4 &4172362223564402117 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6250980548453061127, guid: c576e639900eafd419d81eb2820cba7d,
+    type: 3}
+  m_PrefabInstance: {fileID: 8023379230458609602}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &7579291344005218265 stripped
+SphereCollider:
+  m_CorrespondingSourceObject: {fileID: 466062863822536731, guid: c576e639900eafd419d81eb2820cba7d,
     type: 3}
   m_PrefabInstance: {fileID: 8023379230458609602}
   m_PrefabAsset: {fileID: 0}

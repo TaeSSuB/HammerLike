@@ -23,7 +23,15 @@ public class ChasingBossState : IBossAIState
         b_Boss.Anim.SetInteger("PatternIdx", patternIdx);
 
         if(b_Boss as B_Boss_SkeletonTorturer)
-            (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.isTracking = false;
+        {
+            var targetBoss = b_Boss as B_Boss_SkeletonTorturer;
+            var weaponOrbitCommon = targetBoss.WeaponOrbitCommon;
+
+            weaponOrbitCommon.SetTracking(false);
+            weaponOrbitCommon.SetWeaponPos(targetBoss.WeaponInitPos);
+            weaponOrbitCommon.DisableCollider();
+            weaponOrbitCommon.SetRigidKinematic(true);
+        }
 
     }
 

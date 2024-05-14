@@ -16,7 +16,14 @@ public class IdleBossState : IBossAIState
         b_Boss.Anim.SetTrigger("tIdle");
 
         if(b_Boss as B_Boss_SkeletonTorturer)
-            (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.isTracking = false;
+        {
+            var targetBoss = b_Boss as B_Boss_SkeletonTorturer;
+            var weaponOrbitCommon = targetBoss.WeaponOrbitCommon;
+
+            weaponOrbitCommon.SetTracking(false);
+            weaponOrbitCommon.DisableCollider();
+            weaponOrbitCommon.SetRigidKinematic(false);
+        }
         
     }
 

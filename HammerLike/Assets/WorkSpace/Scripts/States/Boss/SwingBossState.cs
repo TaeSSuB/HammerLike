@@ -19,10 +19,14 @@ public class SwingBossState : IBossAIState
     {
         if(b_Boss as B_Boss_SkeletonTorturer)
         {
-            (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.trackType = WeaponOrbitCommon.TrackType.None;
-            (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.isTracking = true;
-            weaponObj = (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.TargetObj;
-            weaponObj.GetComponent<Rigidbody>().isKinematic = true;
+            var targetBoss = b_Boss as B_Boss_SkeletonTorturer;
+            var weaponOrbitCommon = targetBoss.WeaponOrbitCommon;
+
+            weaponOrbitCommon.trackType = WeaponOrbitCommon.TrackType.None; // 선형 궤도를 사용
+
+            weaponOrbitCommon.SetTracking(true);
+            weaponOrbitCommon.EnableCollider();
+            weaponOrbitCommon.SetRigidKinematic(false);
         }
             
         // var xzPlayerPos = new Vector3(GameManager.Instance.Player.transform.position.x, b_Boss.transform.position.y, GameManager.Instance.Player.transform.position.z);
@@ -30,6 +34,7 @@ public class SwingBossState : IBossAIState
 
         b_Boss.Anim.SetTrigger("tPatternPlay");
         b_Boss.Anim.SetInteger("PatternIdx", patternIdx);
+
 
     }
 
@@ -40,12 +45,16 @@ public class SwingBossState : IBossAIState
 
     public void OnExit()
     {
-        // if(b_Boss as B_Boss_SkeletonTorturer)
-        // {
-        //     (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.trackType = WeaponOrbitCommon.TrackType.DirBasedPoint;
-        //     (b_Boss as B_Boss_SkeletonTorturer).WeaponOrbitCommon.isTracking = false;
-        // }
-        weaponObj.GetComponent<Rigidbody>().isKinematic = false;
+        if(b_Boss as B_Boss_SkeletonTorturer)
+        {            
+            var targetBoss = b_Boss as B_Boss_SkeletonTorturer;
+            var weaponOrbitCommon = targetBoss.WeaponOrbitCommon;
+
+            weaponOrbitCommon.trackType = WeaponOrbitCommon.TrackType.DirBasedPoint;
+            weaponOrbitCommon.SetTracking(false);
+            weaponOrbitCommon.DisableCollider();
+        }
+
         b_Boss.Anim.ResetTrigger("tPatternPlay");
     }
 }

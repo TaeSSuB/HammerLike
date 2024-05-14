@@ -26,9 +26,17 @@ public class B_Boss_SkeletonTorturer : B_Boss
         return base.Move(inPos);
     }
 
+    public override void StartAttack()
+    {
+        base.StartAttack();
+        weaponOrbitCommon.TargetCollider.enabled = true;
+    }
+
     public override void EndAttack()
     {
-        BossController.SetState(Thinking());
+        base.EndAttack();
+        //BossController.SetState(Thinking());
+        weaponOrbitCommon.TargetCollider.enabled = false;
     }
 
     public override void Init()
