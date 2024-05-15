@@ -598,7 +598,12 @@ public class B_Player : B_UnitBase
         Anim.speed = 1f;//(unitStatus as SO_PlayerStatus).atkSpeed;
 
         chargeVFXObj.SetActive(false);
-        weaponRenderer.material.SetFloat("_ChargeAmount", 0f);
+        
+        foreach (var weaponMat in weaponRenderer.materials)
+        {
+            weaponMat.SetFloat("_ChargeAmount", 0f);
+        }
+
         //zoomCam.orthographicSize = startZoom;
 
         ResetDamage();
