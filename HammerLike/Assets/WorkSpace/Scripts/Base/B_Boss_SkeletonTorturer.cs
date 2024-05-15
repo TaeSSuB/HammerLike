@@ -3,6 +3,7 @@ using RootMotion.Demos;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using UnityEngine;
 using TMPro;
 
@@ -14,10 +15,12 @@ public class B_Boss_SkeletonTorturer : B_Boss
     [SerializeField] private float distance = 0f;
     //[SerializeField] private GameObject weaponObj;
     [SerializeField] private TMP_Text devText;
-    [SerializeField] private GameObject panel;
+
 
     public WeaponOrbitCommon WeaponOrbitCommon => weaponOrbitCommon;
     public Vector3 WeaponInitPos => weaponInitPos.position;
+    public event Action OnBossDead;
+    [SerializeField] private SceneLoader sceneLoader;
 
     public override Vector3 Move(Vector3 inPos)
     {            
@@ -44,15 +47,13 @@ public class B_Boss_SkeletonTorturer : B_Boss
     public override void Init()
     {
         base.Init();
+        OnBossDead += sceneLoader.BossDead;
     }
 
     protected override void Dead()
     {
         base.Dead();
-        if(!panel.gameObject.activeSelf)
-        {
-            panel.gameObject.SetActive(true);
-        }
+        OnBossDead?.Invoke();
     }
 
     protected override void Start()
@@ -100,6 +101,11 @@ public class B_Boss_SkeletonTorturer : B_Boss
         {
             return BossAIStateType.CHASE;        
         }
+    }
+
+    void OnDestroy()
+    {
+        OnBossDead -= sceneLoader.BossDead;
     }
 
 }

@@ -90,7 +90,7 @@ public class RoomManager : MonoBehaviour
         int monsterCount = CountMonstersInRoom(room);
         room.monsterCount = monsterCount;
         //Debug.Log($"{room.gameObject.name} currently has {monsterCount} monsters.");
-        if (room.gameObject.name == "Dungeon_MidBossRoom.001")
+        if (room.gameObject.name == "Room_Boss")
         {
             EnablePanel();
             if (!boss.gameObject.activeSelf)

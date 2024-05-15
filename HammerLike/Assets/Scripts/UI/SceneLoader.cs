@@ -8,6 +8,9 @@ public class SceneLoader : MonoBehaviour
 {
     public Image targetImage; // 투명도를 조절할 Image 컴포넌트
     public float duration = 1.0f; // 페이드 인/아웃에 걸리는 시간
+
+    public GameObject deadPanel;
+    public GameObject clearPanel;
     // public string sceneToLoad;
 
     void Start()
@@ -70,5 +73,32 @@ public class SceneLoader : MonoBehaviour
     public void Exit()
     {
         Application.Quit();
+    }
+
+    public void PlayerDead()
+    {
+        FadeIn();
+
+        if (deadPanel != null)
+        {
+
+            if (!deadPanel.gameObject.activeSelf)
+                deadPanel.gameObject.SetActive(true);
+
+        }
+   
+    }
+
+    public void BossDead()
+    {
+        FadeIn();
+
+        if (clearPanel != null)
+        {
+
+            if (!clearPanel.gameObject.activeSelf)
+                clearPanel.gameObject.SetActive(true);
+
+        }
     }
 }

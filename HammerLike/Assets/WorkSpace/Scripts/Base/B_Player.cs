@@ -38,8 +38,6 @@ public class B_Player : B_UnitBase
     [SerializeField] private bool AllowRotate_L = true;
     [SerializeField] private bool AllowRotate_R = true;
 
-    [Header("Temp")]
-    [SerializeField] private GameObject deadPanel;
 
     public SO_Weapon WeaponData => weaponData;
 
@@ -48,8 +46,9 @@ public class B_Player : B_UnitBase
 
     // OnWeaponEquipped
     public event Action<B_Weapon> OnWeaponEquipped;
-
-
+    [Header("Temp")]
+    [SerializeField] private SceneLoader sceneLoader;
+    public event Action OnPlayerDeath;
     #region Unity Callbacks & Init
 
     //init override
@@ -69,6 +68,7 @@ public class B_Player : B_UnitBase
         findItem = B_InventoryManager.Instance.playerWeaponContainer.FindItemOnInventory(currentWeaponObj.itemData);
 
         EquipWeapon(findItem.ItemObject as SO_Weapon);
+        OnPlayerDeath += sceneLoader.PlayerDead;
     }
 
     protected override void Update()
@@ -468,8 +468,9 @@ public class B_Player : B_UnitBase
     {
         base.Dead();
         Anim.SetTrigger("tDeath");
-        if (!deadPanel.gameObject.activeSelf)
-            deadPanel.gameObject.SetActive(true);
+      
+
+        OnPlayerDeath?.Invoke();
     }
 
     #endregion
@@ -641,5 +642,9 @@ public class B_Player : B_UnitBase
     }
 
     #endregion
+    void OnDestroy()
+    {
+        OnPlayerDeath -= sceneLoader.PlayerDead;
+    }
 
 }
