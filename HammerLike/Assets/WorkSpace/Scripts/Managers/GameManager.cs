@@ -50,7 +50,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     #region Unity Callbacks
     protected override void Awake()
     {
-        base.Awake();
+        //base.Awake();
 
         devModeTextObj = Instantiate(textPrefab, textTR);
         devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();

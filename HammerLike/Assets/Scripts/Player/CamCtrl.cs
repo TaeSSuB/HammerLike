@@ -455,7 +455,7 @@ public class CamCtrl : MonoBehaviour
     {
         // 카메라의 최소 및 최대 XYZ 좌표 설정
         cameraBounds.min = new Vector3(roomBounds.min.x + 15.0f, cameraBounds.min.y, roomBounds.min.z);
-        cameraBounds.max = new Vector3(roomBounds.max.x - 15.0f, cameraBounds.max.y, roomBounds.max.z - 45.0f);
+        cameraBounds.max = new Vector3(roomBounds.max.x - 15.0f, cameraBounds.max.y, roomBounds.max.z);
     }
 
 

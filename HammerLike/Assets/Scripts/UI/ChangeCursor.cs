@@ -21,13 +21,10 @@ public class ChangeCursor : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded; // 씬이 로드될 때마다 호출할 이벤트 리스너 등록
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+        
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

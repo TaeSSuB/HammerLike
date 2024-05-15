@@ -37,7 +37,7 @@ public class RoomManager : MonoBehaviour
         }
         if (monsterParent == null)
         {
-            Debug.LogError("Monster Parent is not assigned in the RoomManager.");
+            // Debug.LogError("Monster Parent is not assigned in the RoomManager.");
         }
     }
 
@@ -68,6 +68,7 @@ public class RoomManager : MonoBehaviour
         if (foundRoom != currentRoom)
         {
             currentRoom = foundRoom; // Update the current room
+            if(foundRoom != null||foundRoom.monsterParent!=null) 
             monsterParent = foundRoom.monsterParent;
             if (currentRoom != null)
             {
