@@ -62,6 +62,31 @@ public class SO_InventoryObject : ScriptableObject
         }
         return null;
     }
+
+    public B_InventorySlot FindSlotWithItemIndex(int idx)
+    {
+        for (int i = 0; i < Container.Items.Length; i++)
+        {
+            if (Container.Items[i].item.index == idx)
+            {
+                return Container.Items[i];
+            }
+        }
+        return null;
+    }
+
+    public int FindSlotIndexWithItem(B_Item _item)
+    {
+        for (int i = 0; i < Container.Items.Length; i++)
+        {
+            if (Container.Items[i].item.index == _item.index)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public B_InventorySlot SetEmptySlot(B_Item _item, int _amount)
     {
         for (int i = 0; i < Container.Items.Length; i++)
@@ -136,6 +161,7 @@ public class SO_InventoryObject : ScriptableObject
 public class B_Inventory
 {
     public B_InventorySlot[] Items = new B_InventorySlot[24];
+    
     public void Clear()
     {
         for (int i = 0; i < Items.Length; i++)
@@ -143,6 +169,21 @@ public class B_Inventory
             if (Items[i] != null)
                 Items[i].RemoveItem();
         }
+    }
+
+    public int GetFilledSlotSize()
+    {
+        int counter = 0;
+        for (int i = 0; i < Items.Length; i++)
+        {
+            if (Items[i].item.index >= 0)
+            {
+                counter++;
+            }
+        }
+        Debug.Log("Filled Slot Size : " + counter);
+
+        return counter;
     }
 }
 
@@ -161,7 +202,8 @@ public class B_InventorySlot
         {
             if (item.index >= 0)
             {
-                return parent.inventory.database.GetItem[item.index];
+                B_InventoryManager.Instance.itemDataBase.GetItem.TryGetValue(item.index, out SO_Item itemObject);
+                return itemObject;
             }
             return null;
         }

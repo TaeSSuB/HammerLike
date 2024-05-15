@@ -7,6 +7,7 @@ using UnityEngine.XR;
 public class B_Slime : B_Enemy
 {
     [Header("Slime")]
+    [SerializeField] private Collider weaponCollider;
     public float duration = 1f;
     public float multiplier = 5f;
 
@@ -16,15 +17,25 @@ public class B_Slime : B_Enemy
 
     public AnimationCurve inCurve;
 
+    public override void Init()
+    {
+        base.Init();
+
+        weaponCollider.enabled = false;
+    }
+
     protected override void Dead()
     {
         base.Dead();
+        
+        weaponCollider.enabled = false;
 
         StartCoroutine(CoSlimeDead());
     }
 
     public override void Attack()
     {
+        base.Attack();
         Debug.Log("Slime Attack");
         //base.Attack();
         //AIStateManager?.SetState(AIStateType.IDLE);
@@ -40,19 +51,32 @@ public class B_Slime : B_Enemy
         //}   
     }
 
+    public override void StartAttack()
+    {
+        base.StartAttack();
+        
+        col.enabled = false;
+        weaponCollider.enabled = true;
+
+        Rigid.isKinematic = true;
+    }
+
     public override void EndAttack()
     {
         base.EndAttack();
+
+        col.enabled = true;
+        weaponCollider.enabled = false;
 
         Rigid.isKinematic = false;
     }
 
     IEnumerator CoSlimeAttack()
     {
-        var targetTr = GameManager.Instance.Player.transform;
+        var lastTargetPos = GameManager.Instance.Player.transform.position;
 
         // Shortest distance to the target
-        float target_Distance = Vector3.Distance(transform.position, targetTr.position);
+        float target_Distance = Vector3.Distance(transform.position, lastTargetPos);
 
 
         // Calculate the velocity needed to throw the object to the target at specified angle.
@@ -64,7 +88,6 @@ public class B_Slime : B_Enemy
 
         // Rotate projectile to face the target.
         //var newRot = Quaternion.LookRotation(targetTr.position - transform.position);
-        transform.LookAt(targetTr);
         transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
 
         //transform.rotation = newRot;
@@ -73,24 +96,26 @@ public class B_Slime : B_Enemy
 
         // Move projectile to the target and adjust height based on the cross product
         float elapse_time = 0;
+        float delayTime = 0.5f;
 
         agent.enabled = false;
-        Rigid.isKinematic = true;
         //rigid.mass = 100f;
 
-        Vector3 dir = targetTr.position - transform.position;
-        Debug.DrawLine(transform.position, targetTr.position, Color.red, 1f);
+        Vector3 dir = lastTargetPos - transform.position;
+        Debug.DrawLine(transform.position, lastTargetPos, Color.red, 1f);
+
+        //transform.LookAt(lastTargetPos);
+        isAttacking = true;
+        
+        yield return new WaitForSeconds(delayTime);
+
+        StartAttack();
 
         while (elapse_time < flightDuration)
         {
             transform.Translate(0, (Vy - (9.8f * elapse_time)) * Time.deltaTime * multiplier, 0f);
 
             Vector3 meshForwardXZ = transform.forward;
-            //dir.y = 0;
-            //Vector3 meshForwardXZ = dir.normalized;
-
-
-            Debug.Log("meshForwardXZ: " + meshForwardXZ);
 
             transform.Translate(meshForwardXZ * Vx * Time.deltaTime * multiplier * (1 + inCurve.Evaluate(elapse_time)), Space.World);
 
@@ -100,10 +125,11 @@ public class B_Slime : B_Enemy
 
             elapse_time += Time.deltaTime;
 
-            unitStatus.currentAttackCooltime = unitStatus.maxAttackCooltime;
-
             yield return null;
         }
+
+        EndAttack();
+        unitStatus.currentAttackCooltime = unitStatus.maxAttackCooltime;
 
         // Reset height
         transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
@@ -111,6 +137,8 @@ public class B_Slime : B_Enemy
         Rigid.velocity = Vector3.zero;
         Rigid.isKinematic = false;
         //rigid.mass = unitStatus.mass;
+
+        yield return new WaitForSeconds(delayTime);
 
     }
 

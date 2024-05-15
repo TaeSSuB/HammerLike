@@ -24,6 +24,8 @@ public class SO_ItemDataBase : ScriptableObject, ISerializationCallbackReceiver
             Items[i].itemData.index = i;
             GetItem.Add(i, Items[i]);
         }
+
+        Debug.Log("Item Database Loaded");
     }
 
     // 오브젝트 수정 이전, 도중 호출

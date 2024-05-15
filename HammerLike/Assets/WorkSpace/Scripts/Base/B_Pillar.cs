@@ -289,7 +289,45 @@ public class B_PartMesh
     }
 
     // Temp - B_Pillar 
+    /// <summary>
+    /// 명진.0515
+    /// 깰 수 있는 문 오브젝트를 만들었는데 현재는 오버로딩으로 대체했는데 템플릿으로 변경예정
+    /// </summary>
+    /// <param name="original"></param>
     public void MakeGameobject(B_Pillar original)
+    {
+        GameObject = new GameObject(original.name);
+        GameObject.transform.position = original.transform.position;
+        GameObject.transform.rotation = original.transform.rotation;
+        GameObject.transform.localScale = original.transform.localScale;
+
+        var mesh = new Mesh();
+        mesh.name = original.GetComponent<MeshFilter>().mesh.name;
+
+        mesh.vertices = Vertices;
+        mesh.normals = Normals;
+        mesh.uv = UV;
+        for (var i = 0; i < Triangles.Length; i++)
+            mesh.SetTriangles(Triangles[i], i, true);
+        Bounds = mesh.bounds;
+
+        var renderer = GameObject.AddComponent<MeshRenderer>();
+        renderer.materials = original.GetComponent<MeshRenderer>().materials;
+
+        var filter = GameObject.AddComponent<MeshFilter>();
+        filter.mesh = mesh;
+
+        var collider = GameObject.AddComponent<MeshCollider>();
+        collider.convex = true;
+
+        var rigidbody = GameObject.AddComponent<Rigidbody>();
+        var meshDestroy = GameObject.AddComponent<MeshDestroy>();
+        meshDestroy.CutCascades = original.CutCascades;
+        meshDestroy.ExplodeForce = original.ExplodeForce;
+
+    }
+
+    public void MakeGameobject(B_BreakableDoor original)
     {
         GameObject = new GameObject(original.name);
         GameObject.transform.position = original.transform.position;
