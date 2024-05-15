@@ -85,8 +85,8 @@ public class RoomManager : MonoBehaviour
         else 
         {
             camCtrl.followOption = FollowOption.FollowToObject;
-            if(!room.doorOpened)
-            room.OpenDoor();
+            /*if(!room.doorOpened)
+            room.OpenDoor();*/
             if(entranceA!=null&&entranceB!=null&&entranceA.activeSelf&&entranceB.activeSelf)
             {
                 entranceA.SetActive(false);
