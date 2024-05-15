@@ -84,7 +84,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0.5, z: 0}
   trackType: 3
   trailRenderer: {fileID: 576635233718691163}
-  b_Weapon: {fileID: 0}
+  b_Weapon: {fileID: 449306736835462884}
   player: {fileID: 8957840737876896812}
   startWidthScale: 0.3
   endWidthScale: 0.1
@@ -454,7 +454,7 @@ MonoBehaviour:
   anim: {fileID: 1768623639919925977}
   agent: {fileID: 0}
   isAttacking: 0
-  knockbackDuration: 0.5
+  knockbackDuration: 1
   puppet: {fileID: 0}
   groundLayer:
     serializedVersion: 2
@@ -470,7 +470,7 @@ MonoBehaviour:
   weaponCollider: {fileID: 4939906264136678488}
   weaponOrbit: {fileID: 1952734946970189571}
   rotateType: 2
-  rotSpeed: 10
+  rotSpeed: 30
   rotDeadZone: 0.5
   AllowRotate_L: 1
   AllowRotate_R: 1
@@ -1111,6 +1111,7 @@ GameObject:
   - component: {fileID: 4761890177331708341}
   - component: {fileID: 325186012286737142}
   - component: {fileID: 7927657473104004988}
+  - component: {fileID: 449306736835462884}
   m_Layer: 9
   m_Name: Test_Hammer
   m_TagString: Untagged
@@ -1236,6 +1237,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &449306736835462884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4389952972687816322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd354a6bd2cb7ba448e09456d06d58f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vfxObj: {fileID: 4313188254355159387}
+  meshObj: {fileID: 4389952972687816322}
+  weaponTrailMat: {fileID: 0}
 --- !u!1 &4400693451823004380
 GameObject:
   m_ObjectHideFlags: 0
