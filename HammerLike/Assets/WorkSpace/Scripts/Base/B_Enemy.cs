@@ -39,13 +39,6 @@ public class B_Enemy : B_UnitBase
     {
         base.Update();
 
-        // if Dead return
-        if (UnitStatus.currentHP <= 0 || isTester)
-        {
-            //DisableMovementAndRotation();
-            return;
-        }
-
         // Temp - Set Chasing
         if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD && !isAttacking)
         {

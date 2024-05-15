@@ -69,21 +69,21 @@ public class B_Player : B_UnitBase
 
     protected override void Update()
     {
-        base.Update();
-
-        // if Dead return
-        if (unitStatus.currentHP <= 0)
-        {
-            //DisableMovementAndRotation();
+        if (!isAlive)
             return;
-        }
+
+        InputCharge();
+
+        TrackWeaponDirXZ();
+    }
+
+    protected override void FixedUpdate() 
+    {
+        base.FixedUpdate();
 
         LookAtMouse();
 
         InputMovement();
-        InputCharge();
-
-        TrackWeaponDirXZ();
     }
 
     

@@ -41,6 +41,11 @@ public class B_Entity : MonoBehaviour
 
     }
 
+    protected virtual void FixedUpdate()
+    {
+
+    }
+
     protected virtual void OnTriggerEnter(Collider other)
     {
 
