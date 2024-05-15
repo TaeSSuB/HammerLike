@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using DG.Tweening;
 public class RoomPrefab : MonoBehaviour
 {
     public GameObject EntranceN;
@@ -12,18 +13,32 @@ public class RoomPrefab : MonoBehaviour
     public event Action onMonsterCountChange;
     public BoxCollider Ground; // Collider that defines the room's boundaries
     public GameObject monsterParent; // Direct reference to the Monster parent object
+    public GameObject Door;
+    public bool doorOpened = false;
 
     // This method checks if a given position is within the room's ground collider
     public bool IsPositionInside(Vector3 position)
     {
-        Vector3 localPos = Ground.transform.InverseTransformPoint(position); // 諛⑹쓽 BoxCollider瑜?湲곗??쇰줈 濡쒖뺄 ?꾩튂 怨꾩궛
-        localPos.y = 0; // Y 異?臾댁떆
+        Vector3 localPos = Ground.transform.InverseTransformPoint(position); // 
+        localPos.y = 0; //
 
-        // 濡쒖뺄 寃쎄퀎 ?뺤씤???꾪빐 BoxCollider??center? size瑜??ъ슜
+        //
         Bounds localBounds = new Bounds(Ground.center, Ground.size);
         return localBounds.Contains(localPos);
     }
 
+    private void Update()
+    {
+        if (monsterCount == 0)
+            OpenDoor();
+
+       
+    }
+
+    public void Start()
+    {
+        CountMonsters();
+    }
 
     // Count monsters within this room
     public int CountMonsters()
@@ -65,5 +80,27 @@ public class RoomPrefab : MonoBehaviour
             // Update FollowOption or similar settings here
             Debug.Log($"FollowOption changed in {gameObject.name} due to no remaining monsters.");
         }
+    }
+
+    public void OpenDoor()
+    {
+        if (!doorOpened) // 문이 아직 열리지 않았다면
+        {
+            doorOpened = true; // 문이 열렸다고 표시
+            float moveDistance = 7.0f; // 이동 거리
+            float duration = 3.0f; // 지속 시간
+
+            // DoTween을 사용하여 문을 엽니다.
+            Door.transform.DOMoveY(Door.transform.position.y - moveDistance, duration).SetEase(Ease.InOutQuad);
+        }
+    }
+
+    public void CloseDoor()
+    {
+        float moveDistance = 7.0f; //
+        float duration = 3.0f; //
+
+        // DoTween을 사용하여 문을 엽니다.
+        Door.transform.DOMoveY(Door.transform.position.y + moveDistance, duration).SetEase(Ease.InOutQuad);
     }
 }

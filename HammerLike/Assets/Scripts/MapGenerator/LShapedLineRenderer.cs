@@ -33,7 +33,7 @@ public class LShapedLineRenderer : MonoBehaviour
         return new Vector3(1, 0, 1);  // 疫꿸퀡????由곁몴?獄쏆꼹??(???쐭??? ??용뮉 野껋럩??
     }
 
-    private void SetupLinePositions()
+    public void SetupLinePositions()
     {
         Vector3 startPosition = pointA.transform.position;
         Vector3 endPosition = pointB.transform.position;
