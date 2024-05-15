@@ -133,7 +133,9 @@ public class B_Boss : B_UnitBase
     {
         base.Attack();
 
-        transform.LookAt(GameManager.Instance.Player.transform);
+        var xzPlayerPos = new Vector3(GameManager.Instance.Player.transform.position.x, transform.position.y, GameManager.Instance.Player.transform.position.z);
+
+        transform.LookAt(xzPlayerPos);
     }    
 
     #endregion
