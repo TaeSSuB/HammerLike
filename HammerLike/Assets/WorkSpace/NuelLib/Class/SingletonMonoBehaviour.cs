@@ -29,14 +29,18 @@ namespace NuelLib
 
         protected virtual void Awake()
         {
+            Debug.Log("GameManager Awake called on: " + gameObject.name);
             if (instance == null)
             {
                 instance = this as T;
                 isQuit= false;
                 DontDestroyOnLoad(gameObject);
+                Debug.Log("Instance created and set to not destroy on load: " + gameObject.name);
             }
+        
             else
             {
+            Debug.Log("Instance already exists, destroying duplicate: " + gameObject.name);
                 Destroy(gameObject);
             }
         }

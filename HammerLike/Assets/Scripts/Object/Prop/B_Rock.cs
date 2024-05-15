@@ -23,6 +23,34 @@ public class B_Rock : B_Prop
         DestroyMesh();
     }
 
+    protected override void OnTriggerEnter(Collider other)
+    {
+        base.OnTriggerEnter(other);
+
+        if (other.CompareTag("WeaponCollider"))
+        {
+            TakeDamage(1, other.ClosestPoint(transform.position));
+        }
+    }
+
+    public void TakeDamage(int damage, Vector3 pos)
+    {
+        hp -= damage;
+        if (hp <= 0)
+        {
+            Dead();
+        }
+        else
+        {
+            B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, pos);
+            B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+            Debug.Log("Hit");
+            Vector3 playerDirection = transform.forward; // 플레이어가 바라보는 방향
+            GetComponent<Rigidbody>().AddForce(playerDirection * 200f, ForceMode.Impulse);
+        }
+
+    }
+
     public void DestroyMesh()
     {
         if (hasBeenDestroyed) // 이미 DestroyMesh가 호출되었으면 아무 것도 하지 않음

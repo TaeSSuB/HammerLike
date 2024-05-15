@@ -14,6 +14,7 @@ public class B_Boss_SkeletonTorturer : B_Boss
     [SerializeField] private float distance = 0f;
     //[SerializeField] private GameObject weaponObj;
     [SerializeField] private TMP_Text devText;
+    [SerializeField] private GameObject panel;
 
     public WeaponOrbitCommon WeaponOrbitCommon => weaponOrbitCommon;
     public Vector3 WeaponInitPos => weaponInitPos.position;
@@ -44,7 +45,16 @@ public class B_Boss_SkeletonTorturer : B_Boss
     {
         base.Init();
     }
-    
+
+    protected override void Dead()
+    {
+        base.Dead();
+        if(!panel.gameObject.activeSelf)
+        {
+            panel.gameObject.SetActive(true);
+        }
+    }
+
     protected override void Start()
     {
         base.Start();
