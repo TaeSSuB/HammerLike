@@ -81,4 +81,39 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
             Debug.LogWarning($"No audio found for category {category} with tag {tag}");
         }
     }
+
+    public void PlaySound(string name)
+    {
+        var audioInfo = audioSet.audioInfos.FirstOrDefault(info => info.name == name);
+        if (audioInfo != null && audioInfo.clip != null)
+        {
+            // for Play Once (VFX)
+            if(!audioInfo.loop)
+            {
+                AudioSource audioSourceOnce = audioSourceOnces.FirstOrDefault(source => source && !source.isPlaying);
+
+                // When all audioSourceOnce is playing
+                if(audioSourceOnce == null)
+                {
+                    audioSourceOnce = audioSourceOnces[0];
+                }
+                audioSourceOnce.clip = audioInfo.clip;
+                audioSourceOnce.volume = audioInfo.volume;
+                audioSourceOnce.loop = audioInfo.loop;
+                audioSourceOnce.Play();
+            }
+            // for BGM like loop sound
+            else
+            {
+                audioSourceLoop.clip = audioInfo.clip;
+                audioSourceLoop.volume = audioInfo.volume;
+                audioSourceLoop.loop = audioInfo.loop;
+                audioSourceLoop.Play();
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"No audio found for name {name}");
+        }
+    }
 }
