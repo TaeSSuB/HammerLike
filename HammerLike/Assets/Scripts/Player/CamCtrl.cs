@@ -78,7 +78,10 @@ public class CamCtrl : MonoBehaviour
     public float zoomMax;
     public float zoomSpd;
     public AnimationCurve zoomSpdCrv;
-    private float zoomTimer  = 0f;
+    private bool isZooming = false;
+    public float zoomDelay = 0.5f; // Delay before zooming starts
+    private float zoomDelayTimer = 0f; // Timer to track the delay
+    private bool zoomTriggered = false;
     private Bounds roomBounds;
     //private PlayerAtk playerAtk;
     private bool shouldReturnToInitialZoom = false; 
@@ -345,40 +348,42 @@ public class CamCtrl : MonoBehaviour
 
 
 
-        /*if (Input.GetMouseButtonUp(0) && cursorFollow)
+        if (Input.GetMouseButton(0) && !zoomTriggered)
         {
-            cursorFollow = false;
-            shouldReturnToInitialZoom = true; // Start zooming out
+            if (!isZooming)
+            {
+                // Start counting delay only if zoom has not started yet
+                zoomDelayTimer += Time.deltaTime;
+                if (zoomDelayTimer >= zoomDelay)
+                {
+                    // Once delay is over, trigger zooming
+                    isZooming = true;
+                    zoomTriggered = true;
+                    zoomDelayTimer = 0f; // Reset the delay timer
+                }
+            }
         }
-        else if (Input.GetMouseButton(0))
+        else if (Input.GetMouseButtonUp(0))
         {
-            ZoomIn();
-            if (!cursorFollow)
-                cursorFollow = true;
-        }
-
-        if (shouldReturnToInitialZoom)
-        {
-            ZoomOut();
-        }*/
-
-         if (Input.GetMouseButton(0))
-        {
-            ZoomIn();
-            if (!cursorFollow)
-                cursorFollow = true;
-        }
-        else if(Input.GetMouseButtonUp(0))
-        {
+            isZooming = false; // Stop zooming when mouse button is released
+            zoomTriggered = false; // Reset trigger flag for next zoom operation
             shouldReturnToInitialZoom = true;
         }
-         else
-        {
-            ZoomOut();
 
-            if (cursorFollow)
-                cursorFollow= false;
+        if (isZooming)
+        {
+            ZoomIn(); // Call zoom in function as per original functionality
+            if (!cursorFollow)
+                cursorFollow = true;
         }
+        else
+        {
+            ZoomOut(); // Handle zooming out or returning to initial zoom state
+            if (cursorFollow)
+                cursorFollow = false;
+        }
+
+
     }
 
     private void LateUpdate()
