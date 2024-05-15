@@ -18,7 +18,6 @@ public class B_Boss_SkeletonTorturer : B_Boss
     public WeaponOrbitCommon WeaponOrbitCommon => weaponOrbitCommon;
     public Vector3 WeaponInitPos => weaponInitPos.position;
 
-
     public override Vector3 Move(Vector3 inPos)
     {            
         float moveAmount = Agent.velocity.normalized.magnitude;

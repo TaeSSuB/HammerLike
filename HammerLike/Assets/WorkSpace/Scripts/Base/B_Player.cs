@@ -26,6 +26,9 @@ public class B_Player : B_UnitBase
 
     [SerializeField] private WeaponOrbit weaponOrbit;
 
+    private int atkDamageOrigin;
+    private float knockbackPowerOrigin;
+
 
     [Header("Camera Settings")]
     [SerializeField] private RotateType rotateType = RotateType.LookAtMouseSmooth;
@@ -59,25 +62,28 @@ public class B_Player : B_UnitBase
         if(findItem == null) {
             B_InventoryManager.Instance.playerWeaponContainer.AddItem(currentWeaponObj.itemData, 1);
         }
+        findItem = B_InventoryManager.Instance.playerWeaponContainer.FindItemOnInventory(currentWeaponObj.itemData);
+
+        EquipWeapon(findItem.ItemObject as SO_Weapon);
     }
 
     protected override void Update()
     {
-        base.Update();
-
-        // if Dead return
-        if (unitStatus.currentHP <= 0)
-        {
-            //DisableMovementAndRotation();
+        if (!isAlive)
             return;
-        }
+
+        InputCharge();
+
+        TrackWeaponDirXZ();
+    }
+
+    protected override void FixedUpdate() 
+    {
+        base.FixedUpdate();
 
         LookAtMouse();
 
         InputMovement();
-        InputCharge();
-
-        TrackWeaponDirXZ();
     }
 
     
@@ -150,15 +156,37 @@ public class B_Player : B_UnitBase
         Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         moveDir.Normalize();
 
+        Vector3 coordDir = Vector3.zero;
+
         var move = Move(transform.position + moveDir);
         //Debug.Log("Move - " + move);
         //Debug.Log("ACSN - " + GameManager.instance.ApplyCoordScaleNormalize(moveDir));
+
         MoveAnim(moveDir);
 
         if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
         {
             ResetAttack();
-            Dash(moveDir);
+
+            if(moveDir == Vector3.zero)
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, 100, groundLayer))
+                {
+                    Vector3 lookAt = hit.point;
+                    moveDir = lookAt - transform.position;
+                    moveDir.y = 0;
+                }
+            }
+            
+            coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(moveDir);
+
+            transform.LookAt(coordDir + transform.position);
+
+            Dash(coordDir);
+
         }
 
         return moveDir;
@@ -366,23 +394,18 @@ public class B_Player : B_UnitBase
     #region ..Dash
     void Dash(Vector3 inDir)
     {
-        if (inDir == Vector3.zero)
-        {
-            inDir = transform.forward;
-        }
-
         StartCoroutine(DashCoroutine(inDir));
     }
 
-    private IEnumerator DashCoroutine(Vector3 inDir)
+    private IEnumerator DashCoroutine(Vector3 coordDir)
     {
         float dashTime = (unitStatus as SO_PlayerStatus).dashDuration;
         float dashSpeed = (unitStatus as SO_PlayerStatus).dashSpeed;
 
         StartDash();
 
-        Vector3 coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDir);
         //transform.LookAt(coordDir + transform.position);
+        var lookAt = coordDir + transform.position;
 
         Debug.DrawLine(transform.position, coordDir + transform.position, Color.red, 3f);
 
@@ -392,7 +415,6 @@ public class B_Player : B_UnitBase
 
         while (dashTime > 0)
         {
-            transform.LookAt(coordDir + transform.position);
             // move with rigid body
             Rigid.velocity = coordDir * dashSpeed;
             dashTime -= Time.deltaTime;
@@ -453,7 +475,7 @@ public class B_Player : B_UnitBase
     }
     void ResetDamage()
     {
-        (unitStatus as SO_PlayerStatus).atkDamage = (unitStatus as SO_PlayerStatus).AtkDamageOrigin + (weaponData == null ? 0 : weaponData.attackPower);
+        (unitStatus as SO_PlayerStatus).atkDamage = atkDamageOrigin;
     }
 
     public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true)
@@ -505,11 +527,16 @@ public class B_Player : B_UnitBase
         chargeVFXObj = b_Weapon.VFXObj;
 
         // Status Apply
-        (unitStatus as SO_PlayerStatus).atkDamage += weaponData.attackPower;
-        (unitStatus as SO_PlayerStatus).knockbackPower += weaponData.knockbackPower;
+        (unitStatus as SO_PlayerStatus).atkDamage = weaponData.attackPower;
+        atkDamageOrigin = (unitStatus as SO_PlayerStatus).atkDamage;
+
+        (unitStatus as SO_PlayerStatus).knockbackPower = weaponData.knockbackPower;
+        knockbackPowerOrigin = (unitStatus as SO_PlayerStatus).knockbackPower;
         
         (unitStatus as SO_PlayerStatus).atkRange = weaponData.weaponRange;
         (unitStatus as SO_PlayerStatus).atkSpeed = weaponData.attackSpeed;
+
+        (unitStatus as SO_PlayerStatus).chargeRate = 1;
 
         OnWeaponEquipped?.Invoke(b_Weapon);
     }
@@ -523,11 +550,16 @@ public class B_Player : B_UnitBase
         weaponData = null;
 
         // Status Apply
-        (unitStatus as SO_PlayerStatus).atkDamage = (unitStatus as SO_PlayerStatus).AtkDamageOrigin;
-        (unitStatus as SO_PlayerStatus).knockbackPower = (unitStatus as SO_PlayerStatus).KnockbackPowerOrigin;
+        (unitStatus as SO_PlayerStatus).atkDamage = 1;
+        atkDamageOrigin = 1;
+
+        (unitStatus as SO_PlayerStatus).knockbackPower = 1;
+        knockbackPowerOrigin = 1;
         
         (unitStatus as SO_PlayerStatus).atkRange = 1f;
         (unitStatus as SO_PlayerStatus).atkSpeed = 1f;
+
+        (unitStatus as SO_PlayerStatus).chargeRate = 1;
 
         OnWeaponEquipped?.Invoke(null);
     }

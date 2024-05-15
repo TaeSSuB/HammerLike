@@ -39,13 +39,6 @@ public class B_Enemy : B_UnitBase
     {
         base.Update();
 
-        // if Dead return
-        if (UnitStatus.currentHP <= 0 || isTester)
-        {
-            //DisableMovementAndRotation();
-            return;
-        }
-
         // Temp - Set Chasing
         if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD && !isAttacking)
         {
@@ -92,7 +85,7 @@ public class B_Enemy : B_UnitBase
             // Get hit dir from player
             Vector3 hitDir = (transform.position - player.transform.position).normalized;
 
-            var chargeAmount = player.UnitStatus.atkDamage / player.UnitStatus.AtkDamageOrigin;
+            var chargeAmount = (player.UnitStatus as SO_PlayerStatus).chargeRate;
             
             // Take Damage and Knockback dir from player
             TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount);

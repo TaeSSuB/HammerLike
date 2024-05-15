@@ -48,7 +48,7 @@ public class B_UnitBase : B_Entity
     public Animator Anim { get => anim;}
     public NavMeshAgent Agent { get => agent;}
 
-    private bool isAlive = true;
+    protected bool isAlive = true;
     public bool IsAlive { get => isAlive; }
     // lock move and rotate
     public bool isLockMove { get; private set; }
@@ -87,6 +87,15 @@ public class B_UnitBase : B_Entity
     protected override void Update()
     {
         base.Update();
+
+        if (!isAlive)
+            return;
+    }
+
+    protected override void FixedUpdate() 
+    {
+        base.FixedUpdate();
+        
         CheckGrounded();
 
         if (!isAlive)
@@ -95,11 +104,6 @@ public class B_UnitBase : B_Entity
         if (UnitStatus.currentAttackCooltime > 0)
         {
             UpdateAttackCoolTime();
-            //UnitStatus.currentAttackCooltime -= Time.deltaTime;
-            //Anim.SetFloat("fRemainShot", UnitStatus.currentAttackCooltime);
-
-            // Init - On Attack State
-            // current Attack -> Max Attack Cooltime
         }
 
         if(UnitStatus.currentRestoreHPCooltime > 0)
@@ -112,7 +116,6 @@ public class B_UnitBase : B_Entity
             RestoreHP((int)UnitStatus.restoreHP);
             UnitStatus.currentRestoreHPCooltime = UnitStatus.restoreHPCooltime;
         }
-
     }
 
     protected override void OnTriggerEnter(Collider other)
@@ -209,7 +212,7 @@ public class B_UnitBase : B_Entity
     #endregion
 
     #region Check or Update State
-    private void CheckGrounded()
+    protected void CheckGrounded()
     {
 
         // min dis 0.01f to prevent raycast from hitting itself
