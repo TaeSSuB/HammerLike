@@ -72,11 +72,11 @@ public class UI_InGame : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.N))
+        /*if(Input.GetKeyDown(KeyCode.N))
         {
             
             OnOffPanel();
-        }
+        }*/
     }
 
     private void OnApplicationQuit()
