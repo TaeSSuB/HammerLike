@@ -40,8 +40,15 @@ public class RoomPrefab : MonoBehaviour
         if (monsterCount == 0 && isCheck)
         {
             OpenDoors();
+            if(nextMonsterGroup!=null)
+            {
+
             if (!nextMonsterGroup.gameObject.activeSelf)
+                {
                 nextMonsterGroup.SetActive(true);
+                    
+                }
+            }
         }
     }
 
