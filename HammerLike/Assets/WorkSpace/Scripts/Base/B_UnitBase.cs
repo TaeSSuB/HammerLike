@@ -376,7 +376,7 @@ public class B_UnitBase : B_Entity
     /// </summary>
     public virtual void StartAttack()
     {
-        
+        isAttacking = true;
     }
 
     /// <summary>

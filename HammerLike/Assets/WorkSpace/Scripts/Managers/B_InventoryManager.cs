@@ -43,6 +43,7 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
     void WeaponSwitchWithWheel() {
 
         if(Input.GetAxis("Mouse ScrollWheel") == 0) return;
+        if(GameManager.Instance.Player.isAttacking) return;
 
         var currentWeaponSlotIndex = GetCurrentWeaponSlotIndex();
         int nextWeaponIndex = currentWeaponSlotIndex;
@@ -73,7 +74,10 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
 
         if(currentWeaponSlotIndex == nextWeaponIndex) return;
 
-        GameManager.Instance.Player.EquipWeapon(playerWeaponContainer.Container.Items[nextWeaponIndex].ItemObject as SO_Weapon);
+        var targetWeapon = playerWeaponContainer.Container.Items[nextWeaponIndex].ItemObject as SO_Weapon;
+
+        GameManager.Instance.Player.EquipWeapon(targetWeapon);
+        B_UIManager.Instance.UI_InGame.UpdateWeaponImage(targetWeapon.itemIcon);
     }
 
     public void OnApplicationQuit()

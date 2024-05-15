@@ -26,6 +26,10 @@ public class UI_InGame : MonoBehaviour
     [Header("Inventory UI")]
     [SerializeField] protected GameObject inventoryUI;
 
+    [Header("Equipment UI")]
+    [SerializeField] protected Image currentWeaponImage;
+
+
     [Header("QuickSlot UI")]
     [SerializeField] protected GameObject quickSlotUI;
 
@@ -182,6 +186,11 @@ public class UI_InGame : MonoBehaviour
     public void UpdateBossHP(B_Boss b_boss)
     {
         bossHPSlider.value = (float)b_boss.UnitStatus.currentHP / b_boss.UnitStatus.maxHP;
+    }
+
+    public void UpdateWeaponImage(Sprite sprite)
+    {
+        currentWeaponImage.sprite = sprite;
     }
 
 }
