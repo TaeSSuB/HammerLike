@@ -6,8 +6,7 @@ public class AudioControlUI : MonoBehaviour
     [Header("UI 요소")]
     public Slider bgmVolumeSlider;
     public Slider sfxVolumeSlider;
-    public Button muteToggleButton;
-    public Text muteToggleText;
+    public Toggle muteToggleButton;
 
     private bool isMuted = false;
     private float savedBGMVolume = 1.0f;
@@ -22,9 +21,9 @@ public class AudioControlUI : MonoBehaviour
         // UI 요소에 대한 리스너 연결
         bgmVolumeSlider.onValueChanged.AddListener(SetBGMVolume);
         sfxVolumeSlider.onValueChanged.AddListener(SetSFXVolume);
-        muteToggleButton.onClick.AddListener(ToggleMute);
+        muteToggleButton.onValueChanged.AddListener(ToggleMute);
 
-        UpdateMuteButtonText();
+
     }
 
 
@@ -46,11 +45,9 @@ public class AudioControlUI : MonoBehaviour
         }
     }
 
-    public void ToggleMute()
+    public void ToggleMute(bool isOn)
     {
-        isMuted = !isMuted;
-        UpdateMuteButtonText();
-
+        isMuted = isOn;
         if (isMuted)
         {
             B_AudioManager.Instance.SetVolume(AudioCategory.BGM, 0);
@@ -63,10 +60,8 @@ public class AudioControlUI : MonoBehaviour
         }
     }
 
-    private void UpdateMuteButtonText()
-    {
-        muteToggleText.text = isMuted ? "음소거 해제" : "음소거";
-    }
+
+
 }
 
 public static class AudioManagerExtensions
