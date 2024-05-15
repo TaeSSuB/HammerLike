@@ -472,7 +472,7 @@ public class CamCtrl : MonoBehaviour
 
         targetPos.x = Mathf.Clamp(targetPos.x, -cursorFollowThreshold + followObjTr.position.x, cursorFollowThreshold + followObjTr.position.x);
         targetPos.y = cameraOffset.y;
-        targetPos.z = Mathf.Clamp(targetPos.z, -cursorFollowThreshold + followObjTr.position.z, cursorFollowThreshold + followObjTr.position.z);
+        targetPos.z = Mathf.Clamp(targetPos.z, -cursorFollowThreshold*1.6f + followObjTr.position.z, cursorFollowThreshold*1.6f + followObjTr.position.z);
 
         targetPos.z += cameraOffset.z;
 
