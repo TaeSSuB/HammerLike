@@ -22,7 +22,7 @@ public class SceneLoadObject : MonoBehaviour
     {
         if(other.CompareTag("Player"))
         {
-            sceneLoader.ChangeScene("Test_RoomSetting");
+            sceneLoader.ChangeSceneOther("Test_RoomSetting");
         }
     }
 }
