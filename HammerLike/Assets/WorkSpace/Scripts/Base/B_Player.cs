@@ -156,15 +156,37 @@ public class B_Player : B_UnitBase
         Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         moveDir.Normalize();
 
+        Vector3 coordDir = Vector3.zero;
+
         var move = Move(transform.position + moveDir);
         //Debug.Log("Move - " + move);
         //Debug.Log("ACSN - " + GameManager.instance.ApplyCoordScaleNormalize(moveDir));
+
         MoveAnim(moveDir);
 
         if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
         {
             ResetAttack();
-            Dash(moveDir);
+
+            if(moveDir == Vector3.zero)
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, 100, groundLayer))
+                {
+                    Vector3 lookAt = hit.point;
+                    moveDir = lookAt - transform.position;
+                    moveDir.y = 0;
+                }
+            }
+            
+            coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(moveDir);
+
+            transform.LookAt(coordDir + transform.position);
+
+            Dash(coordDir);
+
         }
 
         return moveDir;
@@ -372,23 +394,18 @@ public class B_Player : B_UnitBase
     #region ..Dash
     void Dash(Vector3 inDir)
     {
-        if (inDir == Vector3.zero)
-        {
-            inDir = transform.forward;
-        }
-
         StartCoroutine(DashCoroutine(inDir));
     }
 
-    private IEnumerator DashCoroutine(Vector3 inDir)
+    private IEnumerator DashCoroutine(Vector3 coordDir)
     {
         float dashTime = (unitStatus as SO_PlayerStatus).dashDuration;
         float dashSpeed = (unitStatus as SO_PlayerStatus).dashSpeed;
 
         StartDash();
 
-        Vector3 coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDir);
         //transform.LookAt(coordDir + transform.position);
+        var lookAt = coordDir + transform.position;
 
         Debug.DrawLine(transform.position, coordDir + transform.position, Color.red, 3f);
 
@@ -398,7 +415,6 @@ public class B_Player : B_UnitBase
 
         while (dashTime > 0)
         {
-            transform.LookAt(coordDir + transform.position);
             // move with rigid body
             Rigid.velocity = coordDir * dashSpeed;
             dashTime -= Time.deltaTime;
