@@ -63,6 +63,37 @@ Transform:
   - {fileID: 6225097330378915096}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8619710247731924522
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6469274450052942726}
+  m_Layer: 0
+  m_Name: hpTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6469274450052942726
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8619710247731924522}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6225097330378915096}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5902324065674910451
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -593,6 +624,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8816575067612710706}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 531ee4c8a8eadd4489462c0da056a2ca,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6469274450052942726}
     - targetCorrespondingSourceObject: {fileID: -5094550406504429438, guid: 531ee4c8a8eadd4489462c0da056a2ca,
         type: 3}
       insertIndex: -1
@@ -884,13 +919,14 @@ MonoBehaviour:
   anim: {fileID: 8540874310223118576}
   agent: {fileID: 8317560437314509844}
   isAttacking: 0
+  knockbackDuration: 0.5
   puppet: {fileID: 0}
   groundLayer:
     serializedVersion: 2
     m_Bits: 2147483648
   groundCheckDistance: 0.1
   isKnockback: 0
-  hpPosTR: {fileID: 0}
+  hpPosTR: {fileID: 6469274450052942726}
   isTester: 0
   muzzleTR: {fileID: 7689427768120481052}
   projectilePrefab: {fileID: 5288796281280855363, guid: 52301030f9c8097458466e2150de7920,
@@ -1514,7 +1550,7 @@ MonoBehaviour:
   baseTransform: {fileID: 6225097330378915096}
   Hips: {fileID: 2839718334594970089}
   ScaleReferenceMode: 3
-  finalScaleReference: 0.38349134
+  finalScaleReference: 0.38349128
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0

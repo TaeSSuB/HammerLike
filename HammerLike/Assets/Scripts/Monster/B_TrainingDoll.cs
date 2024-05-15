@@ -22,7 +22,7 @@ public class TrainingDoll : B_Enemy
 
 
             Sequence shakeSequence = DOTween.Sequence();
-            shakeSequence.Append(transform.DOShakeRotation(0.5f, new Vector3(0, 0, 30), 10, 90, false))
+            shakeSequence.Append(transform.DOShakeRotation(0.3f, new Vector3(0, 0, 30), 10, 90, false))
                           .Append(transform.DORotateQuaternion(Quaternion.identity, 0.2f));
 
             var chargeAmount = (player.UnitStatus as SO_PlayerStatus).chargeRate;

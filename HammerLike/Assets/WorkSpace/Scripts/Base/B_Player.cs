@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 /// <summary>
 /// B_Player : Player Base Class
@@ -36,6 +37,9 @@ public class B_Player : B_UnitBase
     [SerializeField] private float rotDeadZone = 0.1f;
     [SerializeField] private bool AllowRotate_L = true;
     [SerializeField] private bool AllowRotate_R = true;
+
+    [Header("Temp")]
+    [SerializeField] private GameObject deadPanel;
 
     public SO_Weapon WeaponData => weaponData;
 
@@ -464,6 +468,8 @@ public class B_Player : B_UnitBase
     {
         base.Dead();
         Anim.SetTrigger("tDeath");
+        if (!deadPanel.gameObject.activeSelf)
+            deadPanel.gameObject.SetActive(true);
     }
 
     #endregion
