@@ -368,7 +368,12 @@ public class B_Player : B_UnitBase
         weaponOrbit.trailRenderer.Clear();
         DisableWeaponCollider();
         chargeVFXObj.SetActive(false);
-        weaponRenderer.material.SetFloat("_ChargeAmount", 0f);
+
+        foreach (var weaponMat in weaponRenderer.materials)
+        {
+            weaponMat.SetFloat("_ChargeAmount", 0f);
+        }
+
         //zoomCam.orthographicSize = startZoom;
         ResetDamage();
 
