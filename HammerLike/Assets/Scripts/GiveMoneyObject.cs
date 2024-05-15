@@ -32,7 +32,7 @@ public class GiveMoneyObject : MonoBehaviour
 
     void Update()
     {
-        if (!isGiven && mesh != null && mesh.curHp <= 0)
+        if (!isGiven && mesh != null )
         {
             if (item != null)
             {

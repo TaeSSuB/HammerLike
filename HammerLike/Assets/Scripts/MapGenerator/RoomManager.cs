@@ -61,6 +61,10 @@ public class RoomManager : MonoBehaviour
             {
                 Debug.Log($"Player has entered a new room: {currentRoom.gameObject.name}");
                 camCtrl.UpdateCameraBounds(currentRoom.Ground.bounds);
+                if(currentRoom.Door.transform.position.y <0)    // 일단 현재는 몬스터 없을때 있을때 구분 안함
+                {
+                    currentRoom.CloseDoor();
+                }
             }
             else
             {
@@ -81,8 +85,8 @@ public class RoomManager : MonoBehaviour
         else 
         {
             camCtrl.followOption = FollowOption.FollowToObject;
-            if(!room.doorOpened)
-            room.OpenDoor();
+            /*if(!room.doorOpened)
+            room.OpenDoor();*/
             if(entranceA!=null&&entranceB!=null&&entranceA.activeSelf&&entranceB.activeSelf)
             {
                 entranceA.SetActive(false);

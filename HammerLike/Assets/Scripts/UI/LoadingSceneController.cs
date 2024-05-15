@@ -20,6 +20,10 @@ public class LoadingSceneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if(!image.gameObject.activeSelf)
+        {
+            image.gameObject.SetActive(true);
+        }
         FadeOut();
         StartCoroutine(LoadSceneProcess());
     }

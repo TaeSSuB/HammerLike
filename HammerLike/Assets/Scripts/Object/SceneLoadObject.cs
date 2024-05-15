@@ -6,6 +6,7 @@ public class SceneLoadObject : MonoBehaviour
 {
 
     [SerializeField] private SceneLoader sceneLoader;
+    [SerializeField] private string sceneName= "HG_CombatSystem";
     // Start is called before the first frame update
     void Start()
     {
@@ -22,7 +23,7 @@ public class SceneLoadObject : MonoBehaviour
     {
         if(other.CompareTag("Player"))
         {
-            sceneLoader.ChangeSceneOther("Test_RoomSetting");
+            sceneLoader.ChangeSceneOther(sceneName);
         }
     }
 }

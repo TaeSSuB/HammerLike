@@ -12,6 +12,10 @@ public class SceneLoader : MonoBehaviour
 
     void Start()
     {
+        if(!targetImage.gameObject.activeSelf)
+        {
+            targetImage.gameObject.SetActive(true);
+        }
         // 시작 시 페이드 아웃 실행
         FadeOut();
     }
