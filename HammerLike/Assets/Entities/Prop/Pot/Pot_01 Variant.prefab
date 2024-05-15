@@ -11,10 +11,8 @@ GameObject:
   - component: {fileID: 3926853678471123502}
   - component: {fileID: 130928780427009419}
   - component: {fileID: 2753335728324405569}
-  - component: {fileID: 3599578831111000767}
   - component: {fileID: 6320283902246909277}
   - component: {fileID: -6517824033602315686}
-  - component: {fileID: 3636730365675198238}
   m_Layer: 10
   m_Name: Pot_01 Variant
   m_TagString: Pot
@@ -29,13 +27,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4410480002878228628}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.38268343, z: 0, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
 --- !u!33 &130928780427009419
 MeshFilter:
@@ -87,24 +85,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &3599578831111000767
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4410480002878228628}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15f2cae7a75dc1d479c03956c57c10a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SnapPosition: 1
-  SnapEulerAngles: 1
-  SnapAngleStrategy: 0
-  angleResolution: 22.5
-  AlignPixelGrid: 0
-  PixelGridReference: {fileID: 0}
 --- !u!136 &6320283902246909277
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -113,8 +93,17 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4410480002878228628}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
+  serializedVersion: 2
   m_Radius: 0.6565888
   m_Height: 1.7740867
   m_Direction: 1
@@ -126,7 +115,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4410480002878228628}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8eab486a190a9814fa13b8d5338032cb, type: 3}
   m_Name: 
@@ -137,15 +126,3 @@ MonoBehaviour:
   deathTime: 10
   maxHp: 1
   curHp: 0
---- !u!114 &3636730365675198238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4410480002878228628}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62772fad69a1d4342bd81c1eaeffe252, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
