@@ -13,6 +13,7 @@ public class RoomPrefab : MonoBehaviour
     public event Action onMonsterCountChange;
     public BoxCollider Ground;
     public GameObject monsterParent;
+    public GameObject nextMonsterGroup;
 
     public List<GameObject> Doors = new List<GameObject>(); // 다수의 문을 관리
     public bool doorsOpened = false;
@@ -37,7 +38,11 @@ public class RoomPrefab : MonoBehaviour
     private void Update()
     {
         if (monsterCount == 0 && isCheck)
+        {
             OpenDoors();
+            if (!nextMonsterGroup.gameObject.activeSelf)
+                nextMonsterGroup.SetActive(true);
+        }
     }
 
     public int CountMonsters()
