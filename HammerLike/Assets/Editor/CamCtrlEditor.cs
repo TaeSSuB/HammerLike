@@ -86,6 +86,7 @@ public class CamCtrlEditor : Editor
                 SerializedProperty zoomMin = serializedCamCtrl.FindProperty("zoomMin");
                 SerializedProperty zoomMax = serializedCamCtrl.FindProperty("zoomMax");
                 SerializedProperty zoomSpd = serializedCamCtrl.FindProperty("zoomSpd");
+                SerializedProperty zoomDelay = serializedCamCtrl.FindProperty("zoomDelay");
                 SerializedProperty zoomSpdCrv = serializedCamCtrl.FindProperty("zoomSpdCrv");
 
                 EditorGUILayout.PropertyField(cursorFollow);
@@ -94,6 +95,7 @@ public class CamCtrlEditor : Editor
                 EditorGUILayout.PropertyField(zoomMin);
                 EditorGUILayout.PropertyField(zoomMax);
                 EditorGUILayout.PropertyField(zoomSpd);
+                EditorGUILayout.PropertyField(zoomDelay);
                 EditorGUILayout.PropertyField(zoomSpdCrv);
             }
         }
