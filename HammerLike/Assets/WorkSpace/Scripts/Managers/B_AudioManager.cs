@@ -21,6 +21,16 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
     private AudioSource[] audioSourceOnces; // For SFX
     private AudioSource audioSourceLoop; // For BGM
 
+    public AudioSource GetLoopAudioSource()
+    {
+        return audioSourceLoop;
+    }
+
+    public AudioSource[] GetOnceAudioSources()
+    {
+        return audioSourceOnces;
+    }
+
     protected override void Awake()
     {
         base.Awake();
