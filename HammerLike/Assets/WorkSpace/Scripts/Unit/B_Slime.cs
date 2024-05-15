@@ -58,7 +58,7 @@ public class B_Slime : B_Enemy
         col.enabled = false;
         weaponCollider.enabled = true;
 
-        Rigid.isKinematic = true;
+        //Rigid.isKinematic = true;
     }
 
     public override void EndAttack()
@@ -68,7 +68,7 @@ public class B_Slime : B_Enemy
         col.enabled = true;
         weaponCollider.enabled = false;
 
-        Rigid.isKinematic = false;
+        //Rigid.isKinematic = false;
     }
 
     IEnumerator CoSlimeAttack()
@@ -136,6 +136,7 @@ public class B_Slime : B_Enemy
         agent.enabled = true;
         Rigid.velocity = Vector3.zero;
         Rigid.isKinematic = false;
+        weaponCollider.enabled = false;
         //rigid.mass = unitStatus.mass;
 
         yield return new WaitForSeconds(delayTime);
