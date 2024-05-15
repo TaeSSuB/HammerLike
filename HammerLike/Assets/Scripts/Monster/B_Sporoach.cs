@@ -12,11 +12,13 @@ public class B_Sporoach : B_Enemy
 
     protected void Shot()
     {
-       
         GameObject projectile = Instantiate(projectilePrefab, muzzleTR.position, Quaternion.identity);
-        
 
-        
+    }
+
+    protected override void Dead()
+    {
+
     }
 
     public override void EndAttack()
