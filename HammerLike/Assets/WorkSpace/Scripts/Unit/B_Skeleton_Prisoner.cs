@@ -12,6 +12,8 @@ public class B_Skeleton_Prisoner : B_Enemy
     {
         base.Dead();
 
+        weaponColliderObj.SetActive(false);
+
         // 스켈레톤 유닛은 Dead 시 puppet 분리
         DisconnectMusclesRecursive(GameManager.Instance.Player.transform.position);
     }

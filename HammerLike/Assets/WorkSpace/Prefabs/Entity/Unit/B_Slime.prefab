@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 427798352306079903}
   - component: {fileID: 6684310037322054117}
   - component: {fileID: 2629802174635142213}
-  m_Layer: 8
+  m_Layer: 16
   m_Name: Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -143,6 +143,7 @@ Transform:
   m_Children:
   - {fileID: 7694012040184570831}
   - {fileID: 1010054233868788792}
+  - {fileID: 1784469914811841033}
   - {fileID: 4138437372281481108}
   - {fileID: 6271083023624452756}
   m_Father: {fileID: 2173788121208908483}
@@ -251,6 +252,7 @@ MonoBehaviour:
   anim: {fileID: 7344168283046424172}
   agent: {fileID: 0}
   isAttacking: 0
+  knockbackDuration: 0.5
   puppet: {fileID: 0}
   groundLayer:
     serializedVersion: 2
@@ -259,6 +261,7 @@ MonoBehaviour:
   isKnockback: 0
   hpPosTR: {fileID: 6271083023624452756}
   isTester: 0
+  weaponCollider: {fileID: 4815964313420995929}
   duration: 1
   multiplier: 1.5
   deadMultiplier: 1
@@ -752,7 +755,7 @@ GameObject:
   - component: {fileID: 2209110815843000634}
   - component: {fileID: 6256333549181961136}
   - component: {fileID: 8618030071394978056}
-  m_Layer: 8
+  m_Layer: 16
   m_Name: Arm.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -846,6 +849,59 @@ SpringJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!1 &1672535182816848490
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1784469914811841033}
+  - component: {fileID: 4815964313420995929}
+  m_Layer: 13
+  m_Name: Collider_Weapon
+  m_TagString: WeaponCollider
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1784469914811841033
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1672535182816848490}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 985795359630169132}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &4815964313420995929
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1672535182816848490}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Radius: 1.1632427
+  m_Center: {x: 0, y: 0.90384305, z: 0}
 --- !u!1 &1992863800750966762
 GameObject:
   m_ObjectHideFlags: 0
@@ -858,7 +914,7 @@ GameObject:
   - component: {fileID: 2350727361623123386}
   - component: {fileID: 6067783569492390582}
   - component: {fileID: 5944551696722992645}
-  m_Layer: 8
+  m_Layer: 16
   m_Name: Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1182,7 +1238,7 @@ GameObject:
   - component: {fileID: 4272342821062396738}
   - component: {fileID: 4167034463947887835}
   - component: {fileID: 3929308313192939486}
-  m_Layer: 8
+  m_Layer: 16
   m_Name: Front
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1286,7 +1342,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 468238251570949995}
-  m_Layer: 8
+  m_Layer: 16
   m_Name: Face
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1352,7 +1408,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7694012040184570831}
-  m_Layer: 8
+  m_Layer: 16
   m_Name: Armature_Slime
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1418,7 +1474,7 @@ GameObject:
   - component: {fileID: 5130856386273839785}
   - component: {fileID: 8782942335895387030}
   - component: {fileID: 6462062362149532197}
-  m_Layer: 8
+  m_Layer: 16
   m_Name: Arm.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1732,7 +1788,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4129913593073005494}
-  m_Layer: 8
+  m_Layer: 16
   m_Name: Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1772,7 +1828,7 @@ GameObject:
   - component: {fileID: 3956522036803329429}
   - component: {fileID: 736684919847946788}
   - component: {fileID: 8894537719968596579}
-  m_Layer: 8
+  m_Layer: 16
   m_Name: Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
