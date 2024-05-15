@@ -158,7 +158,7 @@ public class B_UnitBase : B_Entity
         UnitStatus.currentHP = UnitStatus.maxHP;
     }
 
-    public void RestoreHP(int hpRate = 0)
+    public virtual void RestoreHP(int hpRate = 0)
     {
         UnitStatus.currentHP = UnitStatus.currentHP + hpRate;
         ClampHP();
@@ -352,7 +352,7 @@ public class B_UnitBase : B_Entity
 
         isKnockback = false;
         isInvincible = false;
-        
+
         EnableMovementAndRotation();
     }
     #endregion
@@ -376,7 +376,7 @@ public class B_UnitBase : B_Entity
     /// </summary>
     public virtual void StartAttack()
     {
-        
+        isAttacking = true;
     }
 
     /// <summary>

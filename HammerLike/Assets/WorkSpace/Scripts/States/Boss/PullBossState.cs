@@ -60,20 +60,6 @@ public class PullBossState : IBossAIState
     {
         b_Boss.Anim.ResetTrigger("tPatternPlay");
         b_Boss.Anim.SetBool("bGrabbed", false);
-
-        if(b_Boss as B_Boss_SkeletonTorturer)
-        { 
-            var targetBoss = b_Boss as B_Boss_SkeletonTorturer;
-
-            if(weaponOrbitCommon == null)
-            {
-                weaponOrbitCommon = targetBoss.WeaponOrbitCommon;
-            }
-
-            weaponOrbitCommon.SetRigidKinematic(false);
-            weaponOrbitCommon.SetWeaponPos(targetBoss.WeaponInitPos);
-        }
-
     }
     
     private void PullWeapon()

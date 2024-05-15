@@ -13,6 +13,7 @@ public class UI_InGame : MonoBehaviour
     [Header("HP UI")]
     [SerializeField] protected Slider playerHPSlider;
     [SerializeField] protected Slider bossHPSlider;
+    [SerializeField] protected GameObject bossHPUI;
 
     [Header("Charge UI")]
     [SerializeField] protected Slider chargeSlider;
@@ -25,6 +26,10 @@ public class UI_InGame : MonoBehaviour
 
     [Header("Inventory UI")]
     [SerializeField] protected GameObject inventoryUI;
+
+    [Header("Equipment UI")]
+    [SerializeField] protected Image currentWeaponImage;
+
 
     [Header("QuickSlot UI")]
     [SerializeField] protected GameObject quickSlotUI;
@@ -47,6 +52,8 @@ public class UI_InGame : MonoBehaviour
     private SO_PlayerStatus playerStatus;
 
     private Coroutine chargeCoroutine;
+
+    public GameObject BossHPUI { get => bossHPUI; }
 
     private void Awake()
     {
@@ -179,9 +186,19 @@ public class UI_InGame : MonoBehaviour
             EnablePanel();
     }
 
+    public void SetActiveBossHPUI(bool isActive)
+    {
+        bossHPUI.SetActive(isActive);
+    }
+
     public void UpdateBossHP(B_Boss b_boss)
     {
         bossHPSlider.value = (float)b_boss.UnitStatus.currentHP / b_boss.UnitStatus.maxHP;
+    }
+
+    public void UpdateWeaponImage(Sprite sprite)
+    {
+        currentWeaponImage.sprite = sprite;
     }
 
 }

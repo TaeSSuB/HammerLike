@@ -26,7 +26,7 @@ public class SO_Weapon : SO_Equipment
         base.Use();
         // Equip the item
         // Remove it from the inventory
-
+        B_InventoryManager.Instance.playerWeaponContainer.AddItem(this.itemData, 1);
         GameManager.Instance.Player.EquipWeapon(this);
     }
 }

@@ -26,6 +26,7 @@ public class MeleeAttackBossState : IBossAIState
 
             weaponOrbitCommon.trackType = WeaponOrbitCommon.TrackType.DirBasedPoint;
             weaponOrbitCommon.SetTracking(true);
+            weaponOrbitCommon.DisableCollider();
             
             startA = weaponOrbitCommon.a;
             startB = weaponOrbitCommon.b;
@@ -36,17 +37,13 @@ public class MeleeAttackBossState : IBossAIState
             weaponOrbitCommon.a *= 0.5f;
             weaponOrbitCommon.b *= 0.5f;
         }
-
-        var xzPlayerPos = new Vector3(GameManager.Instance.Player.transform.position.x, b_Boss.transform.position.y, GameManager.Instance.Player.transform.position.z);
-        b_Boss.transform.LookAt(xzPlayerPos);
-
         // b_Boss.Anim.SetTrigger("tPatternPlay");
         // b_Boss.Anim.SetInteger("PatternIdx", patternIdx);
 
         // b_Boss.UnitStatus.currentAttackCooltime = b_Boss.UnitStatus.maxAttackCooltime;
 
-        b_Boss.Anim.SetBool("bAttack", b_Boss.isAttacking);
         b_Boss.Anim.SetTrigger("tAttack");
+        //b_Boss.Anim.SetBool("bAttack", b_Boss.isAttacking);
 
         b_Boss.Attack();
     }

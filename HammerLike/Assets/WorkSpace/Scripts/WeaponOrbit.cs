@@ -38,6 +38,7 @@ public class WeaponOrbit : MonoBehaviour
     public B_Weapon b_Weapon;  // 무기 컴포넌트
     private GameObject targetObj;  // 추적할 오브젝트
     private GameObject weaponMesh;  // 무기 오브젝트
+    private Material weaponTrailMat;  // 무기 트레일 머티리얼
     public B_Player player;  // 플레이어 오브젝트
     public float startWidthScale = 0.1f;  // 트레일 시작 폭
     public float endWidthScale = 0.05f;  // 트레일 끝 폭
@@ -70,6 +71,7 @@ public class WeaponOrbit : MonoBehaviour
         {
             targetObj = b_Weapon.VFXObj;
             weaponMesh = b_Weapon.MeshObj;
+            weaponTrailMat = b_Weapon.WeaponTrailMat;
         }
 
         AdjustTrailWidth();
@@ -121,6 +123,9 @@ public class WeaponOrbit : MonoBehaviour
 
         if(weaponRenderer == null)
             return;
+
+        if(weaponTrailMat != null)
+            trailRenderer.material = weaponTrailMat;
 
         float weaponLength = weaponRenderer.bounds.size.magnitude;  // 무기의 길이 계산
         trailRenderer.startWidth = weaponLength * startWidthScale;  // 트레일의 시작 폭 설정

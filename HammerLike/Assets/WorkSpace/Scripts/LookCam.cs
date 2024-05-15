@@ -5,6 +5,13 @@ using UnityEngine;
 
 public class LookCam : MonoBehaviour
 {
+    public enum ProjectionType
+    {
+        Perspective,
+        Orthographic
+    }
+    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +22,17 @@ public class LookCam : MonoBehaviour
     void Update()
     {
         if(Camera.main != null)
-            transform.LookAt(Camera.main.transform);
+        {
+            switch(Camera.main.orthographic)
+            {
+                case true:
+                    //transform.LookAt(Camera.main.transform);
+                    transform.rotation = Quaternion.Euler(30, 0, 0);
+                    break;
+                case false:
+                    transform.LookAt(Camera.main.transform);
+                    break;
+            }
+        }
     }
 }

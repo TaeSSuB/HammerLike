@@ -34,6 +34,8 @@ public class B_Player : B_UnitBase
     [SerializeField] private bool AllowRotate_L = true;
     [SerializeField] private bool AllowRotate_R = true;
 
+    public SO_Weapon WeaponData => weaponData;
+
     public event Action<int> OnHPChanged;
     public event Action<float> OnChargeChanged;
 
@@ -50,6 +52,13 @@ public class B_Player : B_UnitBase
         // Init logic
         GameManager.Instance.SetPlayer(this);
         chargeVFXObj.SetActive(false);
+
+        var currentWeaponObj = GameManager.Instance.Player.WeaponData;
+        var findItem = B_InventoryManager.Instance.playerWeaponContainer.FindItemOnInventory(currentWeaponObj.itemData);
+
+        if(findItem == null) {
+            B_InventoryManager.Instance.playerWeaponContainer.AddItem(currentWeaponObj.itemData, 1);
+        }
     }
 
     protected override void Update()
@@ -450,6 +459,13 @@ public class B_Player : B_UnitBase
     public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true)
     {
         base.TakeDamage(damageDir, damage, knockBackPower, knockBack);
+
+        OnHPChanged?.Invoke(unitStatus.currentHP);
+    }
+
+    public override void RestoreHP(int hpRate = 0)
+    {
+        base.RestoreHP(hpRate);
 
         OnHPChanged?.Invoke(unitStatus.currentHP);
     }
