@@ -12,7 +12,12 @@ public class LShapedLineRenderer : MonoBehaviour
 
     void Start()
     {
-        
+
+        Generate();
+    }
+
+    public void Generate()
+    {
         tileSize = GetPrefabSize(tilePrefab);  // ?袁ⓥ봺?諭????由곁몴?揶쎛?紐꾩긾
 
         container = new GameObject("TilesAndCornersContainer");
