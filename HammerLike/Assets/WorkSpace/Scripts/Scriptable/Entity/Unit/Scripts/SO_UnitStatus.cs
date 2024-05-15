@@ -38,7 +38,6 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
     
     [Header("Attack")]
     public int atkDamage = 10;
-    protected int atkDamageOrigin = 10;
     public float atkRange = 1f;
     public float atkSpeed = 1f;
 
@@ -48,15 +47,12 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
 
     [Header("KnockBack")]
     public float knockbackPower = 1f;
-    protected float knockbackPowerOrigin = 1f;
     public float knockbackResistance = 0f;
 
 
     #endregion
 
     public float MoveSpeedOrigin { get => moveSpeedOrigin;}
-    public int AtkDamageOrigin { get => atkDamageOrigin;}
-    public float KnockbackPowerOrigin { get => knockbackPowerOrigin;}
 
     /// <summary>
     /// 스탯 Initialize
@@ -70,8 +66,6 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
         currentAttackCooltime = maxAttackCooltime;
         
         moveSpeedOrigin = moveSpeed;
-        atkDamageOrigin = atkDamage;
-        knockbackPowerOrigin = knockbackPower;
     }
 
     /// <summary>
@@ -98,7 +92,5 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
     public void OnApplicationQuit()
     {
         moveSpeed = moveSpeedOrigin;
-        atkDamage = atkDamageOrigin;
-        knockbackPower = knockbackPowerOrigin;
     }
 }

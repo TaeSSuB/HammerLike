@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class B_HPBar : MonoBehaviour
 {
-    [SerializeField] private Image hpBar;
+    [SerializeField] private Slider hpBarSlider;
     [SerializeField] private B_UnitBase unitBase;
     public void SetUnit(B_UnitBase b_UnitBase)
     {
@@ -14,7 +14,7 @@ public class B_HPBar : MonoBehaviour
 
     public void SetHPBar(float inCurrentHP, float inMaxHP)
     {
-        hpBar.fillAmount = inCurrentHP / inMaxHP;
+        hpBarSlider.value = inCurrentHP / inMaxHP;
     }
 
     protected void Update()

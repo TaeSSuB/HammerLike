@@ -26,6 +26,9 @@ public class B_Player : B_UnitBase
 
     [SerializeField] private WeaponOrbit weaponOrbit;
 
+    private int atkDamageOrigin;
+    private float knockbackPowerOrigin;
+
 
     [Header("Camera Settings")]
     [SerializeField] private RotateType rotateType = RotateType.LookAtMouseSmooth;
@@ -59,6 +62,9 @@ public class B_Player : B_UnitBase
         if(findItem == null) {
             B_InventoryManager.Instance.playerWeaponContainer.AddItem(currentWeaponObj.itemData, 1);
         }
+        findItem = B_InventoryManager.Instance.playerWeaponContainer.FindItemOnInventory(currentWeaponObj.itemData);
+
+        EquipWeapon(findItem.ItemObject as SO_Weapon);
     }
 
     protected override void Update()
@@ -453,7 +459,7 @@ public class B_Player : B_UnitBase
     }
     void ResetDamage()
     {
-        (unitStatus as SO_PlayerStatus).atkDamage = (unitStatus as SO_PlayerStatus).AtkDamageOrigin + (weaponData == null ? 0 : weaponData.attackPower);
+        (unitStatus as SO_PlayerStatus).atkDamage = atkDamageOrigin;
     }
 
     public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true)
@@ -505,11 +511,16 @@ public class B_Player : B_UnitBase
         chargeVFXObj = b_Weapon.VFXObj;
 
         // Status Apply
-        (unitStatus as SO_PlayerStatus).atkDamage += weaponData.attackPower;
-        (unitStatus as SO_PlayerStatus).knockbackPower += weaponData.knockbackPower;
+        (unitStatus as SO_PlayerStatus).atkDamage = weaponData.attackPower;
+        atkDamageOrigin = (unitStatus as SO_PlayerStatus).atkDamage;
+
+        (unitStatus as SO_PlayerStatus).knockbackPower = weaponData.knockbackPower;
+        knockbackPowerOrigin = (unitStatus as SO_PlayerStatus).knockbackPower;
         
         (unitStatus as SO_PlayerStatus).atkRange = weaponData.weaponRange;
         (unitStatus as SO_PlayerStatus).atkSpeed = weaponData.attackSpeed;
+
+        (unitStatus as SO_PlayerStatus).chargeRate = 1;
 
         OnWeaponEquipped?.Invoke(b_Weapon);
     }
@@ -523,11 +534,16 @@ public class B_Player : B_UnitBase
         weaponData = null;
 
         // Status Apply
-        (unitStatus as SO_PlayerStatus).atkDamage = (unitStatus as SO_PlayerStatus).AtkDamageOrigin;
-        (unitStatus as SO_PlayerStatus).knockbackPower = (unitStatus as SO_PlayerStatus).KnockbackPowerOrigin;
+        (unitStatus as SO_PlayerStatus).atkDamage = 1;
+        atkDamageOrigin = 1;
+
+        (unitStatus as SO_PlayerStatus).knockbackPower = 1;
+        knockbackPowerOrigin = 1;
         
         (unitStatus as SO_PlayerStatus).atkRange = 1f;
         (unitStatus as SO_PlayerStatus).atkSpeed = 1f;
+
+        (unitStatus as SO_PlayerStatus).chargeRate = 1;
 
         OnWeaponEquipped?.Invoke(null);
     }
