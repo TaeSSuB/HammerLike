@@ -23,6 +23,13 @@ public class DeadState : IAIState
         unitBase.Agent.enabled = false;
         unitBase.Anim.SetTrigger("tDead");
         //unitBase.Anim.SetTrigger("Dead");
+
+        if(unitBase as B_Skeleton_Prisoner)
+        {
+            var targetUnit = unitBase as B_Skeleton_Prisoner;
+            if(targetUnit.WeaponColliderObj != null)
+                targetUnit.WeaponColliderObj.SetActive(false);
+        }
     }
 
     public void OnExit()

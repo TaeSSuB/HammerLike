@@ -23,6 +23,13 @@ public class HitState : IAIState
         HitEvent(1f);
 
         invincibleTime = maxInvincibleTime;
+
+        if(unitBase as B_Skeleton_Prisoner)
+        {
+            var targetUnit = unitBase as B_Skeleton_Prisoner;
+            if(targetUnit.WeaponColliderObj != null)
+                targetUnit.WeaponColliderObj.SetActive(false);
+        }
     }
 
     public void OnExit()
