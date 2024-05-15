@@ -114,8 +114,8 @@ public class RoomGeneratorEditor : Editor
 
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Room Size", headerStyle);
-        EditorGUILayout.IntSlider(gridX, 1, 50);
-        EditorGUILayout.IntSlider(gridZ, 1, 50);
+        EditorGUILayout.IntSlider(gridX, 1, 100);
+        EditorGUILayout.IntSlider(gridZ, 1, 100);
 
         tileSize.floatValue = EditorGUILayout.FloatField("Tile Size", tileSize.floatValue);
 
