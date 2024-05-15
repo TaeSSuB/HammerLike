@@ -71,10 +71,10 @@ public class MeshDestroy : MonoBehaviour
 
     void Update()
     {
-       if(Input.GetKeyDown(KeyCode.T))
+       /*if(Input.GetKeyDown(KeyCode.T))
         {
             DestroyMesh();
-        }
+        }*/
 
         /*if (meshCol != null && weaponCollider != null && weaponCollider.enabled && meshCol.bounds.Intersects(weaponCollider.bounds))
         {
