@@ -264,7 +264,11 @@ public class B_Player : B_UnitBase
 
             // VFX
             chargeVFXObj.SetActive(true);
-            weaponRenderer.material.SetFloat("_ChargeAmount", normalizeChargeRate * 4f);
+
+            foreach (var weaponMat in weaponRenderer.materials)
+            {
+                weaponMat.SetFloat("_ChargeAmount", normalizeChargeRate * 4f);
+            }
 
             // Move Speed Reduce
             UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin - (unitStatus as SO_PlayerStatus).MoveSpeedOrigin * Mathf.Clamp(normalizeChargeRate, 0f, 1f - minChargeMoveRate);
@@ -364,7 +368,12 @@ public class B_Player : B_UnitBase
         weaponOrbit.trailRenderer.Clear();
         DisableWeaponCollider();
         chargeVFXObj.SetActive(false);
-        weaponRenderer.material.SetFloat("_ChargeAmount", 0f);
+
+        foreach (var weaponMat in weaponRenderer.materials)
+        {
+            weaponMat.SetFloat("_ChargeAmount", 0f);
+        }
+
         //zoomCam.orthographicSize = startZoom;
         ResetDamage();
 

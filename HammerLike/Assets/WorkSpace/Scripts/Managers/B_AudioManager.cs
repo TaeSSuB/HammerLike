@@ -18,8 +18,8 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
 
     // BGM, SFX source
     [SerializeField] private int audioSourceOnceCount = 5;
-    private AudioSource[] audioSourceOnces;
-    private AudioSource audioSourceLoop;
+    private AudioSource[] audioSourceOnces; // For SFX
+    private AudioSource audioSourceLoop; // For BGM
 
     protected override void Awake()
     {
