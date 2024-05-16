@@ -16,6 +16,7 @@ public class B_Player : B_UnitBase
     }
 
     [Header("Player Settings")]
+    public LayerMask mouseLayer;
     private Vector3 currentMovePos = Vector3.zero;
     private Vector3 currentDashPos = Vector3.zero;
     [SerializeField] private GameObject chargeVFXObj;
@@ -196,7 +197,7 @@ public class B_Player : B_UnitBase
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
 
-                if (Physics.Raycast(ray, out hit, 100, groundLayer))
+                if (Physics.Raycast(ray, out hit, 100, mouseLayer))
                 {
                     Vector3 lookAt = hit.point;
                     inDashDir = lookAt - transform.position;
@@ -249,7 +250,7 @@ public class B_Player : B_UnitBase
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, 100, groundLayer))
+        if (Physics.Raycast(ray, out hit, 100, mouseLayer))
         {
             Vector3 lookAt = hit.point;
             lookAt.y = transform.position.y;
