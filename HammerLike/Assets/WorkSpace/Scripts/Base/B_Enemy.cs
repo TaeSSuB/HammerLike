@@ -85,7 +85,9 @@ public class B_Enemy : B_UnitBase
             // Get hit dir from player
             Vector3 hitDir = (transform.position - player.transform.position).normalized;
 
-            var chargeAmount = (player.UnitStatus as SO_PlayerStatus).chargeRate;
+            //var chargeAmount = (player.UnitStatus as SO_PlayerStatus).chargeRate;
+            var chargeAmount = (float)(player.UnitStatus.atkDamage / player.AtkDamageOrigin);
+            Debug.Log("chargeAmount - " + chargeAmount);
             
             // Take Damage and Knockback dir from player
             TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount);
