@@ -21,6 +21,7 @@ public class B_BreakableDoor : B_Prop
     {
         base.Dead();
         DestroyMesh();
+        B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Crash);
     }
 
     public void DestroyMesh()

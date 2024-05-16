@@ -17,6 +17,7 @@ public class RoomPrefab : MonoBehaviour
 
     public List<GameObject> Doors = new List<GameObject>(); // 다수의 문을 관리
     public bool doorsOpened = false;
+    public bool doorsClosed = false;
     private bool isCheck = false;
 
     private void Awake()
@@ -99,8 +100,9 @@ public class RoomPrefab : MonoBehaviour
 
     public void CloseDoors()
     {
-        if (Doors.Count > 0)
+        if (!doorsClosed && Doors.Count > 0)
         {
+            doorsClosed = true;
             float moveDistance = 7.0f;
             float duration = 3.0f;
             foreach (GameObject door in Doors)

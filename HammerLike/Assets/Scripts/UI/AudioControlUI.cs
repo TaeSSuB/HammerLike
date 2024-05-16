@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI; // UI 요소(슬라이더 및 버튼 등) 사용을 위해 필요
+using UnityEngine.UI;
 
 public class AudioControlUI : MonoBehaviour
 {
@@ -15,17 +15,17 @@ public class AudioControlUI : MonoBehaviour
     private void Start()
     {
         // 현재 설정을 바탕으로 볼륨 슬라이더 초기화
-        bgmVolumeSlider.value = B_AudioManager.Instance.GetVolume(AudioCategory.BGM);
-        sfxVolumeSlider.value = B_AudioManager.Instance.GetVolume(AudioCategory.SFX);
+        savedBGMVolume = PlayerPrefs.GetFloat("BGMVolume", 1.0f);
+        savedSFXVolume = PlayerPrefs.GetFloat("SFXVolume", 1.0f);
+
+        bgmVolumeSlider.value = savedBGMVolume;
+        sfxVolumeSlider.value = savedSFXVolume;
 
         // UI 요소에 대한 리스너 연결
         bgmVolumeSlider.onValueChanged.AddListener(SetBGMVolume);
         sfxVolumeSlider.onValueChanged.AddListener(SetSFXVolume);
         muteToggleButton.onValueChanged.AddListener(ToggleMute);
-
-
     }
-
 
     public void SetBGMVolume(float volume)
     {
@@ -33,6 +33,8 @@ public class AudioControlUI : MonoBehaviour
         {
             B_AudioManager.Instance.SetVolume(AudioCategory.BGM, volume);
             savedBGMVolume = volume;
+            PlayerPrefs.SetFloat("BGMVolume", volume);
+            PlayerPrefs.Save();
         }
     }
 
@@ -42,6 +44,8 @@ public class AudioControlUI : MonoBehaviour
         {
             B_AudioManager.Instance.SetVolume(AudioCategory.SFX, volume);
             savedSFXVolume = volume;
+            PlayerPrefs.SetFloat("SFXVolume", volume);
+            PlayerPrefs.Save();
         }
     }
 
@@ -59,39 +63,4 @@ public class AudioControlUI : MonoBehaviour
             B_AudioManager.Instance.SetVolume(AudioCategory.SFX, savedSFXVolume);
         }
     }
-
-
-
 }
-
-public static class AudioManagerExtensions
-{
-    public static void SetVolume(this B_AudioManager manager, AudioCategory category, float volume)
-    {
-        if (category == AudioCategory.BGM)
-        {
-            manager.GetLoopAudioSource().volume = volume;
-        }
-        else if (category == AudioCategory.SFX)
-        {
-            foreach (var source in manager.GetOnceAudioSources())
-            {
-                source.volume = volume;
-            }
-        }
-    }
-
-    public static float GetVolume(this B_AudioManager manager, AudioCategory category)
-    {
-        if (category == AudioCategory.BGM)
-        {
-            return manager.GetLoopAudioSource().volume;
-        }
-        else if (category == AudioCategory.SFX)
-        {
-            return manager.GetOnceAudioSources().Length > 0 ? manager.GetOnceAudioSources()[0].volume : 0;
-        }
-        return 0;
-    }
-}
-
