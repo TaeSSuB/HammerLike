@@ -30,17 +30,24 @@ public class SceneLoader : MonoBehaviour
 
     public void ChangeScene(string sceneName)
     {
+        if (Time.timeScale == 0)
+            Time.timeScale = 1;
         // sceneToLoad에 설정된 씬으로 이동합니다.
         LoadingSceneController.LoadScene(sceneName);
+        
     }
 
     public void ChangeSceneOther(string sceneName)
     {
+        if (Time.timeScale == 0)
+            Time.timeScale = 1;
         StartCoroutine(ChangeSceneName(sceneName));
     }
 
     IEnumerator ChangeSceneName(string sceneName)
     {
+        if (Time.timeScale == 0)
+            Time.timeScale = 1;
         FadeIn();
         yield return new WaitForSeconds(1f);
         ChangeScene(sceneName);
@@ -61,13 +68,13 @@ public class SceneLoader : MonoBehaviour
     public void FadeIn()
     {
         // DOTween을 사용한 페이드 인: 투명도를 0에서 1로 변경
-        targetImage.DOFade(1, duration).SetEase(Ease.InOutQuad);
+        targetImage.DOFade(1, duration).SetEase(Ease.InOutQuad).SetUpdate(true); ;
     }
 
     public void FadeOut()
     {
         // DOTween을 사용한 페이드 아웃: 투명도를 1에서 0으로 변경
-        targetImage.DOFade(0, duration).SetEase(Ease.InOutQuad);
+        targetImage.DOFade(0, duration).SetEase(Ease.InOutQuad).SetUpdate(true); ;
     }
 
     public void Exit()
@@ -84,7 +91,7 @@ public class SceneLoader : MonoBehaviour
 
             if (!deadPanel.gameObject.activeSelf)
                 deadPanel.gameObject.SetActive(true);
-
+            Time.timeScale = 0;
         }
    
     }
@@ -99,6 +106,7 @@ public class SceneLoader : MonoBehaviour
             if (!clearPanel.gameObject.activeSelf)
                 clearPanel.gameObject.SetActive(true);
 
+        Time.timeScale = 0;
         }
     }
 }
