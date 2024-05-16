@@ -40,7 +40,7 @@ public class B_Enemy : B_UnitBase
         base.Update();
 
         // Temp - Set Chasing
-        if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD && !isAttacking)
+        if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
         {
             var moveDir = GameManager.Instance.Player.transform.position - transform.position;
 
@@ -56,7 +56,8 @@ public class B_Enemy : B_UnitBase
                 }
                 else
                 {
-                    aIStateManager?.SetState(AIStateType.CHASE);
+                    if(!isAttacking)
+                        aIStateManager?.SetState(AIStateType.CHASE);
                 }
             }
             else

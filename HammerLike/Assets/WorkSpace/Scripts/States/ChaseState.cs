@@ -15,10 +15,13 @@ public class ChaseState : IAIState
         //Debug.Log("ChaseState OnEnter");
         this.target = GameManager.Instance.Player.transform;
         unitBase.Anim.SetBool("IsChasing", true);
+        
+        unitBase.isAttacking = false;
 
         if(unitBase as B_Skeleton_Prisoner)
         {
             var targetUnit = unitBase as B_Skeleton_Prisoner;
+
             if(targetUnit.WeaponColliderObj != null)
                 targetUnit.WeaponColliderObj.SetActive(false);
         }

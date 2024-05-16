@@ -15,6 +15,7 @@ public class IdleState : IAIState
     {
         //Debug.Log("IdleState OnEnter");
         unitBase.Anim.SetTrigger("tIdle");
+        
         unitBase.isAttacking = false;
 
         if(unitBase as B_Skeleton_Prisoner)

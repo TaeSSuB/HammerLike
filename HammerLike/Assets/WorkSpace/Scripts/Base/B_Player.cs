@@ -16,6 +16,8 @@ public class B_Player : B_UnitBase
     }
 
     [Header("Player Settings")]
+    private Vector3 currentMovePos = Vector3.zero;
+    private Vector3 currentDashPos = Vector3.zero;
     [SerializeField] private GameObject chargeVFXObj;
     [SerializeField] private float minChargeMoveRate = 0.1f;
 
@@ -80,6 +82,9 @@ public class B_Player : B_UnitBase
 
         InputCharge();
 
+        currentMovePos = InputMovement();
+        currentDashPos = InputDash(currentMovePos);
+
         TrackWeaponDirXZ();
     }
 
@@ -89,7 +94,10 @@ public class B_Player : B_UnitBase
 
         LookAtMouse();
 
-        InputMovement();
+        ApplyMovement(currentMovePos);
+        ApplyDash(currentDashPos);
+
+        currentMovePos = InputMovement();
     }
 
     
@@ -165,17 +173,25 @@ public class B_Player : B_UnitBase
 
         Vector3 coordDir = Vector3.zero;
 
-        var move = Move(transform.position + moveDir);
+        return moveDir;
+    }
+
+    private void ApplyMovement(Vector3 inMoveDir)
+    {
+        var move = Move(transform.position + inMoveDir);
         //Debug.Log("Move - " + move);
         //Debug.Log("ACSN - " + GameManager.instance.ApplyCoordScaleNormalize(moveDir));
 
-        MoveAnim(moveDir);
+        MoveAnim(inMoveDir);
+    }
 
+    private Vector3 InputDash(Vector3 inDashDir)
+    {
         if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
         {
             ResetAttack();
 
-            if(moveDir == Vector3.zero)
+            if(inDashDir == Vector3.zero)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
@@ -183,20 +199,28 @@ public class B_Player : B_UnitBase
                 if (Physics.Raycast(ray, out hit, 100, groundLayer))
                 {
                     Vector3 lookAt = hit.point;
-                    moveDir = lookAt - transform.position;
-                    moveDir.y = 0;
+                    inDashDir = lookAt - transform.position;
+                    inDashDir.y = 0;
                 }
             }
             
-            coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(moveDir);
+            var coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDashDir);
 
-            transform.LookAt(coordDir + transform.position);
-
-            Dash(coordDir);
-
+            return coordDir;
         }
 
-        return moveDir;
+        return Vector3.zero;
+    }
+
+    private void ApplyDash(Vector3 inDashDir)
+    {
+        if(inDashDir == Vector3.zero)
+            return;
+        if(isLockMove)
+            return;
+
+        transform.LookAt(inDashDir + transform.position);
+        Dash(inDashDir);
     }
 
     void InputCharge()
