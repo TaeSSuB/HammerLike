@@ -279,10 +279,11 @@ public class B_UnitBase : B_Entity
     /// a.HG : 240501 - NavMesh 도입. 위치 기반으로 변경. inDir -> inPos
     /// </summary>
     /// <param name="inPos">타겟 포지션</param>
+    /// <param name="isForce">강제 이동 여부</param>
     /// <returns>Agent 목표 위치</returns>
-    public virtual Vector3 Move(Vector3 inPos)
+    public virtual Vector3 Move(Vector3 inPos, bool isForce = false)
     {
-        if (!isGrounded || isLockMove || !agent.enabled)
+        if (!isGrounded || (isLockMove && !isForce) || !agent.enabled)
             return Vector3.zero;
 
         var targetDir = inPos - transform.position;

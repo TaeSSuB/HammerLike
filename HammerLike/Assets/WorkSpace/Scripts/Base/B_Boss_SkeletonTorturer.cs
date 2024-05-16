@@ -22,7 +22,7 @@ public class B_Boss_SkeletonTorturer : B_Boss
     public event Action OnBossDead;
     [SerializeField] private SceneLoader sceneLoader;
 
-    public override Vector3 Move(Vector3 inPos)
+    public override Vector3 Move(Vector3 inPos, bool isForce = false)
     {            
         float moveAmount = Agent.velocity.normalized.magnitude;
             

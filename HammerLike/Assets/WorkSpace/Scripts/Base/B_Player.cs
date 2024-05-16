@@ -174,9 +174,9 @@ public class B_Player : B_UnitBase
         Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         moveDir.Normalize();
 
-        Vector3 coordDir = Vector3.zero;
+        Vector3 coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(moveDir);
 
-        return moveDir;
+        return coordDir;
     }
 
     private void ApplyMovement(Vector3 inMoveDir)
@@ -201,13 +201,11 @@ public class B_Player : B_UnitBase
                 {
                     Vector3 lookAt = hit.point;
                     inDashDir = lookAt - transform.position;
-                    inDashDir.y = 0;
+                    inDashDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDashDir);
                 }
             }
-            
-            var coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDashDir);
 
-            return coordDir;
+            return inDashDir;
         }
 
         return Vector3.zero;
@@ -496,50 +494,55 @@ public class B_Player : B_UnitBase
         float dashTime = (unitStatus as SO_PlayerStatus).dashDuration;
         float dashSpeed = (unitStatus as SO_PlayerStatus).dashSpeed;
 
-        ResetAttack();
         StartDash();
 
-        //transform.LookAt(coordDir + transform.position);
-        var lookAt = coordDir + transform.position;
-
         Debug.DrawLine(transform.position, coordDir + transform.position, Color.red, 3f);
-
-        agent.isStopped = true;
-        agent.enabled = false;
-        Rigid.velocity = Vector3.zero;
-        isLockAttack = true;
 
         while (dashTime > 0)
         {
             // move with rigid body
-            Rigid.velocity = coordDir * dashSpeed;
+            Move(transform.position + coordDir, true);
+
             dashTime -= Time.deltaTime;
             yield return null;
         }
-        
-        Rigid.velocity = Vector3.zero;
-        agent.enabled = true;
-        agent.isStopped = false;
-        isLockAttack = false;
-        ResetAttack();
+
         EndDash();
     }
 
+    /// <summary>
+    /// StartDash : 대쉬 시작
+    /// moveSpeed를 대쉬 속도로 변경하고, 대쉬 상태를 고정
+    /// </summary>
     protected void StartDash()
     {
+        ResetAttack();
+
         // Start dash logic
         Anim.SetTrigger("tEnvasion");
         Anim.speed = 1.2f / (unitStatus as SO_PlayerStatus).dashDuration;//(unitStatus as SO_PlayerStatus).dashSpeed;
+        (unitStatus as SO_PlayerStatus).moveSpeed = (unitStatus as SO_PlayerStatus).dashSpeed;
 
+        isLockAttack = true;
         SetInvincible(true);
         DisableMovementAndRotation();
     }
     
+    /// <summary>
+    /// EndDash : 대쉬 종료
+    /// moveSpeed를 원래대로 돌리고, 대쉬 상태를 초기화
+    /// </summary>
     protected void EndDash()
     {
+        // Temp. 리셋 두번은 필요 없을 듯? a.HG
+        ResetAttack();
+
         // End dash logic & Initialize
         Anim.SetTrigger("tIdle");
         Anim.speed = 1f;//(unitStatus as SO_PlayerStatus);
+        (unitStatus as SO_PlayerStatus).moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin;
+
+        isLockAttack = false;
         SetInvincible(false);
         EnableMovementAndRotation();
     }
