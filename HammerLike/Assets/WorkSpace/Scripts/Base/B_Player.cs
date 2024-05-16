@@ -53,6 +53,8 @@ public class B_Player : B_UnitBase
     public event Action<B_Weapon> OnWeaponEquipped;
     [Header("Temp")]
     [SerializeField] private SceneLoader sceneLoader;
+    private bool isLockAttack;
+
     public event Action OnPlayerDeath;
     #region Unity Callbacks & Init
 
@@ -190,8 +192,6 @@ public class B_Player : B_UnitBase
     {
         if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
         {
-            ResetAttack();
-
             if(inDashDir == Vector3.zero)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -226,6 +226,9 @@ public class B_Player : B_UnitBase
 
     void InputCharge()
     {
+        if(isLockAttack)
+            return;
+
         // Charge attack logic
         if (Input.GetMouseButton(0))
         {
@@ -493,6 +496,7 @@ public class B_Player : B_UnitBase
         float dashTime = (unitStatus as SO_PlayerStatus).dashDuration;
         float dashSpeed = (unitStatus as SO_PlayerStatus).dashSpeed;
 
+        ResetAttack();
         StartDash();
 
         //transform.LookAt(coordDir + transform.position);
@@ -503,6 +507,7 @@ public class B_Player : B_UnitBase
         agent.isStopped = true;
         agent.enabled = false;
         Rigid.velocity = Vector3.zero;
+        isLockAttack = true;
 
         while (dashTime > 0)
         {
@@ -515,7 +520,8 @@ public class B_Player : B_UnitBase
         Rigid.velocity = Vector3.zero;
         agent.enabled = true;
         agent.isStopped = false;
-
+        isLockAttack = false;
+        ResetAttack();
         EndDash();
     }
 
