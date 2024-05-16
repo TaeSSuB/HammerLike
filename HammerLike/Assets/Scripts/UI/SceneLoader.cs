@@ -21,6 +21,13 @@ public class SceneLoader : MonoBehaviour
         }
         // 시작 시 페이드 아웃 실행
         FadeOut();
+
+        if (SceneManager.GetActiveScene().name == "Town")
+            B_AudioManager.Instance.PlaySound(AudioCategory.BGM, AudioTag.Town);
+        else if (SceneManager.GetActiveScene().name == "Mainmenu")
+            B_AudioManager.Instance.PlaySound(AudioCategory.BGM, AudioTag.MainMenu);
+        else
+            B_AudioManager.Instance.PlaySound(AudioCategory.BGM, AudioTag.Battle);
     }
     /*public void ChangeScene()
     {
@@ -108,5 +115,10 @@ public class SceneLoader : MonoBehaviour
 
         Time.timeScale = 0;
         }
+    }
+
+    public bool IsCurrentSceneTown()
+    {
+        return SceneManager.GetActiveScene().name == "Town";
     }
 }

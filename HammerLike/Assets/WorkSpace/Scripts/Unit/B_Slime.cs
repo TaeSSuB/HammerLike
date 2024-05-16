@@ -26,10 +26,10 @@ public class B_Slime : B_Enemy
 
     protected override void Dead()
     {
-        base.Dead();
+        //base.Dead();
         
         weaponCollider.enabled = false;
-
+        B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.SlimeDeath);
         StartCoroutine(CoSlimeDead());
     }
 
