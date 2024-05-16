@@ -56,8 +56,7 @@ public class B_Enemy : B_UnitBase
                 }
                 else
                 {
-                    if(!isAttacking)
-                        aIStateManager?.SetState(AIStateType.CHASE);
+                    aIStateManager?.SetState(AIStateType.CHASE);
                 }
             }
             else

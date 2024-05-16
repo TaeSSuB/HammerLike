@@ -74,7 +74,7 @@ public class RoomManager : MonoBehaviour
             {
                 Debug.Log($"Player has entered a new room: {currentRoom.gameObject.name}");
                 camCtrl.UpdateCameraBounds(currentRoom.Ground.bounds);
-                if (currentRoom.Doors[0].transform.position.y < 0)    // 일단 현재는 몬스터 없을때 있을때 구분 안함
+                if (currentRoom.Doors.Count > 0 && currentRoom.Doors[0].transform.position.y < 0)    // 일단 현재는 몬스터 없을때 있을때 구분 안함
                 {
                     currentRoom.CloseDoors();
                 }

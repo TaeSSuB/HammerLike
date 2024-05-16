@@ -132,6 +132,7 @@ public class B_Player : B_UnitBase
 
             // Take Damage and Knockback dir from player
             TakeDamage(hitDir, unit.UnitStatus.atkDamage, unit.UnitStatus.knockbackPower);
+            StartCoroutine(CoHitEvent(1f, knockbackDuration));
 
             Anim.SetTrigger("tHit");
 
@@ -253,6 +254,56 @@ public class B_Player : B_UnitBase
     #endregion
 
     #region Action
+
+    // Temp 20240411 - Hit Event (Shader) a.HG
+    protected void HitEvent(float amount = 1f)
+    {
+        amount = Mathf.Clamp01(amount);
+
+        var renderers  = MeshObj?.GetComponentsInChildren<Renderer>();
+
+        if (renderers.Length > 0)
+        {
+            foreach (var renderer in renderers)
+            {
+                foreach (var material in renderer.materials)
+                {
+                    material.SetFloat("_HitAmount", amount);
+                }
+            }
+        }
+    }
+
+    IEnumerator CoHitEvent(float amount = 1f, float duration = 0.5f)
+    {
+        amount = Mathf.Clamp01(amount);
+
+        var renderers  = MeshObj?.GetComponentsInChildren<Renderer>();
+
+        if (renderers.Length > 0)
+        {
+            foreach (var renderer in renderers)
+            {
+                foreach (var material in renderer.materials)
+                {
+                    material.SetFloat("_HitAmount", amount);
+                }
+            }
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        if (renderers.Length > 0)
+        {
+            foreach (var renderer in renderers)
+            {
+                foreach (var material in renderer.materials)
+                {
+                    material.SetFloat("_HitAmount", 0f);
+                }
+            }
+        }
+    }
 
     void Charging()
     {
