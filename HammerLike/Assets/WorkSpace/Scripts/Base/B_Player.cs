@@ -43,6 +43,8 @@ public class B_Player : B_UnitBase
 
     public SO_Weapon WeaponData => weaponData;
 
+    public int AtkDamageOrigin => atkDamageOrigin;
+
     public event Action<int> OnHPChanged;
     public event Action<float> OnChargeChanged;
 

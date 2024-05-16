@@ -25,7 +25,8 @@ public class TrainingDoll : B_Enemy
             shakeSequence.Append(transform.DOShakeRotation(0.3f, new Vector3(0, 0, 30), 10, 90, false))
                           .Append(transform.DORotateQuaternion(Quaternion.identity, 0.2f));
 
-            var chargeAmount = (player.UnitStatus as SO_PlayerStatus).chargeRate;
+            //var chargeAmount = (player.UnitStatus as SO_PlayerStatus).chargeRate;
+            var chargeAmount = (float)(player.UnitStatus.atkDamage / player.AtkDamageOrigin);
 
             // Take Damage and Knockback dir from player
             TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount);
