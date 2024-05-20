@@ -50,9 +50,9 @@ public class B_Boss_SkeletonTorturer : B_Boss
         OnBossDead += sceneLoader.BossDead;
     }
 
-    protected override void Dead()
+    protected override void Dead(bool isSelf = false)
     {
-        base.Dead();
+        base.Dead(isSelf);
         OnBossDead?.Invoke();
     }
 

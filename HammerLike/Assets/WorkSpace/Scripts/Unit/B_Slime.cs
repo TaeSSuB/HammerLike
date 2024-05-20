@@ -24,7 +24,7 @@ public class B_Slime : B_Enemy
         weaponCollider.enabled = false;
     }
 
-    protected override void Dead()
+    protected override void Dead(bool isSelf = false)
     {
         //base.Dead();
         
@@ -104,8 +104,8 @@ public class B_Slime : B_Enemy
         Vector3 dir = lastTargetPos - transform.position;
         Debug.DrawLine(transform.position, lastTargetPos, Color.red, 1f);
 
-        //transform.LookAt(lastTargetPos);
-        isAttacking = true;
+        transform.LookAt(lastTargetPos);
+        SetAttacking = true;
         
         yield return new WaitForSeconds(delayTime);
 

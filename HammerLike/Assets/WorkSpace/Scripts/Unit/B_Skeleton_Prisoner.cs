@@ -11,9 +11,9 @@ public class B_Skeleton_Prisoner : B_Enemy
     /// <summary>
     /// Dead : 유닛 사망 함수. 스켈레톤은 퍼펫 분리 추가
     /// </summary>
-    protected override void Dead()
+    protected override void Dead(bool isSelf = false)
     {
-        base.Dead();
+        base.Dead(isSelf);
 
         if(weaponColliderObj != null)
             weaponColliderObj.SetActive(false);

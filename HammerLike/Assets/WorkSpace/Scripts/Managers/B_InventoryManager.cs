@@ -43,7 +43,7 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
     void WeaponSwitchWithWheel() {
 
         if(Input.GetAxis("Mouse ScrollWheel") == 0) return;
-        if(GameManager.Instance.Player.isAttacking) return;
+        if(GameManager.Instance.Player.IsAttacking) return;
 
         var currentWeaponSlotIndex = GetCurrentWeaponSlotIndex();
         int nextWeaponIndex = currentWeaponSlotIndex;

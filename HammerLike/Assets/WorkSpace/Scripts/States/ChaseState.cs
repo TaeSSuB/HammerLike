@@ -16,7 +16,7 @@ public class ChaseState : IAIState
         this.target = GameManager.Instance.Player.transform;
         unitBase.Anim.SetBool("IsChasing", true);
         
-        unitBase.isAttacking = false;
+        unitBase.SetAttacking = false;
 
         if(unitBase as B_Skeleton_Prisoner)
         {

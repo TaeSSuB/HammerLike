@@ -22,38 +22,47 @@ public class B_UnitBase : B_Entity
     [SerializeField] protected int unitIndex = -1;
     [SerializeField] private Animator anim;
     [SerializeField] protected NavMeshAgent agent;
-    public bool isAttacking = false;
+    protected bool isAttacking = false;
+    protected bool isAlive = true;
 
     [Header("Knockback")]
     protected float knockBackMultiplier = 1f;
     protected float partsKnockBackMultiplier = 1f;
-    public float knockbackDuration = 0.5f;
+    protected float knockbackDuration = 0.5f;
     protected float maxKnockBackForce = 100f;
     protected float maxPartsBreakForce = 100f;
     protected AnimationCurve knockbackCurve;
     protected AnimationCurve partsBreakForceCurve;
+    protected ForceMode forceMode = ForceMode.Force;
 
     // Temp 240402 - Puppet 테스트 목적, a.HG
-    public BehaviourPuppet puppet;
+    [SerializeField] private BehaviourPuppet puppet;
     protected Vector3 remainKnockBackDir;
     protected float remainKnockBackForce = 0f;
 
     // Ground check variables
     [Header("Ground Check")]
-    public LayerMask groundLayer; // Define which layer is considered as ground
-    public float groundCheckDistance = 0.1f; // Distance to check for ground
-    protected bool isGrounded; // Variable to store if unit is grounded
+    private LayerMask groundLayer; // Define which layer is considered as ground
+    private float groundCheckDistance = 0.1f; // Distance to check for ground
+    [SerializeField] protected bool isGrounded; // Variable to store if unit is grounded
+
+    #region Getters & Setters
 
     public SO_UnitStatus UnitStatus { get => unitStatus;}
     public Animator Anim { get => anim;}
     public NavMeshAgent Agent { get => agent;}
 
-    protected bool isAlive = true;
     public bool IsAlive { get => isAlive; }
-    // lock move and rotate
-    public bool isLockMove { get; private set; }
-    public bool isLockRotate { get; private set; }
-    public bool isKnockback;
+    public bool IsAttacking { get => isAttacking; }
+
+    public bool IsLockMove { get; private set; }
+    public bool IsLockRotate { get; private set; }
+    public bool IsKnockback { get; private set; }
+
+    public bool SetAttacking { set => isAttacking = value; }
+
+    #endregion
+
 
     public int SetUnitIndex
     {
@@ -147,13 +156,18 @@ public class B_UnitBase : B_Entity
 
     protected virtual void ApplySystemSettings()
     {
+        knockbackDuration = GameManager.Instance.SystemSettings.KnockbackDuration;
         knockBackMultiplier = GameManager.Instance.SystemSettings.KnockBackScale;
         maxKnockBackForce = GameManager.Instance.SystemSettings.MaxKnockBackForce;
         knockbackCurve = GameManager.Instance.SystemSettings.KnockbackCurve;
+        forceMode = GameManager.Instance.SystemSettings.KnockbackForceMode;
 
         partsKnockBackMultiplier = GameManager.Instance.SystemSettings.PartsKnockBackScale;
         maxPartsBreakForce = GameManager.Instance.SystemSettings.MaxPartsBreakForce;
         partsBreakForceCurve = GameManager.Instance.SystemSettings.PartsBreakForceCurve;
+
+        groundLayer = GameManager.Instance.SystemSettings.GroundLayer;
+        groundCheckDistance = GameManager.Instance.SystemSettings.GroundCheckDistance;
     }
 
     public void InitHP()
@@ -189,12 +203,7 @@ public class B_UnitBase : B_Entity
             remainKnockBackDir = damageDir;
             remainKnockBackForce = knockBackPower;
 
-
-            if (!CheckDead())
-            {
-                // If the unit is not dead, apply smooth knockback
-                Knockback(damageDir, remainKnockBackForce);
-            }
+            Knockback(damageDir, remainKnockBackForce);
         }
         else
         {
@@ -214,7 +223,6 @@ public class B_UnitBase : B_Entity
     #region Check or Update State
     protected void CheckGrounded()
     {
-
         // min dis 0.01f to prevent raycast from hitting itself
         var minDis = Vector3.up * 0.01f;
 
@@ -224,14 +232,14 @@ public class B_UnitBase : B_Entity
         Debug.DrawRay(transform.position, -Vector3.up * (groundCheckDistance), Color.red);
     }
 
-    protected virtual bool CheckDead()
+    protected virtual bool CheckDead(bool isSelf = false)
     {
         // Dead if hp is 0
         if (UnitStatus.currentHP <= 0)
         {
             if(isAlive)
             {
-                Dead();
+                Dead(isSelf);
                 isAlive = false;
             }
             return true;
@@ -253,8 +261,8 @@ public class B_UnitBase : B_Entity
         // Disable movement and rotation logic
         // For example, you can set a flag to prevent movement and rotation
         // or disable specific components responsible for movement and rotation
-        isLockMove = true;
-        isLockRotate = true;
+        IsLockMove = true;
+        IsLockRotate = true;
 
         //Debug.Log("DisableMovementAndRotation()");
     }
@@ -264,8 +272,8 @@ public class B_UnitBase : B_Entity
         // Enable movement and rotation logic
         // For example, you can reset the flag to allow movement and rotation
         // or enable the disabled components responsible for movement and rotation
-        isLockMove = false;
-        isLockRotate = false;
+        IsLockMove = false;
+        IsLockRotate = false;
 
         //Debug.Log("EnableMovementAndRotation()");
     }
@@ -283,7 +291,7 @@ public class B_UnitBase : B_Entity
     /// <returns>Agent 목표 위치</returns>
     public virtual Vector3 Move(Vector3 inPos, bool isForce = false)
     {
-        if (!isGrounded || (isLockMove && !isForce) || !agent.enabled)
+        if (!isGrounded || (IsLockMove && !isForce) || !agent.enabled)
             return Vector3.zero;
 
         var targetDir = inPos - transform.position;
@@ -299,7 +307,7 @@ public class B_UnitBase : B_Entity
 
     public virtual void Attack()
     {
-        isAttacking = true;
+        SetAttacking = true;
     }
 
     #region Knockback    
@@ -312,7 +320,7 @@ public class B_UnitBase : B_Entity
         var resultKnockPower = Mathf.Clamp(force * knockBackMultiplier, 0f, maxKnockBackForce);
         //Debug.Log(this.gameObject.name + " Knockback : " + resultKnockPower);
         
-        StartCoroutine(CoSmoothKnockback(inDir, resultKnockPower, Rigid, knockbackCurve, knockbackDuration));
+        StartCoroutine(CoSmoothKnockback(inDir, resultKnockPower, Rigid, knockbackCurve, knockbackDuration, forceMode));
     }
 
     /// <summary>
@@ -330,8 +338,13 @@ public class B_UnitBase : B_Entity
         {
             inRigid = Rigid;
         }
-
+        
         Vector3 knockbackVelocity = inDir * force / unitStatus.mass;
+
+        if(inForceMode != ForceMode.VelocityChange)
+        {
+            knockbackVelocity = inDir * force;
+        }
 
         // 초기 속도를 저장합니다.
         Vector3 initialVelocity = inRigid.velocity;
@@ -339,7 +352,7 @@ public class B_UnitBase : B_Entity
         float startTime = Time.time;
 
         DisableMovementAndRotation();
-        isKnockback = true;
+        IsKnockback = true;
         isInvincible = true;
 
         while (Time.time < startTime + knockbackDuration)
@@ -354,17 +367,19 @@ public class B_UnitBase : B_Entity
             yield return null;
         }
 
-        isKnockback = false;
+        IsKnockback = false;
         isInvincible = false;
 
         EnableMovementAndRotation();
+
+        CheckDead(true);
     }
     #endregion
 
     /// <summary>
     /// Dead : 유닛 사망 함수
     /// </summary>
-    protected virtual void Dead()
+    protected virtual void Dead(bool isSelf = false)
     {
         //Destroy(gameObject);
         //gameObject.SetActive(false);
@@ -380,7 +395,7 @@ public class B_UnitBase : B_Entity
     /// </summary>
     public virtual void StartAttack()
     {
-        isAttacking = true;
+        SetAttacking = true;
     }
 
     /// <summary>
@@ -388,7 +403,7 @@ public class B_UnitBase : B_Entity
     /// </summary>
     public virtual void EndAttack()
     {
-        isAttacking = false;
+        SetAttacking = false;
     }
     #endregion
 
@@ -397,7 +412,7 @@ public class B_UnitBase : B_Entity
     /// DisconnectMusclesRecursive : PuppetMaster의 Muscle을 해제 및 넉백 적용
     /// </summary>
     /// <param name="inPos">넉백 기준점</param>
-    protected void DisconnectMusclesRecursive(Vector3 inPos, bool isSelf = false)
+    public void DisconnectMusclesRecursive(Vector3 inPos, bool isSelf = false)
     {
         if (puppet != null && puppet.puppetMaster != null)
         {

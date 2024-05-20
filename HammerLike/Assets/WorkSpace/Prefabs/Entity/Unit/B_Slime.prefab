@@ -216,7 +216,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 84
+  m_Constraints: 116
   m_CollisionDetection: 3
 --- !u!114 &2449680744361544971
 MonoBehaviour:
@@ -243,7 +243,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02e156e622a36804bb585b2ac540105a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootObj: {fileID: 3304079569416378373}
   meshObj: {fileID: 5128996553571218849}
   col: {fileID: 937606953505993846}
   rigid: {fileID: 4804104527515222762}
@@ -251,16 +250,9 @@ MonoBehaviour:
   unitIndex: 5
   anim: {fileID: 7344168283046424172}
   agent: {fileID: 0}
-  isAttacking: 0
-  knockbackDuration: 0.5
   puppet: {fileID: 0}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 2684354560
-  groundCheckDistance: 0.1
-  isKnockback: 0
+  isGrounded: 0
   hpPosTR: {fileID: 6271083023624452756}
-  isTester: 0
   weaponCollider: {fileID: 4815964313420995929}
   duration: 1
   multiplier: 1.5

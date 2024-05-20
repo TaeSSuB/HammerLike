@@ -29,6 +29,10 @@ public class B_Player : B_UnitBase
     [SerializeField] private BoxCollider weaponCollider;
 
     [SerializeField] private WeaponOrbit weaponOrbit;
+    
+    private Vector3 attackStartDir;
+    private float attackRotX = 0f;
+    private float lastAttackRotX = 0f;
 
     private int atkDamageOrigin;
     private float knockbackPowerOrigin;
@@ -37,10 +41,8 @@ public class B_Player : B_UnitBase
     [Header("Camera Settings")]
     [SerializeField] private RotateType rotateType = RotateType.LookAtMouseSmooth;
     [SerializeField] private float rotSpeed = 10f;
+    [SerializeField] private float atkRotSpeed = 5f;
     [SerializeField] private float rotDeadZone = 0.1f;
-    [SerializeField] private bool AllowRotate_L = true;
-    [SerializeField] private bool AllowRotate_R = true;
-
 
     public SO_Weapon WeaponData => weaponData;
 
@@ -75,7 +77,9 @@ public class B_Player : B_UnitBase
         findItem = B_InventoryManager.Instance.playerWeaponContainer.FindItemOnInventory(currentWeaponObj.itemData);
 
         EquipWeapon(findItem.ItemObject as SO_Weapon);
-        OnPlayerDeath += sceneLoader.PlayerDead;
+
+        if(sceneLoader != null)
+            OnPlayerDeath += sceneLoader.PlayerDead;
     }
 
     protected override void Update()
@@ -167,7 +171,7 @@ public class B_Player : B_UnitBase
 
     private Vector3 InputMovement()
     {
-        if(isLockMove)
+        if(IsLockMove)
             return Vector3.zero;
 
         // Input logic
@@ -215,7 +219,7 @@ public class B_Player : B_UnitBase
     {
         if(inDashDir == Vector3.zero)
             return;
-        if(isLockMove)
+        if(IsLockMove)
             return;
 
         transform.LookAt(inDashDir + transform.position);
@@ -245,7 +249,7 @@ public class B_Player : B_UnitBase
     /// </summary>
     protected void LookAtMouse()
     {
-        if(isLockRotate)
+        if(IsLockRotate)
             return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -265,9 +269,38 @@ public class B_Player : B_UnitBase
                         transform.LookAt(lookAt);
                         break;
                     case RotateType.LookAtMouseSmooth:
-                        Quaternion targetRotation = Quaternion.LookRotation(lookAt - transform.position);
-                        Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotSpeed);
-                        transform.rotation = newRot;
+                        var lookAtDir = lookAt - transform.position;
+
+                        Quaternion targetRotation = Quaternion.LookRotation(lookAtDir);
+
+                        if(IsAttacking) 
+                        {
+                            // Check Right or Left to attackStartDir
+                            float angle = Vector3.SignedAngle(attackStartDir, lookAtDir, Vector3.up);
+                            attackRotX = angle;
+
+                            if(Mathf.Abs(attackRotX) > Mathf.Abs(lastAttackRotX))
+                            {
+                                lastAttackRotX = attackRotX;
+
+                                Anim.SetFloat("fAttackX", attackRotX);
+
+                                var currentRotSpeed = atkRotSpeed;
+                                
+                                Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * currentRotSpeed);
+
+                                transform.rotation = newRot;
+                            }
+                        }
+                        else
+                        {
+                            var currentRotSpeed = rotSpeed;
+
+                            Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * currentRotSpeed);
+
+                            transform.rotation = newRot;
+                        } 
+
                         break;
                     default:
                         break;
@@ -374,6 +407,8 @@ public class B_Player : B_UnitBase
         var minChargeRate = (unitStatus as SO_PlayerStatus).minChargeRate;
         var maxChargeRate = (unitStatus as SO_PlayerStatus).maxChargeRate;
 
+        attackStartDir = transform.forward;
+
         if (chargeRate >= minChargeRate)
         {
             if (chargeRate >= maxChargeRate)
@@ -405,9 +440,6 @@ public class B_Player : B_UnitBase
         // Attack damage = Original attack damage
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
-
-        // Temp 240508
-        AllowRotate_R = false;
     }
 
     void ChargeAttack()
@@ -419,9 +451,6 @@ public class B_Player : B_UnitBase
         ApplyChargeDamage();
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
-
-        // Temp 240508
-        AllowRotate_L = false;
     }
 
     void MaximumChargeAttack()
@@ -433,9 +462,6 @@ public class B_Player : B_UnitBase
         ApplyChargeDamage();
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
-
-        // Temp 240508
-        AllowRotate_L = false;
     }
 
     /// <summary>
@@ -444,7 +470,7 @@ public class B_Player : B_UnitBase
     void ResetAttack()
     {
         // Reset attack logic
-        isAttacking = false;
+        SetAttacking = false;
         Anim.SetBool("bAttack", false);
         Anim.SetBool("IsOutWardAttack", false);
         Anim.SetBool("IsInWardAttack", false);
@@ -459,9 +485,6 @@ public class B_Player : B_UnitBase
 
         //zoomCam.orthographicSize = startZoom;
         ResetDamage();
-
-        AllowRotate_L = true;
-        AllowRotate_R = true;
     }
 
     #region .Movement
@@ -551,9 +574,9 @@ public class B_Player : B_UnitBase
 
     #endregion
 
-    protected override void Dead()
+    protected override void Dead(bool isSelf = false)
     {
-        base.Dead();
+        base.Dead(isSelf);
         Anim.SetTrigger("tDeath");
       
 
@@ -696,8 +719,8 @@ public class B_Player : B_UnitBase
 
         ResetDamage();
 
-        AllowRotate_L = true;
-        AllowRotate_R = true;
+        // temp
+        lastAttackRotX = 0f;
     }
 
     void EnableWeaponCollider()
@@ -736,7 +759,8 @@ public class B_Player : B_UnitBase
     #endregion
     void OnDestroy()
     {
-        OnPlayerDeath -= sceneLoader.PlayerDead;
+        if(sceneLoader != null)
+            OnPlayerDeath -= sceneLoader.PlayerDead;
     }
 
 }

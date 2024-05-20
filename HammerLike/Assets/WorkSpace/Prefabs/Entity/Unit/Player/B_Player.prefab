@@ -445,7 +445,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d3c7810508c534daf67b3eb220ca2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootObj: {fileID: 1768623638817304503}
   meshObj: {fileID: 4716837519280517602}
   col: {fileID: 3484366558637496199}
   rigid: {fileID: 7190315784335179458}
@@ -453,14 +452,7 @@ MonoBehaviour:
   unitIndex: -1
   anim: {fileID: 1768623639919925977}
   agent: {fileID: 0}
-  isAttacking: 0
-  knockbackDuration: 0.5
   puppet: {fileID: 0}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 2684354560
-  groundCheckDistance: 0.1
-  isKnockback: 0
   mouseLayer:
     serializedVersion: 2
     m_Bits: 2147483648
@@ -474,9 +466,8 @@ MonoBehaviour:
   weaponOrbit: {fileID: 1952734946970189571}
   rotateType: 2
   rotSpeed: 30
+  atkRotSpeed: 5
   rotDeadZone: 0.5
-  AllowRotate_L: 1
-  AllowRotate_R: 1
   sceneLoader: {fileID: 0}
 --- !u!1 &2110469650803552666
 GameObject:
@@ -850,7 +841,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2

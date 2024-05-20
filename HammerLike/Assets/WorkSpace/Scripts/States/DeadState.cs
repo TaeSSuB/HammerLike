@@ -47,7 +47,7 @@ public class DeadState : IAIState
         if (deadTime <= 0)
         {
             //unitBase.Init();
-            unitBase.RootObj.SetActive(false);
+            unitBase.gameObject.SetActive(false);
             unitBase.Col.enabled = true;
             unitBase.Agent.enabled = true;
             (unitBase as B_Enemy).AIStateManager.SetState(AIStateType.IDLE);

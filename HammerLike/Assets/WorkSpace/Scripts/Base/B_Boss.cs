@@ -86,12 +86,12 @@ public class B_Boss : B_UnitBase
         // When hit Other Enemy
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            if (isKnockback) return;
+            if (IsKnockback) return;
 
             var other = collision.gameObject.GetComponent<B_Enemy>();
             
             if (other == null) return;
-            if (!other.isKnockback) return;
+            if (!other.IsKnockback) return;
 
             // Get hit dir from another enemy
             Vector3 hitDir = (transform.position - collision.transform.position).normalized;
@@ -121,9 +121,9 @@ public class B_Boss : B_UnitBase
 
     #region Check or Update State
 
-    protected override void Dead()
+    protected override void Dead(bool isSelf = false)
     {
-        base.Dead();
+        base.Dead(isSelf);
         bossController.SetState(BossAIStateType.DEAD);
 
         //DisconnectMusclesRecursive(GameManager.Instance.Player.transform.position);

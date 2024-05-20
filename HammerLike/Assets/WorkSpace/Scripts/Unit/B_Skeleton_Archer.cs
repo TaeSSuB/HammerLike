@@ -11,9 +11,9 @@ public class B_Skeleton_Archer : B_Enemy
     /// <summary>
     /// Dead : 유닛 사망 함수. 스켈레톤은 퍼펫 분리 추가
     /// </summary>
-    protected override void Dead()
+    protected override void Dead(bool isSelf = false)
     {
-        base.Dead();
+        base.Dead(isSelf);
 
         // 스켈레톤 유닛은 Dead 시 puppet 분리
         DisconnectMusclesRecursive(GameManager.Instance.Player.transform.position);

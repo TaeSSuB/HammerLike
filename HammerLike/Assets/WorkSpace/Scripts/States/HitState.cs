@@ -18,7 +18,7 @@ public class HitState : IAIState
     {
         //Debug.Log("HitState OnEnter");
         unitBase.SetInvincible(true);
-        unitBase.Anim.SetTrigger("tHit");
+        unitBase.Anim?.SetTrigger("tHit");
 
         HitEvent(1f);
 

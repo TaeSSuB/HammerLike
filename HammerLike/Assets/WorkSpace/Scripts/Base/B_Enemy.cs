@@ -13,9 +13,6 @@ public class B_Enemy : B_UnitBase
     [Header("HP UI")]
     [SerializeField] Transform hpPosTR;
 
-    // Temp - Dev
-    [SerializeField] private bool isTester = false;
-
     // get aIStateManager
     public AIStateManager AIStateManager => aIStateManager;
 
@@ -25,13 +22,12 @@ public class B_Enemy : B_UnitBase
     {
         base.Init();
 
-        if(!isTester)
-            aIStateManager = GetComponent<AIStateManager>();
-
         if(hpPosTR == null)
             hpPosTR = transform;
 
         FindObjectOfType<B_UIManager>().CreateHPWorldUI(hpPosTR, this);
+
+        aIStateManager = GetComponent<AIStateManager>();
     }
 
     // Update
@@ -56,7 +52,7 @@ public class B_Enemy : B_UnitBase
                 }
                 else
                 {
-                    if(!isAttacking)
+                    if(!IsAttacking)
                         aIStateManager?.SetState(AIStateType.CHASE);
                 }
             }
@@ -104,9 +100,6 @@ public class B_Enemy : B_UnitBase
                 B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Death);
             }
 
-            if (isTester)
-                return;
-
             //ChangeState(new ChaseState(this));
             if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
                 aIStateManager?.SetState(AIStateType.HIT);
@@ -120,12 +113,14 @@ public class B_Enemy : B_UnitBase
         // When hit Other Enemy
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            if (isKnockback) return;
+            CheckDead();
+            
+            if (IsKnockback) return;
 
             var other = collision.gameObject.GetComponent<B_Enemy>();
             
             if (other == null) return;
-            if (!other.isKnockback) return;
+            if (!other.IsKnockback) return;
 
             // Get hit dir from another enemy
             Vector3 hitDir = (transform.position - collision.transform.position).normalized;
@@ -155,9 +150,9 @@ public class B_Enemy : B_UnitBase
     
     #region Check or Update State
 
-    protected override void Dead()
+    protected override void Dead(bool isSelf = false)
     {
-        base.Dead();
+        base.Dead(isSelf);
         //aIStateManager.SetState(AIStateType.DEAD);
 
         //DisconnectMusclesRecursive(GameManager.Instance.Player.transform.position);

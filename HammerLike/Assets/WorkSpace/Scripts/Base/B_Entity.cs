@@ -9,14 +9,14 @@ using UnityEngine;
 public class B_Entity : MonoBehaviour
 {
     [Header("Base Object Info")]
-    [SerializeField] protected GameObject rootObj;
+    //[SerializeField] protected GameObject rootObj;
     [SerializeField] protected GameObject meshObj;
     [SerializeField] protected Collider col;
     [SerializeField] private Rigidbody rigid;
 
     [SerializeField] protected bool isInvincible;
 
-    public GameObject RootObj { get => rootObj; }
+    //public GameObject RootObj { get => rootObj; }
     public GameObject MeshObj { get => meshObj; }
     public Collider Col { get => col; }
     public Rigidbody Rigid { get => rigid;}
@@ -58,10 +58,10 @@ public class B_Entity : MonoBehaviour
 
     public virtual void Init()
     {
-        if(rootObj == null)
-        {
-            rootObj = gameObject;
-        }
+        // if(rootObj == null)
+        // {
+        //     rootObj = gameObject;
+        // }
 
         if(col == null)
         {
