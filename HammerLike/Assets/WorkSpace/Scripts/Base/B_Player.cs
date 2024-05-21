@@ -22,12 +22,14 @@ public class B_Player : B_UnitBase
     [SerializeField] private GameObject chargeVFXObj;
     [SerializeField] private float minChargeMoveRate = 0.1f;
 
+    [Header("Weapon Settings")]
     [SerializeField] private GameObject weaponObj;
-    [SerializeField] private Renderer weaponRenderer;
     [SerializeField] private Transform weaponTR;
     [SerializeField] private SO_Weapon weaponData;
-    [SerializeField] private BoxCollider weaponCollider;
+    private Renderer weaponRenderer;
 
+    [Header("Weapon Orbit Settings")]
+    [SerializeField] private BoxCollider weaponCollider;
     [SerializeField] private WeaponOrbit weaponOrbit;
     
     private Vector3 attackStartDir;
@@ -275,15 +277,18 @@ public class B_Player : B_UnitBase
                         {
                             // Check Right or Left to attackStartDir
                             float signedAngle = Vector3.SignedAngle(attackStartDir, lookAtDir, Vector3.up);
-                            
-                            attackSign = Mathf.Sign(signedAngle);
 
-                            if(Mathf.Abs(signedAngle) < 15)
+                            if(attackSign == 0)
                             {
-                                attackSign = 0;
-                            }
+                                attackSign = Mathf.Sign(signedAngle);
 
-                            Anim.SetFloat("fAttackX", attackSign);
+                                if(Mathf.Abs(signedAngle) < 15)
+                                {
+                                    attackSign = 0;
+                                }
+
+                                Anim.SetFloat("fAttackX", attackSign);
+                            }
 
                             // Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * currentRotSpeed);
                             //Quaternion newRot  = Quaternion.RotateTowards(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
@@ -700,7 +705,7 @@ public class B_Player : B_UnitBase
 
     public void StartAttackDownWard()
     {
-        if(attackSign != 0f) return;
+        //if(attackSign != 0f) return;
 
         Debug.Log("StartAttackDownWard");
 
@@ -709,7 +714,7 @@ public class B_Player : B_UnitBase
 
     public void EndAttackDownWard()
     {
-        if(attackSign != 0f) return;
+        //if(attackSign != 0f) return;
 
         Debug.Log("EndAttackDownWard");
 
@@ -718,7 +723,7 @@ public class B_Player : B_UnitBase
 
     public void StartAttackOutWard()
     {
-        if(attackSign != -1f) return;
+        //if(attackSign != -1f) return;
 
         Debug.Log("StartAttackOutWard");
 
@@ -727,7 +732,7 @@ public class B_Player : B_UnitBase
 
     public void EndAttackOutWard()
     {
-        if(attackSign != -1f) return;
+        //if(attackSign != -1f) return;
 
         Debug.Log("EndAttackOutWard");
 
@@ -736,7 +741,7 @@ public class B_Player : B_UnitBase
 
     public void StartAttackInWard()
     {
-        if(attackSign != 1f) return;
+        //if(attackSign != 1f) return;
 
         Debug.Log("StartAttackInWard");
 
@@ -745,7 +750,7 @@ public class B_Player : B_UnitBase
 
     public void EndAttackInWard()
     {
-        if(attackSign != 1f) return;
+        //if(attackSign != 1f) return;
 
         Debug.Log("EndAttackInWard");
 
@@ -781,6 +786,9 @@ public class B_Player : B_UnitBase
         ResetDamage();
 
         agent.updateRotation = true;
+
+        DisableWeaponCollider();
+        attackSign = 0f;
     }
 
     void EnableWeaponCollider()
