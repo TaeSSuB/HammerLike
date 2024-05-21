@@ -164,12 +164,10 @@ public class BSPGenerator : MonoBehaviour
     {
         List<BSPNode> leafNodes = GetLeafNodes(node);
         if (leafNodes.Count < 2)
-            return; // Not enough rooms to connect
+            return;
 
-        // Initialize edge list for Kruskal's MST
         List<Edge> edges = new List<Edge>();
 
-        // Generate all possible edges between leaf nodes with distances
         for (int i = 0; i < leafNodes.Count; i++)
         {
             for (int j = i + 1; j < leafNodes.Count; j++)
@@ -185,14 +183,12 @@ public class BSPGenerator : MonoBehaviour
             }
         }
 
-        // Sort edges by distance
         edges.Sort((a, b) => a.distance.CompareTo(b.distance));
 
-        // Kruskal's MST implementation
         Dictionary<BSPNode, BSPNode> parent = new Dictionary<BSPNode, BSPNode>();
         foreach (var leaf in leafNodes)
         {
-            parent[leaf] = leaf; // Initially, each node is its own parent
+            parent[leaf] = leaf;
         }
 
         List<KeyValuePair<BSPNode, BSPNode>> roomConnections = new List<KeyValuePair<BSPNode, BSPNode>>();
@@ -205,16 +201,14 @@ public class BSPGenerator : MonoBehaviour
             {
                 CreatePathBetweenRooms(edge.nodeA, edge.nodeB);
                 roomConnections.Add(new KeyValuePair<BSPNode, BSPNode>(edge.nodeA, edge.nodeB));
-                parent[rootA] = rootB; // Union the sets
+                parent[rootA] = rootB;
             }
         }
 
-        // 연결된 방들의 순서를 출력하거나 다른 방식으로 사용
         foreach (var connection in roomConnections)
         {
             Debug.Log($"Connected: {connection.Key.roomType} to {connection.Value.roomType}");
         }
-
     }
 
     BSPNode Find(Dictionary<BSPNode, BSPNode> parent, BSPNode node)
@@ -238,7 +232,6 @@ public class BSPGenerator : MonoBehaviour
 
     void CreatePathBetweenRooms(BSPNode nodeA, BSPNode nodeB)
     {
-
         if (nodeA == null || nodeB == null || nodeA.roomObject == null || nodeB.roomObject == null) return;
 
         RoomPrefab roomPrefabA = nodeA.roomObject.GetComponent<RoomPrefab>();
@@ -247,7 +240,6 @@ public class BSPGenerator : MonoBehaviour
         if (roomPrefabA == null || roomPrefabB == null)
             return;
 
-        // Find the closest entrance points between the two rooms
         GameObject[] entrancesA = { roomPrefabA.EntranceN, roomPrefabA.EntranceE, roomPrefabA.EntranceS, roomPrefabA.EntranceW };
         GameObject[] entrancesB = { roomPrefabB.EntranceN, roomPrefabB.EntranceE, roomPrefabB.EntranceS, roomPrefabB.EntranceW };
 
@@ -257,39 +249,40 @@ public class BSPGenerator : MonoBehaviour
         GameObject startEntrance = null;
         GameObject endEntrance = null;
 
-        // Find closest pair of entrances
-        foreach (GameObject entranceA in entrancesA)
+        Dictionary<GameObject, GameObject> symmetricEntrances = new Dictionary<GameObject, GameObject>
         {
-            if (entranceA == null) continue;
-            foreach (GameObject entranceB in entrancesB)
+            { roomPrefabA.EntranceN, roomPrefabB.EntranceS },
+            { roomPrefabA.EntranceE, roomPrefabB.EntranceW },
+            { roomPrefabA.EntranceS, roomPrefabB.EntranceN },
+            { roomPrefabA.EntranceW, roomPrefabB.EntranceE }
+        };
+
+        foreach (var pair in symmetricEntrances)
+        {
+            if (pair.Key == null || pair.Value == null) continue;
+            float distance = Vector3.Distance(pair.Key.transform.position, pair.Value.transform.position);
+            if (distance < minDistance)
             {
-                if (entranceB == null) continue;
-                float distance = Vector3.Distance(entranceA.transform.position, entranceB.transform.position);
-                if (distance < minDistance)
-                {
-                    minDistance = distance;
-                    startEntrance = entranceA;
-                    endEntrance = entranceB;
-                }
+                minDistance = distance;
+                startEntrance = pair.Key;
+                endEntrance = pair.Value;
             }
         }
 
-        // Determine the coordinates for the L-shaped path
         if (minDistance < float.MaxValue)
         {
             start = startEntrance.transform.position;
             end = endEntrance.transform.position;
-            CreateLShapedPath(start, end);
-            if(startEntrance != null || endEntrance != null)
+            CreateLShapedPath(start, end, startEntrance, endEntrance);
+            if (startEntrance != null || endEntrance != null)
             {
-
-            startEntrance.SetActive(false);
-            endEntrance.SetActive(false);
+                startEntrance.SetActive(false);
+                endEntrance.SetActive(false);
             }
         }
     }
 
-    void CreateLShapedPath(Vector3 startPosition, Vector3 endPosition)
+    void CreateLShapedPath(Vector3 startPosition, Vector3 endPosition, GameObject startEntrance, GameObject endEntrance)
     {
 
         float deltaX = endPosition.x - startPosition.x;
@@ -316,34 +309,32 @@ public class BSPGenerator : MonoBehaviour
             }
 
             Vector3 midPoint = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, (startPosition.z + endPosition.z) / 2);
-            Vector3 intermediate1, intermediate2;
+            Vector3 midPoint1, midPoint2;
 
-            if (Mathf.Abs(startPosition.x - endPosition.x) > Mathf.Abs(startPosition.z - endPosition.z))
+            if (startEntrance.name.Contains("N") && endEntrance.name.Contains("S") || startEntrance.name.Contains("S") && endEntrance.name.Contains("N"))
             {
-                intermediate1 = new Vector3(midPoint.x, startPosition.y, startPosition.z);
-                intermediate2 = new Vector3(midPoint.x, endPosition.y, endPosition.z);
-                Debug.Log("X좌표가 Z좌표보다 절대값이 큼" + intermediate1+""+intermediate2);
+                midPoint1 = new Vector3(startPosition.x, startPosition.y, (startPosition.z + endPosition.z) / 2);
+                midPoint2 = new Vector3(endPosition.x, endPosition.y, (startPosition.z + endPosition.z) / 2);
             }
             else
             {
-                intermediate1 = new Vector3(startPosition.x, startPosition.y, midPoint.z);
-                intermediate2 = new Vector3(endPosition.x, endPosition.y, midPoint.z);
-                Debug.Log("Z좌표가 X좌표보다 절대값이 큼" + intermediate1 + "" + intermediate2);
+                midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
+                midPoint2 = new Vector3((startPosition.x + endPosition.x) / 2, endPosition.y, endPosition.z);
             }
 
-
+            DetermineAndPlaceCornerObjects(startEntrance, endEntrance, midPoint1, midPoint2);
             // Place corner objects
-            DetermineAndPlaceCornerObjects(deltaX, deltaZ, intermediate1, intermediate2);
+            //DetermineAndPlaceCornerObjects(deltaX, deltaZ, midPoint1, midPoint2);
             Vector3 cornerKMJ = new Vector3(2, 0, 6);
             Vector3 cornerSize = GetPrefabSize(cornerPrefab); // 
-            Vector3 direction1 = (intermediate2 - intermediate1).normalized;
-            Vector3 offsetStart1 = intermediate1 + direction1 * cornerSize.x * 4; // 
-            Vector3 direction0 = (intermediate1 - startPosition).normalized;
-            Vector3 direction2 = (endPosition - intermediate2).normalized;
-            Vector3 offsetStart2 = intermediate2 + direction2 * cornerSize.x * 4f; // 
-            Vector3 offsetEnd1 = intermediate1 - direction0 * cornerSize.x * 2;
+            Vector3 direction1 = (midPoint2 - midPoint1).normalized;
+            Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 4; // 
+            Vector3 direction0 = (midPoint1 - startPosition).normalized;
+            Vector3 direction2 = (endPosition - midPoint2).normalized;
+            Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f; // 
+            Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 2;
             Vector3 offsetEnd11 = offsetEnd1 - direction0 * cornerSize.z * 2;
-            Vector3 offsetEnd2 = intermediate2 - direction1 * cornerSize.x * 2;
+            Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
             Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 2;
             PlaceTilesAlongLine(startPosition, offsetEnd11, false);
             PlaceTilesAlongLine(offsetStart1, offsetEnd22, false);
@@ -358,11 +349,13 @@ public class BSPGenerator : MonoBehaviour
             {
                 PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
                 PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
+                Debug.Log("a");
             }
             else // c <= d
             {
                 PlaceCornerObject(intermediate1 - new Vector3(2.0f, 0f, -2.0f), Quaternion.Euler(0, 90, 0));
                 PlaceCornerObject(intermediate2 + new Vector3(2.0f, 0f, -2.0f), Quaternion.Euler(0, -90, 0));
+                Debug.Log("b");
             }
         }
         else if (c > 0 && d < 0)
@@ -371,24 +364,28 @@ public class BSPGenerator : MonoBehaviour
             {
                 PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
                 PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 0, 0));
+                Debug.Log("c");
             }
             else // Abs(d) >= Abs(c)
             {
                 PlaceCornerObject(intermediate1 - new Vector3(2.0f, 0f, 2.0f), Quaternion.Euler(0, 0, 0));
                 PlaceCornerObject(intermediate2 + new Vector3(2.0f, 0f, 2.0f), Quaternion.Euler(0, 180, 0));
+                Debug.Log("d");
             }
         }
         else if (c < 0 && d > 0)
         {
             if (Mathf.Abs(c) > d)
             {
-                PlaceCornerObject(intermediate1 - new Vector3(2.0f, 0f, 2.0f), Quaternion.identity);
-                PlaceCornerObject(intermediate2 + new Vector3(2.0f, 0f, 2.0f), Quaternion.Euler(0, 180, 0));
+                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
+                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.identity);
+                Debug.Log("e");
             }
             else // d >= Abs(c)
             {
                 PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
                 PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.identity);
+                Debug.Log("f");
             }
         }
         else if (c < 0 && d < 0)
@@ -397,13 +394,75 @@ public class BSPGenerator : MonoBehaviour
             {
                 PlaceCornerObject(intermediate1 - new Vector3(2.0f, 0f, -2.0f), Quaternion.Euler(0, 90, 0));
                 PlaceCornerObject(intermediate2 + new Vector3(2.0f, 0f, -2.0f), Quaternion.Euler(0, -90, 0));
+                Debug.Log("g");
             }
             else // Abs(d) >= Abs(c)
             {
                 PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
                 PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
+                Debug.Log("h");
             }
         }
+    }
+
+    private void DetermineAndPlaceCornerObjects(GameObject start, GameObject end, Vector3 intermediate1, Vector3 intermediate2)
+    {
+        string startName = start.name;
+        string endName = end.name;
+        if ((startName.Contains("N") && endName.Contains("S")))
+        {
+            if (start.transform.position.x > end.transform.position.x)
+            {
+
+                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
+                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
+            }
+            else
+            {
+                PlaceCornerObject(intermediate1 - new Vector3(+2.0f, 0f, 2.0f), Quaternion.Euler(0, 0, 0));
+                PlaceCornerObject(intermediate2 + new Vector3(2.0f, 0f, 2.0f), Quaternion.Euler(0, 180, 0));
+            }
+        }
+        else if ((startName.Contains("S") && endName.Contains("N")))
+        {
+            if (start.transform.position.x > end.transform.position.x)
+            {
+                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
+                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 0, 0));
+            }
+            else
+            {
+                PlaceCornerObject(intermediate1 - new Vector3(2.0f, 0f, -2.0f), Quaternion.Euler(0, 90, 0));
+                PlaceCornerObject(intermediate2 + new Vector3(2.0f, 0f, -2.0f), Quaternion.Euler(0, 270, 0));
+            }
+        }
+        else if ((startName.Contains("E") && endName.Contains("W")))
+        {
+            if (start.transform.position.z > end.transform.position.z)
+            {
+                PlaceCornerObject(intermediate2 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
+                PlaceCornerObject(intermediate1 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
+            }
+            else
+            {
+                PlaceCornerObject(intermediate2 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
+                PlaceCornerObject(intermediate1 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 0, 0));
+            }
+        }
+        else if ((startName.Contains("W") && endName.Contains("E")))
+        {
+            if (start.transform.position.z > end.transform.position.z)
+            {
+                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
+                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 0, 0));
+            }
+            else
+            {
+                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
+                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
+            }
+        }
+
     }
 
     private void PlaceCornerObject(Vector3 position, Quaternion rotation)
