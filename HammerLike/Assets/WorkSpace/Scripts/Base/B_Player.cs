@@ -702,6 +702,8 @@ public class B_Player : B_UnitBase
     {
         if(attackSign != 0f) return;
 
+        Debug.Log("StartAttackDownWard");
+
         StartAttack();
     }
 
@@ -709,30 +711,44 @@ public class B_Player : B_UnitBase
     {
         if(attackSign != 0f) return;
 
+        Debug.Log("EndAttackDownWard");
+
         EndAttack();
     }
 
     public void StartAttackOutWard()
     {
         if(attackSign != -1f) return;
+
+        Debug.Log("StartAttackOutWard");
+
         StartAttack();
     }
 
     public void EndAttackOutWard()
     {
         if(attackSign != -1f) return;
+
+        Debug.Log("EndAttackOutWard");
+
         EndAttack();
     }
 
     public void StartAttackInWard()
     {
         if(attackSign != 1f) return;
+
+        Debug.Log("StartAttackInWard");
+
         StartAttack();
     }
 
     public void EndAttackInWard()
     {
         if(attackSign != 1f) return;
+
+        Debug.Log("EndAttackInWard");
+
         EndAttack();
     }
 
