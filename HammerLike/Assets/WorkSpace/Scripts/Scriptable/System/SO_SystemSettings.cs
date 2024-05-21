@@ -28,11 +28,11 @@ public class SO_SystemSettings : ScriptableObject
     [SerializeField] private ForceMode knockbackForceMode = ForceMode.Force;
     [SerializeField] private float knockbackDuration = 0.5f;
     [SerializeField] private float knockBackScale = 10f;
-    [SerializeField] private float maxKnockBackForce = 100f;
+    private float maxKnockBackForce = 1000f;
     [SerializeField] private AnimationCurve knockbackCurve;
     [Space(10)]
     [SerializeField] private float partsKnockBackScale = 10f;
-    [SerializeField] private float maxPartsBreakForce = 100f;
+    private float maxPartsBreakForce = 100f;
     [SerializeField] private AnimationCurve partsBreakForceCurve;
     //[SerializeField] private float gravity = 9.8f;
 

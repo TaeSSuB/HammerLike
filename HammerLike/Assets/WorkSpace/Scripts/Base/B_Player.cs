@@ -31,8 +31,7 @@ public class B_Player : B_UnitBase
     [SerializeField] private WeaponOrbit weaponOrbit;
     
     private Vector3 attackStartDir;
-    private float attackRotX = 0f;
-    private float lastAttackRotX = 0f;
+    private float attackSign;
 
     private int atkDamageOrigin;
     private float knockbackPowerOrigin;
@@ -103,8 +102,6 @@ public class B_Player : B_UnitBase
 
         ApplyMovement(currentMovePos);
         ApplyDash(currentDashPos);
-
-        currentMovePos = InputMovement();
     }
 
     
@@ -270,37 +267,41 @@ public class B_Player : B_UnitBase
                         break;
                     case RotateType.LookAtMouseSmooth:
                         var lookAtDir = lookAt - transform.position;
-
                         Quaternion targetRotation = Quaternion.LookRotation(lookAtDir);
 
-                        if(IsAttacking) 
+                        float currentRotSpeed = IsAttacking ? atkRotSpeed : rotSpeed;
+
+                        if (IsAttacking)
                         {
                             // Check Right or Left to attackStartDir
-                            float angle = Vector3.SignedAngle(attackStartDir, lookAtDir, Vector3.up);
-                            attackRotX = angle;
+                            float signedAngle = Vector3.SignedAngle(attackStartDir, lookAtDir, Vector3.up);
+                            
+                            attackSign = Mathf.Sign(signedAngle);
 
-                            if(Mathf.Abs(attackRotX) > Mathf.Abs(lastAttackRotX))
+                            if(Mathf.Abs(signedAngle) < 15)
                             {
-                                lastAttackRotX = attackRotX;
-
-                                Anim.SetFloat("fAttackX", attackRotX);
-
-                                var currentRotSpeed = atkRotSpeed;
-                                
-                                Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * currentRotSpeed);
-
-                                transform.rotation = newRot;
+                                attackSign = 0;
                             }
+
+                            Anim.SetFloat("fAttackX", attackSign);
+
+                            // Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * currentRotSpeed);
+                            //Quaternion newRot  = Quaternion.RotateTowards(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
+
+                            if(Quaternion.Angle(targetRotation, transform.rotation) > 5f)
+                            {
+                                transform.Rotate(Vector3.up, attackSign * Time.deltaTime * currentRotSpeed);
+                            }
+                            //transform.rotation = newRot;
+                            
                         }
                         else
                         {
-                            var currentRotSpeed = rotSpeed;
-
                             Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * currentRotSpeed);
+                            //Quaternion newRot  = Quaternion.RotateTowards(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
 
                             transform.rotation = newRot;
-                        } 
-
+                        }
                         break;
                     default:
                         break;
@@ -578,7 +579,10 @@ public class B_Player : B_UnitBase
     {
         base.Dead(isSelf);
         Anim.SetTrigger("tDeath");
-      
+
+        isLockAttack = true;
+
+        DisableWeaponCollider();
 
         OnPlayerDeath?.Invoke();
     }
@@ -693,9 +697,50 @@ public class B_Player : B_UnitBase
     #endregion
 
     #region Animation Event
+
+    public void StartAttackDownWard()
+    {
+        if(attackSign != 0f) return;
+
+        StartAttack();
+    }
+
+    public void EndAttackDownWard()
+    {
+        if(attackSign != 0f) return;
+
+        EndAttack();
+    }
+
+    public void StartAttackOutWard()
+    {
+        if(attackSign != -1f) return;
+        StartAttack();
+    }
+
+    public void EndAttackOutWard()
+    {
+        if(attackSign != -1f) return;
+        EndAttack();
+    }
+
+    public void StartAttackInWard()
+    {
+        if(attackSign != 1f) return;
+        StartAttack();
+    }
+
+    public void EndAttackInWard()
+    {
+        if(attackSign != 1f) return;
+        EndAttack();
+    }
+
     public override void StartAttack()
     {
         base.StartAttack();
+
+        agent.updateRotation=false;
     }
     public override void EndAttack()
     {
@@ -719,8 +764,7 @@ public class B_Player : B_UnitBase
 
         ResetDamage();
 
-        // temp
-        lastAttackRotX = 0f;
+        agent.updateRotation = true;
     }
 
     void EnableWeaponCollider()
@@ -762,5 +806,22 @@ public class B_Player : B_UnitBase
         if(sceneLoader != null)
             OnPlayerDeath -= sceneLoader.PlayerDead;
     }
+
+    #region Gizmos
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, transform.forward * 2f);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(transform.position, currentMovePos * 2f);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(transform.position, currentDashPos * 2f);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawRay(transform.position, attackStartDir * 10f);
+    }
+    #endregion
 
 }

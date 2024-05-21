@@ -1542,7 +1542,6 @@ GameObject:
   m_Component:
   - component: {fileID: 250384303}
   - component: {fileID: 250384304}
-  - component: {fileID: 250384305}
   m_Layer: 0
   m_Name: Manager_UI
   m_TagString: Untagged
@@ -1584,27 +1583,6 @@ MonoBehaviour:
   ui_InGame: {fileID: 637190829}
   inventoryObj: {fileID: 1986976266}
   inventoryKey: 105
---- !u!114 &250384305
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 250384302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f249aeed16b983498044620ceba9dcf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cursorTextures:
-  - index: 0
-    texture: {fileID: 2800000, guid: 93ab6de52ec4e7440a20c8a065673693, type: 3}
-  - index: 1
-    texture: {fileID: 2800000, guid: 038ab4af0c4b7844295b63f5610d8532, type: 3}
-  - index: 2
-    texture: {fileID: 2800000, guid: 0acbf6906e6b6de448292e7f63b13685, type: 3}
-  - index: 3
-    texture: {fileID: 2800000, guid: aee27b13b8733724faae2d660d0902ba, type: 3}
 --- !u!1 &268529964 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4313188254355159387, guid: ca6bc6a7961f4e249a99966978999eb6,
@@ -2812,6 +2790,16 @@ PrefabInstance:
       propertyPath: weaponSlot
       value: 
       objectReference: {fileID: 2056171209}
+    - target: {fileID: 7190315784335179458, guid: ca6bc6a7961f4e249a99966978999eb6,
+        type: 3}
+      propertyPath: m_Drag
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7190315784335179458, guid: ca6bc6a7961f4e249a99966978999eb6,
+        type: 3}
+      propertyPath: m_AngularDrag
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8957840737876896812, guid: ca6bc6a7961f4e249a99966978999eb6,
         type: 3}
       propertyPath: zoomCam
@@ -2824,8 +2812,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8957840737876896812, guid: ca6bc6a7961f4e249a99966978999eb6,
         type: 3}
+      propertyPath: atkRotSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8957840737876896812, guid: ca6bc6a7961f4e249a99966978999eb6,
+        type: 3}
       propertyPath: rotDeadZone
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8957840737876896812, guid: ca6bc6a7961f4e249a99966978999eb6,
         type: 3}
@@ -2859,6 +2852,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: CameraController
+      objectReference: {fileID: 0}
+    - target: {fileID: 1205577275724422261, guid: b95a2db59ec9e82439c522d278813ab0,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 17.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 1205577275724422261, guid: b95a2db59ec9e82439c522d278813ab0,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -29.47
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813656274905827397, guid: b95a2db59ec9e82439c522d278813ab0,
+        type: 3}
+      propertyPath: near clip plane
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8928222595677586948, guid: b95a2db59ec9e82439c522d278813ab0,
         type: 3}
@@ -3769,7 +3777,7 @@ PrefabInstance:
     - target: {fileID: 3484081846424364911, guid: b84dc5605c8770540aa98cb56a63e2b3,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 366.66666
+      value: 630
       objectReference: {fileID: 0}
     - target: {fileID: 3484081846424364911, guid: b84dc5605c8770540aa98cb56a63e2b3,
         type: 3}
@@ -4319,7 +4327,7 @@ PrefabInstance:
     - target: {fileID: 6555750840360824997, guid: b84dc5605c8770540aa98cb56a63e2b3,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 400
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6555750840360824997, guid: b84dc5605c8770540aa98cb56a63e2b3,
         type: 3}
@@ -4409,7 +4417,7 @@ PrefabInstance:
     - target: {fileID: 6778329808681690203, guid: b84dc5605c8770540aa98cb56a63e2b3,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 346.66666
+      value: 610
       objectReference: {fileID: 0}
     - target: {fileID: 6778329808681690203, guid: b84dc5605c8770540aa98cb56a63e2b3,
         type: 3}
@@ -5373,7 +5381,7 @@ PrefabInstance:
     - target: {fileID: 3304079569416378373, guid: 4635d579a65e129438a74def4b27692d,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3479563616340746650, guid: 4635d579a65e129438a74def4b27692d,
         type: 3}
@@ -6972,6 +6980,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: B_Boss_SkeletonTorturer
+      objectReference: {fileID: 0}
+    - target: {fileID: 7643274899012111229, guid: 3fce899721c78a0419d1b8b253dba71b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7786611458447458419, guid: 3fce899721c78a0419d1b8b253dba71b,
         type: 3}
