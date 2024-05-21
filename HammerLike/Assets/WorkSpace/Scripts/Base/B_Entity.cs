@@ -56,6 +56,9 @@ public class B_Entity : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Init : 초기화 함수
+    /// </summary>
     public virtual void Init()
     {
         // if(rootObj == null)

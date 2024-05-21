@@ -16,8 +16,8 @@ public class B_Enemy : B_UnitBase
     // get aIStateManager
     public AIStateManager AIStateManager => aIStateManager;
 
-    #region Unity Callbacks & Init
 
+    #region Unity Callbacks & Init
     public override void Init()
     {
         base.Init();
@@ -30,7 +30,6 @@ public class B_Enemy : B_UnitBase
         aIStateManager = GetComponent<AIStateManager>();
     }
 
-    // Update
     protected override void Update()
     {
         base.Update();
@@ -142,14 +141,10 @@ public class B_Enemy : B_UnitBase
             if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
                 aIStateManager?.SetState(AIStateType.HIT);
         }
-
-
     }
-
     #endregion
     
     #region Check or Update State
-
     protected override void Dead(bool isSelf = false)
     {
         base.Dead(isSelf);
@@ -161,7 +156,6 @@ public class B_Enemy : B_UnitBase
     #endregion
     
     #region Action
-
     public override void Attack()
     {
         base.Attack();
@@ -171,7 +165,6 @@ public class B_Enemy : B_UnitBase
     #endregion
 
     #region Animation Event
-
     public override void StartAttack()
     {
         base.StartAttack();
@@ -181,9 +174,6 @@ public class B_Enemy : B_UnitBase
     {
         base.EndAttack();
     }
-
     #endregion
-
-
 
 }

@@ -16,8 +16,7 @@ public class AttackState : IAIState
     public void OnEnter()
     {
         //Debug.Log("AttackState OnEnter");
-        //unitBase.Anim.SetTrigger("tAttack");
-        //unitBase.StartAttack();
+
         var xzPlayerPos = new Vector3(GameManager.Instance.Player.transform.position.x, unitBase.transform.position.y, GameManager.Instance.Player.transform.position.z);
         unitBase.transform.LookAt(xzPlayerPos);
     }

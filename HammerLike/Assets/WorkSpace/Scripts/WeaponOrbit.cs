@@ -85,7 +85,6 @@ public class WeaponOrbit : MonoBehaviour
         }
         if(player == null)
         {
-            //player = GameObject.FindGameObjectWithTag("Player");
             player = GameManager.Instance.Player;
         }
         trailRenderer.emitting = false;

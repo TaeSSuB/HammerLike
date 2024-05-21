@@ -1,4 +1,3 @@
-using RootMotion.Dynamics;
 using System.Collections;
 
 using UnityEngine;
@@ -34,9 +33,6 @@ public class B_UnitBase : B_Entity
     protected AnimationCurve knockbackCurve;
     protected AnimationCurve partsBreakForceCurve;
     protected ForceMode forceMode = ForceMode.Force;
-
-    // Temp 240402 - Puppet 테스트 목적, a.HG
-    [SerializeField] private BehaviourPuppet puppet;
     protected Vector3 remainKnockBackDir;
     protected float remainKnockBackForce = 0f;
 
@@ -48,21 +44,24 @@ public class B_UnitBase : B_Entity
 
     #region Getters & Setters
 
-    public SO_UnitStatus UnitStatus { get => unitStatus;}
-    public Animator Anim { get => anim;}
-    public NavMeshAgent Agent { get => agent;}
+    public SO_UnitStatus UnitStatus => unitStatus;
+    public Animator Anim => anim;
+    public NavMeshAgent Agent => agent;
 
-    public bool IsAlive { get => isAlive; }
-    public bool IsAttacking { get => isAttacking; }
+    public bool IsAlive => isAlive;
+    public bool IsAttacking => isAttacking;
 
     public bool IsLockMove { get; private set; }
     public bool IsLockRotate { get; private set; }
     public bool IsKnockback { get; private set; }
 
-    public bool SetAttacking { set => isAttacking = value; }
-
-    #endregion
-
+    public bool SetAttacking
+    {
+        set
+        {
+            isAttacking = value;
+        } 
+    }
 
     public int SetUnitIndex
     {
@@ -72,6 +71,9 @@ public class B_UnitBase : B_Entity
             ApplyStatus();
         }
     }
+
+    #endregion
+
 
     #region Unity Callbacks & Init
     public override void Init()
@@ -156,18 +158,20 @@ public class B_UnitBase : B_Entity
 
     protected virtual void ApplySystemSettings()
     {
-        knockbackDuration = GameManager.Instance.SystemSettings.KnockbackDuration;
-        knockBackMultiplier = GameManager.Instance.SystemSettings.KnockBackScale;
-        maxKnockBackForce = GameManager.Instance.SystemSettings.MaxKnockBackForce;
-        knockbackCurve = GameManager.Instance.SystemSettings.KnockbackCurve;
-        forceMode = GameManager.Instance.SystemSettings.KnockbackForceMode;
+        var systemSettings = GameManager.Instance.SystemSettings;
 
-        partsKnockBackMultiplier = GameManager.Instance.SystemSettings.PartsKnockBackScale;
-        maxPartsBreakForce = GameManager.Instance.SystemSettings.MaxPartsBreakForce;
-        partsBreakForceCurve = GameManager.Instance.SystemSettings.PartsBreakForceCurve;
+        knockbackDuration = systemSettings.KnockbackDuration;
+        knockBackMultiplier = systemSettings.KnockBackScale;
+        maxKnockBackForce = systemSettings.MaxKnockBackForce;
+        knockbackCurve = systemSettings.KnockbackCurve;
+        forceMode = systemSettings.KnockbackForceMode;
 
-        groundLayer = GameManager.Instance.SystemSettings.GroundLayer;
-        groundCheckDistance = GameManager.Instance.SystemSettings.GroundCheckDistance;
+        partsKnockBackMultiplier = systemSettings.PartsKnockBackScale;
+        maxPartsBreakForce = systemSettings.MaxPartsBreakForce;
+        partsBreakForceCurve = systemSettings.PartsBreakForceCurve;
+
+        groundLayer = systemSettings.GroundLayer;
+        groundCheckDistance = systemSettings.GroundCheckDistance;
     }
 
     public void InitHP()
@@ -177,6 +181,11 @@ public class B_UnitBase : B_Entity
 
     public virtual void RestoreHP(int hpRate = 0)
     {
+        if(IsKnockback || !isAlive)
+        {
+            return;
+        }
+        
         UnitStatus.currentHP = UnitStatus.currentHP + hpRate;
         ClampHP();
     }
@@ -197,7 +206,7 @@ public class B_UnitBase : B_Entity
         ClampHP();
 
         Debug.Log(this.gameObject.name + " TakeDamage : " + damage);
-        ChangeCursor.Instance.SetCursorAttack();    // 명진. 0514 임시 Cursor 변경 싱글톤으로 받아감
+        //ChangeCursor.Instance.SetCursorAttack();    // 명진. 0514 임시 Cursor 변경 싱글톤으로 받아감
         if (knockBack)
         {
             remainKnockBackDir = damageDir;
@@ -227,7 +236,7 @@ public class B_UnitBase : B_Entity
         var minDis = Vector3.up * 0.01f;
 
         RaycastHit hit;
-        // Check if there's ground below the unit within the groundCheckDistance
+
         isGrounded = Physics.Raycast(transform.position + minDis, -Vector3.up, out hit, groundCheckDistance + minDis.magnitude, groundLayer);
         Debug.DrawRay(transform.position, -Vector3.up * (groundCheckDistance), Color.red);
     }
@@ -258,24 +267,14 @@ public class B_UnitBase : B_Entity
 
     public virtual void DisableMovementAndRotation()
     {
-        // Disable movement and rotation logic
-        // For example, you can set a flag to prevent movement and rotation
-        // or disable specific components responsible for movement and rotation
         IsLockMove = true;
         IsLockRotate = true;
-
-        //Debug.Log("DisableMovementAndRotation()");
     }
 
     public virtual void EnableMovementAndRotation()
     {
-        // Enable movement and rotation logic
-        // For example, you can reset the flag to allow movement and rotation
-        // or enable the disabled components responsible for movement and rotation
         IsLockMove = false;
         IsLockRotate = false;
-
-        //Debug.Log("EnableMovementAndRotation()");
     }
 
     #endregion
@@ -318,8 +317,7 @@ public class B_UnitBase : B_Entity
         inDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDir);
 
         var resultKnockPower = Mathf.Clamp(force * knockBackMultiplier, 0f, maxKnockBackForce);
-        //Debug.Log(this.gameObject.name + " Knockback : " + resultKnockPower);
-        
+
         StartCoroutine(CoSmoothKnockback(inDir, resultKnockPower, Rigid, knockbackCurve, knockbackDuration, forceMode));
     }
 
@@ -332,7 +330,7 @@ public class B_UnitBase : B_Entity
     /// <param name="inCurve"></param>
     /// <param name="inDuration"></param>
     /// <returns></returns>
-    private IEnumerator CoSmoothKnockback(Vector3 inDir, float force, Rigidbody inRigid, AnimationCurve inCurve, float inDuration = 0.5f, ForceMode inForceMode = ForceMode.VelocityChange)
+    protected IEnumerator CoSmoothKnockback(Vector3 inDir, float force, Rigidbody inRigid, AnimationCurve inCurve, float inDuration = 0.5f, ForceMode inForceMode = ForceMode.VelocityChange)
     {
         if(inRigid == null)
         {
@@ -346,21 +344,17 @@ public class B_UnitBase : B_Entity
             knockbackVelocity = inDir * force;
         }
 
-        // 초기 속도를 저장합니다.
-        Vector3 initialVelocity = inRigid.velocity;
         float knockbackDuration = inDuration; // Duration over which the force is applied
         float startTime = Time.time;
 
         DisableMovementAndRotation();
+
         IsKnockback = true;
         isInvincible = true;
 
         while (Time.time < startTime + knockbackDuration)
         {
             float elapsed = (Time.time - startTime) / knockbackDuration;
-
-            // Apply the force using the animation curve
-            //inRigid.velocity = Vector3.Lerp(initialVelocity, knockbackVelocity, inCurve.Evaluate(elapsed));
 
             inRigid.AddForce(knockbackVelocity * inCurve.Evaluate(elapsed), inForceMode);
 
@@ -381,9 +375,6 @@ public class B_UnitBase : B_Entity
     /// </summary>
     protected virtual void Dead(bool isSelf = false)
     {
-        //Destroy(gameObject);
-        //gameObject.SetActive(false);
-        Debug.Log("Dead");
         DisableMovementAndRotation();
     }
 
@@ -404,46 +395,6 @@ public class B_UnitBase : B_Entity
     public virtual void EndAttack()
     {
         SetAttacking = false;
-    }
-    #endregion
-
-    #region PuppetMaster
-    /// <summary>
-    /// DisconnectMusclesRecursive : PuppetMaster의 Muscle을 해제 및 넉백 적용
-    /// </summary>
-    /// <param name="inPos">넉백 기준점</param>
-    public void DisconnectMusclesRecursive(Vector3 inPos, bool isSelf = false)
-    {
-        if (puppet != null && puppet.puppetMaster != null)
-        {
-            for (int i = 0; i < puppet.puppetMaster.muscles.Length; i++)
-            {
-                Rigidbody muscleRigid = puppet.puppetMaster.muscles[i].rigidbody;
-
-                float partsKnockBackTime = 0.2f;
-
-                // Temp 240402 - 파츠 별 넉백.., a.HG
-                // 1. StartCoroutine(SmoothKnockback)
-                // 2. ImpulseKnockbackToPuppet
-                // 3. AddForce Each (Loop)
-
-                if (muscleRigid != null && !isSelf)
-                {
-                    Vector3 dir = (muscleRigid.transform.position - inPos).normalized;
-                    dir = GameManager.Instance.ApplyCoordScaleAfterNormalize(dir);
-
-                    remainKnockBackForce = Mathf.Clamp(remainKnockBackForce * partsKnockBackMultiplier, 0f, maxPartsBreakForce);
-
-                    StartCoroutine(CoSmoothKnockback(dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime, ForceMode.Impulse));
-                }
-
-                puppet.puppetMaster.DisconnectMuscleRecursive(i, MuscleDisconnectMode.Sever);
-
-                // root RigidBody 물리력 고정 및 콜라이더 비활성화
-                Rigid.isKinematic = true;
-                col.enabled = false;
-            }
-        }
     }
     #endregion
 }

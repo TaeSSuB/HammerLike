@@ -22,7 +22,6 @@ public class DeadState : IAIState
         unitBase.Col.enabled = false;
         unitBase.Agent.enabled = false;
         unitBase.Anim.SetTrigger("tDead");
-        //unitBase.Anim.SetTrigger("Dead");
 
         if(unitBase as B_Skeleton_Prisoner)
         {

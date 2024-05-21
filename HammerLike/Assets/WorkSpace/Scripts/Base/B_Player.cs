@@ -21,6 +21,9 @@ public class B_Player : B_UnitBase
     private Vector3 currentDashPos = Vector3.zero;
     [SerializeField] private GameObject chargeVFXObj;
     [SerializeField] private float minChargeMoveRate = 0.1f;
+    private int atkDamageOrigin;
+    private float knockbackPowerOrigin;
+    private bool isLockAttack;
 
     [Header("Weapon Settings")]
     [SerializeField] private GameObject weaponObj;
@@ -31,13 +34,9 @@ public class B_Player : B_UnitBase
     [Header("Weapon Orbit Settings")]
     [SerializeField] private BoxCollider weaponCollider;
     [SerializeField] private WeaponOrbit weaponOrbit;
-    
+    [SerializeField] private float minAttackRotAmount = 20f;
     private Vector3 attackStartDir;
     private float attackSign;
-
-    private int atkDamageOrigin;
-    private float knockbackPowerOrigin;
-
 
     [Header("Camera Settings")]
     [SerializeField] private RotateType rotateType = RotateType.LookAtMouseSmooth;
@@ -49,16 +48,16 @@ public class B_Player : B_UnitBase
 
     public int AtkDamageOrigin => atkDamageOrigin;
 
+    #region Events
     public event Action<int> OnHPChanged;
     public event Action<float> OnChargeChanged;
-
-    // OnWeaponEquipped
     public event Action<B_Weapon> OnWeaponEquipped;
+    public event Action OnPlayerDeath;
+    #endregion
+
     [Header("Temp")]
     [SerializeField] private SceneLoader sceneLoader;
-    private bool isLockAttack;
 
-    public event Action OnPlayerDeath;
     #region Unity Callbacks & Init
 
     //init override
@@ -101,6 +100,8 @@ public class B_Player : B_UnitBase
         base.FixedUpdate();
 
         LookAtMouse();
+
+        UpdateDashCoolTime();
 
         ApplyMovement(currentMovePos);
         ApplyDash(currentDashPos);
@@ -193,7 +194,7 @@ public class B_Player : B_UnitBase
 
     private Vector3 InputDash(Vector3 inDashDir)
     {
-        if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
+        if(Input.GetKey(KeyCode.Space) || Input.GetMouseButton(1))
         {
             if(inDashDir == Vector3.zero)
             {
@@ -219,6 +220,8 @@ public class B_Player : B_UnitBase
         if(inDashDir == Vector3.zero)
             return;
         if(IsLockMove)
+            return;
+        if((UnitStatus as SO_PlayerStatus).dashCooldown > 0)
             return;
 
         transform.LookAt(inDashDir + transform.position);
@@ -282,7 +285,7 @@ public class B_Player : B_UnitBase
                             {
                                 attackSign = Mathf.Sign(signedAngle);
 
-                                if(Mathf.Abs(signedAngle) < 15)
+                                if(Mathf.Abs(signedAngle) < minAttackRotAmount)
                                 {
                                     attackSign = 0;
                                 }
@@ -290,24 +293,19 @@ public class B_Player : B_UnitBase
                                 Anim.SetFloat("fAttackX", attackSign);
                             }
 
-                            // Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * currentRotSpeed);
-                            //Quaternion newRot  = Quaternion.RotateTowards(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
-
-                            if(Quaternion.Angle(targetRotation, transform.rotation) > 5f)
+                            if(Quaternion.Angle(targetRotation, transform.rotation) > minAttackRotAmount)
                             {
                                 transform.Rotate(Vector3.up, attackSign * Time.deltaTime * currentRotSpeed);
                             }
-                            //transform.rotation = newRot;
-                            
                         }
                         else
                         {
                             Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * currentRotSpeed);
-                            //Quaternion newRot  = Quaternion.RotateTowards(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
 
                             transform.rotation = newRot;
                         }
                         break;
+
                     default:
                         break;
                 }
@@ -521,7 +519,6 @@ public class B_Player : B_UnitBase
     private IEnumerator DashCoroutine(Vector3 coordDir)
     {
         float dashTime = (unitStatus as SO_PlayerStatus).dashDuration;
-        float dashSpeed = (unitStatus as SO_PlayerStatus).dashSpeed;
 
         StartDash();
 
@@ -574,6 +571,8 @@ public class B_Player : B_UnitBase
         isLockAttack = false;
         SetInvincible(false);
         EnableMovementAndRotation();
+
+        (unitStatus as SO_PlayerStatus).dashCooldown = (unitStatus as SO_PlayerStatus).DashCooldownOrigin;
     }
 
     #endregion
@@ -626,6 +625,12 @@ public class B_Player : B_UnitBase
 
         OnHPChanged?.Invoke(unitStatus.currentHP);
     }
+
+    protected void UpdateDashCoolTime()
+    {
+        (UnitStatus as SO_PlayerStatus).dashCooldown -= Time.deltaTime;
+    }
+
 
     public void EquipWeapon(SO_Weapon inWeapon)
     {

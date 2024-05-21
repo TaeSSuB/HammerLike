@@ -50,8 +50,6 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
         int maxWeaponIndex = playerWeaponContainer.Container.GetFilledSlotSize() - 1;
 
         if (Input.GetAxis("Mouse ScrollWheel") > 0) {
-            // Scroll Up
-            Debug.Log("Scroll Up");
 
             nextWeaponIndex = currentWeaponSlotIndex + 1;
             
@@ -61,15 +59,12 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
 
         }
         if (Input.GetAxis("Mouse ScrollWheel") < 0) {
-            // Scroll Down
-            Debug.Log("Scroll Down");
 
             nextWeaponIndex = currentWeaponSlotIndex - 1;
 
             if (nextWeaponIndex < 0) {
                 nextWeaponIndex = maxWeaponIndex;
             }
-
         }
 
         if(currentWeaponSlotIndex == nextWeaponIndex) return;

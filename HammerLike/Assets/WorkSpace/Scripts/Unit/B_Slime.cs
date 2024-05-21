@@ -26,7 +26,7 @@ public class B_Slime : B_Enemy
 
     protected override void Dead(bool isSelf = false)
     {
-        //base.Dead();
+        base.Dead(isSelf);
         
         weaponCollider.enabled = false;
         B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.SlimeDeath);
@@ -36,19 +36,8 @@ public class B_Slime : B_Enemy
     public override void Attack()
     {
         base.Attack();
-        Debug.Log("Slime Attack");
-        //base.Attack();
-        //AIStateManager?.SetState(AIStateType.IDLE);
 
         StartCoroutine(CoSlimeAttack());
-
-        //if (UnitStatus.currentAttackCooltime <= 0)
-        //{
-        //    StartCoroutine(CoSlimeAttack());
-
-        //    // Attack
-        //    UnitStatus.currentAttackCooltime = UnitStatus.maxAttackCooltime;
-        //}   
     }
 
     public override void StartAttack()
