@@ -76,18 +76,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bdba9a3713c9304b95cae85a1cd108c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rootObj: {fileID: 2960243994431189709}
   a: 6
   b: 12
   resolution: 100
-  offset: {x: 0, y: 1, z: 0}
   speed: 5
+  offset: {x: 0, y: 1, z: 0}
   trackType: 1
-  isTracking: 1
-  centerObj: {fileID: 2242907448648029416}
+  trailRenderer: {fileID: 0}
   targetObj: {fileID: 2960243994431189709}
-  targetCollider: {fileID: 4682302256360783752}
-  debugMode: 0
+  centerObj: {fileID: 2242907448648029416}
+  startWidthScale: 0.1
+  endWidthScale: 0.05
   edgeCount: 32
+  isTracking: 1
+  targetCollider: {fileID: 4682302256360783752}
 --- !u!1 &8530368621909945124
 GameObject:
   m_ObjectHideFlags: 0
@@ -753,7 +756,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8391d48a390177140b5e0957f84bbeda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootObj: {fileID: 7643274899012111229}
   meshObj: {fileID: 5715018204859133825}
   col: {fileID: 4487481348071656113}
   rigid: {fileID: 4680527163703177068}
@@ -761,19 +763,13 @@ MonoBehaviour:
   unitIndex: 6
   anim: {fileID: 4795088994431128616}
   agent: {fileID: 8002766311254961147}
-  isAttacking: 0
-  knockbackDuration: 0.5
-  puppet: {fileID: 0}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 2684354560
-  groundCheckDistance: 0.1
-  isKnockback: 0
+  isGrounded: 0
   enableHitEvent: 0
   weaponOrbitCommon: {fileID: 8332951749461163968}
   weaponInitPos: {fileID: 111728655469778980}
   distance: 0
   devText: {fileID: 0}
+  sceneLoader: {fileID: 0}
 --- !u!4 &4204326384135600017 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -6216720986993648088, guid: 7738d657bbeb841449098b1756baae4e,

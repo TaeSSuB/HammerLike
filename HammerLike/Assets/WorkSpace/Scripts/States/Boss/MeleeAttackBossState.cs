@@ -24,7 +24,7 @@ public class MeleeAttackBossState : IBossAIState
             var targetBoss = b_Boss as B_Boss_SkeletonTorturer;
             var weaponOrbitCommon = targetBoss.WeaponOrbitCommon;
 
-            weaponOrbitCommon.trackType = WeaponOrbitCommon.TrackType.DirBasedPoint;
+            weaponOrbitCommon.SetTrackType(WeaponOrbitCommon.TrackType.DirBasedPoint);
             weaponOrbitCommon.SetTracking(true);
             weaponOrbitCommon.DisableCollider();
             

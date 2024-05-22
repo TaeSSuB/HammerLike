@@ -10,6 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2662661217698328672, guid: 8687db9e141c79e49841a27dd2eba94c,
         type: 3}
+      propertyPath: meshRenderer
+      value: 
+      objectReference: {fileID: 1320552252880644529}
+    - target: {fileID: 2662661217698328672, guid: 8687db9e141c79e49841a27dd2eba94c,
+        type: 3}
       propertyPath: weaponTrailMat
       value: 
       objectReference: {fileID: 2100000, guid: 1e68dae99c6652145b8743a41a74e8ef, type: 2}
@@ -50,11 +55,12 @@ PrefabInstance:
       objectReference: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000,
         type: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 5314171238396080394, guid: 8687db9e141c79e49841a27dd2eba94c, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4466178805891559740, guid: 8687db9e141c79e49841a27dd2eba94c,
         type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 1213711605834460730}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8687db9e141c79e49841a27dd2eba94c, type: 3}
@@ -125,6 +131,12 @@ PrefabInstance:
 --- !u!4 &1213711605834460730 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5827442064182336686, guid: 6a59ea646d5be61418c168ca9bc9233f,
+    type: 3}
+  m_PrefabInstance: {fileID: 4614153222885077652}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1320552252880644529 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5934416853819661093, guid: 6a59ea646d5be61418c168ca9bc9233f,
     type: 3}
   m_PrefabInstance: {fileID: 4614153222885077652}
   m_PrefabAsset: {fileID: 0}

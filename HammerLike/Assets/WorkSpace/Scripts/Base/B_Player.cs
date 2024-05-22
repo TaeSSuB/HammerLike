@@ -33,7 +33,7 @@ public class B_Player : B_UnitBase
 
     [Header("Weapon Orbit Settings")]
     [SerializeField] private BoxCollider weaponCollider;
-    [SerializeField] private WeaponOrbit weaponOrbit;
+    [SerializeField] private WeaponOrbitPlayer weaponOrbit;
     [SerializeField] private float minAttackRotAmount = 20f;
     private Vector3 attackStartDir;
     private float attackSign;
@@ -69,14 +69,10 @@ public class B_Player : B_UnitBase
         chargeVFXObj.SetActive(false);
 
         var currentWeaponObj = GameManager.Instance.Player.WeaponData;
-        var findItem = B_InventoryManager.Instance.playerWeaponContainer.FindItemOnInventory(currentWeaponObj.itemData);
 
-        if(findItem == null) {
-            B_InventoryManager.Instance.playerWeaponContainer.AddItem(currentWeaponObj.itemData, 1);
-        }
-        findItem = B_InventoryManager.Instance.playerWeaponContainer.FindItemOnInventory(currentWeaponObj.itemData);
-
-        EquipWeapon(findItem.ItemObject as SO_Weapon);
+        currentWeaponObj.Use();
+        //findItem.ItemObject.Use();
+        //EquipWeapon(findItem.ItemObject as SO_Weapon);
 
         if(sceneLoader != null)
             OnPlayerDeath += sceneLoader.PlayerDead;
@@ -545,7 +541,8 @@ public class B_Player : B_UnitBase
         ResetAttack();
 
         // Start dash logic
-        Anim.SetTrigger("tEnvasion");
+        Anim.SetTrigger("tEvasion");
+        Anim.SetInteger("iEvasion", (int)(unitStatus as SO_PlayerStatus).evasionType);
         Anim.speed = 1.2f / (unitStatus as SO_PlayerStatus).dashDuration;//(unitStatus as SO_PlayerStatus).dashSpeed;
         (unitStatus as SO_PlayerStatus).moveSpeed = (unitStatus as SO_PlayerStatus).dashSpeed;
 
@@ -651,18 +648,9 @@ public class B_Player : B_UnitBase
             return;
         }
 
-        weaponRenderer = b_Weapon.MeshObj.GetComponent<Renderer>();
+        weaponRenderer = b_Weapon.MeshRenderer;
 
-        if(weaponRenderer == null)
-            weaponRenderer = b_Weapon.MeshObj.GetComponentInChildren<Renderer>();
-
-        if(weaponRenderer == null)
-        {
-            Debug.LogError("weaponRenderer is not in B_Weapon.MeshObj or is not in child.");
-            return;
-        }
-
-        weaponOrbit.ApplyWeapon(b_Weapon);
+        //weaponOrbit.ApplyWeapon(b_Weapon);
 
         chargeVFXObj = b_Weapon.VFXObj;
 
@@ -677,6 +665,8 @@ public class B_Player : B_UnitBase
         (unitStatus as SO_PlayerStatus).atkSpeed = weaponData.attackSpeed;
 
         (unitStatus as SO_PlayerStatus).chargeRate = 1;
+
+        (unitStatus as SO_PlayerStatus).evasionType = weaponData.evasionType;
 
         OnWeaponEquipped?.Invoke(b_Weapon);
     }

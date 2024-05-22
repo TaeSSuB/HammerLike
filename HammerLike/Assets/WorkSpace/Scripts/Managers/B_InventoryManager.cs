@@ -70,8 +70,10 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
         if(currentWeaponSlotIndex == nextWeaponIndex) return;
 
         var targetWeapon = playerWeaponContainer.Container.Items[nextWeaponIndex].ItemObject as SO_Weapon;
-
-        GameManager.Instance.Player.EquipWeapon(targetWeapon);
+        
+        targetWeapon.Use(); // 플레이어 무기 장착
+        //GameManager.Instance.Player.EquipWeapon(targetWeapon);
+        
         B_UIManager.Instance.UI_InGame.UpdateWeaponImage(targetWeapon.itemIcon);
     }
 

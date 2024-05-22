@@ -41,8 +41,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8158478015098429755}
-  - component: {fileID: 1952734946970189571}
   - component: {fileID: 576635233718691163}
+  - component: {fileID: 181009680143009383}
   m_Layer: 6
   m_Name: WeaponOrbit
   m_TagString: WeaponCollider
@@ -65,31 +65,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1768623638817304500}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1952734946970189571
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 421241350792236095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0af50ee6e2923d4e87a83bb9c69f56b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  a: 2
-  b: 4
-  resolution: 100
-  speed: 1
-  offset: {x: 0, y: 0.5, z: 0}
-  trackType: 3
-  trailRenderer: {fileID: 576635233718691163}
-  b_Weapon: {fileID: 449306736835462884}
-  player: {fileID: 8957840737876896812}
-  startWidthScale: 0.3
-  endWidthScale: 0.1
-  debugMode: 0
-  edgeCount: 24
 --- !u!96 &576635233718691163
 TrailRenderer:
   serializedVersion: 3
@@ -194,6 +169,32 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!114 &181009680143009383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421241350792236095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a39bed487f6c465439d657d16fe2149c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  a: 2
+  b: 4
+  resolution: 100
+  speed: 1
+  offset: {x: 0, y: 1, z: 0}
+  trackType: 2
+  trailRenderer: {fileID: 576635233718691163}
+  centerObj: {fileID: 1768623638817304503}
+  startWidthScale: 0.3
+  endWidthScale: 0.1
+  edgeCount: 16
+  b_Weapon: {fileID: 0}
+  player: {fileID: 0}
+  debugMode: 0
 --- !u!1 &475875400231599456
 GameObject:
   m_ObjectHideFlags: 0
@@ -462,7 +463,7 @@ MonoBehaviour:
   weaponTR: {fileID: 6890217952169371145}
   weaponData: {fileID: 11400000, guid: e0492f0a8febfa74c9a0aeb035ac796c, type: 2}
   weaponCollider: {fileID: 4939906264136678488}
-  weaponOrbit: {fileID: 1952734946970189571}
+  weaponOrbit: {fileID: 181009680143009383}
   minAttackRotAmount: 45
   rotateType: 2
   rotSpeed: 30
@@ -1245,7 +1246,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vfxObj: {fileID: 4313188254355159387}
-  meshObj: {fileID: 4389952972687816322}
+  meshRenderer: {fileID: 0}
   weaponTrailMat: {fileID: 0}
 --- !u!1 &4400693451823004380
 GameObject:

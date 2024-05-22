@@ -2,11 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum EnvasionType
+{
+    Roll,
+    Dash,
+    Haste,
+    None
+}
+
 [CreateAssetMenu(fileName = "PlayerStatus", menuName = "B_ScriptableObjects/Unit/PlayerStatus", order = 2)]
 public class SO_PlayerStatus : SO_UnitStatus
 {
     [Header("Player Status")]
     [Header("Dash")]
+    public EnvasionType evasionType = EnvasionType.Roll;
     public float dashSpeed = 10f;
     public float dashDuration = 0.5f;
     public float dashCooldown = 1f;
