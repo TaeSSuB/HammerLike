@@ -24,6 +24,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     [Header("Dev")]
     [SerializeField] private bool isDevMode;
+    [SerializeField] private GameObject devCanvas;
     [SerializeField] private GameObject tempCombatTestGroupPrefab;
     private GameObject currentTempCombatTestGroup;
     [SerializeField] private TMP_Text fpsText;
@@ -58,6 +59,11 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         resetTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Reset - " : "Destroy - ")}" + resetKey.ToString();
         ResetTester();
 
+        #if UNITY_EDITOR || DEVELOPMENT_BUILD
+        SetDevMode(true);
+        #else
+        SetDevMode(false);
+        #endif
 
         StartCoroutine(GetFPSRoutine());
     }
@@ -70,11 +76,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         }
         if(Input.GetKeyDown(devModeKey))
         {
-            isDevMode = !isDevMode;
-
-            devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();
-            resetTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Reset - " : "Destroy - " )}" + resetKey.ToString();
-
+            #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            SetDevMode(!isDevMode);
+            #endif
         }
 
         if(Input.GetKeyDown(KeyCode.F1))
@@ -201,6 +205,18 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     #endregion
 
     #region Dev Mode
+
+    public void SetDevMode(bool inIsDevMode)
+    {
+        isDevMode = inIsDevMode;
+
+        devCanvas?.SetActive(isDevMode);
+
+        devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();
+        resetTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Reset - " : "Destroy - " )}" + resetKey.ToString();
+
+    }
+
     public void ResetTester()
     {
         if (currentTempCombatTestGroup != null)

@@ -226,9 +226,9 @@ public class B_Player : B_UnitBase
 
     void InputCharge()
     {
-        if(isLockAttack)
+        if(isLockAttack || isAttacking)
             return;
-
+            
         // Charge attack logic
         if (Input.GetMouseButton(0))
         {
@@ -759,6 +759,8 @@ public class B_Player : B_UnitBase
         base.StartAttack();
 
         agent.updateRotation=false;
+
+        UnitStatus.moveSpeed = UnitStatus.MoveSpeedOrigin * 0.2f;
     }
     public override void EndAttack()
     {
@@ -786,6 +788,8 @@ public class B_Player : B_UnitBase
 
         DisableWeaponCollider();
         attackSign = 0f;
+
+        UnitStatus.moveSpeed = UnitStatus.MoveSpeedOrigin;
     }
 
     void EnableWeaponCollider()

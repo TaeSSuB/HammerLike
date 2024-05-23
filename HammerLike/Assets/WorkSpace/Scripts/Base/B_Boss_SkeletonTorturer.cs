@@ -47,7 +47,9 @@ public class B_Boss_SkeletonTorturer : B_Boss
     public override void Init()
     {
         base.Init();
-        OnBossDead += sceneLoader.BossDead;
+
+        if(sceneLoader != null)
+            OnBossDead += sceneLoader.BossDead;
     }
 
     protected override void Dead(bool isSelf = false)
@@ -105,7 +107,8 @@ public class B_Boss_SkeletonTorturer : B_Boss
 
     void OnDestroy()
     {
-        OnBossDead -= sceneLoader.BossDead;
+        if(sceneLoader != null)
+            OnBossDead -= sceneLoader.BossDead;
     }
 
 }
