@@ -691,6 +691,8 @@ public class B_Player : B_UnitBase
 
         (unitStatus as SO_PlayerStatus).chargeRate = 1;
 
+        (unitStatus as SO_PlayerStatus).evasionType = 0;
+
         OnWeaponEquipped?.Invoke(null);
     }
 
