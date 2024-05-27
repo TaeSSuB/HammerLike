@@ -724,7 +724,7 @@ public class B_Player : B_UnitBase
         //if(attackSign != 0f) return;
 
         Debug.Log("EndAttackDownWard");
-
+        
         EndAttack();
     }
 
@@ -814,6 +814,11 @@ public class B_Player : B_UnitBase
         // Disable weapon collider logic
         weaponOrbit.trailRenderer.emitting = false;
         weaponCollider.enabled = false;
+    }
+
+    void TempAttackVFXEvent()
+    {
+        B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, weaponOrbit.gameObject.transform.position);
     }
 
     #endregion

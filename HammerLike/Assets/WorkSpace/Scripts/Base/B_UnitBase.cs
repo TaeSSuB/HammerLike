@@ -22,7 +22,7 @@ public class B_UnitBase : B_Entity
     [Header("Unit Data")]
     [SerializeField] protected int unitIndex = -1;
     [SerializeField] private Animator anim;
-    [SerializeField] protected NavMeshAgent agent;
+    protected NavMeshAgent agent;
     protected bool isAttacking = false;
     protected bool isAlive = true;
 
