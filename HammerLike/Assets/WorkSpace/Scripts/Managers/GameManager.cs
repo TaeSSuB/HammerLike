@@ -25,10 +25,10 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     [Header("Dev")]
     [SerializeField] private bool isDevMode;
     [SerializeField] private GameObject devCanvas;
+
     [SerializeField] private GameObject tempCombatTestGroupPrefab;
     private GameObject currentTempCombatTestGroup;
-    [SerializeField] private TMP_Text fpsText;
-    [SerializeField] private float fpsInterval = 0.5f;
+
     [SerializeField] private GameObject textPrefab;
     [SerializeField] private Transform textTR;
     public KeyCode resetKey = KeyCode.F5;
@@ -65,7 +65,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         SetDevMode(false);
         #endif
 
-        StartCoroutine(GetFPSRoutine());
+        //StartCoroutine(GetFPSRoutine());
     }
 
     private void Update()
@@ -234,14 +234,14 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     //     StartCoroutine(GetFPSRoutine());
     // }
 
-    private IEnumerator GetFPSRoutine()
-    {
-        while (true&&fpsText)
-        {
-            yield return new WaitForSeconds(fpsInterval);
-            fpsText.text = $"FPS : {1f / Time.deltaTime}";
-        }
-    }
+    // private IEnumerator GetFPSRoutine()
+    // {
+    //     while (true&&fpsText)
+    //     {
+    //         yield return new WaitForSeconds(fpsInterval);
+    //         fpsText.text = $"FPS : {1f / Time.deltaTime}";
+    //     }
+    // }
 
     #endregion
 

@@ -2,20 +2,6 @@ using UnityEngine;
 using System.Linq;
 using NuelLib;
 
-public enum AudioCategory { BGM, SFX }
-public enum AudioTag
-{
-    MainMenu,
-    Battle,
-    Ambient,
-    UI,
-    Death,
-    PickUp,
-    Crash,
-    Town,
-    SlimeDeath
-}
-
 public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
 {
     public SO_AudioSet audioSet; // Assign in the Unity editor
