@@ -2365,6 +2365,8 @@ GameObject:
   - component: {fileID: 7536291519061573817}
   - component: {fileID: 2505145306526970958}
   - component: {fileID: 7977219591623078285}
+  - component: {fileID: 671486389882956473}
+  - component: {fileID: 3759509351355510956}
   m_Layer: 8
   m_Name: Skeleton_Archer
   m_TagString: Enemy
@@ -2757,7 +2759,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b03e5c6f179b74492f0deb45653728, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootObj: {fileID: 1523360970604685396}
   meshObj: {fileID: 5258643636659036818}
   col: {fileID: 6266812155113483454}
   rigid: {fileID: 6266812155113483442}
@@ -2765,16 +2766,9 @@ MonoBehaviour:
   unitIndex: 3
   anim: {fileID: 6266812155113483443}
   agent: {fileID: 0}
-  isAttacking: 0
-  knockbackDuration: 0.5
-  puppet: {fileID: 6266812155327914425}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 2684354560
-  groundCheckDistance: 0.1
-  isKnockback: 0
+  isGrounded: 0
   hpPosTR: {fileID: 3586195826296895627}
-  isTester: 0
+  puppet: {fileID: 6266812155327914425}
   muzzleTR: {fileID: 6266812155247929620}
   projectilePrefab: {fileID: 3696216365482091258, guid: ddfd7f51f57f7c84f82a8be0cfab2978,
     type: 3}
@@ -2800,6 +2794,30 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &671486389882956473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6266812155113483445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cd9d9700a02be6439c42fc044784743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3759509351355510956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6266812155113483445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7520ff5ab540f264e87aa8b9ee9a5cf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6266812155119616431
 GameObject:
   m_ObjectHideFlags: 0

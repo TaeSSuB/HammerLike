@@ -63,6 +63,7 @@ public class TrailOrbit : MonoBehaviour
         
     }
 
+    // 이후 거리 단위 AddPosition 및 FixedUpdate로 변경
     protected virtual void Update()
     {
         if(isTracking)

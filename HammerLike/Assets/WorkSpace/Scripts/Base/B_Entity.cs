@@ -21,6 +21,8 @@ public class B_Entity : MonoBehaviour
     public Collider Col { get => col; }
     public Rigidbody Rigid { get => rigid;}
 
+    public bool IsInvincible { get => isInvincible; set => isInvincible = value;}
+
     #region Unity Callbacks & Init
     protected virtual void Awake()
     {

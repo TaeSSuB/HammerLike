@@ -210,7 +210,8 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     {
         isDevMode = inIsDevMode;
 
-        devCanvas?.SetActive(isDevMode);
+        if(devCanvas != null)
+            devCanvas?.SetActive(isDevMode);
 
         devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();
         resetTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Reset - " : "Destroy - " )}" + resetKey.ToString();

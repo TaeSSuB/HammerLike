@@ -18,10 +18,16 @@ public class B_Player : B_UnitBase
     public LayerMask mouseLayer;
     private Vector3 currentMovePos = Vector3.zero;
     private Vector3 currentDashPos = Vector3.zero;
+
     [SerializeField] private GameObject chargeVFXObj;
     [SerializeField] private float minChargeMoveRate = 0.1f;
+
     private int atkDamageOrigin;
+
     private float knockbackPowerOrigin;
+    
+    private float hitDuration;
+
     private bool isLockAttack;
 
     [Header("Weapon Settings")]
@@ -65,11 +71,16 @@ public class B_Player : B_UnitBase
         base.Init();
         // Init logic
         GameManager.Instance.SetPlayer(this);
+
+        // Temp - 피격 시간. 일단 넉백 시간으로 임시 할당
+        hitDuration = GameManager.Instance.SystemSettings.KnockbackDuration;
+
         chargeVFXObj.SetActive(false);
 
         var currentWeaponObj = GameManager.Instance.Player.WeaponData;
-
+        
         currentWeaponObj.Use();
+        
         //findItem.ItemObject.Use();
         //EquipWeapon(findItem.ItemObject as SO_Weapon);
 
@@ -142,7 +153,7 @@ public class B_Player : B_UnitBase
 
             // Take Damage and Knockback dir from player
             TakeDamage(hitDir, unit.UnitStatus.atkDamage, unit.UnitStatus.knockbackPower);
-            StartCoroutine(CoHitEvent(1f, knockbackDuration));
+            StartCoroutine(CoHitEvent(1f, hitDuration));
 
             Anim.SetTrigger("tHit");
 

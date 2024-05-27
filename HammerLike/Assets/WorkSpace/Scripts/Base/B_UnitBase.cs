@@ -13,9 +13,11 @@ using UnityEngine.AI;
 /// - NavMeshAgent를 이용한 이동 로직
 /// </summary>
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(B_KnockBack))]
 public class B_UnitBase : B_Entity
 {
     protected SO_UnitStatus unitStatus;
+    protected B_KnockBack knockBack;
 
     [Header("Unit Data")]
     [SerializeField] protected int unitIndex = -1;
@@ -23,18 +25,6 @@ public class B_UnitBase : B_Entity
     [SerializeField] protected NavMeshAgent agent;
     protected bool isAttacking = false;
     protected bool isAlive = true;
-
-    [Header("Knockback")]
-    protected float knockBackMultiplier = 1f;
-    protected float partsKnockBackMultiplier = 1f;
-    protected float knockbackDuration = 0.5f;
-    protected float maxKnockBackForce = 100f;
-    protected float maxPartsBreakForce = 100f;
-    protected AnimationCurve knockbackCurve;
-    protected AnimationCurve partsBreakForceCurve;
-    protected ForceMode forceMode = ForceMode.Force;
-    protected Vector3 remainKnockBackDir;
-    protected float remainKnockBackForce = 0f;
 
     // Ground check variables
     [Header("Ground Check")]
@@ -53,7 +43,7 @@ public class B_UnitBase : B_Entity
 
     public bool IsLockMove { get; private set; }
     public bool IsLockRotate { get; private set; }
-    public bool IsKnockback { get; private set; }
+    public bool IsKnockback { get; set; }
 
     public bool SetAttacking
     {
@@ -81,6 +71,7 @@ public class B_UnitBase : B_Entity
         base.Init();
 
         agent = GetComponent<NavMeshAgent>();
+        knockBack = GetComponent<B_KnockBack>();
 
         ApplyStatus();
 
@@ -160,16 +151,6 @@ public class B_UnitBase : B_Entity
     {
         var systemSettings = GameManager.Instance.SystemSettings;
 
-        knockbackDuration = systemSettings.KnockbackDuration;
-        knockBackMultiplier = systemSettings.KnockBackScale;
-        maxKnockBackForce = systemSettings.MaxKnockBackForce;
-        knockbackCurve = systemSettings.KnockbackCurve;
-        forceMode = systemSettings.KnockbackForceMode;
-
-        partsKnockBackMultiplier = systemSettings.PartsKnockBackScale;
-        maxPartsBreakForce = systemSettings.MaxPartsBreakForce;
-        partsBreakForceCurve = systemSettings.PartsBreakForceCurve;
-
         groundLayer = systemSettings.GroundLayer;
         groundCheckDistance = systemSettings.GroundCheckDistance;
     }
@@ -190,7 +171,7 @@ public class B_UnitBase : B_Entity
         ClampHP();
     }
 
-    public virtual void TakeDamage(Vector3 damageDir, int damage, float knockBackPower, bool knockBack = true)
+    public virtual void TakeDamage(Vector3 damageDir, int damage, float knockBackPower, bool enableKnockBack = true)
     {
         if (isInvincible)
         {
@@ -207,12 +188,12 @@ public class B_UnitBase : B_Entity
 
         Debug.Log(this.gameObject.name + " TakeDamage : " + damage);
         //ChangeCursor.Instance.SetCursorAttack();    // 명진. 0514 임시 Cursor 변경 싱글톤으로 받아감
-        if (knockBack)
+        if (enableKnockBack)
         {
-            remainKnockBackDir = damageDir;
-            remainKnockBackForce = knockBackPower;
+            var remainKnockBackDir = damageDir;
+            var remainKnockBackForce = knockBackPower;
 
-            Knockback(damageDir, remainKnockBackForce);
+            knockBack.Knockback(this, remainKnockBackDir, remainKnockBackForce);
         }
         else
         {
@@ -241,7 +222,7 @@ public class B_UnitBase : B_Entity
         Debug.DrawRay(transform.position, -Vector3.up * (groundCheckDistance), Color.red);
     }
 
-    protected virtual bool CheckDead(bool isSelf = false)
+    public virtual bool CheckDead(bool isSelf = false)
     {
         // Dead if hp is 0
         if (UnitStatus.currentHP <= 0)
@@ -308,67 +289,6 @@ public class B_UnitBase : B_Entity
     {
         SetAttacking = true;
     }
-
-    #region Knockback    
-    // knockback function with mass
-    public void Knockback(Vector3 inDir, float force)
-    {
-        // Apply Coord Scale inDir
-        inDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDir);
-
-        var resultKnockPower = Mathf.Clamp(force * knockBackMultiplier, 0f, maxKnockBackForce);
-
-        StartCoroutine(CoSmoothKnockback(inDir, resultKnockPower, Rigid, knockbackCurve, knockbackDuration, forceMode));
-    }
-
-    /// <summary>
-    /// CoSmoothKnockback : 부드러운 넉백 적용 코루틴
-    /// </summary>
-    /// <param name="inDir"></param>
-    /// <param name="force"></param>
-    /// <param name="inRigid"></param>
-    /// <param name="inCurve"></param>
-    /// <param name="inDuration"></param>
-    /// <returns></returns>
-    protected IEnumerator CoSmoothKnockback(Vector3 inDir, float force, Rigidbody inRigid, AnimationCurve inCurve, float inDuration = 0.5f, ForceMode inForceMode = ForceMode.VelocityChange)
-    {
-        if(inRigid == null)
-        {
-            inRigid = Rigid;
-        }
-        
-        Vector3 knockbackVelocity = inDir * force / unitStatus.mass;
-
-        if(inForceMode != ForceMode.VelocityChange)
-        {
-            knockbackVelocity = inDir * force;
-        }
-
-        float knockbackDuration = inDuration; // Duration over which the force is applied
-        float startTime = Time.time;
-
-        DisableMovementAndRotation();
-
-        IsKnockback = true;
-        isInvincible = true;
-
-        while (Time.time < startTime + knockbackDuration)
-        {
-            float elapsed = (Time.time - startTime) / knockbackDuration;
-
-            inRigid.AddForce(knockbackVelocity * inCurve.Evaluate(elapsed), inForceMode);
-
-            yield return null;
-        }
-
-        IsKnockback = false;
-        isInvincible = false;
-
-        EnableMovementAndRotation();
-
-        CheckDead(true);
-    }
-    #endregion
 
     /// <summary>
     /// Dead : 유닛 사망 함수
