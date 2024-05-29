@@ -41,9 +41,9 @@ public class B_Slime : B_Enemy
     {
         base.StartAttack();
         
-        col.enabled = false;
+        //col.enabled = false;
         weaponCollider.enabled = true;
-
+        agent.enabled = false;
         //Rigid.isKinematic = true;
     }
 
@@ -53,80 +53,59 @@ public class B_Slime : B_Enemy
 
         col.enabled = true;
         weaponCollider.enabled = false;
-
+        agent.enabled = true;
         //Rigid.isKinematic = false;
     }
-
     IEnumerator CoSlimeAttack()
     {
         var lastTargetPos = GameManager.Instance.Player.transform.position;
 
-        // Shortest distance to the target
+        // 타겟까지의 거리 계산
         float target_Distance = Vector3.Distance(transform.position, lastTargetPos);
 
+        // 초기 위치에서 타겟으로 향하는 방향 벡터 계산
+        Vector3 dir = (lastTargetPos - transform.position).normalized;
 
-        // Calculate the velocity needed to throw the object to the target at specified angle.
-        float projectile_Velocity = target_Distance / (Mathf.Sin(2 * firingAngle * Mathf.Deg2Rad) / 9.8f);
+        // 발사 각도와 초기 속도 계산
+        float angle = 60.0f; // 발사 각도 (필요에 따라 조정)
+        float projectile_Velocity = Mathf.Sqrt(target_Distance * 9.8f / Mathf.Sin(2 * angle * Mathf.Deg2Rad));
 
-        // Extract the X  & Y componenent of the velocity
-        float Vx = Mathf.Sqrt(projectile_Velocity) * Mathf.Cos(firingAngle * Mathf.Deg2Rad);
-        float Vy = Mathf.Sqrt(projectile_Velocity) * Mathf.Sin(firingAngle * Mathf.Deg2Rad);
+        // X와 Y 성분의 초기 속도 계산
+        float Vx = projectile_Velocity * Mathf.Cos(angle * Mathf.Deg2Rad);
+        float Vy = projectile_Velocity * Mathf.Sin(angle * Mathf.Deg2Rad);
 
-        // Rotate projectile to face the target.
-        //var newRot = Quaternion.LookRotation(targetTr.position - transform.position);
-        transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
-
-        //transform.rotation = newRot;
-
-        float flightDuration = target_Distance / Vx;
-
-        // Move projectile to the target and adjust height based on the cross product
-        float elapse_time = 0;
-        float delayTime = 0.5f;
-
-        agent.enabled = false;
-        //rigid.mass = 100f;
-
-        Vector3 dir = lastTargetPos - transform.position;
-        Debug.DrawLine(transform.position, lastTargetPos, Color.red, 1f);
+        //rigid.isKinematic = false;
+        Rigid.velocity = Vector3.zero;
 
         transform.LookAt(lastTargetPos);
-        SetAttacking = true;
-        
+
+        // 짧은 시간 지연
+        float delayTime = 0.5f;
         yield return new WaitForSeconds(delayTime);
 
+        // 공격 시작
         StartAttack();
 
-        while (elapse_time < flightDuration)
+        // Rigidbody에 초기 속도 적용
+        Rigid.velocity = dir * 2f * Vx + Vector3.up * Vy;
+
+        Debug.Log(Rigid.velocity);
+
+        // 바닥에 착지할 때까지 대기
+        while (!(Rigid.velocity.y <= 0 && isGrounded))
         {
-            transform.Translate(0, (Vy - (9.8f * elapse_time)) * Time.deltaTime * multiplier, 0f);
-
-            Vector3 meshForwardXZ = transform.forward;
-
-            transform.Translate(meshForwardXZ * Vx * Time.deltaTime * multiplier * (1 + inCurve.Evaluate(elapse_time)), Space.World);
-
-            Debug.DrawLine(transform.position, meshForwardXZ, Color.green, 1f);
-            Debug.DrawLine(transform.position, Vx * dir, Color.blue, 1f);
-            Debug.DrawLine(transform.position, (1 + inCurve.Evaluate(elapse_time)) * dir, Color.yellow, 1f);
-
-            elapse_time += Time.deltaTime;
-
             yield return null;
         }
 
-        EndAttack();
-        unitStatus.currentAttackCooltime = unitStatus.maxAttackCooltime;
 
-        // Reset height
-        transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
-        agent.enabled = true;
-        Rigid.velocity = Vector3.zero;
-        Rigid.isKinematic = false;
+        unitStatus.currentAttackCooltime = unitStatus.maxAttackCooltime;
+        
         weaponCollider.enabled = false;
-        //rigid.mass = unitStatus.mass;
 
         yield return new WaitForSeconds(delayTime);
 
+        // 공격 종료
+        EndAttack();
     }
 
     IEnumerator CoSlimeDead()

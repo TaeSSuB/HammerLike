@@ -58,7 +58,7 @@ public class B_UnitBase : B_Entity
         set
         {
             unitIndex = value;
-            ApplyStatus();
+            InitStatus();
         }
     }
 
@@ -73,7 +73,7 @@ public class B_UnitBase : B_Entity
         agent = GetComponent<NavMeshAgent>();
         knockBack = GetComponent<B_KnockBack>();
 
-        ApplyStatus();
+        InitStatus();
 
         InitHP();
         ApplySystemSettings();
@@ -129,7 +129,7 @@ public class B_UnitBase : B_Entity
 
     #region Control & Apply Status Data
 
-    protected virtual void ApplyStatus()
+    protected virtual void InitStatus()
     {
         if(unitStatus != null)
         {
@@ -243,7 +243,8 @@ public class B_UnitBase : B_Entity
 
     protected virtual void UpdateAttackCoolTime()
     {
-        UnitStatus.currentAttackCooltime -= Time.deltaTime;
+        if(!IsAttacking)
+            UnitStatus.currentAttackCooltime -= Time.deltaTime;
     }
 
     public virtual void DisableMovementAndRotation()

@@ -80,7 +80,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 84
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!145 &2629802174635142213
 SpringJoint:
@@ -89,17 +89,17 @@ SpringJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1286027827173360070}
-  m_ConnectedBody: {fileID: 4804104527515222762}
+  m_ConnectedBody: {fileID: 6067783569492390582}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 1.4385718, z: 0}
   serializedVersion: 2
-  m_Spring: 500
-  m_Damper: 0.2
+  m_Spring: 100
+  m_Damper: 100
   m_MinDistance: 0
   m_MaxDistance: 0
-  m_Tolerance: 0.025
+  m_Tolerance: 0.1
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
@@ -121,6 +121,7 @@ GameObject:
   - component: {fileID: 2449680744361544971}
   - component: {fileID: 2311101366186423222}
   - component: {fileID: 4928781325609091582}
+  - component: {fileID: 7783805108753066673}
   m_Layer: 8
   m_Name: Slime
   m_TagString: Untagged
@@ -216,7 +217,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 116
+  m_Constraints: 112
   m_CollisionDetection: 3
 --- !u!114 &2449680744361544971
 MonoBehaviour:
@@ -249,8 +250,6 @@ MonoBehaviour:
   isInvincible: 0
   unitIndex: 5
   anim: {fileID: 7344168283046424172}
-  agent: {fileID: 0}
-  puppet: {fileID: 0}
   isGrounded: 0
   hpPosTR: {fileID: 6271083023624452756}
   weaponCollider: {fileID: 4815964313420995929}
@@ -735,6 +734,18 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &7783805108753066673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417570922332306238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cd9d9700a02be6439c42fc044784743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1433897908514070084
 GameObject:
   m_ObjectHideFlags: 0
@@ -815,7 +826,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 84
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!145 &8618030071394978056
 SpringJoint:
@@ -824,17 +835,17 @@ SpringJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1433897908514070084}
-  m_ConnectedBody: {fileID: 4804104527515222762}
+  m_ConnectedBody: {fileID: 6684310037322054117}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.69999963, y: 0.5000016, z: 0}
+  m_ConnectedAnchor: {x: -0.6999999, y: 0.5000016, z: 0}
   serializedVersion: 2
-  m_Spring: 500
-  m_Damper: 0.2
+  m_Spring: 100
+  m_Damper: 100
   m_MinDistance: 0
   m_MaxDistance: 0
-  m_Tolerance: 0.025
+  m_Tolerance: 0.1
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
@@ -974,7 +985,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 84
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!145 &5944551696722992645
 SpringJoint:
@@ -983,17 +994,17 @@ SpringJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1992863800750966762}
-  m_ConnectedBody: {fileID: 4804104527515222762}
+  m_ConnectedBody: {fileID: 6684310037322054117}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: -0.0000036348188, y: -0.08959972, z: 0}
   serializedVersion: 2
-  m_Spring: 500
-  m_Damper: 0.2
+  m_Spring: 100
+  m_Damper: 100
   m_MinDistance: 0
   m_MaxDistance: 0
-  m_Tolerance: 0.025
+  m_Tolerance: 0.1
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
@@ -1299,7 +1310,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 84
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!145 &3929308313192939486
 SpringJoint:
@@ -1308,17 +1319,17 @@ SpringJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3791875914713102634}
-  m_ConnectedBody: {fileID: 4804104527515222762}
+  m_ConnectedBody: {fileID: 6684310037322054117}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.0000006811959, y: 0.5000016, z: 0.3999996}
+  m_ConnectedAnchor: {x: 0.00000035124162, y: 0.5000016, z: 0.3999996}
   serializedVersion: 2
-  m_Spring: 500
-  m_Damper: 0.2
+  m_Spring: 100
+  m_Damper: 100
   m_MinDistance: 0
   m_MaxDistance: 0
-  m_Tolerance: 0.025
+  m_Tolerance: 0.1
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
@@ -1534,7 +1545,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 84
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!145 &6462062362149532197
 SpringJoint:
@@ -1543,17 +1554,17 @@ SpringJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5513520666879507446}
-  m_ConnectedBody: {fileID: 4804104527515222762}
+  m_ConnectedBody: {fileID: 6684310037322054117}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.69999963, y: 0.5000016, z: 0}
+  m_ConnectedAnchor: {x: 0.69999987, y: 0.5000016, z: 0}
   serializedVersion: 2
-  m_Spring: 500
-  m_Damper: 0.2
+  m_Spring: 100
+  m_Damper: 100
   m_MinDistance: 0
   m_MaxDistance: 0
-  m_Tolerance: 0.025
+  m_Tolerance: 0.1
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
@@ -1888,7 +1899,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 84
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!145 &8894537719968596579
 SpringJoint:
@@ -1897,17 +1908,17 @@ SpringJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9215632866691027237}
-  m_ConnectedBody: {fileID: 4804104527515222762}
+  m_ConnectedBody: {fileID: 6684310037322054117}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0.5000016, z: -0.3999996}
   serializedVersion: 2
-  m_Spring: 500
-  m_Damper: 0.2
+  m_Spring: 100
+  m_Damper: 100
   m_MinDistance: 0
   m_MaxDistance: 0
-  m_Tolerance: 0.025
+  m_Tolerance: 0.1
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0

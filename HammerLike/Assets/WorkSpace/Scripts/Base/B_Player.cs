@@ -602,10 +602,85 @@ public class B_Player : B_UnitBase
 
     #region Control & Apply Status Data
 
-    protected override void ApplyStatus()
+    protected override void InitStatus()
     {
         unitStatus = Instantiate(GameManager.Instance.PlayerStatus);
         //unitStatus = GameManager.Instance.PlayerStatus;
+    }
+
+    void ApplyWeaponStatus(SO_Weapon inWeapon)
+    {
+        if(inWeapon != null)
+        {
+            // Status Apply
+            (unitStatus as SO_PlayerStatus).atkDamage = inWeapon.attackPower;
+            atkDamageOrigin = (unitStatus as SO_PlayerStatus).atkDamage;
+
+            (unitStatus as SO_PlayerStatus).knockbackPower = inWeapon.knockbackPower;
+            knockbackPowerOrigin = (unitStatus as SO_PlayerStatus).knockbackPower;
+            
+            (unitStatus as SO_PlayerStatus).atkRange = inWeapon.weaponRange;
+            (unitStatus as SO_PlayerStatus).atkSpeed = inWeapon.attackSpeed;
+
+            (unitStatus as SO_PlayerStatus).chargeRate = 1;
+
+            (unitStatus as SO_PlayerStatus).evasionType = inWeapon.evasionType;
+        }
+        else
+        {
+            // Status Apply
+            (unitStatus as SO_PlayerStatus).atkDamage = 1;
+            atkDamageOrigin = 1;
+
+            (unitStatus as SO_PlayerStatus).knockbackPower = 1;
+            knockbackPowerOrigin = 1;
+            
+            (unitStatus as SO_PlayerStatus).atkRange = 1f;
+            (unitStatus as SO_PlayerStatus).atkSpeed = 1f;
+
+            (unitStatus as SO_PlayerStatus).chargeRate = 1;
+
+            (unitStatus as SO_PlayerStatus).evasionType = 0;
+        }
+    }
+
+    void ApplyWeaponResources(SO_Weapon inWeapon)
+    {
+        if(inWeapon != null)
+        {
+            weaponData = Instantiate(inWeapon);
+            
+            weaponObj = Instantiate(weaponData.prefab, weaponTR);
+            
+            B_Weapon b_Weapon = weaponObj.GetComponent<B_Weapon>();
+            
+            if(b_Weapon == null)
+                b_Weapon = weaponObj.GetComponentInChildren<B_Weapon>();
+            
+            if(b_Weapon == null)
+            {
+                Debug.LogError("WeaponObj is not B_Weapon or is not in child.");
+                return;
+            }
+
+            weaponRenderer = b_Weapon.MeshRenderer;
+
+            //weaponOrbit.ApplyWeapon(b_Weapon);
+
+            chargeVFXObj = b_Weapon.VFXObj;
+
+            OnWeaponEquipped?.Invoke(b_Weapon);
+        }
+        else
+        {
+            Destroy(weaponObj);
+            weaponObj = null;
+            weaponRenderer = null;
+
+            weaponData = null;
+
+            OnWeaponEquipped?.Invoke(null);
+        }
     }
 
     void ApplyChargeDamage()
@@ -618,7 +693,6 @@ public class B_Player : B_UnitBase
     {
         (unitStatus as SO_PlayerStatus).atkDamage = atkDamageOrigin;
     }
-
     public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true)
     {
         base.TakeDamage(damageDir, damage, knockBackPower, knockBack);
@@ -638,72 +712,20 @@ public class B_Player : B_UnitBase
         (UnitStatus as SO_PlayerStatus).dashCooldown -= Time.deltaTime;
     }
 
-
     public void EquipWeapon(SO_Weapon inWeapon)
     {
         UnEquipWeapon();
 
-        weaponData = Instantiate(inWeapon);
-        
-        weaponObj = Instantiate(weaponData.prefab, weaponTR);
-        
-        B_Weapon b_Weapon = weaponObj.GetComponent<B_Weapon>();
-        
-        if(b_Weapon == null)
-            b_Weapon = weaponObj.GetComponentInChildren<B_Weapon>();
-        
-        if(b_Weapon == null)
-        {
-            Debug.LogError("WeaponObj is not B_Weapon or is not in child.");
-            return;
-        }
+        ApplyWeaponResources(inWeapon);
 
-        weaponRenderer = b_Weapon.MeshRenderer;
-
-        //weaponOrbit.ApplyWeapon(b_Weapon);
-
-        chargeVFXObj = b_Weapon.VFXObj;
-
-        // Status Apply
-        (unitStatus as SO_PlayerStatus).atkDamage = weaponData.attackPower;
-        atkDamageOrigin = (unitStatus as SO_PlayerStatus).atkDamage;
-
-        (unitStatus as SO_PlayerStatus).knockbackPower = weaponData.knockbackPower;
-        knockbackPowerOrigin = (unitStatus as SO_PlayerStatus).knockbackPower;
-        
-        (unitStatus as SO_PlayerStatus).atkRange = weaponData.weaponRange;
-        (unitStatus as SO_PlayerStatus).atkSpeed = weaponData.attackSpeed;
-
-        (unitStatus as SO_PlayerStatus).chargeRate = 1;
-
-        (unitStatus as SO_PlayerStatus).evasionType = weaponData.evasionType;
-
-        OnWeaponEquipped?.Invoke(b_Weapon);
+        ApplyWeaponStatus(inWeapon);
     }
 
     public void UnEquipWeapon()
     {
-        Destroy(weaponObj);
-        weaponObj = null;
-        weaponRenderer = null;
+        ApplyWeaponResources(null);
 
-        weaponData = null;
-
-        // Status Apply
-        (unitStatus as SO_PlayerStatus).atkDamage = 1;
-        atkDamageOrigin = 1;
-
-        (unitStatus as SO_PlayerStatus).knockbackPower = 1;
-        knockbackPowerOrigin = 1;
-        
-        (unitStatus as SO_PlayerStatus).atkRange = 1f;
-        (unitStatus as SO_PlayerStatus).atkSpeed = 1f;
-
-        (unitStatus as SO_PlayerStatus).chargeRate = 1;
-
-        (unitStatus as SO_PlayerStatus).evasionType = 0;
-
-        OnWeaponEquipped?.Invoke(null);
+        ApplyWeaponStatus(null);
     }
 
     #endregion
