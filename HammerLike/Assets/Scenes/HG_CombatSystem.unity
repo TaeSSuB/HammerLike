@@ -2844,21 +2844,6 @@ PrefabInstance:
       propertyPath: m_ApplyRootMotion
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1952734946970189571, guid: ca6bc6a7961f4e249a99966978999eb6,
-        type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 1371145044}
-    - target: {fileID: 1952734946970189571, guid: ca6bc6a7961f4e249a99966978999eb6,
-        type: 3}
-      propertyPath: b_Weapon
-      value: 
-      objectReference: {fileID: 1152736324}
-    - target: {fileID: 1952734946970189571, guid: ca6bc6a7961f4e249a99966978999eb6,
-        type: 3}
-      propertyPath: weaponSlot
-      value: 
-      objectReference: {fileID: 2056171209}
     - target: {fileID: 7190315784335179458, guid: ca6bc6a7961f4e249a99966978999eb6,
         type: 3}
       propertyPath: m_Drag
@@ -2883,11 +2868,6 @@ PrefabInstance:
         type: 3}
       propertyPath: knockbackDuration
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8957840737876896812, guid: ca6bc6a7961f4e249a99966978999eb6,
-        type: 3}
-      propertyPath: minAttackRotAmount
-      value: 90
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2429223032665612088, guid: ca6bc6a7961f4e249a99966978999eb6, type: 3}
@@ -5709,18 +5689,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 658364749}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1371145044 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8957840737876896812, guid: ca6bc6a7961f4e249a99966978999eb6,
-    type: 3}
-  m_PrefabInstance: {fileID: 658364749}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52d3c7810508c534daf67b3eb220ca2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1425873792
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10564,6 +10532,7 @@ MonoBehaviour:
   playerStatus: {fileID: 11400000, guid: f81b0e2aed3684e4f8088db754b079bc, type: 2}
   systemSettings: {fileID: 11400000, guid: f90dd2497e9748144930a65da7efc0ae, type: 2}
   isDevMode: 0
+  isLimitFrame: 0
   devCanvas: {fileID: 230688707}
   tempCombatTestGroupPrefab: {fileID: 1901445337346543820, guid: fb42186742fa2a349b00312682dc29e9,
     type: 3}
@@ -10590,12 +10559,6 @@ MonoBehaviour:
     sortConfig:
       sortByProperty: armor
       ascending: 1
---- !u!1 &2056171209 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3390375666078707877, guid: ca6bc6a7961f4e249a99966978999eb6,
-    type: 3}
-  m_PrefabInstance: {fileID: 658364749}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2086670654
 GameObject:
   m_ObjectHideFlags: 0

@@ -24,6 +24,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     [Header("Dev")]
     [SerializeField] private bool isDevMode;
+    [SerializeField] private bool isLimitFrame;
     [SerializeField] private GameObject devCanvas;
 
     [SerializeField] private GameObject tempCombatTestGroupPrefab;
@@ -81,15 +82,48 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
             #endif
         }
 
-        if(Input.GetKeyDown(KeyCode.F1))
+        if(isDevMode && Input.GetKeyDown(KeyCode.F1))
         {
-            QualitySettings.vSyncCount = 0;
-            Application.targetFrameRate = 60;
+            var targetFrameArray = new int[] { 30, 60, 120};
+
+            var currentFrame = (int)Application.targetFrameRate;
+
+            switch(currentFrame)
+            {
+                case 30:
+                    SetFrameRate(targetFrameArray[1]);
+                    break;
+                case 60:
+                    SetFrameRate(targetFrameArray[2]);
+                    break;
+                case 120:
+                    SetFrameRate(targetFrameArray[0]);
+                    break;
+                // case 240:
+                //     SetFrameRate(targetFrameArray[0]);
+                //     break;
+                default:
+                    SetFrameRate(targetFrameArray[1]);
+                    break;
+            }
         }
     }
     #endregion
 
     #region Set System Settings
+
+    public float SetFrameRate(int inFrameRate)
+    {
+        Debug.Log($"Set Frame Rate to {inFrameRate}");
+        
+        QualitySettings.vSyncCount = 0;
+
+        inFrameRate = Mathf.Clamp(inFrameRate, 1, 120);
+        Application.targetFrameRate = inFrameRate;
+        isLimitFrame = !isLimitFrame;
+        
+        return Application.targetFrameRate;
+    }
 
     /// <summary>
     /// SetTimeScale : TimeScale 설정

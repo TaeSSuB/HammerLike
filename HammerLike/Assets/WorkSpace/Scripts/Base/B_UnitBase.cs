@@ -145,6 +145,10 @@ public class B_UnitBase : B_Entity
         unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(unitIndex));
 
         Rigid.mass = UnitStatus.mass;
+
+        // Temp. 마찰력 전용 계산식 필요
+        Rigid.drag =  UnitStatus.mass * 0.5f;
+        Rigid.angularDrag = UnitStatus.mass * 0.5f;
     }
 
     protected virtual void ApplySystemSettings()

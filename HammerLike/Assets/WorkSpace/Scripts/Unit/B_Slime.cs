@@ -5,14 +5,9 @@ public class B_Slime : B_Enemy
 {
     [Header("Slime")]
     [SerializeField] private Collider weaponCollider;
-    public float duration = 1f;
-    public float multiplier = 5f;
-
-    public float deadMultiplier = 2f;
-
-    float firingAngle = 45.0f;
-
-    public AnimationCurve inCurve;
+    public float attackDistanceXMultiplier = 2f;
+    public float attackDistanceYMultiplier = 1f;
+    public float deadYpos = 2f;
 
     public override void Init()
     {
@@ -71,8 +66,8 @@ public class B_Slime : B_Enemy
         float projectile_Velocity = Mathf.Sqrt(target_Distance * 9.8f / Mathf.Sin(2 * angle * Mathf.Deg2Rad));
 
         // X와 Y 성분의 초기 속도 계산
-        float Vx = projectile_Velocity * Mathf.Cos(angle * Mathf.Deg2Rad);
-        float Vy = projectile_Velocity * Mathf.Sin(angle * Mathf.Deg2Rad);
+        float Vx = projectile_Velocity * Mathf.Cos(angle * Mathf.Deg2Rad) * attackDistanceXMultiplier;
+        float Vy = projectile_Velocity * Mathf.Sin(angle * Mathf.Deg2Rad) * attackDistanceYMultiplier;
 
         //rigid.isKinematic = false;
         Rigid.velocity = Vector3.zero;
@@ -87,7 +82,7 @@ public class B_Slime : B_Enemy
         StartAttack();
 
         // Rigidbody에 초기 속도 적용
-        Rigid.velocity = dir * 2f * Vx + Vector3.up * Vy;
+        Rigid.velocity = dir * Vx + Vector3.up * Vy;
 
         Debug.Log(Rigid.velocity);
 
@@ -96,7 +91,6 @@ public class B_Slime : B_Enemy
         {
             yield return null;
         }
-
 
         unitStatus.currentAttackCooltime = unitStatus.maxAttackCooltime;
         
@@ -114,7 +108,7 @@ public class B_Slime : B_Enemy
 
         while (duration > 0f)
         {
-            transform.Translate(0, -deadMultiplier * Time.deltaTime, 0);
+            transform.Translate(0, -deadYpos * Time.deltaTime, 0);
 
             duration -= Time.deltaTime;
 
