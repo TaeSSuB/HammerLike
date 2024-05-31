@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -15,7 +16,6 @@ public class B_Enemy : B_UnitBase
 
     // get aIStateManager
     public AIStateManager AIStateManager => aIStateManager;
-
 
     #region Unity Callbacks & Init
     public override void Init()
@@ -82,10 +82,13 @@ public class B_Enemy : B_UnitBase
 
             //var chargeAmount = (player.UnitStatus as SO_PlayerStatus).chargeRate;
             var chargeAmount = (float)(player.UnitStatus.atkDamage / player.AtkDamageOrigin);
-            Debug.Log("chargeAmount - " + chargeAmount);
+            
+            if(chargeAmount > 1f) Debug.Log("Take chargeDamage. Amount - " + chargeAmount);
             
             // Take Damage and Knockback dir from player
             TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount);
+
+            GameManager.Instance.SlowMotion(0.1f, 0.1f);
 
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);

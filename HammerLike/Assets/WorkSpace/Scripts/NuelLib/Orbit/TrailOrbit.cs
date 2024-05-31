@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -35,7 +37,16 @@ public class TrailOrbit : MonoBehaviour
     [SerializeField] protected TrackType trackType = TrackType.DirBasedPoint;
 
     [Header("References")]
+    public bool instanceMode = false;  // 인스턴스 모드
+    public float trailLifeTime = 0.25f;  // 트레일 라이프 타임
     public TrailRenderer trailRenderer;  // 트레일 렌더러 컴포넌트
+    public Material trailMaterial;  // 트레일 머티리얼
+    
+    protected Queue<TrailRenderer> trailRendererPool;  // 트레일 렌더러 풀
+
+    protected float startWidth = 0.1f;  // 트레일 시작 폭
+    protected float endWidth = 0.05f;  // 트레일 끝 폭
+
     [SerializeField] protected GameObject targetObj;  // 추적할 오브젝트
     public GameObject centerObj;  // 타겟 오브젝트
     public float startWidthScale = 0.1f;  // 트레일 시작 폭
@@ -51,16 +62,28 @@ public class TrailOrbit : MonoBehaviour
             rootObj = gameObject;
         }
 
-        if (trailRenderer == null)
+        if(!instanceMode)
         {
-            trailRenderer = GetComponent<TrailRenderer>();
-        }
+            if (trailRenderer == null)
+            {
+                trailRenderer = GetComponent<TrailRenderer>();
+                
+                if(trailRenderer == null)
+                {
+                    trailRenderer = gameObject.AddComponent<TrailRenderer>();
+                }
+            }
 
-        if(trailRenderer != null)
-        {
-            trailRenderer.emitting = false;
+            if(trailRenderer != null)
+            {
+                trailRenderer.emitting = false;
+                trailMaterial = trailRenderer.material;
+            }
         }
-        
+        else
+        {
+            trailRendererPool = new Queue<TrailRenderer>();
+        }
     }
 
     // 이후 거리 단위 AddPosition 및 FixedUpdate로 변경
@@ -83,14 +106,58 @@ public class TrailOrbit : MonoBehaviour
         }
     }
 
+    protected GameObject InstansiateTrailRendererObj(bool inEmitting = false, float inLifeTime = 0.25f, bool inAutoDestruct = false)
+    {
+        GameObject trailObj = new GameObject("PlayerWeaponTrail");
+        trailObj.transform.SetParent(rootObj.transform);    
+        trailRenderer = trailObj.AddComponent<TrailRenderer>();
+
+        trailRenderer.material = trailMaterial;
+
+        trailRenderer.startWidth = startWidth;
+        trailRenderer.endWidth = endWidth;
+
+        trailRenderer.emitting = inEmitting;
+        trailRenderer.time = inLifeTime;
+        //trailRenderer.autodestruct = inAutoDestruct;
+
+        //trailRendererPool.Add(trailRenderer);
+        trailRendererPool.Enqueue(trailRenderer);
+        StartCoroutine(CoDestroyTrailRendererObj(trailObj, inLifeTime));
+        
+
+        return trailObj;
+    }
+
+    IEnumerator CoDestroyTrailRendererObj(GameObject inTrailObj, float inLifeTime)
+    {
+        yield return new WaitForSeconds(inLifeTime);
+        Destroy(inTrailObj);
+    }
+
     /// <summary>
     /// 트레일 폭 조정
     /// </summary>
     protected void AdjustTrailWidth(Renderer inRenderer)
     {
         float boundsLength = inRenderer.bounds.size.magnitude;  // 무기의 길이 계산
-        trailRenderer.startWidth = boundsLength * startWidthScale;  // 트레일의 시작 폭 설정
-        trailRenderer.endWidth = boundsLength * endWidthScale;  // 트레일의 끝 폭 설정
+
+        startWidth = boundsLength * startWidthScale;  // 트레일의 시작 폭 설정
+        endWidth = boundsLength * endWidthScale;  // 트레일의 끝 폭 설정
+
+        if(!instanceMode)
+        {
+            trailRenderer.startWidth = startWidth;  // 트레일의 시작 폭 설정
+            trailRenderer.endWidth = endWidth;  // 트레일의 끝 폭 설정
+        }
+    }
+
+    protected void ApplyMaterial(Material inMaterial)
+    {
+        trailMaterial = inMaterial;
+        
+        if(!instanceMode)
+            trailRenderer.material = trailMaterial;
     }
 
     /// <summary>
@@ -127,8 +194,31 @@ public class TrailOrbit : MonoBehaviour
             }
         }
 
-        // 가장 방향이 일치하는 궤도 위치로 이동
         rootObj.transform.position = bestMatchPoint + offset;
+    }
+
+    public void AddTrackInstanceTrail()
+    {
+        // 가장 방향이 일치하는 궤도 위치로 이동
+        if(instanceMode)
+        {
+            var trailObj = InstansiateTrailRendererObj(true, trailLifeTime, true);
+            trailObj.transform.position = bestMatchPoint + offset;
+        }
+    }
+
+    public void ClearTrackInstanceTrail()
+    {
+        if(instanceMode)
+        {
+            if(trailRendererPool.Count > 0)
+            {
+                var trailObj = trailRendererPool.Dequeue();
+                trailObj.transform.SetParent(null);
+                //trailObj.Clear();
+                //Destroy(trailObj);
+            }
+        }
     }
 
     #region Legacy

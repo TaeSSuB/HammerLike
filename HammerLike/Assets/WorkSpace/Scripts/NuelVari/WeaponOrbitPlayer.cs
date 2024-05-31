@@ -7,7 +7,6 @@ public class WeaponOrbitPlayer : TrailOrbit
 {
     //[Header("References")]
     private Renderer weaponRenderer;  // 무기 렌더러
-    private Material weaponTrailMat;  // 무기 트레일 머티리얼
     private B_Player player;  // 플레이어 오브젝트
 
     void OnEnable()
@@ -34,11 +33,8 @@ public class WeaponOrbitPlayer : TrailOrbit
 
         targetObj = inWeapon.VFXObj;
         weaponRenderer = inWeapon.MeshRenderer;
-        weaponTrailMat = inWeapon.WeaponTrailMat;
 
-        if(weaponTrailMat != null)
-            trailRenderer.material = weaponTrailMat;
-
+        ApplyMaterial(inWeapon.WeaponTrailMat);
         AdjustTrailWidth(weaponRenderer);
     }
 

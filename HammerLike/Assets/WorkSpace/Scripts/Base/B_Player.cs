@@ -484,7 +484,10 @@ public class B_Player : B_UnitBase
         Anim.SetBool("bAttack", false);
         Anim.SetBool("IsOutWardAttack", false);
         Anim.SetBool("IsInWardAttack", false);
-        weaponOrbit.trailRenderer.Clear();
+        
+        if(!weaponOrbit.instanceMode)
+            weaponOrbit.trailRenderer.Clear();
+        
         DisableWeaponCollider();
         chargeVFXObj.SetActive(false);
 
@@ -826,15 +829,31 @@ public class B_Player : B_UnitBase
 
     void EnableWeaponCollider()
     {
-        weaponOrbit.trailRenderer.Clear();
-        weaponOrbit.trailRenderer.emitting = true;
+        if(!weaponOrbit.instanceMode)
+        {
+            weaponOrbit.trailRenderer.Clear();        
+            weaponOrbit.trailRenderer.emitting = true;
+        }
+        else
+        {
+            weaponOrbit.AddTrackInstanceTrail();
+        }
+            
         // Enable weapon collider logic
         weaponCollider.enabled = true;
     }
     void DisableWeaponCollider()
     {
         // Disable weapon collider logic
-        weaponOrbit.trailRenderer.emitting = false;
+        if(!weaponOrbit.instanceMode)
+        {
+            weaponOrbit.trailRenderer.emitting = false;
+        }
+        else
+        {
+            weaponOrbit.ClearTrackInstanceTrail();
+        }
+        
         weaponCollider.enabled = false;
     }
 

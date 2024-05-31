@@ -84,8 +84,6 @@ public class B_Slime : B_Enemy
         // Rigidbody에 초기 속도 적용
         Rigid.velocity = dir * Vx + Vector3.up * Vy;
 
-        Debug.Log(Rigid.velocity);
-
         // 바닥에 착지할 때까지 대기
         while (!(Rigid.velocity.y <= 0 && isGrounded))
         {

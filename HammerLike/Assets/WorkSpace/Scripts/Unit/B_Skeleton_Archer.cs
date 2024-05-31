@@ -10,6 +10,12 @@ public class B_Skeleton_Archer : B_Enemy
     [SerializeField] private Transform muzzleTR;
     [SerializeField] private GameObject projectilePrefab;
 
+    public override void Init()
+    {
+        base.Init();
+
+        partsKnockBack = GetComponent<B_PartsKnockBack>();
+    }
     /// <summary>
     /// Dead : 유닛 사망 함수. 스켈레톤은 퍼펫 분리 추가
     /// </summary>

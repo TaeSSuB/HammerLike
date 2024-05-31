@@ -117,7 +117,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         Debug.Log($"Set Frame Rate to {inFrameRate}");
         
         QualitySettings.vSyncCount = 0;
-
+        
         inFrameRate = Mathf.Clamp(inFrameRate, 1, 120);
         Application.targetFrameRate = inFrameRate;
         isLimitFrame = !isLimitFrame;
@@ -140,7 +140,30 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         
         Time.timeScale = inTimeScale;
         
-        return systemSettings.TimeScale;
+        return SystemSettings.TimeScale;
+    }
+
+    public void SlowMotion(float inTimeScale, float inDuration)
+    {
+        StartCoroutine(CoSlowMotion(inTimeScale, inDuration));
+    }
+
+    IEnumerator CoSlowMotion(float inTimeScale, float inDuration)
+    {
+        float duration = inDuration;
+        float originTimeScale = 1f;
+
+        SetTimeScale(inTimeScale);
+
+        // while (duration > 0f)
+        // {
+        //     duration -= Time.unscaledDeltaTime;
+
+        //     yield return null;
+        // }
+        yield return new WaitForSecondsRealtime(inDuration);
+
+        SetTimeScale(originTimeScale);
     }
 
     #endregion

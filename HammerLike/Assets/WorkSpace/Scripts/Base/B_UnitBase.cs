@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 
 using UnityEngine;
@@ -44,6 +45,8 @@ public class B_UnitBase : B_Entity
     public bool IsLockMove { get; private set; }
     public bool IsLockRotate { get; private set; }
     public bool IsKnockback { get; set; }
+
+    public Action OnHitEvent;
 
     public bool SetAttacking
     {
@@ -189,6 +192,8 @@ public class B_UnitBase : B_Entity
         UnitStatus.currentHP = UnitStatus.currentHP - damage;
 
         ClampHP();
+
+        OnHitEvent?.Invoke();
 
         Debug.Log(this.gameObject.name + " TakeDamage : " + damage);
         //ChangeCursor.Instance.SetCursorAttack();    // 명진. 0514 임시 Cursor 변경 싱글톤으로 받아감
