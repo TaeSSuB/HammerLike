@@ -148,7 +148,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         StartCoroutine(CoSlowMotion(inTimeScale, inDuration));
     }
 
-    IEnumerator CoSlowMotion(float inTimeScale, float inDuration)
+    public IEnumerator CoSlowMotion(float inTimeScale, float inDuration)
     {
         float duration = inDuration;
         float originTimeScale = 1f;

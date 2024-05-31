@@ -32,14 +32,30 @@ public class B_KnockBack : MonoBehaviour
     }
 
 
-    public void Knockback(B_UnitBase unitBase, Vector3 inDir, float force)
+    public void Knockback(B_UnitBase unitBase, Vector3 inDir, float force, bool slowMotion = false)
     {
         // Apply Coord Scale inDir
         inDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDir);
 
         var resultKnockPower = Mathf.Clamp(force * knockBackMultiplier, 0f, maxKnockBackForce);
 
-        StartCoroutine(CoSmoothKnockback(unitBase, inDir, resultKnockPower, unitBase.Rigid, knockbackCurve, knockbackDuration, forceMode));
+        if (slowMotion)
+        {
+            StartCoroutine(CoApplySlowMotionAndKnockback(unitBase, inDir, resultKnockPower, unitBase.Rigid, knockbackCurve, knockbackDuration, forceMode));
+        }
+        else
+        {
+            StartCoroutine(CoSmoothKnockback(unitBase, inDir, resultKnockPower, unitBase.Rigid, knockbackCurve, knockbackDuration, forceMode));
+        }
+    }
+
+    public IEnumerator CoApplySlowMotionAndKnockback(B_UnitBase unitBase, Vector3 direction, float force, Rigidbody rigidbody, AnimationCurve forceCurve, float knockbackDuration = 0.5f, ForceMode forceMode = ForceMode.VelocityChange)
+    {
+        // 피격 판정 후 슬로우모션 실행
+        yield return StartCoroutine(GameManager.Instance.CoSlowMotion(0.1f, 0.5f));
+
+        // 슬로우모션 끝난 후 넉백 시작
+        yield return StartCoroutine(CoSmoothKnockback(unitBase, direction, force, rigidbody, forceCurve, knockbackDuration, forceMode));
     }
 
     

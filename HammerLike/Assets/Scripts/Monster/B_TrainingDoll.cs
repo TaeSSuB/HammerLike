@@ -29,7 +29,7 @@ public class TrainingDoll : B_Enemy
             var chargeAmount = (float)(player.UnitStatus.atkDamage / player.AtkDamageOrigin);
 
             // Take Damage and Knockback dir from player
-            TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount);
+            TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount, false);
 
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);

@@ -83,12 +83,19 @@ public class B_Enemy : B_UnitBase
             //var chargeAmount = (player.UnitStatus as SO_PlayerStatus).chargeRate;
             var chargeAmount = (float)(player.UnitStatus.atkDamage / player.AtkDamageOrigin);
             
-            if(chargeAmount > 1f) Debug.Log("Take chargeDamage. Amount - " + chargeAmount);
+            if((player.UnitStatus as SO_PlayerStatus).maxChargeRate <= chargeAmount)
+            {
+                TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount, true, true);
+            }
+            else
+            {
+                TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount, true, false);
+            }
             
-            // Take Damage and Knockback dir from player
-            TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount);
+            //GameManager.Instance.SlowMotion(0.1f, 0.1f);
 
-            GameManager.Instance.SlowMotion(0.1f, 0.1f);
+            // Take Damage and Knockback dir from player
+
 
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
@@ -127,7 +134,7 @@ public class B_Enemy : B_UnitBase
             // Get hit dir from another enemy
             Vector3 hitDir = (transform.position - collision.transform.position).normalized;
 
-            TakeDamage(hitDir, (int)(other.Rigid.mass / 2f), other.Rigid.mass);
+            TakeDamage(hitDir, (int)(other.Rigid.mass / 2f), other.Rigid.mass, true);
 
             var vfxPos = collision.contacts[0].point;
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);

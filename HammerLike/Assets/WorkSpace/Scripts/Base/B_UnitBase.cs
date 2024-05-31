@@ -178,7 +178,7 @@ public class B_UnitBase : B_Entity
         ClampHP();
     }
 
-    public virtual void TakeDamage(Vector3 damageDir, int damage, float knockBackPower, bool enableKnockBack = true)
+    public virtual void TakeDamage(Vector3 damageDir, int damage, float knockBackPower, bool enableKnockBack = true, bool slowMotion = false)
     {
         if (isInvincible)
         {
@@ -202,7 +202,7 @@ public class B_UnitBase : B_Entity
             var remainKnockBackDir = damageDir;
             var remainKnockBackForce = knockBackPower;
 
-            knockBack.Knockback(this, remainKnockBackDir, remainKnockBackForce);
+            knockBack.Knockback(this, remainKnockBackDir, remainKnockBackForce, slowMotion);
         }
         else
         {

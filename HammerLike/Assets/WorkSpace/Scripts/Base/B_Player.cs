@@ -696,9 +696,9 @@ public class B_Player : B_UnitBase
     {
         (unitStatus as SO_PlayerStatus).atkDamage = atkDamageOrigin;
     }
-    public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true)
+    public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true, bool slowMotion = false)
     {
-        base.TakeDamage(damageDir, damage, knockBackPower, knockBack);
+        base.TakeDamage(damageDir, damage, knockBackPower, knockBack, slowMotion);
 
         OnHPChanged?.Invoke(unitStatus.currentHP);
     }
