@@ -92,11 +92,6 @@ public class B_Enemy : B_UnitBase
                 TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount, true, false);
             }
             
-            //GameManager.Instance.SlowMotion(0.1f, 0.1f);
-
-            // Take Damage and Knockback dir from player
-
-
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
 

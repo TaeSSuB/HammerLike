@@ -152,7 +152,7 @@ public class B_Player : B_UnitBase
             Vector3 hitDir = (transform.position - unit.transform.position).normalized;
 
             // Take Damage and Knockback dir from player
-            TakeDamage(hitDir, unit.UnitStatus.atkDamage, unit.UnitStatus.knockbackPower);
+            TakeDamage(hitDir, unit.UnitStatus.atkDamage, unit.UnitStatus.knockbackPower, true);
             StartCoroutine(CoHitEvent(1f, hitDuration));
 
             Anim.SetTrigger("tHit");

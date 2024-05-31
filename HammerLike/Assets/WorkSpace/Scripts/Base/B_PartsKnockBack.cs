@@ -55,6 +55,8 @@ public class B_PartsKnockBack : MonoBehaviour
                     Vector3 dir = (muscleRigid.transform.position - inPos).normalized;
                     dir = GameManager.Instance.ApplyCoordScaleAfterNormalize(dir);
 
+                    remainKnockBackForce = knockBack.remainKnockBackForce;
+                    
                     remainKnockBackForce = Mathf.Clamp(remainKnockBackForce * partsKnockBackMultiplier, 0f, maxPartsBreakForce);
 
                     StartCoroutine(knockBack.CoSmoothKnockback(unitBase, dir, remainKnockBackForce, muscleRigid, partsBreakForceCurve, partsKnockBackTime, ForceMode.Impulse));

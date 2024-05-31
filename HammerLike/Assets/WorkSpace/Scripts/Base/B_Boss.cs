@@ -59,7 +59,7 @@ public class B_Boss : B_UnitBase
             var chargeAmount = (float)(player.UnitStatus.atkDamage / player.AtkDamageOrigin);
             
             // Take Damage and Knockback dir from player
-            TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount);
+            TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount, true);
 
             if(EnableHitEvent)
                 Anim.SetTrigger("tHit");

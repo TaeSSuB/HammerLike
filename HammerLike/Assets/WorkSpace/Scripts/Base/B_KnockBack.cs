@@ -13,7 +13,10 @@ public class B_KnockBack : MonoBehaviour
 
     protected ForceMode forceMode = ForceMode.Force;
     protected Vector3 remainKnockBackDir;
-    protected float remainKnockBackForce = 0f;
+
+    public float remainKnockBackForce = 0f;
+
+    //public float RemainKnockBackForce => remainKnockBackForce;
 
     protected void Start()
     {
@@ -39,12 +42,16 @@ public class B_KnockBack : MonoBehaviour
 
         var resultKnockPower = Mathf.Clamp(force * knockBackMultiplier, 0f, maxKnockBackForce);
 
+        remainKnockBackForce = resultKnockPower;
+
         if (slowMotion)
         {
             StartCoroutine(CoApplySlowMotionAndKnockback(unitBase, inDir, resultKnockPower, unitBase.Rigid, knockbackCurve, knockbackDuration, forceMode));
         }
         else
         {
+            unitBase.CheckDead();
+
             StartCoroutine(CoSmoothKnockback(unitBase, inDir, resultKnockPower, unitBase.Rigid, knockbackCurve, knockbackDuration, forceMode));
         }
     }
@@ -53,6 +60,8 @@ public class B_KnockBack : MonoBehaviour
     {
         // 피격 판정 후 슬로우모션 실행
         yield return StartCoroutine(GameManager.Instance.CoSlowMotion(0.1f, 0.5f));
+        
+        unitBase.CheckDead();
 
         // 슬로우모션 끝난 후 넉백 시작
         yield return StartCoroutine(CoSmoothKnockback(unitBase, direction, force, rigidbody, forceCurve, knockbackDuration, forceMode));
@@ -98,7 +107,5 @@ public class B_KnockBack : MonoBehaviour
         unitBase.IsInvincible = false;
 
         unitBase.EnableMovementAndRotation();
-
-        unitBase.CheckDead(true);
     }
 }
