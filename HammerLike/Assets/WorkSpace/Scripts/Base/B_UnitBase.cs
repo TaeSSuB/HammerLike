@@ -53,6 +53,7 @@ public class B_UnitBase : B_Entity
         set
         {
             isAttacking = value;
+            Anim.SetBool("IsAttacking", isAttacking);
         } 
     }
 

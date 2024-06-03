@@ -153,7 +153,7 @@ public class B_Enemy : B_UnitBase
     protected override void Dead(bool isSelf = false)
     {
         base.Dead(isSelf);
-        //aIStateManager.SetState(AIStateType.DEAD);
+        aIStateManager.SetState(AIStateType.DEAD);
 
         //DisconnectMusclesRecursive(GameManager.Instance.Player.transform.position);
         //Invoke(nameof(DisconnectMusclesRecursive), 0.1f);

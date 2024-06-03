@@ -13,6 +13,7 @@ public enum BossAIStateType
     IDLE,
     CHASE,
     HIT,
+    STUN,
     ATTACK,
     SWING,
     THROW,

@@ -77,7 +77,8 @@ public class B_Boss_SkeletonTorturer : B_Boss
             return;
         }
 
-        if (BossController?.CurrentStateType != BossAIStateType.HIT && BossController?.CurrentStateType != BossAIStateType.DEAD)
+        if (BossController?.CurrentStateType != BossAIStateType.STUN &&
+            BossController?.CurrentStateType != BossAIStateType.DEAD)
         {
             BossController.SetState(Thinking());
             // else
@@ -90,19 +91,7 @@ public class B_Boss_SkeletonTorturer : B_Boss
 
     protected BossAIStateType Thinking()
     {
-        var moveDir = GameManager.Instance.Player.transform.position - transform.position;
-
-        float applyCoordScale = GameManager.Instance.CalcCoordScale(moveDir);
-        var targetDis = moveDir.magnitude / applyCoordScale;
-
-        if (targetDis <= unitStatus.detectRange)
-        {
-            return BossController.CheckPattern();
-        }
-        else
-        {
-            return BossAIStateType.CHASE;        
-        }
+        return BossController.CheckPattern();
     }
 
     void OnDestroy()

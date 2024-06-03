@@ -20,19 +20,20 @@ public class B_BossController : MonoBehaviour
         { BossAIStateType.IDLE, 2f },
         { BossAIStateType.CHASE, 10f },
         { BossAIStateType.SWING, 7f },
-        { BossAIStateType.THROW, 4f },
-        { BossAIStateType.PULL, 3f },
+        { BossAIStateType.THROW, 5f },
+        { BossAIStateType.PULL, 5f },
         { BossAIStateType.ROAR, 5f },
-        { BossAIStateType.ATTACK, 5f } // 기본 공격도 최소 시간 설정 가능
+        { BossAIStateType.STUN, 3f },
+        { BossAIStateType.ATTACK, 2f } // 기본 공격도 최소 시간 설정 가능
     };
     private Dictionary<BossAIStateType, float> patternCooldowns = new Dictionary<BossAIStateType, float>()
     {
         { BossAIStateType.CHASE, 10f },
         { BossAIStateType.SWING, 20f },
-        { BossAIStateType.THROW, 15f },
+        { BossAIStateType.THROW, 1f },
         // { BossAIStateType.PULL, 20f },
         { BossAIStateType.ROAR, 25f },
-        { BossAIStateType.ATTACK, 5f}
+        //{ BossAIStateType.ATTACK, 5f}
     };    
     
     private Dictionary<BossAIStateType, float> lastPatternTimes = new Dictionary<BossAIStateType, float>();
@@ -55,6 +56,9 @@ public class B_BossController : MonoBehaviour
         states[BossAIStateType.THROW] = new ThrowBossState(this.b_Boss, 2);
         states[BossAIStateType.PULL] = new PullBossState(this.b_Boss, 3);
         states[BossAIStateType.ROAR] = new RoarBossState(this.b_Boss, 4);
+        
+        //states[BossAIStateType.HIT] = new HitBossState(this.b_Boss);
+        states[BossAIStateType.STUN] = new StunBossState(this.b_Boss);
         states[BossAIStateType.DEAD] = new DeadBossState(this.b_Boss);
 
         SetState(BossAIStateType.IDLE);
@@ -96,6 +100,16 @@ public class B_BossController : MonoBehaviour
             {
                 return currentStateType; // 현재 상태의 최소 시간이 만료되지 않았다면 상태 유지
             }
+        }
+
+        var moveDir = GameManager.Instance.Player.transform.position - transform.position;
+
+        float applyCoordScale = GameManager.Instance.CalcCoordScale(moveDir);
+        var targetDis = moveDir.magnitude / applyCoordScale;
+
+        if (targetDis > b_Boss.UnitStatus.detectRange)
+        {
+            return BossAIStateType.CHASE;        
         }
 
         List<BossAIStateType> availablePatterns = new List<BossAIStateType>();

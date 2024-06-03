@@ -46,6 +46,10 @@ public class B_Boss : B_UnitBase
         {
             if(isInvincible) return;
 
+            B_EnemyWeapon enemyWeapon = other.GetComponent<B_EnemyWeapon>();
+
+            if(enemyWeapon != null) Debug.Log("EnemyWeapon : " + enemyWeapon.name);
+
             // Get player
             // 현재는 B_Player지만, B_UnitBase를 상속받는 모든 유닛에게 적용 가능. a.HG
             B_Player player = other.GetComponentInParent<B_Player>();
