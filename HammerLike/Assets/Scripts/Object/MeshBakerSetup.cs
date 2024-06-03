@@ -23,19 +23,19 @@ public class MeshBakerSetup : MonoBehaviour
         }
 
         // 초기 설정
-        textureBaker.resultMaterial = new Material(Shader.Find("Standard")); // 필요에 따라 적절한 쉐이더 설정
+        textureBaker.resultMaterial = new Material(Shader.Find("HLPixelizer/SRP/HLPixelizer")); // 필요에 따라 적절한 쉐이더 설정
         textureBaker.textureBakeResults = ScriptableObject.CreateInstance<MB2_TextureBakeResults>();
 
-        BakeMeshes();
+        //BakeMeshes();
     }
 
-    /*void OnGUI()
+    void OnGUI()
     {
         if (GUILayout.Button("Bake Meshes"))
         {
             BakeMeshes();
         }
-    }*/
+    }
 
     void BakeMeshes()
     {
