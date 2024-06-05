@@ -55,6 +55,9 @@ public class UI_InGame : MonoBehaviour
 
     public GameObject BossHPUI { get => bossHPUI; }
 
+    public GameObject TopPanelGameObject => topPanel.gameObject;
+    public GameObject BottomPanelGameObject => bottomPanel.gameObject;
+
     private void Awake()
     {
         disableTopPanelPos = topPanel.anchoredPosition;

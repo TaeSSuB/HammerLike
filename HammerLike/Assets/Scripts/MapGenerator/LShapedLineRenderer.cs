@@ -6,7 +6,10 @@ public class LShapedLineRenderer : MonoBehaviour
     public GameObject pointA;
     public GameObject pointB;
     public GameObject tilePrefab;  // ?????袁ⓥ봺??
+    public GameObject tilePrefab2;  // ?????袁ⓥ봺??
     public GameObject cornerPrefab; // ?꾨뗀瑗??袁ⓥ봺??
+    public GameObject cornerPrefab2; // ?꾨뗀瑗??袁ⓥ봺??
+    public GameObject cornerPrefab3; // ?꾨뗀瑗??袁ⓥ봺??
     public GameObject container;
     private Vector3 tileSize;  // ????깆벥 ??쇱젫 ??由?
     private float distance=0;
@@ -73,7 +76,7 @@ public class LShapedLineRenderer : MonoBehaviour
 
 
             // Place corner objects
-            DetermineAndPlaceCornerObjects(pointA.name, pointB.name, midPoint1, midPoint2);
+            DetermineAndPlaceCornerObjects(pointA, pointB, midPoint1, midPoint2);
             //DetermineAndPlaceCornerObjects(deltaX, deltaZ, midPoint1, midPoint2);
             Vector3 cornerKMJ = new Vector3(2, 0, 6);
             Vector3 cornerSize = GetPrefabSize(cornerPrefab); // 
@@ -86,9 +89,9 @@ public class LShapedLineRenderer : MonoBehaviour
             Vector3 offsetEnd11 = offsetEnd1 - direction0 * cornerSize.z * 2;
             Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
             Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 2;
-            PlaceTilesAlongLine(startPosition, offsetEnd11, false);
+            PlaceTilesAlongLine2(startPosition, offsetEnd11, false);
             PlaceTilesAlongLine(offsetStart1, offsetEnd22, false);
-            PlaceTilesAlongLine(offsetStart2, endPosition, false);
+            PlaceTilesAlongLine2(offsetStart2, endPosition, false);
         }
     }
 
@@ -113,6 +116,29 @@ public class LShapedLineRenderer : MonoBehaviour
             if (i == tileCount - 1)
             {
                 Instantiate(tilePrefab, end, rotation, container.transform);
+            }
+        }
+    }
+
+    private void PlaceTilesAlongLine2(Vector3 start, Vector3 end, bool skipLastTile)
+    {
+        Vector3 direction = (end - start).normalized;
+        float distance = Vector3.Distance(start, end);
+        float tileStep = tileSize.x;
+        int tileCount = Mathf.FloorToInt(distance / tileStep);
+
+        if (skipLastTile)
+            tileCount--;
+
+        Quaternion rotation = Quaternion.LookRotation(direction);
+
+        for (int i = 0; i < tileCount; i++)
+        {
+            Vector3 tilePosition = start + direction * tileStep * i;
+            GameObject tile = Instantiate(tilePrefab2, tilePosition, rotation, container.transform);
+            if (i == tileCount - 1)
+            {
+                Instantiate(tilePrefab2, end, rotation, container.transform);
             }
         }
     }
@@ -187,6 +213,11 @@ public class LShapedLineRenderer : MonoBehaviour
         Instantiate(cornerPrefab, position, rotation, container.transform);
     }
 
+    private void PlaceCornerObject2(Vector3 position, Quaternion rotation)
+    {
+        Instantiate(cornerPrefab2, position, rotation, container.transform);
+    }
+
     private void GetDistance()
     {
         Debug.Log("PointA : "+pointA.transform.position+" PointB : "+ pointB.transform.position);
@@ -199,13 +230,15 @@ public class LShapedLineRenderer : MonoBehaviour
 
     }
 
-    private void DetermineAndPlaceCornerObjects(string startName, string endName, Vector3 intermediate1, Vector3 intermediate2)
+    private void DetermineAndPlaceCornerObjects(GameObject start, GameObject end, Vector3 intermediate1, Vector3 intermediate2)
     {
+        string startName = start.name;
+        string endName = end.name;
         if ((startName.Contains("N") && endName.Contains("S")))
         {
-            if(pointA.transform.position.x> pointB.transform.position.x)
+            if (start.transform.position.x > end.transform.position.x)
             {
-            
+
                 PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
                 PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
             }
@@ -217,7 +250,7 @@ public class LShapedLineRenderer : MonoBehaviour
         }
         else if ((startName.Contains("S") && endName.Contains("N")))
         {
-            if (pointA.transform.position.x > pointB.transform.position.x)
+            if (start.transform.position.x > end.transform.position.x)
             {
                 PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
                 PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 0, 0));
@@ -230,10 +263,10 @@ public class LShapedLineRenderer : MonoBehaviour
         }
         else if ((startName.Contains("E") && endName.Contains("W")))
         {
-            if(pointA.transform.position.z > pointB.transform.position.z)
+            if (start.transform.position.z > end.transform.position.z)
             {
-            PlaceCornerObject(intermediate2 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
-            PlaceCornerObject(intermediate1 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
+                PlaceCornerObject(intermediate2 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
+                PlaceCornerObject(intermediate1 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
             }
             else
             {
@@ -243,14 +276,14 @@ public class LShapedLineRenderer : MonoBehaviour
         }
         else if ((startName.Contains("W") && endName.Contains("E")))
         {
-            if (pointA.transform.position.z > pointB.transform.position.z)
+            if (start.transform.position.z > end.transform.position.z)
             {
                 PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
                 PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 0, 0));
             }
             else
             {
-                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
+                PlaceCornerObject2(intermediate1 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
                 PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
             }
         }
