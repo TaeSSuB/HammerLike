@@ -9,17 +9,19 @@ using UnityEngine;
 public class B_Entity : MonoBehaviour
 {
     [Header("Base Object Info")]
-    [SerializeField] protected GameObject rootObj;
+    //[SerializeField] protected GameObject rootObj;
     [SerializeField] protected GameObject meshObj;
     [SerializeField] protected Collider col;
     [SerializeField] private Rigidbody rigid;
 
     [SerializeField] protected bool isInvincible;
 
-    public GameObject RootObj { get => rootObj; }
+    //public GameObject RootObj { get => rootObj; }
     public GameObject MeshObj { get => meshObj; }
     public Collider Col { get => col; }
     public Rigidbody Rigid { get => rigid;}
+
+    public bool IsInvincible { get => isInvincible; set => isInvincible = value;}
 
     #region Unity Callbacks & Init
     protected virtual void Awake()
@@ -56,12 +58,15 @@ public class B_Entity : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Init : 초기화 함수
+    /// </summary>
     public virtual void Init()
     {
-        if(rootObj == null)
-        {
-            rootObj = gameObject;
-        }
+        // if(rootObj == null)
+        // {
+        //     rootObj = gameObject;
+        // }
 
         if(col == null)
         {

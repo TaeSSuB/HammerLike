@@ -17,6 +17,7 @@ public enum AudioTag
     Click
 }
 
+
 public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
 {
     public SO_AudioSet audioSet; // Assign in the Unity editor

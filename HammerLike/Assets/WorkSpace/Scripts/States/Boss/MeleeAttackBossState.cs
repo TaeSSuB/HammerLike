@@ -24,7 +24,7 @@ public class MeleeAttackBossState : IBossAIState
             var targetBoss = b_Boss as B_Boss_SkeletonTorturer;
             var weaponOrbitCommon = targetBoss.WeaponOrbitCommon;
 
-            weaponOrbitCommon.trackType = WeaponOrbitCommon.TrackType.DirBasedPoint;
+            weaponOrbitCommon.SetTrackType(WeaponOrbitCommon.TrackType.DirBasedPoint);
             weaponOrbitCommon.SetTracking(true);
             weaponOrbitCommon.DisableCollider();
             
@@ -74,10 +74,10 @@ public class MeleeAttackBossState : IBossAIState
 
         // b_Boss.UnitStatus.currentAttackCooltime = b_Boss.UnitStatus.maxAttackCooltime;
 
-        b_Boss.isAttacking = false;
+        b_Boss.SetAttacking = false;
         b_Boss.Anim.ResetTrigger("tPatternPlay");
         b_Boss.Anim.SetInteger("PatternIdx", -1);
-        b_Boss.Anim.SetBool("bAttack", b_Boss.isAttacking);
+        b_Boss.Anim.SetBool("bAttack", b_Boss.IsAttacking);
         b_Boss.Anim.ResetTrigger("tAttack");
     }
 }

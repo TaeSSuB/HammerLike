@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3457203401403454957}
   - component: {fileID: 4295742898837949395}
   - component: {fileID: 7423004856959773990}
+  - component: {fileID: 7637356523305577113}
   m_Layer: 8
   m_Name: TrainingDoll
   m_TagString: Untagged
@@ -54,11 +55,11 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.97674173
+  m_Radius: 0.8
   m_Height: 2.63
   m_Direction: 1
   m_Center: {x: 0, y: 1.2849435, z: 0}
@@ -74,7 +75,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b177c08003aaeb54283ee7ed8e0b104c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootObj: {fileID: 3549329512787973906}
   meshObj: {fileID: 4431728618323048112}
   col: {fileID: 3549329512787973904}
   rigid: {fileID: 5794850943227641414}
@@ -82,16 +82,8 @@ MonoBehaviour:
   unitIndex: 98
   anim: {fileID: 7423004856959773990}
   agent: {fileID: 0}
-  isAttacking: 0
-  knockbackDuration: 0.5
-  puppet: {fileID: 0}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  groundCheckDistance: 0.1
-  isKnockback: 0
+  isGrounded: 0
   hpPosTR: {fileID: 1371752695025892479}
-  isTester: 0
 --- !u!54 &5794850943227641414
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -131,7 +123,7 @@ NavMeshAgent:
   m_Radius: 0.5
   m_Speed: 3.5
   m_Acceleration: 8
-  avoidancePriority: 50
+  avoidancePriority: 0
   m_AngularSpeed: 120
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
@@ -175,6 +167,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7637356523305577113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3549329512787973906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cd9d9700a02be6439c42fc044784743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6602547701455984821
 GameObject:
   m_ObjectHideFlags: 0

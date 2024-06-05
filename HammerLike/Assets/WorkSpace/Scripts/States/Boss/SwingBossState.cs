@@ -29,7 +29,7 @@ public class SwingBossState : IBossAIState
             var targetBoss = b_Boss as B_Boss_SkeletonTorturer;
             weaponOrbitCommon = targetBoss.WeaponOrbitCommon;
 
-            weaponOrbitCommon.trackType = WeaponOrbitCommon.TrackType.None; // 선형 궤도를 사용
+            weaponOrbitCommon.SetTrackType(WeaponOrbitCommon.TrackType.None); // 선형 궤도를 사용
             weaponOrbitCommon.SetTracking(false);
         }
             
@@ -65,7 +65,7 @@ public class SwingBossState : IBossAIState
                 weaponOrbitCommon = targetBoss.WeaponOrbitCommon;
             }
                 
-            weaponOrbitCommon.trackType = WeaponOrbitCommon.TrackType.DirBasedPoint;
+            weaponOrbitCommon.SetTrackType(WeaponOrbitCommon.TrackType.DirBasedPoint);
             weaponOrbitCommon.SetTracking(false);
             weaponOrbitCommon.DisableCollider();
         }

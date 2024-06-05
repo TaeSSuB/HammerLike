@@ -109,4 +109,5 @@ public class B_NPC : B_UnitBase
             }
         }
     }
+
 }
