@@ -32,4 +32,6 @@ public class B_Sporoach : B_Enemy
         base.UpdateAttackCoolTime();
         Anim.SetFloat("fRemainShot", UnitStatus.currentAttackCooltime);
     }
+
+    
 }
