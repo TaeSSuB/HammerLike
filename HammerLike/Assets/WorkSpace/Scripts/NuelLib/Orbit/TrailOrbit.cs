@@ -121,6 +121,9 @@ public class TrailOrbit : MonoBehaviour
         trailRenderer.time = inLifeTime;
         //trailRenderer.autodestruct = inAutoDestruct;
 
+        // Temp. 레이어 구분 일단 UI로 세팅
+        trailRenderer.sortingLayerName = "UI";
+
         //trailRendererPool.Add(trailRenderer);
         trailRendererPool.Enqueue(trailRenderer);
         StartCoroutine(CoDestroyTrailRendererObj(trailObj, inLifeTime));

@@ -51,6 +51,8 @@ public class UI_InGame : MonoBehaviour
     [SerializeField] private B_Player player;
     private SO_PlayerStatus playerStatus;
 
+    [SerializeField] private B_InventoryManager inventoryManager;
+
     private Coroutine chargeCoroutine;
 
     public GameObject BossHPUI { get => bossHPUI; }
@@ -79,6 +81,9 @@ public class UI_InGame : MonoBehaviour
         }*/
     }
 
+    /// <summary>
+    /// 애플리케이션이 종료될 때 호출되는 메서드. 이벤트 처리 포함되어 있으나, 추후 시점 변경해야 함.
+    /// </summary>
     private void OnApplicationQuit()
     {
         // 메모리 해제. a.HG
@@ -93,6 +98,8 @@ public class UI_InGame : MonoBehaviour
 
         player.OnHPChanged -= UpdateHP;
         player.OnChargeChanged -= UpdateGauge;
+
+        inventoryManager.OnGoldChanged -= UpdateGold;
     }
 
     public void Initialize()
@@ -103,12 +110,15 @@ public class UI_InGame : MonoBehaviour
 
         chargeParticle.SetActive(false);
         maximumChargeAmount = chargeScreen.material.GetFloat("_MaxChargeAmount");
-        // UpdateHP(playerStatus.maxHP);
-        // UpdateGauge(playerStatus.chargeRate);
+        
+        inventoryManager = B_InventoryManager.Instance;
 
         // 이벤트 등록. 메모리 해제 주의. a.HG
         player.OnHPChanged += UpdateHP;
         player.OnChargeChanged += UpdateGauge;
+
+        inventoryManager.OnGoldChanged += UpdateGold;
+
     }
 
     private void UpdateGauge(float chargeRate)
@@ -155,6 +165,11 @@ public class UI_InGame : MonoBehaviour
     {
         float hpRatio = (float)hp / playerStatus.maxHP;
         playerHPSlider.value = hpRatio;
+    }
+
+    private void UpdateGold(int gold)
+    {
+        goldText.text = gold.ToString();
     }
 
     private IEnumerator CoInitialize()

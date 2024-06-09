@@ -36,6 +36,12 @@ public class SO_InventoryObject : ScriptableObject
         return true;
     }
 
+    public void AddGold(int _amount)
+    {
+        goldAmount += _amount;
+        Debug.Log("Gold Amount : " + goldAmount);
+    }
+
     public int EmptySlotCount
     {
         get

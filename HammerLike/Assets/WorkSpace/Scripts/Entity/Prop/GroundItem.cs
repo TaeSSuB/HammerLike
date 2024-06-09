@@ -6,7 +6,7 @@ using UnityEngine;
 public class GroundItem : MonoBehaviour, ISerializationCallbackReceiver
 {
     public SO_Item item;
-    public bool canPickUp = false;
+    public bool isPickUpItem = false;
 
     public void OnAfterDeserialize()
     {
