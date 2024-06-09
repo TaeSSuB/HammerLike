@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NuelLib;
+using System;
 
 /// <summary>
 /// 인벤토리 매니저
@@ -14,6 +15,9 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
     public SO_InventoryObject playerEquipContainer;
     public SO_InventoryObject playerWeaponContainer;
 
+    public event Action<int> OnGoldChanged;
+
+
     private void Start() {
 
     }
@@ -22,6 +26,13 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
 
         WeaponSwitchWithWheel();
 
+    }
+
+    public void AddGold(int amount)
+    {
+        playerInventory.AddGold(amount);
+
+        OnGoldChanged?.Invoke(playerInventory.goldAmount);
     }
 
     public int GetCurrentWeaponSlotIndex()

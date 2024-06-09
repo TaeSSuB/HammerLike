@@ -307,6 +307,8 @@ public class B_UnitBase : B_Entity
     protected virtual void Dead(bool isSelf = false)
     {
         DisableMovementAndRotation();
+        
+        UnitManager.Instance.DropItem(unitIndex, transform.position, Quaternion.identity);
     }
 
     #endregion

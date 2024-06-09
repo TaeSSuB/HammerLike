@@ -126,7 +126,7 @@ public class B_Player : B_UnitBase
 
             if(item == null) return;
             
-            if(item.canPickUp)
+            if(item.isPickUpItem)
             {
                 inventory.AddItem(new B_Item(item.item), 1);
             }

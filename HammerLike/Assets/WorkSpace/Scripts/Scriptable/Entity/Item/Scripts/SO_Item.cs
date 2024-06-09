@@ -8,6 +8,7 @@ public enum Rarity { Common, Uncommon, Rare, Epic, Legendary }
 
 public enum Attributes
 {
+    Gold,
     Health,
     Stamina,
     Damage,
