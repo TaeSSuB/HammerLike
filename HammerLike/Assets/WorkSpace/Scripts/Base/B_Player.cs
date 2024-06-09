@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 /// <summary>
 /// B_Player : Player Base Class
@@ -19,41 +18,51 @@ public class B_Player : B_UnitBase
     public LayerMask mouseLayer;
     private Vector3 currentMovePos = Vector3.zero;
     private Vector3 currentDashPos = Vector3.zero;
+
     [SerializeField] private GameObject chargeVFXObj;
     [SerializeField] private float minChargeMoveRate = 0.1f;
 
+    private int atkDamageOrigin;
+
+    private float knockbackPowerOrigin;
+    
+    private float hitDuration;
+
+    private bool isLockAttack;
+
+    [Header("Weapon Settings")]
     [SerializeField] private GameObject weaponObj;
-    [SerializeField] private Renderer weaponRenderer;
     [SerializeField] private Transform weaponTR;
     [SerializeField] private SO_Weapon weaponData;
+    private Renderer weaponRenderer;
+
+    [Header("Weapon Orbit Settings")]
     [SerializeField] private BoxCollider weaponCollider;
-
-    [SerializeField] private WeaponOrbit weaponOrbit;
-
-    private int atkDamageOrigin;
-    private float knockbackPowerOrigin;
-
+    [SerializeField] private WeaponOrbitPlayer weaponOrbit;
+    [SerializeField] private float minAttackRotAmount = 20f;
+    private Vector3 attackStartDir;
+    private float attackSign;
 
     [Header("Camera Settings")]
     [SerializeField] private RotateType rotateType = RotateType.LookAtMouseSmooth;
     [SerializeField] private float rotSpeed = 10f;
+    [SerializeField] private float atkRotSpeed = 5f;
     [SerializeField] private float rotDeadZone = 0.1f;
-    [SerializeField] private bool AllowRotate_L = true;
-    [SerializeField] private bool AllowRotate_R = true;
-
 
     public SO_Weapon WeaponData => weaponData;
 
     public int AtkDamageOrigin => atkDamageOrigin;
 
+    #region Events
     public event Action<int> OnHPChanged;
     public event Action<float> OnChargeChanged;
-
-    // OnWeaponEquipped
     public event Action<B_Weapon> OnWeaponEquipped;
+    public event Action OnPlayerDeath;
+    #endregion
+
     [Header("Temp")]
     [SerializeField] private SceneLoader sceneLoader;
-    public event Action OnPlayerDeath;
+
     #region Unity Callbacks & Init
 
     //init override
@@ -62,18 +71,21 @@ public class B_Player : B_UnitBase
         base.Init();
         // Init logic
         GameManager.Instance.SetPlayer(this);
+
+        // Temp - 피격 시간. 일단 넉백 시간으로 임시 할당
+        hitDuration = GameManager.Instance.SystemSettings.KnockbackDuration;
+
         chargeVFXObj.SetActive(false);
 
         var currentWeaponObj = GameManager.Instance.Player.WeaponData;
-        var findItem = B_InventoryManager.Instance.playerWeaponContainer.FindItemOnInventory(currentWeaponObj.itemData);
+        
+        currentWeaponObj.Use();
+        
+        //findItem.ItemObject.Use();
+        //EquipWeapon(findItem.ItemObject as SO_Weapon);
 
-        if(findItem == null) {
-            B_InventoryManager.Instance.playerWeaponContainer.AddItem(currentWeaponObj.itemData, 1);
-        }
-        findItem = B_InventoryManager.Instance.playerWeaponContainer.FindItemOnInventory(currentWeaponObj.itemData);
-
-        EquipWeapon(findItem.ItemObject as SO_Weapon);
-        OnPlayerDeath += sceneLoader.PlayerDead;
+        if(sceneLoader != null)
+            OnPlayerDeath += sceneLoader.PlayerDead;
     }
 
     protected override void Update()
@@ -95,10 +107,10 @@ public class B_Player : B_UnitBase
 
         LookAtMouse();
 
+        UpdateDashCoolTime();
+
         ApplyMovement(currentMovePos);
         ApplyDash(currentDashPos);
-
-        currentMovePos = InputMovement();
     }
 
     
@@ -140,8 +152,8 @@ public class B_Player : B_UnitBase
             Vector3 hitDir = (transform.position - unit.transform.position).normalized;
 
             // Take Damage and Knockback dir from player
-            TakeDamage(hitDir, unit.UnitStatus.atkDamage, unit.UnitStatus.knockbackPower);
-            StartCoroutine(CoHitEvent(1f, knockbackDuration));
+            TakeDamage(hitDir, unit.UnitStatus.atkDamage, unit.UnitStatus.knockbackPower, true);
+            StartCoroutine(CoHitEvent(1f, hitDuration));
 
             Anim.SetTrigger("tHit");
 
@@ -165,16 +177,16 @@ public class B_Player : B_UnitBase
 
     private Vector3 InputMovement()
     {
-        if(isLockMove)
+        if(IsLockMove)
             return Vector3.zero;
 
         // Input logic
         Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         moveDir.Normalize();
 
-        Vector3 coordDir = Vector3.zero;
+        Vector3 coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(moveDir);
 
-        return moveDir;
+        return coordDir;
     }
 
     private void ApplyMovement(Vector3 inMoveDir)
@@ -188,10 +200,8 @@ public class B_Player : B_UnitBase
 
     private Vector3 InputDash(Vector3 inDashDir)
     {
-        if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
+        if(Input.GetKey(KeyCode.Space) || Input.GetMouseButton(1))
         {
-            ResetAttack();
-
             if(inDashDir == Vector3.zero)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -201,13 +211,11 @@ public class B_Player : B_UnitBase
                 {
                     Vector3 lookAt = hit.point;
                     inDashDir = lookAt - transform.position;
-                    inDashDir.y = 0;
+                    inDashDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDashDir);
                 }
             }
-            
-            var coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDashDir);
 
-            return coordDir;
+            return inDashDir;
         }
 
         return Vector3.zero;
@@ -217,7 +225,9 @@ public class B_Player : B_UnitBase
     {
         if(inDashDir == Vector3.zero)
             return;
-        if(isLockMove)
+        if(IsLockMove)
+            return;
+        if((UnitStatus as SO_PlayerStatus).dashCooldown > 0)
             return;
 
         transform.LookAt(inDashDir + transform.position);
@@ -226,6 +236,9 @@ public class B_Player : B_UnitBase
 
     void InputCharge()
     {
+        if(isLockAttack || isAttacking)
+            return;
+            
         // Charge attack logic
         if (Input.GetMouseButton(0))
         {
@@ -244,7 +257,7 @@ public class B_Player : B_UnitBase
     /// </summary>
     protected void LookAtMouse()
     {
-        if(isLockRotate)
+        if(IsLockRotate)
             return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -264,10 +277,41 @@ public class B_Player : B_UnitBase
                         transform.LookAt(lookAt);
                         break;
                     case RotateType.LookAtMouseSmooth:
-                        Quaternion targetRotation = Quaternion.LookRotation(lookAt - transform.position);
-                        Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotSpeed);
-                        transform.rotation = newRot;
+                        var lookAtDir = lookAt - transform.position;
+                        Quaternion targetRotation = Quaternion.LookRotation(lookAtDir);
+
+                        float currentRotSpeed = IsAttacking ? atkRotSpeed : rotSpeed;
+
+                        if (IsAttacking)
+                        {
+                            // Check Right or Left to attackStartDir
+                            float signedAngle = Vector3.SignedAngle(attackStartDir, lookAtDir, Vector3.up);
+
+                            if(attackSign == 0)
+                            {
+                                attackSign = Mathf.Sign(signedAngle);
+
+                                if(Mathf.Abs(signedAngle) < minAttackRotAmount)
+                                {
+                                    attackSign = 0;
+                                }
+
+                                Anim.SetFloat("fAttackX", attackSign);
+                            }
+
+                            if(Quaternion.Angle(targetRotation, transform.rotation) > minAttackRotAmount)
+                            {
+                                transform.Rotate(Vector3.up, attackSign * Time.deltaTime * currentRotSpeed);
+                            }
+                        }
+                        else
+                        {
+                            Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * currentRotSpeed);
+
+                            transform.rotation = newRot;
+                        }
                         break;
+
                     default:
                         break;
                 }
@@ -373,6 +417,8 @@ public class B_Player : B_UnitBase
         var minChargeRate = (unitStatus as SO_PlayerStatus).minChargeRate;
         var maxChargeRate = (unitStatus as SO_PlayerStatus).maxChargeRate;
 
+        attackStartDir = transform.forward;
+
         if (chargeRate >= minChargeRate)
         {
             if (chargeRate >= maxChargeRate)
@@ -404,9 +450,6 @@ public class B_Player : B_UnitBase
         // Attack damage = Original attack damage
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
-
-        // Temp 240508
-        AllowRotate_R = false;
     }
 
     void ChargeAttack()
@@ -418,9 +461,6 @@ public class B_Player : B_UnitBase
         ApplyChargeDamage();
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
-
-        // Temp 240508
-        AllowRotate_L = false;
     }
 
     void MaximumChargeAttack()
@@ -432,9 +472,6 @@ public class B_Player : B_UnitBase
         ApplyChargeDamage();
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
-
-        // Temp 240508
-        AllowRotate_L = false;
     }
 
     /// <summary>
@@ -443,11 +480,14 @@ public class B_Player : B_UnitBase
     void ResetAttack()
     {
         // Reset attack logic
-        isAttacking = false;
+        SetAttacking = false;
         Anim.SetBool("bAttack", false);
         Anim.SetBool("IsOutWardAttack", false);
         Anim.SetBool("IsInWardAttack", false);
-        weaponOrbit.trailRenderer.Clear();
+        
+        if(!weaponOrbit.instanceMode)
+            weaponOrbit.trailRenderer.Clear();
+        
         DisableWeaponCollider();
         chargeVFXObj.SetActive(false);
 
@@ -458,9 +498,6 @@ public class B_Player : B_UnitBase
 
         //zoomCam.orthographicSize = startZoom;
         ResetDamage();
-
-        AllowRotate_L = true;
-        AllowRotate_R = true;
     }
 
     #region .Movement
@@ -491,62 +528,75 @@ public class B_Player : B_UnitBase
     private IEnumerator DashCoroutine(Vector3 coordDir)
     {
         float dashTime = (unitStatus as SO_PlayerStatus).dashDuration;
-        float dashSpeed = (unitStatus as SO_PlayerStatus).dashSpeed;
 
         StartDash();
 
-        //transform.LookAt(coordDir + transform.position);
-        var lookAt = coordDir + transform.position;
-
         Debug.DrawLine(transform.position, coordDir + transform.position, Color.red, 3f);
-
-        agent.isStopped = true;
-        agent.enabled = false;
-        Rigid.velocity = Vector3.zero;
 
         while (dashTime > 0)
         {
             // move with rigid body
-            Rigid.velocity = coordDir * dashSpeed;
+            Move(transform.position + coordDir, true);
+
             dashTime -= Time.deltaTime;
             yield return null;
         }
-        
-        Rigid.velocity = Vector3.zero;
-        agent.enabled = true;
-        agent.isStopped = false;
 
         EndDash();
     }
 
+    /// <summary>
+    /// StartDash : 대쉬 시작
+    /// moveSpeed를 대쉬 속도로 변경하고, 대쉬 상태를 고정
+    /// </summary>
     protected void StartDash()
     {
-        // Start dash logic
-        Anim.SetTrigger("tEnvasion");
-        Anim.speed = 1.2f / (unitStatus as SO_PlayerStatus).dashDuration;//(unitStatus as SO_PlayerStatus).dashSpeed;
+        ResetAttack();
 
+        // Start dash logic
+        Anim.SetTrigger("tEvasion");
+        Anim.SetInteger("iEvasion", (int)(unitStatus as SO_PlayerStatus).evasionType);
+        Anim.speed = 1.2f / (unitStatus as SO_PlayerStatus).dashDuration;//(unitStatus as SO_PlayerStatus).dashSpeed;
+        (unitStatus as SO_PlayerStatus).moveSpeed = (unitStatus as SO_PlayerStatus).dashSpeed;
+
+        isLockAttack = true;
         SetInvincible(true);
         DisableMovementAndRotation();
     }
     
+    /// <summary>
+    /// EndDash : 대쉬 종료
+    /// moveSpeed를 원래대로 돌리고, 대쉬 상태를 초기화
+    /// </summary>
     protected void EndDash()
     {
+        // Temp. 리셋 두번은 필요 없을 듯? a.HG
+        ResetAttack();
+
         // End dash logic & Initialize
         Anim.SetTrigger("tIdle");
         Anim.speed = 1f;//(unitStatus as SO_PlayerStatus);
+        (unitStatus as SO_PlayerStatus).moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin;
+
+        isLockAttack = false;
         SetInvincible(false);
         EnableMovementAndRotation();
+
+        (unitStatus as SO_PlayerStatus).dashCooldown = (unitStatus as SO_PlayerStatus).DashCooldownOrigin;
     }
 
     #endregion
 
     #endregion
 
-    protected override void Dead()
+    protected override void Dead(bool isSelf = false)
     {
-        base.Dead();
+        base.Dead(isSelf);
         Anim.SetTrigger("tDeath");
-      
+
+        isLockAttack = true;
+
+        DisableWeaponCollider();
 
         OnPlayerDeath?.Invoke();
     }
@@ -555,10 +605,85 @@ public class B_Player : B_UnitBase
 
     #region Control & Apply Status Data
 
-    protected override void ApplyStatus()
+    protected override void InitStatus()
     {
         unitStatus = Instantiate(GameManager.Instance.PlayerStatus);
         //unitStatus = GameManager.Instance.PlayerStatus;
+    }
+
+    void ApplyWeaponStatus(SO_Weapon inWeapon)
+    {
+        if(inWeapon != null)
+        {
+            // Status Apply
+            (unitStatus as SO_PlayerStatus).atkDamage = inWeapon.attackPower;
+            atkDamageOrigin = (unitStatus as SO_PlayerStatus).atkDamage;
+
+            (unitStatus as SO_PlayerStatus).knockbackPower = inWeapon.knockbackPower;
+            knockbackPowerOrigin = (unitStatus as SO_PlayerStatus).knockbackPower;
+            
+            (unitStatus as SO_PlayerStatus).atkRange = inWeapon.weaponRange;
+            (unitStatus as SO_PlayerStatus).atkSpeed = inWeapon.attackSpeed;
+
+            (unitStatus as SO_PlayerStatus).chargeRate = 1;
+
+            (unitStatus as SO_PlayerStatus).evasionType = inWeapon.evasionType;
+        }
+        else
+        {
+            // Status Apply
+            (unitStatus as SO_PlayerStatus).atkDamage = 1;
+            atkDamageOrigin = 1;
+
+            (unitStatus as SO_PlayerStatus).knockbackPower = 1;
+            knockbackPowerOrigin = 1;
+            
+            (unitStatus as SO_PlayerStatus).atkRange = 1f;
+            (unitStatus as SO_PlayerStatus).atkSpeed = 1f;
+
+            (unitStatus as SO_PlayerStatus).chargeRate = 1;
+
+            (unitStatus as SO_PlayerStatus).evasionType = 0;
+        }
+    }
+
+    void ApplyWeaponResources(SO_Weapon inWeapon)
+    {
+        if(inWeapon != null)
+        {
+            weaponData = Instantiate(inWeapon);
+            
+            weaponObj = Instantiate(weaponData.prefab, weaponTR);
+            
+            B_Weapon b_Weapon = weaponObj.GetComponent<B_Weapon>();
+            
+            if(b_Weapon == null)
+                b_Weapon = weaponObj.GetComponentInChildren<B_Weapon>();
+            
+            if(b_Weapon == null)
+            {
+                Debug.LogError("WeaponObj is not B_Weapon or is not in child.");
+                return;
+            }
+
+            weaponRenderer = b_Weapon.MeshRenderer;
+
+            //weaponOrbit.ApplyWeapon(b_Weapon);
+
+            chargeVFXObj = b_Weapon.VFXObj;
+
+            OnWeaponEquipped?.Invoke(b_Weapon);
+        }
+        else
+        {
+            Destroy(weaponObj);
+            weaponObj = null;
+            weaponRenderer = null;
+
+            weaponData = null;
+
+            OnWeaponEquipped?.Invoke(null);
+        }
     }
 
     void ApplyChargeDamage()
@@ -571,10 +696,9 @@ public class B_Player : B_UnitBase
     {
         (unitStatus as SO_PlayerStatus).atkDamage = atkDamageOrigin;
     }
-
-    public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true)
+    public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true, bool slowMotion = false)
     {
-        base.TakeDamage(damageDir, damage, knockBackPower, knockBack);
+        base.TakeDamage(damageDir, damage, knockBackPower, knockBack, slowMotion);
 
         OnHPChanged?.Invoke(unitStatus.currentHP);
     }
@@ -586,84 +710,92 @@ public class B_Player : B_UnitBase
         OnHPChanged?.Invoke(unitStatus.currentHP);
     }
 
+    protected void UpdateDashCoolTime()
+    {
+        (UnitStatus as SO_PlayerStatus).dashCooldown -= Time.deltaTime;
+    }
+
     public void EquipWeapon(SO_Weapon inWeapon)
     {
         UnEquipWeapon();
 
-        weaponData = Instantiate(inWeapon);
-        
-        weaponObj = Instantiate(weaponData.prefab, weaponTR);
-        
-        B_Weapon b_Weapon = weaponObj.GetComponent<B_Weapon>();
-        
-        if(b_Weapon == null)
-            b_Weapon = weaponObj.GetComponentInChildren<B_Weapon>();
-        
-        if(b_Weapon == null)
-        {
-            Debug.LogError("WeaponObj is not B_Weapon or is not in child.");
-            return;
-        }
+        ApplyWeaponResources(inWeapon);
 
-        weaponRenderer = b_Weapon.MeshObj.GetComponent<Renderer>();
-
-        if(weaponRenderer == null)
-            weaponRenderer = b_Weapon.MeshObj.GetComponentInChildren<Renderer>();
-
-        if(weaponRenderer == null)
-        {
-            Debug.LogError("weaponRenderer is not in B_Weapon.MeshObj or is not in child.");
-            return;
-        }
-
-        weaponOrbit.ApplyWeapon(b_Weapon);
-
-        chargeVFXObj = b_Weapon.VFXObj;
-
-        // Status Apply
-        (unitStatus as SO_PlayerStatus).atkDamage = weaponData.attackPower;
-        atkDamageOrigin = (unitStatus as SO_PlayerStatus).atkDamage;
-
-        (unitStatus as SO_PlayerStatus).knockbackPower = weaponData.knockbackPower;
-        knockbackPowerOrigin = (unitStatus as SO_PlayerStatus).knockbackPower;
-        
-        (unitStatus as SO_PlayerStatus).atkRange = weaponData.weaponRange;
-        (unitStatus as SO_PlayerStatus).atkSpeed = weaponData.attackSpeed;
-
-        (unitStatus as SO_PlayerStatus).chargeRate = 1;
-
-        OnWeaponEquipped?.Invoke(b_Weapon);
+        ApplyWeaponStatus(inWeapon);
     }
 
     public void UnEquipWeapon()
     {
-        Destroy(weaponObj);
-        weaponObj = null;
-        weaponRenderer = null;
+        ApplyWeaponResources(null);
 
-        weaponData = null;
-
-        // Status Apply
-        (unitStatus as SO_PlayerStatus).atkDamage = 1;
-        atkDamageOrigin = 1;
-
-        (unitStatus as SO_PlayerStatus).knockbackPower = 1;
-        knockbackPowerOrigin = 1;
-        
-        (unitStatus as SO_PlayerStatus).atkRange = 1f;
-        (unitStatus as SO_PlayerStatus).atkSpeed = 1f;
-
-        (unitStatus as SO_PlayerStatus).chargeRate = 1;
-
-        OnWeaponEquipped?.Invoke(null);
+        ApplyWeaponStatus(null);
     }
 
     #endregion
 
     #region Animation Event
+
+    public void StartAttackDownWard()
+    {
+        //if(attackSign != 0f) return;
+
+        Debug.Log("StartAttackDownWard");
+
+        StartAttack();
+    }
+
+    public void EndAttackDownWard()
+    {
+        //if(attackSign != 0f) return;
+
+        Debug.Log("EndAttackDownWard");
+        
+        EndAttack();
+    }
+
+    public void StartAttackOutWard()
+    {
+        //if(attackSign != -1f) return;
+
+        Debug.Log("StartAttackOutWard");
+
+        StartAttack();
+    }
+
+    public void EndAttackOutWard()
+    {
+        //if(attackSign != -1f) return;
+
+        Debug.Log("EndAttackOutWard");
+
+        EndAttack();
+    }
+
+    public void StartAttackInWard()
+    {
+        //if(attackSign != 1f) return;
+
+        Debug.Log("StartAttackInWard");
+
+        StartAttack();
+    }
+
+    public void EndAttackInWard()
+    {
+        //if(attackSign != 1f) return;
+
+        Debug.Log("EndAttackInWard");
+
+        EndAttack();
+    }
+
     public override void StartAttack()
     {
         base.StartAttack();
+
+        agent.updateRotation=false;
+
+        UnitStatus.moveSpeed = UnitStatus.MoveSpeedOrigin * 0.2f;
     }
     public override void EndAttack()
     {
@@ -687,22 +819,47 @@ public class B_Player : B_UnitBase
 
         ResetDamage();
 
-        AllowRotate_L = true;
-        AllowRotate_R = true;
+        agent.updateRotation = true;
+
+        DisableWeaponCollider();
+        attackSign = 0f;
+
+        UnitStatus.moveSpeed = UnitStatus.MoveSpeedOrigin;
     }
 
     void EnableWeaponCollider()
     {
-        weaponOrbit.trailRenderer.Clear();
-        weaponOrbit.trailRenderer.emitting = true;
+        if(!weaponOrbit.instanceMode)
+        {
+            weaponOrbit.trailRenderer.Clear();        
+            weaponOrbit.trailRenderer.emitting = true;
+        }
+        else
+        {
+            weaponOrbit.AddTrackInstanceTrail();
+        }
+            
         // Enable weapon collider logic
         weaponCollider.enabled = true;
     }
     void DisableWeaponCollider()
     {
         // Disable weapon collider logic
-        weaponOrbit.trailRenderer.emitting = false;
+        if(!weaponOrbit.instanceMode)
+        {
+            weaponOrbit.trailRenderer.emitting = false;
+        }
+        else
+        {
+            weaponOrbit.ClearTrackInstanceTrail();
+        }
+        
         weaponCollider.enabled = false;
+    }
+
+    void TempAttackVFXEvent()
+    {
+        B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, weaponOrbit.gameObject.transform.position);
     }
 
     #endregion
@@ -727,7 +884,25 @@ public class B_Player : B_UnitBase
     #endregion
     void OnDestroy()
     {
-        OnPlayerDeath -= sceneLoader.PlayerDead;
+        if(sceneLoader != null)
+            OnPlayerDeath -= sceneLoader.PlayerDead;
     }
+
+    #region Gizmos
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, transform.forward * 2f);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(transform.position, currentMovePos * 2f);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(transform.position, currentDashPos * 2f);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawRay(transform.position, attackStartDir * 10f);
+    }
+    #endregion
 
 }

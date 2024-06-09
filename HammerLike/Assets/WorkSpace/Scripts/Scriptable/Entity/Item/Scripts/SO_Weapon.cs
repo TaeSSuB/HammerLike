@@ -8,7 +8,8 @@ public class SO_Weapon : SO_Equipment
     // 필요한 추가적인 무기 특성
     //public GameObject prefab; // 무기 프리팹
     [Header("Weapon Data")]
-    public SO_Skill itemSkill; // 무기 고유 스킬
+    //public SO_Skill itemSkill; // 무기 고유 스킬
+    public EnvasionType evasionType = EnvasionType.Roll;
 
     public int attackPower = 0;
     public int knockbackPower = 0;

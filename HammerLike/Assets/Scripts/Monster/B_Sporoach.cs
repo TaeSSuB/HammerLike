@@ -16,9 +16,9 @@ public class B_Sporoach : B_Enemy
 
     }
 
-    protected override void Dead()
+    protected override void Dead(bool isSelf = false)
     {
-
+        
     }
 
     public override void EndAttack()
@@ -32,4 +32,6 @@ public class B_Sporoach : B_Enemy
         base.UpdateAttackCoolTime();
         Anim.SetFloat("fRemainShot", UnitStatus.currentAttackCooltime);
     }
+
+    
 }

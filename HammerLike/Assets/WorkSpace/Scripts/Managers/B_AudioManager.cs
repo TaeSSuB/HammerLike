@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Linq;
 using NuelLib;
-
+using UnityEngine.SceneManagement;
 public enum AudioCategory { BGM, SFX }
 public enum AudioTag
 {
@@ -13,8 +13,10 @@ public enum AudioTag
     PickUp,
     Crash,
     Town,
-    SlimeDeath
+    SlimeDeath,
+    Click
 }
+
 
 public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
 {
@@ -100,6 +102,19 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
     {
         // Example: Play sound at start (optional)
         //PlaySound(AudioCategory.BGM, AudioTag.Town);
+    }
+
+    private void Update()
+    {
+        CheckForMainMenuClick();
+    }
+
+    private void CheckForMainMenuClick()
+    {
+        if (SceneManager.GetActiveScene().name == "Mainmenu" && Input.GetMouseButtonDown(0))
+        {
+            PlaySound(AudioCategory.SFX, AudioTag.Click);
+        }
     }
 
     public void PlaySound(AudioCategory category, AudioTag tag)

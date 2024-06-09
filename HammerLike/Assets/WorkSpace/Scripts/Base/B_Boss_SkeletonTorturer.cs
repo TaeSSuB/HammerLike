@@ -22,7 +22,7 @@ public class B_Boss_SkeletonTorturer : B_Boss
     public event Action OnBossDead;
     [SerializeField] private SceneLoader sceneLoader;
 
-    public override Vector3 Move(Vector3 inPos)
+    public override Vector3 Move(Vector3 inPos, bool isForce = false)
     {            
         float moveAmount = Agent.velocity.normalized.magnitude;
             
@@ -47,12 +47,14 @@ public class B_Boss_SkeletonTorturer : B_Boss
     public override void Init()
     {
         base.Init();
-        OnBossDead += sceneLoader.BossDead;
+
+        if(sceneLoader != null)
+            OnBossDead += sceneLoader.BossDead;
     }
 
-    protected override void Dead()
+    protected override void Dead(bool isSelf = false)
     {
-        base.Dead();
+        base.Dead(isSelf);
         OnBossDead?.Invoke();
     }
 
@@ -75,7 +77,8 @@ public class B_Boss_SkeletonTorturer : B_Boss
             return;
         }
 
-        if (BossController?.CurrentStateType != BossAIStateType.HIT && BossController?.CurrentStateType != BossAIStateType.DEAD)
+        if (BossController?.CurrentStateType != BossAIStateType.STUN &&
+            BossController?.CurrentStateType != BossAIStateType.DEAD)
         {
             BossController.SetState(Thinking());
             // else
@@ -88,24 +91,13 @@ public class B_Boss_SkeletonTorturer : B_Boss
 
     protected BossAIStateType Thinking()
     {
-        var moveDir = GameManager.Instance.Player.transform.position - transform.position;
-
-        float applyCoordScale = GameManager.Instance.CalcCoordScale(moveDir);
-        var targetDis = moveDir.magnitude / applyCoordScale;
-
-        if (targetDis <= unitStatus.detectRange)
-        {
-            return BossController.CheckPattern();
-        }
-        else
-        {
-            return BossAIStateType.CHASE;        
-        }
+        return BossController.CheckPattern();
     }
 
     void OnDestroy()
     {
-        OnBossDead -= sceneLoader.BossDead;
+        if(sceneLoader != null)
+            OnBossDead -= sceneLoader.BossDead;
     }
 
 }

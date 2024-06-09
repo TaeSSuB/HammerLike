@@ -20,23 +20,36 @@ public class SO_SystemSettings : ScriptableObject
 
     [Header("Gameplay Settings")]
     [Space(10)]
+    [Header("Ground Settings")]
+    [SerializeField] private LayerMask groundLayer; // Define which layer is considered as ground
+    [SerializeField] private float groundCheckDistance = 0.1f; // Distance to check for ground
+    [Space(10)]
     [Header("KnockBack Settings")]
+    [SerializeField] private ForceMode knockbackForceMode = ForceMode.Force;
+    [SerializeField] private float knockbackDuration = 0.5f;
     [SerializeField] private float knockBackScale = 10f;
-    [SerializeField] private float maxKnockBackForce = 100f;
+    private float maxKnockBackForce = 1000f;
     [SerializeField] private AnimationCurve knockbackCurve;
     [Space(10)]
     [SerializeField] private float partsKnockBackScale = 10f;
-    [SerializeField] private float maxPartsBreakForce = 100f;
+    private float maxPartsBreakForce = 100f;
     [SerializeField] private AnimationCurve partsBreakForceCurve;
     //[SerializeField] private float gravity = 9.8f;
 
     [Header("Debug")]
     [SerializeField] private bool isDebugMode = false;
 
+
+    #region Getters
     public Vector3 CoordinateScale { get => coordinateScale; }
     public float TimeScale { get => timeScale; }
     public float SetTimeScale { set => timeScale = value; }
 
+    public LayerMask GroundLayer { get => groundLayer; }
+    public float GroundCheckDistance { get => groundCheckDistance; }
+
+    public ForceMode KnockbackForceMode { get => knockbackForceMode; }
+    public float KnockbackDuration { get => knockbackDuration; }
     public float KnockBackScale { get => knockBackScale; }
     public float PartsKnockBackScale { get => partsKnockBackScale; }
     public float MaxKnockBackForce { get => maxKnockBackForce; }
@@ -45,4 +58,8 @@ public class SO_SystemSettings : ScriptableObject
     public bool IsDebugMode { get => isDebugMode; }
     public AnimationCurve KnockbackCurve { get => knockbackCurve;}
     public AnimationCurve PartsBreakForceCurve { get => partsBreakForceCurve;}
+
+
+
+    #endregion
 }

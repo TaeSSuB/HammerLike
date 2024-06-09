@@ -16,8 +16,7 @@ public class AttackState : IAIState
     public void OnEnter()
     {
         //Debug.Log("AttackState OnEnter");
-        //unitBase.Anim.SetTrigger("tAttack");
-        //unitBase.StartAttack();
+
         var xzPlayerPos = new Vector3(GameManager.Instance.Player.transform.position.x, unitBase.transform.position.y, GameManager.Instance.Player.transform.position.z);
         unitBase.transform.LookAt(xzPlayerPos);
     }
@@ -26,7 +25,7 @@ public class AttackState : IAIState
     {
         //Debug.Log("AttackState OnExit");
         //unitBase.EndAttack();
-        unitBase.isAttacking = false;
+        unitBase.SetAttacking = false;
     }
 
     public void OnUpdate()
@@ -44,7 +43,6 @@ public class AttackState : IAIState
             unitBase.UnitStatus.currentAttackCooltime = unitBase.UnitStatus.maxAttackCooltime;
 
             unitBase.Anim.SetFloat("fRemainShot", unitBase.UnitStatus.maxAttackCooltime);
-            unitBase.Anim.SetBool("IsAttacking", unitBase.isAttacking);
 
             // Temp 20240402 - UnitBase에서 Attack 함수로 Anim 포함 일괄 호출하도록 변경 예정, a.HG
             unitBase.Attack();

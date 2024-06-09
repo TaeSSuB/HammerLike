@@ -14,8 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coordinateScale: {x: 1, y: 1.15471, z: 2}
   timeScale: 1
-  knockBackScale: 10
-  maxKnockBackForce: 1000
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 2684354560
+  groundCheckDistance: 0.5
+  knockbackForceMode: 1
+  knockbackDuration: 1
+  knockBackScale: 5
   knockbackCurve:
     serializedVersion: 2
     m_Curve:
@@ -473,7 +478,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   partsKnockBackScale: 1
-  maxPartsBreakForce: 100
   partsBreakForceCurve:
     serializedVersion: 2
     m_Curve:

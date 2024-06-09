@@ -58,7 +58,7 @@ public class SO_UnitStatus : ScriptableObject, ISerializationCallbackReceiver
     /// 스탯 Initialize
     /// ..일관화 필요
     /// </summary>
-    public void Init()
+    public virtual void Init()
     {
         currentHP = maxHP;
 

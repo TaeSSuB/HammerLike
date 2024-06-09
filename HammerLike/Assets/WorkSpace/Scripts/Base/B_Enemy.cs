@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -13,28 +14,22 @@ public class B_Enemy : B_UnitBase
     [Header("HP UI")]
     [SerializeField] Transform hpPosTR;
 
-    // Temp - Dev
-    [SerializeField] private bool isTester = false;
-
     // get aIStateManager
     public AIStateManager AIStateManager => aIStateManager;
 
     #region Unity Callbacks & Init
-
     public override void Init()
     {
         base.Init();
-
-        if(!isTester)
-            aIStateManager = GetComponent<AIStateManager>();
 
         if(hpPosTR == null)
             hpPosTR = transform;
 
         FindObjectOfType<B_UIManager>().CreateHPWorldUI(hpPosTR, this);
+
+        aIStateManager = GetComponent<AIStateManager>();
     }
 
-    // Update
     protected override void Update()
     {
         base.Update();
@@ -56,7 +51,7 @@ public class B_Enemy : B_UnitBase
                 }
                 else
                 {
-                    if(!isAttacking)
+                    if(!IsAttacking)
                         aIStateManager?.SetState(AIStateType.CHASE);
                 }
             }
@@ -87,11 +82,16 @@ public class B_Enemy : B_UnitBase
 
             //var chargeAmount = (player.UnitStatus as SO_PlayerStatus).chargeRate;
             var chargeAmount = (float)(player.UnitStatus.atkDamage / player.AtkDamageOrigin);
-            Debug.Log("chargeAmount - " + chargeAmount);
             
-            // Take Damage and Knockback dir from player
-            TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount);
-
+            if((player.UnitStatus as SO_PlayerStatus).maxChargeRate <= chargeAmount)
+            {
+                TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount, true, true);
+            }
+            else
+            {
+                TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount, true, false);
+            }
+            
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
 
@@ -103,9 +103,6 @@ public class B_Enemy : B_UnitBase
             {
                 B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Death);
             }
-
-            if (isTester)
-                return;
 
             //ChangeState(new ChaseState(this));
             if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
@@ -120,17 +117,19 @@ public class B_Enemy : B_UnitBase
         // When hit Other Enemy
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            if (isKnockback) return;
+            CheckDead();
+            
+            if (IsKnockback) return;
 
             var other = collision.gameObject.GetComponent<B_Enemy>();
             
             if (other == null) return;
-            if (!other.isKnockback) return;
+            if (!other.IsKnockback) return;
 
             // Get hit dir from another enemy
             Vector3 hitDir = (transform.position - collision.transform.position).normalized;
 
-            TakeDamage(hitDir, (int)(other.Rigid.mass / 2f), other.Rigid.mass);
+            TakeDamage(hitDir, (int)(other.Rigid.mass / 2f), other.Rigid.mass, true);
 
             var vfxPos = collision.contacts[0].point;
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
@@ -147,18 +146,14 @@ public class B_Enemy : B_UnitBase
             if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
                 aIStateManager?.SetState(AIStateType.HIT);
         }
-
-
     }
-
     #endregion
     
     #region Check or Update State
-
-    protected override void Dead()
+    protected override void Dead(bool isSelf = false)
     {
-        base.Dead();
-        //aIStateManager.SetState(AIStateType.DEAD);
+        base.Dead(isSelf);
+        aIStateManager.SetState(AIStateType.DEAD);
 
         //DisconnectMusclesRecursive(GameManager.Instance.Player.transform.position);
         //Invoke(nameof(DisconnectMusclesRecursive), 0.1f);
@@ -166,7 +161,6 @@ public class B_Enemy : B_UnitBase
     #endregion
     
     #region Action
-
     public override void Attack()
     {
         base.Attack();
@@ -176,7 +170,6 @@ public class B_Enemy : B_UnitBase
     #endregion
 
     #region Animation Event
-
     public override void StartAttack()
     {
         base.StartAttack();
@@ -186,9 +179,6 @@ public class B_Enemy : B_UnitBase
     {
         base.EndAttack();
     }
-
     #endregion
-
-
 
 }
