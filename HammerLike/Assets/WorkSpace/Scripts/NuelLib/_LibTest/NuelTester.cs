@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using NuelLib;
+using NuelLib.Mathmetics;
 using NuelLib.AI;
-using UnityEditor.Experimental.GraphView;
 
 public class NuelTester : MonoBehaviour
 {
+    AStar3D aStar3D = new AStar3D();
+
     List<AStar2D.Node2D> current2D = new List<AStar2D.Node2D>();
     List<AStar3D.Node3D> current3D = new List<AStar3D.Node3D>();
 
@@ -24,28 +25,62 @@ public class NuelTester : MonoBehaviour
             if(Input.GetKeyDown(KeyCode.Alpha2))
             {
                 current2D.Clear();
-                current3D.Clear();  
+                current3D?.Clear();  
                 
                 current2D = AStarExample2D();
             }
             else if(Input.GetKeyDown(KeyCode.Alpha3))
             {
                 current2D.Clear();
-                current3D.Clear();
+                current3D?.Clear();
 
                 current3D = AStarExample3D();
             }
+        }
+
+        if(Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            
+            BMPNoiseGenerator.GenerateNoiseBMP("Assets/", "BMPNoiseResult");
+        }
+
+        if(Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            RandomRangeDistribution.MeasureRandomRange();
+        }
+
+        if(Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            int n = 100;
+            int kSSR = 1;
+            int kSR = 5;
+            int kR = 20;
+            double pSSR = 0.01; // 1% = 100회 당 1번
+            double pSR = 0.05; // 5% = 20회 당 1번
+            double pR = 0.2; // 20% = 5회 당 1번
+
+            double probabilitySSR = NuelMath.CalculateProbability(n, kSSR, pSSR);
+            double probabilitySR = NuelMath.CalculateProbability(n, kSR, pSR);
+            double probabilityR = NuelMath.CalculateProbability(n, kR, pR);
+
+            Debug.Log($"Probability of getting exactly {kSSR} SSR in {n} tries: {probabilitySSR * 100:F4}%");
+            Debug.Log($"Probability of getting exactly {kSR} SR in {n} tries: {probabilitySR * 100:F4}%");
+            Debug.Log($"Probability of getting exactly {kR} R in {n} tries: {probabilityR * 100:F4}%");
         }
     }
 
     List<AStar2D.Node2D> AStarExample2D()
     {
-        return AStar2D.AStar2DExample();
+        return AStar2D.AStar2DExample(true);
     }
 
     List<AStar3D.Node3D> AStarExample3D()
     {
-        return AStar3D.AStar3DExample();
+        int randomWidth = Random.Range(3, 10);
+        int randomHeight = Random.Range(3, 10);
+        int randomDepth = Random.Range(3, 10);
+        float wallProbability = Random.Range(0.1f, 0.8f);
+        return aStar3D.AStar3DExample(AStar3D.MovementType.DiagonalWithWalls, randomWidth, randomHeight, randomDepth, wallProbability);
     }
 
     private void OnDrawGizmos()
@@ -60,7 +95,7 @@ public class NuelTester : MonoBehaviour
                 {
                     if (example2DMap[x, y] == 1)
                     {
-                        Gizmos.color = Color.black;
+                        Gizmos.color = new Color(0.1f, 0.1f, 0.1f);
                         Gizmos.DrawCube(new Vector2(x, y), Vector3.one * 0.8f);
                     }
                 }
@@ -89,9 +124,10 @@ public class NuelTester : MonoBehaviour
             Gizmos.DrawCube(endPos, Vector3.one * 0.5f);
         }
 
-        if(current3D.Count > 0)
+        if(current3D != null && current3D.Count > 0)
         {
-            var example3DMap = AStar3D.ExampleMap();
+            //var example3DMap = aStar3D.ExampleMap(10, 10, 10);
+            var example3DMap = aStar3D.currentGrid;
 
             for (int z = 0; z < example3DMap.GetLength(2); z++)
             {
@@ -101,7 +137,7 @@ public class NuelTester : MonoBehaviour
                     {
                         if (example3DMap[x, y, z] == 1)
                         {
-                            Gizmos.color = Color.black;
+                            Gizmos.color = new Color(0.1f, 0.1f, 0.1f);
                             Gizmos.DrawCube(new Vector3(x, y, z), Vector3.one * 0.8f);
                         }
                     }
@@ -123,11 +159,11 @@ public class NuelTester : MonoBehaviour
             }
 
             Gizmos.color = Color.green;
-            var startPos = new Vector3(AStar3D.StartNode().X, AStar3D.StartNode().Y, AStar3D.StartNode().Z);
+            var startPos = new Vector3(aStar3D.start.X, aStar3D.start.Y, aStar3D.start.Z);
             Gizmos.DrawCube(startPos, Vector3.one * 0.5f);
 
             Gizmos.color = Color.blue;
-            var endPos = new Vector3(AStar3D.GoalNode().X, AStar3D.GoalNode().Y, AStar3D.GoalNode().Z);
+            var endPos = new Vector3(aStar3D.goal.X, aStar3D.goal.Y, aStar3D.goal.Z);
             Gizmos.DrawCube(endPos, Vector3.one * 0.5f);
         }
 

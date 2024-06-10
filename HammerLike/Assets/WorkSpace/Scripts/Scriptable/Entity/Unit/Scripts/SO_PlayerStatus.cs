@@ -30,6 +30,7 @@ public class SO_PlayerStatus : SO_UnitStatus
     public float chargeRateIncrease = 0.1f;
     //protected float chargeRateOrigin = 1f;
 
+    // a.HG Comment : 스태미나 도입 여부에 대한 논의 필요
     [Header("Stamina")]
     public float currentStamina = 100f;
     public float maxStamina = 100f;
@@ -42,5 +43,9 @@ public class SO_PlayerStatus : SO_UnitStatus
         base.Init();
 
         dashCooldownOrigin = dashCooldown;
+
+        currentStamina = maxStamina;
+        
+        chargeRate = 1f;
     }
 }
