@@ -204,4 +204,9 @@ public class UI_InGame : MonoBehaviour
         currentWeaponImage.sprite = sprite;
     }
 
+    public void UpdateGoldUI(int goldAmount)
+    {
+        goldText.text = goldAmount.ToString();
+    }
+
 }

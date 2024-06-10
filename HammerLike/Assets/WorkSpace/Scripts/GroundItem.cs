@@ -7,6 +7,7 @@ public class GroundItem : MonoBehaviour, ISerializationCallbackReceiver
 {
     public SO_Item item;
     public bool canPickUp = false;
+    public bool canPurchase = true;
 
     public void OnAfterDeserialize()
     {

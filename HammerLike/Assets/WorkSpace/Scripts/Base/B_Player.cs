@@ -126,17 +126,41 @@ public class B_Player : B_UnitBase
 
             if(item == null) return;
             
-            if(item.canPickUp)
+            if(item.canPurchase)
             {
-                inventory.AddItem(new B_Item(item.item), 1);
+                if(inventory.goldAmount>=500)
+                {
+                    if (item.canPickUp)
+                    {
+                        inventory.AddItem(new B_Item(item.item), 1);
+                    }
+                    else
+                    {
+                        Debug.Log("Directly Use Item : " + item.item.name);
+                        item.item.Use();
+                    }
+                    inventory.goldAmount -= 500;
+                    B_UIManager.Instance.UpdateGoldUI(inventory.goldAmount);
+                    Destroy(other.gameObject);
+                }
             }
             else
             {
-                Debug.Log("Directly Use Item : " + item.item.name);
-                item.item.Use();
-            }
+                if (item.canPickUp)
+                {
+                    inventory.AddItem(new B_Item(item.item), 1);
 
-            Destroy(other.gameObject);
+                }
+                else
+                {
+                    Debug.Log("Directly Use Item : " + item.item.name);
+                    item.item.Use();
+                }
+                Destroy(other.gameObject);
+            }
+            
+
+            
         }
 
         if(other.CompareTag("WeaponCollider") && UnitStatus.currentHP > 0)

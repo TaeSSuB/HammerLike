@@ -15,7 +15,7 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
     public SO_InventoryObject playerWeaponContainer;
 
     private void Start() {
-
+        
     }
 
     private void Update() {
@@ -75,6 +75,15 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
         //GameManager.Instance.Player.EquipWeapon(targetWeapon);
         
         B_UIManager.Instance.UI_InGame.UpdateWeaponImage(targetWeapon.itemIcon);
+    }
+
+    public void AddCurrencyItem(SO_Currency currency, int amount)
+    {
+        B_Item currencyItem = new B_Item(currency);
+        playerInventory.AddItem(currencyItem, amount);
+        playerInventory.goldAmount += amount;
+        B_UIManager.Instance.UpdateGoldUI(playerInventory.goldAmount);
+        Debug.Log($"Added {amount} of {currency.name} to player inventory.");
     }
 
     public void OnApplicationQuit()
