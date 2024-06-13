@@ -1,6 +1,7 @@
 using NuelLib;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 /// <summary>
@@ -53,6 +54,11 @@ public class UnitManager : SingletonMonoBehaviour<UnitManager>
         return unitDataBase.GetUnitPrefab(index);
     }
 
+    public GameObject GetDropItemPrefab(int index)
+    {
+        return unitDataBase.GetDropItemPrefab(index);
+    }
+
     /// <summary>
     /// CreateUnit : 유닛 생성 및 데이터 바인딩
     /// </summary>
@@ -89,6 +95,24 @@ public class UnitManager : SingletonMonoBehaviour<UnitManager>
         AddUnit(unit);
 
         return unitObj;
+    }
+
+    public GameObject DropItem(int index, Vector3 position, Quaternion rotation)
+    {
+        // Get DropItem Prefab
+        GameObject dropItem = GetDropItemPrefab(index);
+
+        if(dropItem == null)
+        {
+            Debug.Log("DropItem is not found.");
+            return null;
+        }
+
+        // Create DropItem
+        GameObject dropItemObj = Instantiate(dropItem, position, rotation);
+        Debug.Log("DropItemObj : " + dropItemObj.name);
+
+        return dropItemObj;
     }
 
     /// <summary>

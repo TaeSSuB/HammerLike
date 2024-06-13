@@ -128,7 +128,7 @@ public class B_Player : B_UnitBase
 
             if(item == null) return;
             
-            if(item.canPickUp)
+            if(item.isPickUpItem)
             {
                 inventory.AddItem(new B_Item(item.item), 1);
             }
@@ -267,6 +267,7 @@ public class B_Player : B_UnitBase
 
         if (Physics.Raycast(ray, out hit, 100, mouseLayer))
         {
+            // mouseLayer 상의 마우스 위치
             Vector3 lookAt = hit.point;
             lookAt.y = transform.position.y;
 
@@ -279,35 +280,47 @@ public class B_Player : B_UnitBase
                         transform.LookAt(lookAt);
                         break;
                     case RotateType.LookAtMouseSmooth:
+
+                        // 캐릭터 - 마우스 방향 벡터 & 각도 계산
                         var lookAtDir = lookAt - transform.position;
                         Quaternion targetRotation = Quaternion.LookRotation(lookAtDir);
 
+                        // 공격 여부에 따라 회전 속도 변경
                         float currentRotSpeed = IsAttacking ? atkRotSpeed : rotSpeed;
 
+                        // 공격 상태, 마우스 방향으로 회전 판별
                         if (IsAttacking)
                         {
-                            // Check Right or Left to attackStartDir
+                            // 공격 시작 방향과 마우스 방향의 각도 계산
                             float signedAngle = Vector3.SignedAngle(attackStartDir, lookAtDir, Vector3.up);
 
+                            // attackSign == 0, 즉 공격 시작 방향이 없으면 공격 시작 방향 설정
                             if(attackSign == 0)
                             {
+                                // SignedAngle 부호로 좌우 방향 판별
                                 attackSign = Mathf.Sign(signedAngle);
 
+                                // 일정 각도 이상 차이 없으면 고정 (수직 공격)
                                 if(Mathf.Abs(signedAngle) < minAttackRotAmount)
                                 {
                                     attackSign = 0;
                                 }
-
+                                
+                                // 애니메이션 적용
                                 Anim.SetFloat("fAttackX", attackSign);
                             }
 
+                            // 공격 시작 방향과 마우스 방향이 일정 각도 이상 차이가 나면 회전
                             if(Quaternion.Angle(targetRotation, transform.rotation) > minAttackRotAmount)
                             {
+                                // Lerp 등의 함수는 방향에 상관없이 항상 최소 이동 거리만을 반환함.
+                                // 회전 방향을 고정하기 위해 대신 Rotate와 DeltaTime 사용
                                 transform.Rotate(Vector3.up, attackSign * Time.deltaTime * currentRotSpeed);
                             }
                         }
                         else
                         {
+                            // 회전 속도 적용, 부드러운 회전
                             Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * currentRotSpeed);
 
                             transform.rotation = newRot;
@@ -805,6 +818,8 @@ public class B_Player : B_UnitBase
 
         agent.updateRotation=false;
 
+        transform.LookAt(transform.position + attackStartDir);
+
         UnitStatus.moveSpeed = UnitStatus.MoveSpeedOrigin * 0.2f;
     }
     public override void EndAttack()
@@ -869,7 +884,10 @@ public class B_Player : B_UnitBase
 
     void TempAttackVFXEvent()
     {
-        B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, weaponOrbit.gameObject.transform.position);
+        var dir = weaponOrbit.gameObject.transform.position - gameObject.transform.position;
+        var dirNormalized = dir.normalized;
+
+        B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, weaponOrbit.gameObject.transform.position - dirNormalized * 0.5f);
     }
 
     #endregion

@@ -87,6 +87,11 @@ public class B_UnitBase : B_Entity
         {
             anim = GetComponent<Animator>();
         }
+
+        // 초기 HP 값에 따른 Dead 판별
+        isAlive = true;
+        CheckDead(true);
+        
     }
 
     // Update is called once per frame
@@ -234,19 +239,18 @@ public class B_UnitBase : B_Entity
 
     public virtual bool CheckDead(bool isSelf = false)
     {
+        if(!isAlive) return true;
+
         // Dead if hp is 0
         if (UnitStatus.currentHP <= 0)
         {
-            if(isAlive)
-            {
-                Dead(isSelf);
-                isAlive = false;
-            }
+            Dead(isSelf);
+            isAlive = false;
+
             return true;
         }
         else
         {
-            isAlive = true;
             return false;
         }
     }
@@ -307,6 +311,8 @@ public class B_UnitBase : B_Entity
     protected virtual void Dead(bool isSelf = false)
     {
         DisableMovementAndRotation();
+        
+        UnitManager.Instance.DropItem(unitIndex, transform.position, Quaternion.identity);
     }
 
     #endregion

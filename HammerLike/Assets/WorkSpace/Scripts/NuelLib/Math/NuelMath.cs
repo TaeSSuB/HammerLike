@@ -2,8 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
-namespace NuelLib
+namespace NuelLib.Mathmetics
 {
     public class NuelMath
     {
@@ -26,7 +27,7 @@ namespace NuelLib
         }
 
         /// <summary>
-        /// ÆÑÅä¸®¾ó
+        /// ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
@@ -38,26 +39,96 @@ namespace NuelLib
             int result = 1;
 
             for (int i = 1; i <= n; i++)
+            {
                 result *= i;
+                Debug.Log(result);
+            }
 
             return result;
         }
 
         /// <summary>
-        /// ÀÌÇ× °è¼ö
+        /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         /// </summary>
         /// <param name="n"></param>
         /// <param name="k"></param>
         /// <returns></returns>
         static int BinomialCoefficient(int n, int k)
         {
+            if (k > n) return 0;
+            if (k == 0 || k == n) return 1;
+
+            Debug.Log(Factorial(k));
+            Debug.Log(Factorial(n));
+            Debug.Log(Factorial(n-k));
+
             return Factorial(n) / (Factorial(k) * Factorial(n - k));
         }
 
         /// <summary>
-        /// ´Ü¼ø °æ·Î °è»ê (Æ®¸® ±¸Á¶)
-        /// A ´Â °¡Áö, B ´Â ·¹º§(±íÀÌ)
-        /// ±×³É Á¦°ö Ãâ·ÂÇÏ´Â °Í°ú °°À½
+        /// ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="k"></param>
+        /// <returns></returns>
+        private static int CalculateBinomialCoefficient(int n, int k)
+        {
+            if (k > n) return 0;
+            if (k == 0 || k == n) return 1;
+
+            int result = 1;
+            for (int i = 1; i <= k; i++)
+            {
+                result *= (n - (k - i));
+                result /= i;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="k"></param>
+        /// <returns></returns>
+        public static double LogBinomialCoefficient(int n, int k)
+        {
+            if (k > n) return Double.NegativeInfinity;
+            if (k == 0 || k == n) return 0.0;
+
+            if (k > n - k) // C(n, k) == C(n, n - k)
+                k = n - k;
+
+            double logResult = 0.0;
+            for (int i = 1; i <= k; i++)
+            {
+                logResult += Math.Log(n - (k - i) + 1) - Math.Log(i);
+            }
+
+            return logResult;
+        }
+
+        /// <summary>
+        /// È½ï¿½ï¿½ n, ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ p ï¿½ï¿½ ï¿½ï¿½ k ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½ï¿½
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="k"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static double CalculateProbability(int n, int k, double p)
+        {
+            //int binomialCoefficient = CalculateBinomialCoefficient(n, k);
+            //double probability = binomialCoefficient * Math.Pow(p, k) * Math.Pow(1 - p, n - k);
+            //return probability;
+            double logBinomialCoefficient = LogBinomialCoefficient(n, k);
+            double logProbability = logBinomialCoefficient + k * Math.Log(p) + (n - k) * Math.Log(1 - p);
+            return Math.Exp(logProbability);
+        }
+
+        /// <summary>
+        /// ï¿½Ü¼ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+        /// A ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, B ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)
+        /// ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         /// <param name="branches"></param>
         /// <param name="levels"></param>
@@ -68,7 +139,7 @@ namespace NuelLib
         }
 
         /// <summary>
-        /// ÀÌÁø Æ®¸® °æ·Î °è»ê
+        /// ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         /// </summary>
         /// <param name="levels"></param>
         /// <returns></returns>

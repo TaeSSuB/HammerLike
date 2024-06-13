@@ -12,6 +12,7 @@ public class IndexWithUnitStatus
     public SO_UnitStatus unitStatus;
     public int index;
     public GameObject unitPrefab;
+    public GameObject dropItemPrefab;
 
     public IndexWithUnitStatus(SO_UnitStatus unitStatus, int index)
     {
@@ -64,5 +65,24 @@ public class SO_UnitDB : ScriptableObject
 
         Debug.LogError("UnitPrefab is not found.");
         return unitDataList[0].unitPrefab;
+    }
+
+    /// <summary>
+    /// GetDropItemPrefab : DB 내의 드랍 아이템 프리팹 반환
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public GameObject GetDropItemPrefab(int index)
+    {
+        for (int i = 0; i < unitDataList.Count; i++)
+        {
+            if (unitDataList[i].index == index)
+            {
+                return unitDataList[i].dropItemPrefab;
+            }
+        }
+
+        Debug.LogError("DropItemPrefab is not found.");
+        return unitDataList[0].dropItemPrefab;
     }
 }
