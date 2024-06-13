@@ -99,6 +99,8 @@ public class B_Player : B_UnitBase
         currentDashPos = InputDash(currentMovePos);
 
         TrackWeaponDirXZ();
+
+        
     }
 
     protected override void FixedUpdate() 
@@ -470,6 +472,14 @@ public class B_Player : B_UnitBase
         Anim.SetBool("IsOutWardAttack", true);
 
         ApplyChargeDamage();
+
+        Vector3 targetPosition = GetMouseWorldPosition();
+
+
+        if (weaponData.itemSkill!= null)
+        {
+            weaponData.ActivateWeaponSkill(targetPosition, transform);
+        }
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
     }
@@ -887,6 +897,22 @@ public class B_Player : B_UnitBase
         if(sceneLoader != null)
             OnPlayerDeath -= sceneLoader.PlayerDead;
     }
+
+    private Vector3 GetMouseWorldPosition()
+    {
+        Plane playerPlane = new Plane(Vector3.up, transform.position);
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        float hitdist;
+
+        if (playerPlane.Raycast(ray, out hitdist))
+        {
+            return ray.GetPoint(hitdist);
+        }
+
+        return transform.position;
+    }
+
+
 
     #region Gizmos
     private void OnDrawGizmos()
