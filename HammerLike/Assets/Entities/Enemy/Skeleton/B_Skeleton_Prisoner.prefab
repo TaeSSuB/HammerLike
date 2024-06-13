@@ -6795,6 +6795,8 @@ GameObject:
   - component: {fileID: 7728055365080933140}
   - component: {fileID: 1183918704893762077}
   - component: {fileID: 3775784216780814669}
+  - component: {fileID: 5587218159107310316}
+  - component: {fileID: 2617807996843506024}
   m_Layer: 8
   m_Name: Skeleton_Prisoner
   m_TagString: Enemy
@@ -6928,7 +6930,7 @@ MonoBehaviour:
   drawingMode: 1
   outlineLayer: 0
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -6944,7 +6946,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -6960,7 +6962,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -7026,24 +7028,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 391632d62e344c24babca1c8699bb445, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootObj: {fileID: 8993379786561302878}
   meshObj: {fileID: 8461987264248040813}
   col: {fileID: 8995942570513142284}
   rigid: {fileID: 8995942570513142280}
   isInvincible: 0
   unitIndex: 2
   anim: {fileID: 8995942570513142287}
-  agent: {fileID: 0}
-  isAttacking: 0
-  knockbackDuration: 0.5
-  puppet: {fileID: 8995942570625409004}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 2684354560
-  groundCheckDistance: 0.5
-  isKnockback: 0
+  isGrounded: 0
   hpPosTR: {fileID: 4266959465240773480}
-  isTester: 0
+  puppet: {fileID: 8995942570625409004}
   weaponColliderObj: {fileID: 5475718465746559330}
 --- !u!195 &3775784216780814669
 NavMeshAgent:
@@ -7067,6 +7060,31 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &5587218159107310316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8995942570513142273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cd9d9700a02be6439c42fc044784743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  remainKnockBackForce: 0
+--- !u!114 &2617807996843506024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8995942570513142273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7520ff5ab540f264e87aa8b9ee9a5cf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8995942570552095039
 GameObject:
   m_ObjectHideFlags: 0
@@ -7432,18 +7450,13 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2716011545075135056, guid: f1be4878ab4224a4b8d657aa440d1675,
         type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2716011545075135056, guid: f1be4878ab4224a4b8d657aa440d1675,
-        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2716011545075135056, guid: f1be4878ab4224a4b8d657aa440d1675,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2716011545075135056, guid: f1be4878ab4224a4b8d657aa440d1675,
         type: 3}
@@ -7489,11 +7502,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Monster Light
-      objectReference: {fileID: 0}
-    - target: {fileID: 7013529084959114425, guid: f1be4878ab4224a4b8d657aa440d1675,
-        type: 3}
-      propertyPath: m_Layer
-      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
