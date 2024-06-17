@@ -53,7 +53,7 @@ public class TrainingDoll : B_Enemy
 
     }
 
-    public override void TakeDamage(Vector3 damageDir, int damage, float knockBackPower, bool enableKnockBack = true, bool slowMotion = false)
+    public override void TakeDamage(Vector3 damageDir, int damage, float knockBackPower, bool enableKnockBack = true, bool slowMotion = false, bool isForced = false)
     {
         // Call the base TakeDamage method to apply the default behavior
         base.TakeDamage(damageDir, damage, knockBackPower, enableKnockBack, slowMotion);

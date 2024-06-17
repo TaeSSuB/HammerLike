@@ -444,7 +444,7 @@ public class B_Player : B_UnitBase
 
             // Move Speed Reduce
             UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin - (unitStatus as SO_PlayerStatus).MoveSpeedOrigin * Mathf.Clamp(normalizeChargeRate, 0f, 1f - minChargeMoveRate);
-               if(chargeRate >= maxChargeRate)
+               if(chargeRate >= maxChargeRate && weaponData.itemSkill!=null)
             {
                 DrawSkillRange();
             }
@@ -520,8 +520,7 @@ public class B_Player : B_UnitBase
         {
             Anim.SetBool("bAttack", true);
             Anim.SetBool("IsOutWardAttack", true);
-            if (weaponData.itemSkill.defaultAttack==true)
-                ApplyChargeDamage();
+            ApplyChargeDamage();
         }
         else
         {
