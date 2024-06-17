@@ -16,7 +16,6 @@ public class RandomObjectSpawner : MonoBehaviour
     public bool useParentRotation = true;
     public bool useParentPosition = true;
 
-
     private void Start()
     {
         ReplaceObject();
@@ -26,13 +25,18 @@ public class RandomObjectSpawner : MonoBehaviour
     {
         GameObject selectedPrefab = SelectRandomPrefab();
 
+        if (selectedPrefab == null)
+        {
+            Debug.LogError("No valid prefab selected.");
+            return;
+        }
+
         Quaternion rotation = useParentRotation ? transform.rotation : selectedPrefab.transform.rotation;
         Vector3 scale = useParentScale ? transform.localScale : selectedPrefab.transform.localScale;
         Vector3 position = useParentPosition ? transform.position : transform.position + (selectedPrefab.transform.position);
 
         GameObject spawnedObject = Instantiate(selectedPrefab, position, rotation, transform.parent);
         spawnedObject.transform.localScale = scale;
-
 
         if (destroyOriginal)
         {
@@ -42,15 +46,29 @@ public class RandomObjectSpawner : MonoBehaviour
 
     private GameObject SelectRandomPrefab()
     {
-        float total = 0;
+        List<PrefabProbability> validPrefabs = new List<PrefabProbability>();
+        float totalProbability = 0;
+
+        // 유효한 프리팹과 그 확률을 수집합니다.
         foreach (var item in prefabsWithProbability)
         {
-            total += item.probability;
+            if (item.prefab != null)
+            {
+                validPrefabs.Add(item);
+                totalProbability += item.probability;
+            }
         }
 
-        float randomPoint = Random.value * total;
+        if (validPrefabs.Count == 0)
+        {
+            Debug.LogError("No valid prefabs available for spawning.");
+            return null;
+        }
 
-        foreach (var item in prefabsWithProbability)
+        // 랜덤 값을 통해 프리팹을 선택합니다.
+        float randomPoint = Random.value * totalProbability;
+
+        foreach (var item in validPrefabs)
         {
             if (randomPoint < item.probability)
                 return item.prefab;
