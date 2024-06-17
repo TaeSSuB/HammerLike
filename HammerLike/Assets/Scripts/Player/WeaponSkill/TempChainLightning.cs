@@ -14,7 +14,7 @@ public class TempChainLightning : MonoBehaviour, ISkill
     public float maxDistance = 10f;
     private float damage = 10f;
     private Vector3 playerTrs;
-    [SerializeField] private float overlapSize=3f;
+    [SerializeField] private float overlapSize = 3f;
     public void ChargeSkill(Vector3 position, Transform parent, SO_Skill skillData)
     {
         /*this.transform.position = position;
@@ -25,10 +25,10 @@ public class TempChainLightning : MonoBehaviour, ISkill
     private void Start()
     {
         visualEffect = Thunder.GetComponent<VisualEffect>();
-        
+
     }
 
-    
+
 
     private void ChargeAttack(Vector3 position)
     {
@@ -168,7 +168,7 @@ public class TempChainLightning : MonoBehaviour, ISkill
 
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.CompareTag("Monster") && !hitMonsters.Contains(hitCollider.gameObject))
+            if ((hitCollider.CompareTag("Enemy") || hitCollider.CompareTag("Monster")) && !hitMonsters.Contains(hitCollider.gameObject))
             {
                 float distance = Vector3.Distance(position, hitCollider.transform.position);
                 if (distance < shortestDistance)
@@ -217,7 +217,7 @@ public class TempChainLightning : MonoBehaviour, ISkill
         Collider[] hitColliders = Physics.OverlapSphere(position, overlapSize);
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.CompareTag("Monster"))
+            if (hitCollider.CompareTag("Enemy") || hitCollider.CompareTag("Monster"))
             {
                 B_Enemy enemy = hitCollider.GetComponent<B_Enemy>();
                 if (enemy != null && !hitMonsters.Contains(hitCollider.gameObject))
