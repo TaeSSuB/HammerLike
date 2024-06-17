@@ -213,6 +213,7 @@ public class TempChainLightning : MonoBehaviour, ISkill
     IEnumerator DelayedDamage(Vector3 position)
     {
         yield return new WaitForSeconds(0.1f);
+        position.y = 0f;
 
         Collider[] hitColliders = Physics.OverlapSphere(position, overlapSize);
         foreach (var hitCollider in hitColliders)
