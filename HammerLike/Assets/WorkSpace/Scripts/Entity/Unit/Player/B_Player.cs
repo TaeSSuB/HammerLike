@@ -656,6 +656,8 @@ public class B_Player : B_UnitBase
 
         DisableWeaponCollider();
 
+        B_AudioManager.Instance.PlaySound("Player_Death", AudioCategory.SFX);
+
         OnPlayerDeath?.Invoke();
     }
 
@@ -754,7 +756,7 @@ public class B_Player : B_UnitBase
     {
         (unitStatus as SO_PlayerStatus).atkDamage = atkDamageOrigin;
     }
-    public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true, bool slowMotion = false)
+    public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true, bool slowMotion = false, bool isForced = false)
     {
         base.TakeDamage(damageDir, damage, knockBackPower, knockBack, slowMotion);
 
@@ -795,55 +797,31 @@ public class B_Player : B_UnitBase
 
     public void StartAttackDownWard()
     {
-        //if(attackSign != 0f) return;
-
-        Debug.Log("StartAttackDownWard");
-
         StartAttack();
     }
 
     public void EndAttackDownWard()
     {
-        //if(attackSign != 0f) return;
-
-        Debug.Log("EndAttackDownWard");
-        
         EndAttack();
     }
 
     public void StartAttackOutWard()
     {
-        //if(attackSign != -1f) return;
-
-        Debug.Log("StartAttackOutWard");
-
         StartAttack();
     }
 
     public void EndAttackOutWard()
     {
-        //if(attackSign != -1f) return;
-
-        Debug.Log("EndAttackOutWard");
-
         EndAttack();
     }
 
     public void StartAttackInWard()
     {
-        //if(attackSign != 1f) return;
-
-        Debug.Log("StartAttackInWard");
-
         StartAttack();
     }
 
     public void EndAttackInWard()
     {
-        //if(attackSign != 1f) return;
-
-        Debug.Log("EndAttackInWard");
-
         EndAttack();
     }
 
@@ -865,6 +843,8 @@ public class B_Player : B_UnitBase
         transform.LookAt(transform.position + attackStartDir);
 
         UnitStatus.moveSpeed = UnitStatus.MoveSpeedOrigin * 0.2f;
+
+        B_AudioManager.Instance.PlaySound("Attack_Hammer", AudioCategory.SFX);
     }
     public override void EndAttack()
     {
@@ -1034,6 +1014,7 @@ public class B_Player : B_UnitBase
     }
     #endregion
 
+
     #region Interaction
     private void HandleInteraction()
     {
@@ -1110,5 +1091,5 @@ public class B_Player : B_UnitBase
 
     #endregion
 
-   
+
 }

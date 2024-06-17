@@ -68,6 +68,10 @@ public class SwingBossState : IBossAIState
             weaponOrbitCommon.SetTrackType(WeaponOrbitCommon.TrackType.DirBasedPoint);
             weaponOrbitCommon.SetTracking(false);
             weaponOrbitCommon.DisableCollider();
+
+            // Temp - a.HG : Boss Skeleton Torturer Swing Sound 추가, Loop 적용되어있음. 추후 스크립트에서 제어 필요
+            B_AudioManager.Instance.StopSound("Rolling_Boss");
+
         }
 
         swingDelay = startSwingDelay;
@@ -91,6 +95,9 @@ public class SwingBossState : IBossAIState
             weaponOrbitCommon.SetTracking(true);
             weaponOrbitCommon.EnableCollider();
             weaponOrbitCommon.SetRigidKinematic(false);
+
+            // Temp - a.HG : Boss Skeleton Torturer Swing Sound 추가, Loop 적용되어있음. 추후 스크립트에서 제어 필요
+            B_AudioManager.Instance.PlaySound("Rolling_Boss", AudioCategory.SFX);
         }
 
         
