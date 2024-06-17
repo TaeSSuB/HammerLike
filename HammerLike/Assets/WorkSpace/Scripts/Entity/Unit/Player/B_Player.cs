@@ -67,6 +67,8 @@ public class B_Player : B_UnitBase
 
     public float interactionRange = 2f;  // 상호작용 거리
     public KeyCode interactionKey = KeyCode.F;  // 상호작용 키
+    private LineRenderer lineRenderer;
+    private Vector3 mousePosition;
 
     //init override
     public override void Init()
@@ -83,11 +85,24 @@ public class B_Player : B_UnitBase
         var currentWeaponObj = GameManager.Instance.Player.WeaponData;
         
         currentWeaponObj.Use();
-        
+
+
+        lineRenderer = gameObject.AddComponent<LineRenderer>();
+        lineRenderer.positionCount = 0;
+        lineRenderer.startWidth = 0.05f;
+        lineRenderer.endWidth = 0.05f;
+        lineRenderer.loop = true;
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        lineRenderer.startColor = Color.cyan;
+        lineRenderer.endColor = Color.cyan;
+
+        lineRenderer.sortingLayerName = "Default";
+        lineRenderer.sortingOrder = 5;
+
         //findItem.ItemObject.Use();
         //EquipWeapon(findItem.ItemObject as SO_Weapon);
 
-        if(sceneLoader != null)
+        if (sceneLoader != null)
             OnPlayerDeath += sceneLoader.PlayerDead;
     }
 
@@ -100,7 +115,6 @@ public class B_Player : B_UnitBase
 
         currentMovePos = InputMovement();
         currentDashPos = InputDash(currentMovePos);
-
         TrackWeaponDirXZ();
         HandleInteraction();
         
@@ -254,6 +268,7 @@ public class B_Player : B_UnitBase
         if (Input.GetMouseButton(0))
         {
             Charging();
+            
         }
         else if (Input.GetMouseButtonUp(0))
         {
@@ -412,6 +427,9 @@ public class B_Player : B_UnitBase
         // 0 ~ 1 사이의 값으로 정규화
         float normalizeChargeRate = ((unitStatus as SO_PlayerStatus).chargeRate - 1) / ((unitStatus as SO_PlayerStatus).maxChargeRate - 1);
 
+        var chargeRate = (unitStatus as SO_PlayerStatus).chargeRate;
+        var maxChargeRate = (unitStatus as SO_PlayerStatus).maxChargeRate;
+
         if ((unitStatus as SO_PlayerStatus).chargeRate > (unitStatus as SO_PlayerStatus).minChargeRate)
         {
             Anim.SetBool("IsCharge", true);
@@ -426,7 +444,10 @@ public class B_Player : B_UnitBase
 
             // Move Speed Reduce
             UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin - (unitStatus as SO_PlayerStatus).MoveSpeedOrigin * Mathf.Clamp(normalizeChargeRate, 0f, 1f - minChargeMoveRate);
-
+               if(chargeRate >= maxChargeRate)
+            {
+                DrawSkillRange();
+            }
             // Cam Zoom
             //zoomCam.orthographicSize = startZoom - (zoomAmount * normalizeChargeRate);
         }
@@ -435,6 +456,7 @@ public class B_Player : B_UnitBase
         // Init 해두고 재사용하기엔 편할 듯
         //Anim.SetFloat("fAttackSpd", (unitStatus as SO_PlayerStatus).atkSpeed);
         OnChargeChanged?.Invoke(normalizeChargeRate);
+        
     }
 
     void AttackSwitch()
@@ -494,17 +516,17 @@ public class B_Player : B_UnitBase
     void MaximumChargeAttack()
     {
         // Maximum charge attack logic
-        Anim.SetBool("bAttack", true);
-        Anim.SetBool("IsOutWardAttack", true);
-        if (weaponData.itemSkill.defaultAttack==true)
-            ApplyChargeDamage();
-
-        Vector3 targetPosition = GetMouseWorldPosition();
-
-
-        if (weaponData.itemSkill!= null)
+        if(weaponData.itemSkill==null)
         {
-            weaponData.ActivateWeaponSkill(targetPosition, transform);
+            Anim.SetBool("bAttack", true);
+            Anim.SetBool("IsOutWardAttack", true);
+            if (weaponData.itemSkill.defaultAttack==true)
+                ApplyChargeDamage();
+        }
+        else
+        {
+            Anim.SetTrigger("tActiveWeaponSkill");
+            ClearSkillRange();
         }
 
         Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
@@ -825,6 +847,15 @@ public class B_Player : B_UnitBase
         EndAttack();
     }
 
+    public void EndActiveSkill()
+    {
+        //if(attackSign != 1f) return;
+
+        Debug.Log("EndActiveSkill");
+
+        EndAttack();
+    }
+
     public override void StartAttack()
     {
         base.StartAttack();
@@ -922,6 +953,18 @@ public class B_Player : B_UnitBase
         weaponCollider.gameObject.transform.localScale = new Vector3(1, 1, coordScale);
     }
 
+    void ActiveWeaponSkill()
+    {
+        //Vector3 targetPosition = GetMouseWorldPosition();
+
+        if (weaponData.itemSkill != null)
+        {
+            weaponData.ActivateWeaponSkill(mousePosition, transform);
+        }
+    }
+
+    
+
     #endregion
     void OnDestroy()
     {
@@ -959,6 +1002,35 @@ public class B_Player : B_UnitBase
 
         Gizmos.color = Color.yellow;
         Gizmos.DrawRay(transform.position, attackStartDir * 10f);
+
+        
+    }
+
+
+    private void DrawSkillRange()
+    {
+        mousePosition = GetMouseWorldPosition();
+        DrawCircle(mousePosition, 3f);
+    }
+
+    private void DrawCircle(Vector3 center, float radius)
+    {
+        int segments = 50;
+        lineRenderer.positionCount = segments + 1;
+        float angle = 0f;
+
+        for (int i = 0; i < segments + 1; i++)
+        {
+            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * radius;
+            float z = Mathf.Cos(Mathf.Deg2Rad * angle) * radius;
+            lineRenderer.SetPosition(i, center + new Vector3(x, 0, z));
+            angle += 360f / segments;
+        }
+    }
+
+    private void ClearSkillRange()
+    {
+        lineRenderer.positionCount = 0;
     }
     #endregion
 
@@ -1038,4 +1110,5 @@ public class B_Player : B_UnitBase
 
     #endregion
 
+   
 }
