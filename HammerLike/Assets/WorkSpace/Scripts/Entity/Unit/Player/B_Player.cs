@@ -496,7 +496,7 @@ public class B_Player : B_UnitBase
         // Maximum charge attack logic
         Anim.SetBool("bAttack", true);
         Anim.SetBool("IsOutWardAttack", true);
-        if (weaponData.itemSkill.defaultAttack==true)
+        if (weaponData.itemSkill.defaultAttack == true)
             ApplyChargeDamage();
 
         Vector3 targetPosition = GetMouseWorldPosition();
