@@ -214,6 +214,11 @@ public class UI_InGame : MonoBehaviour
         bossHPSlider.value = (float)b_boss.UnitStatus.currentHP / b_boss.UnitStatus.maxHP;
     }
 
+    public void UpdateGoldUI(int goldAmount)
+    {
+        goldText.text = goldAmount.ToString();
+    }
+
     public void UpdateWeaponImage(Sprite sprite)
     {
         currentWeaponImage.sprite = sprite;

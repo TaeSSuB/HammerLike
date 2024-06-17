@@ -12,6 +12,8 @@ public class TempChainLightning : MonoBehaviour, ISkill
     public GameObject Thunder;
     private VisualEffect visualEffect;
     public float maxDistance = 10f;
+    private float damage = 10f;
+    private Vector3 playerTrs;
 
     public void ChargeSkill(Vector3 position, Transform parent, SO_Skill skillData)
     {
@@ -23,6 +25,7 @@ public class TempChainLightning : MonoBehaviour, ISkill
     private void Start()
     {
         visualEffect = Thunder.GetComponent<VisualEffect>();
+        playerTrs = GameManager.Instance.Player.transform.position;
     }
 
     
@@ -37,6 +40,8 @@ public class TempChainLightning : MonoBehaviour, ISkill
         visualEffect = thunderInstance.GetComponent<VisualEffect>();
         visualEffect.Play();
         Destroy(thunderInstance, 3); // Thunder 오브젝트를 3초 후에 제거
+
+        StartCoroutine(DelayedDamage(thunderPosition));
     }
 
 
@@ -56,12 +61,12 @@ public class TempChainLightning : MonoBehaviour, ISkill
 
     private Vector3 ClampPositionToMaxDistance(Vector3 targetPosition)
     {
-        float distance = Vector3.Distance(transform.position, targetPosition);
+        float distance = Vector3.Distance(playerTrs, targetPosition);
 
         if (distance > maxDistance)
         {
-            Vector3 direction = (targetPosition - transform.position).normalized;
-            targetPosition = transform.position + direction * maxDistance;
+            Vector3 direction = (targetPosition - playerTrs).normalized;
+            targetPosition = playerTrs + direction * maxDistance;
         }
 
         return targetPosition;
@@ -89,6 +94,13 @@ public class TempChainLightning : MonoBehaviour, ISkill
                 {
                     targetPoint = firstTarget.transform.position;
                     hitMonsters.Add(firstTarget);
+
+                    B_Enemy enemy = firstTarget.GetComponent<B_Enemy>();
+                    if (enemy != null)
+                    {
+                        Vector3 hitDir = (firstTarget.transform.position - startLocation).normalized;
+                        enemy.TakeDamage(hitDir, (int)damage, 0, false);
+                    }
                 }
 
                 float distance = Vector3.Distance(targetPoint, startLocation);
@@ -113,6 +125,13 @@ public class TempChainLightning : MonoBehaviour, ISkill
 
             Vector3 targetPoint = nextTarget.transform.position;
             hitMonsters.Add(nextTarget);
+
+            B_Enemy enemy = nextTarget.GetComponent<B_Enemy>();
+            if (enemy != null)
+            {
+                Vector3 hitDir = (nextTarget.transform.position - previousLocation).normalized;
+                enemy.TakeDamage(hitDir, (int)damage, 0, false);
+            }
 
             GameObject attack2 = Instantiate(Lightning, previousLocation, quater);
             float distance = Vector3.Distance(targetPoint, previousLocation);
@@ -166,5 +185,38 @@ public class TempChainLightning : MonoBehaviour, ISkill
             Invoke("WaitForLightning", 2);
             StartCoroutine(DoLightning());
         }*/
+    }
+
+    private void WeaponAttack()
+    {
+        alreadyLightning = true;
+        Invoke("WaitForLightning", 2);
+        StartCoroutine(DoLightning());
+    }
+    public void WeaponAttack(Vector3 position)
+    {
+        alreadyLightning = true;
+        Invoke("WaitForLightning", 2);
+        StartCoroutine(DoLightning());
+    }
+
+    IEnumerator DelayedDamage(Vector3 position)
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        Collider[] hitColliders = Physics.OverlapSphere(position, maxDistance);
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag("Monster"))
+            {
+                B_Enemy enemy = hitCollider.GetComponent<B_Enemy>();
+                if (enemy != null && !hitMonsters.Contains(hitCollider.gameObject))
+                {
+                    Vector3 hitDir = (hitCollider.transform.position - position).normalized;
+                    enemy.TakeDamage(hitDir, (int)damage, 0, false);
+                    hitMonsters.Add(hitCollider.gameObject);
+                }
+            }
+        }
     }
 }

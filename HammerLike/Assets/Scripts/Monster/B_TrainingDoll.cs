@@ -53,5 +53,15 @@ public class TrainingDoll : B_Enemy
 
     }
 
+    public override void TakeDamage(Vector3 damageDir, int damage, float knockBackPower, bool enableKnockBack = true, bool slowMotion = false)
+    {
+        // Call the base TakeDamage method to apply the default behavior
+        base.TakeDamage(damageDir, damage, knockBackPower, enableKnockBack, slowMotion);
+
+        // Add the shake effect
+        Sequence shakeSequence = DOTween.Sequence();
+        shakeSequence.Append(transform.DOShakeRotation(0.3f, new Vector3(0, 0, 30), 10, 90, false))
+                     .Append(transform.DORotateQuaternion(Quaternion.identity, 0.2f));
+    }
 
 }

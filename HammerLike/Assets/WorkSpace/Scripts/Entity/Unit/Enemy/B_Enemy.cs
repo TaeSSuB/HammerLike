@@ -89,6 +89,10 @@ public class B_Enemy : B_UnitBase
             }
             else
             {
+                if (player.WeaponData != null)
+                {
+                    player.WeaponData.WeaponAttack(transform.position, transform);
+                }
                 TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount, true, false);
             }
             

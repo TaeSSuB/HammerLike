@@ -65,6 +65,9 @@ public class B_Player : B_UnitBase
 
     #region Unity Callbacks & Init
 
+    public float interactionRange = 2f;  // 상호작용 거리
+    public KeyCode interactionKey = KeyCode.F;  // 상호작용 키
+
     //init override
     public override void Init()
     {
@@ -99,7 +102,7 @@ public class B_Player : B_UnitBase
         currentDashPos = InputDash(currentMovePos);
 
         TrackWeaponDirXZ();
-
+        HandleInteraction();
         
     }
 
@@ -127,18 +130,24 @@ public class B_Player : B_UnitBase
             var inventory = B_InventoryManager.Instance.playerInventory;
 
             if(item == null) return;
-            
-            if(item.isPickUpItem)
-            {
-                inventory.AddItem(new B_Item(item.item), 1);
-            }
-            else
-            {
-                Debug.Log("Directly Use Item : " + item.item.name);
-                item.item.Use();
-            }
 
-            Destroy(other.gameObject);
+            if (!item.canPurcahse|| item.item.itemType == ItemType.Gold)
+            {
+
+                if (item.isPickUpItem)
+                {
+                    inventory.AddItem(new B_Item(item.item), 1);
+                }
+                else
+                {
+                    Debug.Log("Directly Use Item : " + item.item.name);
+                    item.item.Use();
+                }
+                if(item.item.itemType!=ItemType.Gold)
+                inventory.goldAmount -= item.item.itemData.itemPrice;
+                Destroy(other.gameObject);
+                B_UIManager.Instance.UpdateGoldUI(B_InventoryManager.Instance.playerInventory.goldAmount);
+            }
         }
 
         if(other.CompareTag("WeaponCollider") && UnitStatus.currentHP > 0)
@@ -291,6 +300,7 @@ public class B_Player : B_UnitBase
                         // 공격 상태, 마우스 방향으로 회전 판별
                         if (IsAttacking)
                         {
+                            
                             // 공격 시작 방향과 마우스 방향의 각도 계산
                             float signedAngle = Vector3.SignedAngle(attackStartDir, lookAtDir, Vector3.up);
 
@@ -308,10 +318,13 @@ public class B_Player : B_UnitBase
                                 
                                 // 애니메이션 적용
                                 Anim.SetFloat("fAttackX", attackSign);
+
                             }
 
+                          
+
                             // 공격 시작 방향과 마우스 방향이 일정 각도 이상 차이가 나면 회전
-                            if(Quaternion.Angle(targetRotation, transform.rotation) > minAttackRotAmount)
+                            if (Quaternion.Angle(targetRotation, transform.rotation) > minAttackRotAmount)
                             {
                                 // Lerp 등의 함수는 방향에 상관없이 항상 최소 이동 거리만을 반환함.
                                 // 회전 방향을 고정하기 위해 대신 Rotate와 DeltaTime 사용
@@ -483,8 +496,8 @@ public class B_Player : B_UnitBase
         // Maximum charge attack logic
         Anim.SetBool("bAttack", true);
         Anim.SetBool("IsOutWardAttack", true);
-
-        ApplyChargeDamage();
+        if (weaponData.itemSkill.defaultAttack==true)
+            ApplyChargeDamage();
 
         Vector3 targetPosition = GetMouseWorldPosition();
 
@@ -947,6 +960,82 @@ public class B_Player : B_UnitBase
         Gizmos.color = Color.yellow;
         Gizmos.DrawRay(transform.position, attackStartDir * 10f);
     }
+    #endregion
+
+    #region Interaction
+    private void HandleInteraction()
+    {
+        if (Input.GetKeyDown(interactionKey))
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, interactionRange);
+            Collider closestCollider = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (var hitCollider in hitColliders)
+            {
+                if (hitCollider.CompareTag("NPC") || hitCollider.CompareTag("Item"))
+                {
+                    float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestCollider = hitCollider;
+                    }
+                }
+            }
+
+            if (closestCollider != null)
+            {
+                if (closestCollider.CompareTag("NPC"))
+                {
+                    var npc = closestCollider.GetComponent<B_NPC>();
+                    if (npc != null)
+                    {
+                        npc.StartInteraction();
+                    }
+                }
+                else if (closestCollider.CompareTag("Item"))
+                {
+                    var item = closestCollider.GetComponent<GroundItem>();
+                    if (item != null)
+                    {
+                        PickUpItem(item);
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+    private void PickUpItem(GroundItem item)
+    {
+        if (item != null)
+        {
+            var inventory = B_InventoryManager.Instance.playerInventory;
+            if (inventory.goldAmount >= item.item.itemData.itemPrice || item.item.itemType == ItemType.Gold)
+            {
+                if (item.isPickUpItem)
+                {
+                    inventory.AddItem(new B_Item(item.item), 1);
+                }
+                else
+                {
+                    Debug.Log("Directly Use Item: " + item.item.name);
+                    item.item.Use();
+                }
+                if (item.item.itemType != ItemType.Gold)
+                    inventory.goldAmount -= item.item.itemData.itemPrice;
+                Destroy(item.gameObject);
+                B_UIManager.Instance.UpdateGoldUI(inventory.goldAmount);
+            }
+        }
+    }
+
+
     #endregion
 
 }

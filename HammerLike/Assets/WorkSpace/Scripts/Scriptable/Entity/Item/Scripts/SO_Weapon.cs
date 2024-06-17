@@ -37,4 +37,12 @@ public class SO_Weapon : SO_Equipment
             itemSkill.ChargeSkill(position, parent);
         }
     }
+
+    public void WeaponAttack(Vector3 position, Transform parent)
+    {
+        if (itemSkill != null)
+        {
+            itemSkill.WeaponAttack(position, parent);
+        }
+    }
 }

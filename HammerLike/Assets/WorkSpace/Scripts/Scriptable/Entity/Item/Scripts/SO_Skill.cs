@@ -8,12 +8,14 @@ public class SO_Skill : ScriptableObject
 
     // 스킬의 세부적인 특성 및 효과 구현...
     public GameObject skillPrefab;
+    public bool defaultAttack = true;
 
     public void ChargeSkill(Vector3 position, Transform parent)
     {
         if (skillPrefab != null)
         {
             GameObject skillInstance = Instantiate(skillPrefab, position, Quaternion.identity, parent);
+            Destroy(skillInstance, 3f);
             ISkill skill = skillInstance.GetComponent<ISkill>();
             if (skill != null)
             {
@@ -26,8 +28,17 @@ public class SO_Skill : ScriptableObject
         }
     }
 
-    public void PassiveSkill()
+    public void WeaponAttack(Vector3 position, Transform parent)
     {
-
+        if (skillPrefab != null)
+        {
+            GameObject skillInstance = Instantiate(skillPrefab, position, Quaternion.identity, parent);
+            Destroy(skillInstance, 3f);
+            ISkill skill = skillInstance.GetComponent<ISkill>();
+            if (skill != null)
+            {
+                skill.WeaponAttack(position);
+            }
+        }
     }
 }

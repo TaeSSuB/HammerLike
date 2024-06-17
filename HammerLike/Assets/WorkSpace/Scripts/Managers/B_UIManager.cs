@@ -32,6 +32,7 @@ public class B_UIManager : SingletonMonoBehaviour<B_UIManager>
         {
             ingameUI.SetActive(true);
             ui_InGame = ingameUI.GetComponent<UI_InGame>();
+            UpdateGoldUI(B_InventoryManager.Instance.playerInventory.goldAmount);
         } 
     }
 
@@ -87,6 +88,11 @@ public class B_UIManager : SingletonMonoBehaviour<B_UIManager>
             CloseInventory();
         else
             OpenInventory();
+    }
+
+    public void UpdateGoldUI(int goldAmount)
+    {
+        ui_InGame.UpdateGoldUI(goldAmount);
     }
 
     private void OnDisable()

@@ -35,6 +35,8 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
         OnGoldChanged?.Invoke(playerInventory.goldAmount);
     }
 
+   
+
     public int GetCurrentWeaponSlotIndex()
     {
         var currentWeaponObj = GameManager.Instance.Player.WeaponData;

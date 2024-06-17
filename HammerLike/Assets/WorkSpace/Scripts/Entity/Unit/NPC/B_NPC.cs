@@ -13,20 +13,15 @@ using DG.Tweening;
 /// </summary>
 public class B_NPC : B_UnitBase
 {
-    // Player를 나타내는 Transform
     public Transform playerTransform;
-
-    // NPC의 초기 회전 값을 저장하기 위한 변수
     private Quaternion initialRotation;
     private NavMeshObstacle navMeshObstacle;
     private UI_InGame ui_InGame;
     private float rotationDuration = 0.5f;
-
     private bool isPlayerNearby = false;
-
-    public Transform headTransform; // NPC 머리 위치
-
+    public Transform headTransform;
     private GameObject interactiveObj;
+    private bool isInteracting = false;
 
     public override void Init()
     {
@@ -35,7 +30,6 @@ public class B_NPC : B_UnitBase
         if (navMeshObstacle == null)
         {
             navMeshObstacle = gameObject.AddComponent<NavMeshObstacle>();
-            //navMeshObstacle.carving = true;  // Enable carving
         }
         ui_InGame = B_UIManager.Instance.UI_InGame;
         playerTransform = GameManager.Instance.Player.transform;
@@ -43,7 +37,6 @@ public class B_NPC : B_UnitBase
 
     protected void Start()
     {
-        // 초기 회전 값 저장
         initialRotation = transform.rotation;
         Init();
 
@@ -51,44 +44,66 @@ public class B_NPC : B_UnitBase
         interactiveObj.SetActive(false);
     }
 
-    protected void StartInteraction()
+    public void StartInteraction()
     {
-        // 플레이어를 바라보도록 회전
+        interactiveObj.SetActive(false);
+        if (isInteracting) return;
+        isInteracting = true;
+
         Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(directionToPlayer.x, 0, directionToPlayer.z));
-
-        // DoTween을 사용하여 회전
         transform.DORotateQuaternion(lookRotation, rotationDuration);
 
         ui_InGame.TopPanelGameObject.SetActive(false);
         ui_InGame.BottomPanelGameObject.SetActive(false);
+
+        // 여기에 대화 UI를 표시하는 로직을 추가하세요.
+        ShowDialogueUI();
     }
 
-    protected void EndInteraction()
+    public void EndInteraction()
     {
-        // 초기 회전 값으로 복귀
+        if (!isInteracting) return;
+        isInteracting = false;
+
         transform.DORotateQuaternion(initialRotation, rotationDuration);
         ui_InGame.TopPanelGameObject.SetActive(true);
         ui_InGame.BottomPanelGameObject.SetActive(true);
+
+        // 대화 UI를 숨기는 로직을 추가하세요.
+        HideDialogueUI();
+    }
+
+    private void ShowDialogueUI()
+    {
+        // 대화 UI 표시 로직
+        Debug.Log("Dialogue Started with NPC: " + name);
+        // 예시: ui_InGame.ShowDialogueWindow(this);
+    }
+
+    private void HideDialogueUI()
+    {
+        // 대화 UI 숨기기 로직
+        Debug.Log("Dialogue Ended with NPC: " + name);
+        // 예시: ui_InGame.HideDialogueWindow();
     }
 
     protected override void Update()
     {
         base.Update();
 
-        if(isPlayerNearby&& Input.GetKeyDown(KeyCode.F))
+        /*if (isPlayerNearby && Input.GetKeyDown(KeyCode.F))
         {
             interactiveObj.SetActive(false);
             StartInteraction();
-        }
+        }*/
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Enter triggered by: " + other.name);
-            if (!isPlayerNearby) // 중복 Enter 방지
+            if (!isPlayerNearby)
             {
                 isPlayerNearby = true;
                 interactiveObj.SetActive(true);
@@ -100,8 +115,7 @@ public class B_NPC : B_UnitBase
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Exit triggered by: " + other.name);
-            if (isPlayerNearby) // 중복 Exit 방지
+            if (isPlayerNearby)
             {
                 isPlayerNearby = false;
                 interactiveObj.SetActive(false);
@@ -109,5 +123,4 @@ public class B_NPC : B_UnitBase
             }
         }
     }
-
 }
