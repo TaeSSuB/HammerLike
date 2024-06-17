@@ -14,26 +14,26 @@ public class TempChainLightning : MonoBehaviour, ISkill
     public float maxDistance = 10f;
     private float damage = 10f;
     private Vector3 playerTrs;
-
+    [SerializeField] private float overlapSize=3f;
     public void ChargeSkill(Vector3 position, Transform parent, SO_Skill skillData)
     {
         /*this.transform.position = position;
         StartCoroutine(DoLightning());*/
-        ChargeAttack();
+        ChargeAttack(position);
     }
 
     private void Start()
     {
         visualEffect = Thunder.GetComponent<VisualEffect>();
-        playerTrs = GameManager.Instance.Player.transform.position;
+        
     }
 
     
 
-    private void ChargeAttack()
+    private void ChargeAttack(Vector3 position)
     {
-        Vector3 thunderPosition = GetMouseWorldPosition();
-        thunderPosition = ClampPositionToMaxDistance(thunderPosition);
+        Vector3 thunderPosition;
+        thunderPosition = ClampPositionToMaxDistance(position);
         thunderPosition.y += 5; // y 좌표를 5만큼 증가시킴
 
         GameObject thunderInstance = Instantiate(Thunder, thunderPosition, Quaternion.identity);
@@ -61,16 +61,26 @@ public class TempChainLightning : MonoBehaviour, ISkill
 
     private Vector3 ClampPositionToMaxDistance(Vector3 targetPosition)
     {
-        float distance = Vector3.Distance(playerTrs, targetPosition);
+        playerTrs = GameManager.Instance.Player.transform.position;
+        Debug.Log(targetPosition);
+        // z축 보정
+        Vector3 correctedTargetPosition = new Vector3(targetPosition.x, targetPosition.y, targetPosition.z * 2);
+
+        float distance = Vector3.Distance(playerTrs, correctedTargetPosition);
 
         if (distance > maxDistance)
         {
-            Vector3 direction = (targetPosition - playerTrs).normalized;
-            targetPosition = playerTrs + direction * maxDistance;
+            Vector3 direction = (correctedTargetPosition - playerTrs).normalized;
+            correctedTargetPosition = playerTrs + direction * maxDistance;
         }
 
-        return targetPosition;
+        // z축 보정 해제
+        correctedTargetPosition.z /= 2;
+        //correctedTargetPosition.z -= 2;
+
+        return correctedTargetPosition;
     }
+
 
     IEnumerator DoLightning()
     {
@@ -204,7 +214,7 @@ public class TempChainLightning : MonoBehaviour, ISkill
     {
         yield return new WaitForSeconds(0.1f);
 
-        Collider[] hitColliders = Physics.OverlapSphere(position, maxDistance);
+        Collider[] hitColliders = Physics.OverlapSphere(position, overlapSize);
         foreach (var hitCollider in hitColliders)
         {
             if (hitCollider.CompareTag("Monster"))
