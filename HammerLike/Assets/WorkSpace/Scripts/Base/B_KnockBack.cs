@@ -107,5 +107,9 @@ public class B_KnockBack : MonoBehaviour
         unitBase.IsInvincible = false;
 
         unitBase.EnableMovementAndRotation();
+        
+        Debug.Log(unitBase.gameObject.name + " : Knockback End");
+
+        yield return null;
     }
 }

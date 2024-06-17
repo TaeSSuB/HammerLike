@@ -41,6 +41,8 @@ public class B_Skeleton_Prisoner : B_Enemy
         //weaponColliderObj.transform.localScale += GameManager.Instance.ApplyCoordScaleAfterNormalize(transform.forward);
 
         weaponColliderObj.SetActive(true);
+
+        B_AudioManager.Instance.PlaySound("Attack_Knife", AudioCategory.SFX);
     }
 
     public override void EndAttack()

@@ -97,12 +97,16 @@ public class B_Enemy : B_UnitBase
 
             if (unitStatus.currentHP > 0)
             {
-                B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+                //B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+                
+                // Temp - a.HG : Hit Sound 임시 할당..
+                var weaponTypeName = player.WeaponData.weaponType.ToString();
+                B_AudioManager.Instance.PlaySound("Hit_" + weaponTypeName, AudioCategory.SFX);
             }
-            else
-            {
-                B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Death);
-            }
+            // else
+            // {
+            //     B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Death);
+            // }
 
             //ChangeState(new ChaseState(this));
             if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
@@ -138,10 +142,41 @@ public class B_Enemy : B_UnitBase
             {
                 B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
             }
-            else
+            // else
+            // {
+            //     B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Death);
+            // }
+
+            if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
+                aIStateManager?.SetState(AIStateType.HIT);
+        }
+
+        // When hit Wall Layer
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Wall"))
+        {
+            // Check Knockbacking
+            if (!IsKnockback) return;
+            if(Rigid.velocity.magnitude < 5f) return;
+
+            // Get hit dir from wall
+            Vector3 hitDir = (transform.position - collision.transform.position).normalized;
+
+            // 데미지 강제 적용
+            // 넉백 시 무적 판정이기에, 이를 무시하고 데미지를 적용
+            TakeDamage(hitDir, (int)Rigid.mass, Rigid.velocity.magnitude, true, false, true);
+
+            var vfxPos = collision.contacts[0].point;
+            B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
+
+            if (unitStatus.currentHP > 0)
             {
-                B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Death);
+                //B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+                B_AudioManager.Instance.PlaySound("Hit_" + "Wall", AudioCategory.SFX);
             }
+            // else
+            // {
+            //     B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Death);
+            // }
 
             if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
                 aIStateManager?.SetState(AIStateType.HIT);
