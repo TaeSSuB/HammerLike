@@ -184,9 +184,9 @@ public class B_UnitBase : B_Entity
         ClampHP();
     }
 
-    public virtual void TakeDamage(Vector3 damageDir, int damage, float knockBackPower, bool enableKnockBack = true, bool slowMotion = false)
+    public virtual void TakeDamage(Vector3 damageDir, int damage, float knockBackPower, bool enableKnockBack = true, bool slowMotion = false, bool isForced = false)
     {
-        if (isInvincible)
+        if (isInvincible && !isForced)
         {
             return;
         }

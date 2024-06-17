@@ -21,7 +21,9 @@ public class B_Slime : B_Enemy
         base.Dead(isSelf);
         
         weaponCollider.enabled = false;
+
         B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.SlimeDeath);
+        
         StartCoroutine(CoSlimeDead());
     }
 
@@ -40,6 +42,8 @@ public class B_Slime : B_Enemy
         weaponCollider.enabled = true;
         agent.enabled = false;
         //Rigid.isKinematic = true;
+
+        B_AudioManager.Instance.PlaySound("Attack_Slime", AudioCategory.SFX);
     }
 
     public override void EndAttack()
@@ -77,6 +81,15 @@ public class B_Slime : B_Enemy
         // 짧은 시간 지연
         float delayTime = 0.5f;
         yield return new WaitForSeconds(delayTime);
+
+        if(AIStateManager.CurrentStateType == AIStateType.DEAD || AIStateManager.CurrentStateType == AIStateType.HIT)
+        {
+            unitStatus.currentAttackCooltime = unitStatus.maxAttackCooltime;
+        
+            weaponCollider.enabled = false;
+
+            yield break;
+        }
 
         // 공격 시작
         StartAttack();

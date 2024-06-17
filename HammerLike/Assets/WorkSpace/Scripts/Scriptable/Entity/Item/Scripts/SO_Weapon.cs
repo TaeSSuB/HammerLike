@@ -2,12 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum WeaponType
+{
+    Hammer,
+    Stick,
+    Mace
+}
+
 [CreateAssetMenu(fileName = "New Weapon", menuName = "B_ScriptableObjects/Inventory/Equip/Weapon")]
 public class SO_Weapon : SO_Equipment
 {
     // 필요한 추가적인 무기 특성
     //public GameObject prefab; // 무기 프리팹
     [Header("Weapon Data")]
+    public WeaponType weaponType;
     public SO_Skill itemSkill; // 무기 고유 스킬
     public EnvasionType evasionType = EnvasionType.Roll;
 
