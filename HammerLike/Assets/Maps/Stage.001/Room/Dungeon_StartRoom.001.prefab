@@ -1447,6 +1447,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8866935180404145983}
   - component: {fileID: 4262539792390029449}
+  - component: {fileID: 5620564228202556572}
+  - component: {fileID: 4159556805762555481}
   m_Layer: 31
   m_Name: Dungeon_StartRoom.001
   m_TagString: Untagged
@@ -1500,6 +1502,73 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 30, y: 0, z: 34}
   m_Center: {x: 0, y: 0, z: -2}
+--- !u!114 &5620564228202556572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8127772823624620046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e64da21211d3624cacbc6abe688e843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EntranceN: {fileID: 110989626983780693}
+  EntranceE: {fileID: 6275666023322150427}
+  EntranceW: {fileID: 1292604142567798813}
+  EntranceS: {fileID: 5751880632895296826}
+  monsterCount: -1
+  Ground: {fileID: 4262539792390029449}
+  monsterParent: {fileID: 0}
+  nextMonsterGroup: {fileID: 0}
+  Doors: []
+  doorsOpened: 0
+  doorsClosed: 0
+  meshBakingTileGroup: {fileID: 2914995341216412887}
+  meshBakingWallGroup: {fileID: 3844138640665984978}
+--- !u!23 &4159556805762555481
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8127772823624620046}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &8488613719955161765
 GameObject:
   m_ObjectHideFlags: 0
@@ -29020,6 +29089,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TrainingDoll
+      objectReference: {fileID: 0}
+    - target: {fileID: 3549329512787973906, guid: c3fa292999bf1ff429ee212165ca3914,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

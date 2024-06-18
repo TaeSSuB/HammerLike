@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 public enum RoomType
@@ -28,18 +29,27 @@ public class BSPGenerator : MonoBehaviour
     public GameObject bossRoomPrefab;
     public GameObject eliteRoomPrefab;
     public GameObject[] normalRoomPrefabs;
-    public GameObject tilePrefab;
-    public GameObject cornerPrefab;
+    public GameObject verticalTilePrefab;  // 
+    public GameObject horizontalTilePrefab;  // 
+    public GameObject topLeftCornerPrefab; // 
+    public GameObject topRightCornerPrefab; // 
+    public GameObject bottomLeftCornerPrefab; // 
+    public GameObject bottomRightCornerPrefab; // 
     public int normalRoomCount; // 
     public int mapWidth;
     public int mapHeight;
     public int divideCount; // 
     private Vector3 tileSize;
 
+    public MB3_MeshBaker meshbaker;
+    private List<GameObject> objsToCombine = new List<GameObject>();
+    [SerializeField] private NavMeshSurface navMesh;
     void Start()
     {
-        tileSize = GetPrefabSize(tilePrefab);
+        tileSize = GetPrefabSize(verticalTilePrefab);
         GenerateBSPDungeon();
+        StartCoroutine(BakeMeshes());
+        BakeNavMesh();
     }
 
     private Vector3 GetPrefabSize(GameObject prefab)
@@ -55,6 +65,8 @@ public class BSPGenerator : MonoBehaviour
     public void ReGenerator()
     {
         StartCoroutine(ReGenerateCoroutine());
+        StartCoroutine(BakeMeshes());
+        BakeNavMesh();
     }
 
     private IEnumerator ReGenerateCoroutine()
@@ -99,6 +111,7 @@ public class BSPGenerator : MonoBehaviour
     void GenerateBSPDungeon()
     {
         BSPNode root = new BSPNode();
+
         root.room = new Rect(0, 0, mapWidth, mapHeight);
         SplitNode(root, divideCount);
         PlaceSpecialRooms(root);
@@ -107,6 +120,7 @@ public class BSPGenerator : MonoBehaviour
 
 
     }
+
 
     void DrawLines(BSPNode node)
     {
@@ -288,16 +302,13 @@ public class BSPGenerator : MonoBehaviour
         float deltaX = endPosition.x - startPosition.x;
         float deltaZ = endPosition.z - startPosition.z;
 
-        /*if (deltaX != 0 && deltaZ != 0 && Mathf.Abs(deltaX) < 9 && Mathf.Abs(deltaZ) < 9)
-        {
-            ReGenerator(); // x좌표 혹은 z좌표로 9이하면 다시 배치
-            return;     // 더 이쁘게 배치할려면 시간이 좀 걸릴듯
-        }*/
 
         if (deltaX == 0 || deltaZ == 0)
         {
-
-            PlaceTilesAlongLine(startPosition, endPosition, false);
+            if (deltaX == 0)
+                PlaceTilesAlongLineVertical(startPosition, endPosition, false);
+            if (deltaZ == 0)
+                PlaceTilesAlongLineHorizontal(startPosition, endPosition, false);
         }
         else
         {
@@ -308,102 +319,25 @@ public class BSPGenerator : MonoBehaviour
                 return;
             }
 
-            Vector3 midPoint = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, (startPosition.z + endPosition.z) / 2);
             Vector3 midPoint1, midPoint2;
 
             if (startEntrance.name.Contains("N") && endEntrance.name.Contains("S") || startEntrance.name.Contains("S") && endEntrance.name.Contains("N"))
             {
                 midPoint1 = new Vector3(startPosition.x, startPosition.y, (startPosition.z + endPosition.z) / 2);
                 midPoint2 = new Vector3(endPosition.x, endPosition.y, (startPosition.z + endPosition.z) / 2);
+                DetermineAndPlaceCornerObjects(startEntrance, endEntrance, midPoint1, midPoint2);
             }
             else
             {
                 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
                 midPoint2 = new Vector3((startPosition.x + endPosition.x) / 2, endPosition.y, endPosition.z);
+                DetermineAndPlaceCornerObjects(startEntrance, endEntrance, midPoint1, midPoint2);
             }
 
-            DetermineAndPlaceCornerObjects(startEntrance, endEntrance, midPoint1, midPoint2);
-            // Place corner objects
-            //DetermineAndPlaceCornerObjects(deltaX, deltaZ, midPoint1, midPoint2);
-            Vector3 cornerKMJ = new Vector3(2, 0, 6);
-            Vector3 cornerSize = GetPrefabSize(cornerPrefab); // 
-            Vector3 direction1 = (midPoint2 - midPoint1).normalized;
-            Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 4; // 
-            Vector3 direction0 = (midPoint1 - startPosition).normalized;
-            Vector3 direction2 = (endPosition - midPoint2).normalized;
-            Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f; // 
-            Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 2;
-            Vector3 offsetEnd11 = offsetEnd1 - direction0 * cornerSize.z * 2;
-            Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
-            Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 2;
-            PlaceTilesAlongLine(startPosition, offsetEnd11, false);
-            PlaceTilesAlongLine(offsetStart1, offsetEnd22, false);
-            PlaceTilesAlongLine(offsetStart2, endPosition, false);
+           
         }
     }
-    private void DetermineAndPlaceCornerObjects(float c, float d, Vector3 intermediate1, Vector3 intermediate2)
-    {
-        if (c > 0 && d > 0)
-        {
-            if (c > d)
-            {
-                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
-                Debug.Log("a");
-            }
-            else // c <= d
-            {
-                PlaceCornerObject(intermediate1 - new Vector3(2.0f, 0f, -2.0f), Quaternion.Euler(0, 90, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(2.0f, 0f, -2.0f), Quaternion.Euler(0, -90, 0));
-                Debug.Log("b");
-            }
-        }
-        else if (c > 0 && d < 0)
-        {
-            if (Mathf.Abs(c) > Mathf.Abs(d))
-            {
-                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 0, 0));
-                Debug.Log("c");
-            }
-            else // Abs(d) >= Abs(c)
-            {
-                PlaceCornerObject(intermediate1 - new Vector3(2.0f, 0f, 2.0f), Quaternion.Euler(0, 0, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(2.0f, 0f, 2.0f), Quaternion.Euler(0, 180, 0));
-                Debug.Log("d");
-            }
-        }
-        else if (c < 0 && d > 0)
-        {
-            if (Mathf.Abs(c) > d)
-            {
-                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.identity);
-                Debug.Log("e");
-            }
-            else // d >= Abs(c)
-            {
-                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.identity);
-                Debug.Log("f");
-            }
-        }
-        else if (c < 0 && d < 0)
-        {
-            if (Mathf.Abs(c) > Mathf.Abs(d))
-            {
-                PlaceCornerObject(intermediate1 - new Vector3(2.0f, 0f, -2.0f), Quaternion.Euler(0, 90, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(2.0f, 0f, -2.0f), Quaternion.Euler(0, -90, 0));
-                Debug.Log("g");
-            }
-            else // Abs(d) >= Abs(c)
-            {
-                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
-                Debug.Log("h");
-            }
-        }
-    }
+    
 
     private void DetermineAndPlaceCornerObjects(GameObject start, GameObject end, Vector3 intermediate1, Vector3 intermediate2)
     {
@@ -414,66 +348,191 @@ public class BSPGenerator : MonoBehaviour
             if (start.transform.position.x > end.transform.position.x)
             {
 
-                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
+                PlaceTopRightCornerObject(intermediate1, Quaternion.identity);
+                PlaceBottomLeftCornerObject(intermediate2, Quaternion.identity);
             }
             else
             {
-                PlaceCornerObject(intermediate1 - new Vector3(+2.0f, 0f, 2.0f), Quaternion.Euler(0, 0, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(2.0f, 0f, 2.0f), Quaternion.Euler(0, 180, 0));
+                PlaceTopLeftCornerObject(intermediate1, Quaternion.identity);
+                PlaceBottomRightCornerObject(intermediate2, Quaternion.identity);
             }
+            Vector3 startPosition = start.transform.position;
+            Vector3 endPosition = end.transform.position;
+            Vector3 midPoint1 = new Vector3(startPosition.x, startPosition.y, (startPosition.z + endPosition.z) / 2);
+            Vector3 midPoint2 = new Vector3(endPosition.x, endPosition.y, (startPosition.z + endPosition.z) / 2);
+            Vector3 cornerSize = GetPrefabSize(verticalTilePrefab); // 
+            Vector3 direction1 = (midPoint2 - midPoint1).normalized;
+            Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 4; // 
+            Vector3 direction0 = (midPoint1 - startPosition).normalized;
+            Vector3 direction2 = (endPosition - midPoint2).normalized;
+            Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 8f; // 
+            Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 10;
+            Vector3 offsetEnd11 = offsetEnd1 - direction0 * cornerSize.z * 6;
+            Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
+            Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 2;
+            PlaceTilesAlongLineVertical(startPosition, offsetEnd11, false);
+            PlaceTilesAlongLineHorizontal(offsetStart1, offsetEnd22, false);
+            PlaceTilesAlongLineVertical(offsetStart2, endPosition, false);
         }
         else if ((startName.Contains("S") && endName.Contains("N")))
         {
             if (start.transform.position.x > end.transform.position.x)
             {
-                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 0, 0));
+                PlaceBottomRightCornerObject(intermediate1, Quaternion.identity);
+                PlaceTopLeftCornerObject(intermediate2, Quaternion.identity);
             }
             else
             {
-                PlaceCornerObject(intermediate1 - new Vector3(2.0f, 0f, -2.0f), Quaternion.Euler(0, 90, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(2.0f, 0f, -2.0f), Quaternion.Euler(0, 270, 0));
+                PlaceBottomLeftCornerObject(intermediate1, Quaternion.identity);
+                PlaceTopRightCornerObject(intermediate2, Quaternion.identity);
             }
+            Vector3 startPosition = start.transform.position;
+            Vector3 endPosition = end.transform.position;
+            Vector3 midPoint1 = new Vector3(startPosition.x, startPosition.y, (startPosition.z + endPosition.z) / 2);
+            Vector3 midPoint2 = new Vector3(endPosition.x, endPosition.y, (startPosition.z + endPosition.z) / 2);
+            Vector3 cornerSize = GetPrefabSize(verticalTilePrefab); // 
+            Vector3 direction1 = (midPoint2 - midPoint1).normalized;
+            Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 4; // 
+            Vector3 direction0 = (midPoint1 - startPosition).normalized;
+            Vector3 direction2 = (endPosition - midPoint2).normalized;
+            Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 16; // 
+            Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 10;
+            Vector3 offsetEnd11 = offsetEnd1 - direction0 * cornerSize.z;
+            Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
+            Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 2;
+            PlaceTilesAlongLineVertical(startPosition, offsetEnd11, false);
+            PlaceTilesAlongLineHorizontal(offsetStart1, offsetEnd22, false);
+            PlaceTilesAlongLineVertical(offsetStart2, endPosition, false);
         }
         else if ((startName.Contains("E") && endName.Contains("W")))
         {
             if (start.transform.position.z > end.transform.position.z)
             {
-                PlaceCornerObject(intermediate2 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
-                PlaceCornerObject(intermediate1 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
+                PlaceTopRightCornerObject(intermediate1, Quaternion.identity);
+                PlaceBottomLeftCornerObject(intermediate2, Quaternion.identity);
+                Debug.Log("5");
+                Vector3 startPosition = start.transform.position;
+                Vector3 endPosition = end.transform.position;
+                Vector3 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
+                Vector3 midPoint2 = new Vector3((startPosition.x + endPosition.x) / 2, endPosition.y, endPosition.z);
+                Vector3 cornerSize = GetPrefabSize(verticalTilePrefab); // 
+                Vector3 direction1 = (midPoint2 - midPoint1).normalized;
+                Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 16; // 
+                Vector3 direction0 = (midPoint1 - startPosition).normalized;
+                Vector3 direction2 = (endPosition - midPoint2).normalized;
+                Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f; // 
+                Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 10;
+                Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
+                Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
+                Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 6;
+                PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false);
+                PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false);
+                PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);
             }
             else
             {
-                PlaceCornerObject(intermediate2 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
-                PlaceCornerObject(intermediate1 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 0, 0));
+                PlaceBottomRightCornerObject(intermediate1, Quaternion.identity); ;
+                PlaceTopLeftCornerObject(intermediate2, Quaternion.identity);
+                Debug.Log("6");
+                Vector3 startPosition = start.transform.position;
+                Vector3 endPosition = end.transform.position;
+                Vector3 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
+                Vector3 midPoint2 = new Vector3((startPosition.x + endPosition.x) / 2, endPosition.y, endPosition.z);
+                Vector3 cornerSize = GetPrefabSize(verticalTilePrefab); // 
+                Vector3 direction1 = (midPoint2 - midPoint1).normalized;
+                Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 12; // 
+                Vector3 direction0 = (midPoint1 - startPosition).normalized;
+                Vector3 direction2 = (endPosition - midPoint2).normalized;
+                Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f; // 
+                Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 10;
+                Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
+                Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
+                Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 14;
+                PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false);
+                PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false);
+                PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);
             }
         }
         else if ((startName.Contains("W") && endName.Contains("E")))
         {
             if (start.transform.position.z > end.transform.position.z)
             {
-                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 180, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, -2.0f), Quaternion.Euler(0, 0, 0));
+                PlaceTopLeftCornerObject(intermediate1, Quaternion.identity);
+                PlaceBottomRightCornerObject(intermediate2, Quaternion.identity);
+                Debug.Log("7");
+                Vector3 startPosition = start.transform.position;
+                Vector3 endPosition = end.transform.position;
+                Vector3 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
+                Vector3 midPoint2 = new Vector3((startPosition.x + endPosition.x) / 2, endPosition.y, endPosition.z);
+                Vector3 cornerSize = GetPrefabSize(verticalTilePrefab); // 
+                Vector3 direction1 = (midPoint2 - midPoint1).normalized;
+                Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 16; // 
+                Vector3 direction0 = (midPoint1 - startPosition).normalized;
+                Vector3 direction2 = (endPosition - midPoint2).normalized;
+                Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f; // 
+                Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 10;
+                Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
+                Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
+                Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 6;
+                PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false);
+                PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false);
+                PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);
             }
             else
             {
-                PlaceCornerObject(intermediate1 - new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 270, 0));
-                PlaceCornerObject(intermediate2 + new Vector3(-2.0f, 0f, 2.0f), Quaternion.Euler(0, 90, 0));
+                PlaceBottomLeftCornerObject(intermediate1, Quaternion.identity); ;
+                PlaceTopRightCornerObject(intermediate2, Quaternion.identity);
+                Debug.Log("8");
+                Vector3 startPosition = start.transform.position;
+                Vector3 endPosition = end.transform.position;
+                Vector3 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
+                Vector3 midPoint2 = new Vector3((startPosition.x + endPosition.x) / 2, endPosition.y, endPosition.z);
+                Vector3 cornerSize = GetPrefabSize(verticalTilePrefab); // 
+                Vector3 direction1 = (midPoint2 - midPoint1).normalized;
+                Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 12; // 
+                Vector3 direction0 = (midPoint1 - startPosition).normalized;
+                Vector3 direction2 = (endPosition - midPoint2).normalized;
+                Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f; // 
+                Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 10;
+                Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
+                Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
+                Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 14;
+                PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false);
+                PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false);
+                PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);
             }
         }
 
     }
 
-    private void PlaceCornerObject(Vector3 position, Quaternion rotation)
-    {
-        GameObject tileAndCornerParent = EnsureParentStructure();
-        GameObject cornerParent = tileAndCornerParent.transform.Find("Corner").gameObject;
 
-        GameObject corner = Instantiate(cornerPrefab, position, rotation);
-        corner.transform.parent = cornerParent.transform;
+    private void PlaceTopLeftCornerObject(Vector3 position, Quaternion rotation)
+    {
+        GameObject parent = EnsureParentStructure().transform.Find("Corner").gameObject;
+        GameObject corner = Instantiate(topLeftCornerPrefab, position, rotation);
+        corner.transform.parent = parent.transform;
     }
 
+    private void PlaceTopRightCornerObject(Vector3 position, Quaternion rotation)
+    {
+        GameObject parent = EnsureParentStructure().transform.Find("Corner").gameObject;
+        GameObject corner = Instantiate(topRightCornerPrefab, position, rotation);
+        corner.transform.parent = parent.transform;
+    }
+
+    private void PlaceBottomLeftCornerObject(Vector3 position, Quaternion rotation)
+    {
+        GameObject parent = EnsureParentStructure().transform.Find("Corner").gameObject;
+        GameObject corner = Instantiate(bottomLeftCornerPrefab, position, rotation);
+        corner.transform.parent = parent.transform;
+    }
+
+    private void PlaceBottomRightCornerObject(Vector3 position, Quaternion rotation)
+    {
+        GameObject parent = EnsureParentStructure().transform.Find("Corner").gameObject;
+        GameObject corner = Instantiate(bottomRightCornerPrefab, position, rotation);
+        corner.transform.parent = parent.transform;
+    }
 
     void PlaceSpecialRooms(BSPNode node)
     {
@@ -589,31 +648,56 @@ public class BSPGenerator : MonoBehaviour
             }
         }
     }
-    private void PlaceTilesAlongLine(Vector3 start, Vector3 end, bool skipLastTile)
+    private void PlaceTilesAlongLineVertical(Vector3 start, Vector3 end, bool skipLastTile)
     {
-        GameObject tileAndCornerParent = EnsureParentStructure();
-        GameObject tileParent = tileAndCornerParent.transform.Find("Tile").gameObject;
-
+        GameObject parent = EnsureParentStructure().transform.Find("Tile").gameObject;
         Vector3 direction = (end - start).normalized;
         float distance = Vector3.Distance(start, end);
         float tileStep = tileSize.x;
-        int tileCount = Mathf.CeilToInt(distance / tileStep);
-
+        bool isDecimal = distance % tileStep != 0;
+        int tileCount = Mathf.FloorToInt(distance / tileStep);
 
         if (skipLastTile)
             tileCount--;
 
-        Quaternion rotation = Quaternion.LookRotation(direction);
+        Quaternion rotation = Quaternion.Euler(0, 0, 0);
 
-        for (int i = 0; i < tileCount; i++)
+        for (int i = 0; i <= tileCount; i += 4)
         {
             Vector3 tilePosition = start + direction * tileStep * i;
-            GameObject tile =Instantiate(tilePrefab, tilePosition, rotation);
-            tile.transform.parent = tileParent.transform;
-            if (i == tileCount - 1)
+            GameObject tile = Instantiate(verticalTilePrefab, tilePosition, rotation);
+            tile.transform.parent = parent.transform;
+            if (isDecimal || i == tileCount - 1 || i == tileCount - 2 || i == tileCount - 3)
             {
-                GameObject tile2 = Instantiate(tilePrefab, end, rotation);
-                tile2.transform.parent = tileParent.transform;
+                GameObject lastTile = Instantiate(verticalTilePrefab, end, rotation);
+                lastTile.transform.parent = parent.transform;
+            }
+        }
+    }
+
+    private void PlaceTilesAlongLineHorizontal(Vector3 start, Vector3 end, bool skipLastTile)
+    {
+        GameObject parent = EnsureParentStructure().transform.Find("Tile").gameObject;
+        Vector3 direction = (end - start).normalized;
+        float distance = Vector3.Distance(start, end);
+        float tileStep = tileSize.x;
+        bool isDecimal = distance % tileStep != 0;
+        int tileCount = Mathf.FloorToInt(distance / tileStep);
+
+        if (skipLastTile)
+            tileCount--;
+
+        Quaternion rotation = Quaternion.identity;
+
+        for (int i = 0; i <= tileCount; i += 2)
+        {
+            Vector3 tilePosition = start + direction * tileStep * i;
+            GameObject tile = Instantiate(horizontalTilePrefab, tilePosition, rotation);
+            tile.transform.parent = parent.transform;
+            if (isDecimal || i == tileCount - 1)
+            {
+                GameObject lastTile = Instantiate(horizontalTilePrefab, end, rotation);
+                lastTile.transform.parent = parent.transform;
             }
         }
     }
@@ -647,5 +731,66 @@ public class BSPGenerator : MonoBehaviour
         // "TileAndCorner" 오브젝트 반환
         return tileAndCornerParent;
     }
+
+    IEnumerator BakeMeshes()
+    {
+        // Clear the objsToCombine list
+        objsToCombine.Clear();
+        yield return new WaitForSeconds(1f);
+
+        // Add tile objects to the objsToCombine list
+        Transform tileParent = transform.Find("TileAndCorner/Tile");
+        if (tileParent != null)
+        {
+            foreach (Transform tile in tileParent)
+            {
+                AddChildObjectsWithMeshRenderer(tile, objsToCombine);
+            }
+        }
+
+        // Add room objects' meshBakingTileGroup children to the objsToCombine list
+        foreach (Transform child in transform)
+        {
+            RoomPrefab roomPrefab = child.GetComponent<RoomPrefab>();
+            if (roomPrefab != null && roomPrefab.meshBakingTileGroup != null)
+            {
+                AddChildObjectsWithMeshRenderer(roomPrefab.meshBakingTileGroup.transform, objsToCombine);
+            }
+        }
+
+        // Combine meshes for tile objects and room meshBakingTileGroup children only
+        if (meshbaker.AddDeleteGameObjects(objsToCombine.ToArray(), null, true))
+        {
+            meshbaker.Apply();
+        }
+    }
+
+    // Helper method to add child objects with MeshRenderer or SkinnedMeshRenderer components
+    void AddChildObjectsWithMeshRenderer(Transform parent, List<GameObject> objsToCombine)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.GetComponent<MeshRenderer>() != null || child.GetComponent<SkinnedMeshRenderer>() != null)
+            {
+                objsToCombine.Add(child.gameObject);
+            }
+            AddChildObjectsWithMeshRenderer(child, objsToCombine);
+        }
+    }
+
+    void BakeNavMesh()
+    {
+        if (navMesh.navMeshData == null)
+            navMesh.BuildNavMesh();
+           
+    }
+
+    void ClearNavMesh()
+    {
+        //if (navMesh.navMeshData != null)
+            //navMes
+    }
+
+
 
 }

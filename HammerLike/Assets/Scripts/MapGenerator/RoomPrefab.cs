@@ -18,6 +18,8 @@ public class RoomPrefab : MonoBehaviour
     public List<GameObject> Doors = new List<GameObject>(); // 다수의 문을 관리
     public bool doorsOpened = false;
     public bool doorsClosed = false;
+    public GameObject meshBakingTileGroup;
+    public GameObject meshBakingWallGroup;
     private bool isCheck = false;
 
     private void Awake()
