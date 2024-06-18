@@ -37,6 +37,5 @@ public class B_Prop : B_Entity
 
     protected virtual void Dead()
     {
-        
     }
 }
