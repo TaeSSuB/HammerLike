@@ -40,16 +40,26 @@ public class BSPGenerator : MonoBehaviour
     public int mapHeight;
     public int divideCount; // 
     private Vector3 tileSize;
+    private Dictionary<BSPNode, List<BSPNode>> roomConnections;
+    [SerializeField]private B_Player player;
 
     public MB3_MeshBaker meshbaker;
     private List<GameObject> objsToCombine = new List<GameObject>();
+
+    BSPNode startRoomNode = null;
+    BSPNode bossRoomNode = null;
+
+
     [SerializeField] private NavMeshSurface navMesh;
     void Start()
     {
         tileSize = GetPrefabSize(verticalTilePrefab);
+        player.gameObject.SetActive(false);
+
+        roomConnections = new Dictionary<BSPNode, List<BSPNode>>();
         GenerateBSPDungeon();
-        StartCoroutine(BakeMeshes());
-        BakeNavMesh();
+       
+
     }
 
     private Vector3 GetPrefabSize(GameObject prefab)
@@ -64,9 +74,10 @@ public class BSPGenerator : MonoBehaviour
 
     public void ReGenerator()
     {
+        roomConnections = new Dictionary<BSPNode, List<BSPNode>>();
+        ClearNavMesh();
         StartCoroutine(ReGenerateCoroutine());
-        StartCoroutine(BakeMeshes());
-        BakeNavMesh();
+        
     }
 
     private IEnumerator ReGenerateCoroutine()
@@ -118,7 +129,20 @@ public class BSPGenerator : MonoBehaviour
         PlaceNormalRooms(root, normalRoomCount);
         ConnectRooms(root);
 
+        if (startRoomNode != null && bossRoomNode != null)
+        {
+            TraceAndLogPath(startRoomNode, bossRoomNode);
+        }
 
+        StartCoroutine(BakeNavMesh());
+        StartCoroutine(BakeMeshes());
+        
+        
+
+        if (startRoomNode != null)
+        {
+            StartCoroutine(MovePlayerToStartRoom());
+        }
     }
 
 
@@ -205,8 +229,6 @@ public class BSPGenerator : MonoBehaviour
             parent[leaf] = leaf;
         }
 
-        List<KeyValuePair<BSPNode, BSPNode>> roomConnections = new List<KeyValuePair<BSPNode, BSPNode>>();
-
         foreach (var edge in edges)
         {
             BSPNode rootA = Find(parent, edge.nodeA);
@@ -214,16 +236,18 @@ public class BSPGenerator : MonoBehaviour
             if (rootA != rootB)
             {
                 CreatePathBetweenRooms(edge.nodeA, edge.nodeB);
-                roomConnections.Add(new KeyValuePair<BSPNode, BSPNode>(edge.nodeA, edge.nodeB));
+                if (!roomConnections.ContainsKey(edge.nodeA))
+                    roomConnections[edge.nodeA] = new List<BSPNode>();
+                if (!roomConnections.ContainsKey(edge.nodeB))
+                    roomConnections[edge.nodeB] = new List<BSPNode>();
+
+                roomConnections[edge.nodeA].Add(edge.nodeB);
+                roomConnections[edge.nodeB].Add(edge.nodeA);
                 parent[rootA] = rootB;
             }
         }
-
-        foreach (var connection in roomConnections)
-        {
-            Debug.Log($"Connected: {connection.Key.roomType} to {connection.Value.roomType}");
-        }
     }
+
 
     BSPNode Find(Dictionary<BSPNode, BSPNode> parent, BSPNode node)
     {
@@ -536,25 +560,24 @@ public class BSPGenerator : MonoBehaviour
 
     void PlaceSpecialRooms(BSPNode node)
     {
-        // 
         List<BSPNode> leafNodes = GetLeafNodes(node);
-        if (leafNodes.Count < 3) return; // 
+        if (leafNodes.Count < 3) return;
 
-        // StartRoom 
-        BSPNode startNode = leafNodes[Random.Range(0, leafNodes.Count)];
-        InstantiateRoom(startRoomPrefab, startNode.room, startNode); //
-        startNode.roomType = RoomType.StartRoom;
+        // StartRoom
+        startRoomNode = leafNodes[Random.Range(0, leafNodes.Count)];
+        InstantiateRoom(startRoomPrefab, startRoomNode.room, startRoomNode);
+        startRoomNode.roomType = RoomType.StartRoom;
 
-        // BossRoom 
-        leafNodes.Remove(startNode);
-        BSPNode bossNode = GetFurthestNode(startNode, leafNodes);
-        InstantiateRoom(bossRoomPrefab, bossNode.room, bossNode); // 
-        bossNode.roomType = RoomType.BossRoom;
+        // BossRoom
+        leafNodes.Remove(startRoomNode);
+        bossRoomNode = GetFurthestNode(startRoomNode, leafNodes);
+        InstantiateRoom(bossRoomPrefab, bossRoomNode.room, bossRoomNode);
+        bossRoomNode.roomType = RoomType.BossRoom;
 
-        // EliteRoom 
-        leafNodes.Remove(bossNode);
+        // EliteRoom
+        leafNodes.Remove(bossRoomNode);
         BSPNode eliteNode = leafNodes[Random.Range(0, leafNodes.Count)];
-        InstantiateRoom(eliteRoomPrefab, eliteNode.room, eliteNode); //
+        InstantiateRoom(eliteRoomPrefab, eliteNode.room, eliteNode);
         eliteNode.roomType = RoomType.EliteRoom;
     }
 
@@ -763,6 +786,8 @@ public class BSPGenerator : MonoBehaviour
         {
             meshbaker.Apply();
         }
+
+        
     }
 
     // Helper method to add child objects with MeshRenderer or SkinnedMeshRenderer components
@@ -778,8 +803,10 @@ public class BSPGenerator : MonoBehaviour
         }
     }
 
-    void BakeNavMesh()
+    IEnumerator BakeNavMesh()
     {
+        yield return new WaitForSeconds(1f);
+
         if (navMesh.navMeshData == null)
             navMesh.BuildNavMesh();
            
@@ -787,10 +814,82 @@ public class BSPGenerator : MonoBehaviour
 
     void ClearNavMesh()
     {
-        //if (navMesh.navMeshData != null)
-            //navMes
+        if (navMesh.navMeshData != null)
+            navMesh.RemoveData();
     }
 
+    void TraceAndLogPath(BSPNode startNode, BSPNode endNode)
+    {
+        List<BSPNode> path = new List<BSPNode>();
+        if (startNode == null || endNode == null) return;
+
+        // 경로를 클리어하고 시작 노드를 추가
+        path.Clear();
+        path.Add(startNode);
+        BSPNode currentNode = startNode;
+
+        // endNode를 찾을 때까지 연결을 따라감
+        while (currentNode != endNode && currentNode != null)
+        {
+            BSPNode nextNode = FindNextNodeInPath(currentNode, endNode);
+            if (nextNode == null) break; // 경로가 끊기면 중단
+            path.Add(nextNode);
+            currentNode = nextNode;
+        }
+
+        // 경로 출력
+        string pathDescription = "Path from StartRoom to BossRoom: ";
+        foreach (BSPNode node in path)
+        {
+            pathDescription += $"{node.roomType} -> ";
+        }
+        Debug.Log(pathDescription.TrimEnd(' ', '-', '>'));
+    }
+
+
+    BSPNode FindNextNodeInPath(BSPNode currentNode, BSPNode targetNode)
+    {
+        if (!roomConnections.ContainsKey(currentNode))
+            return null;
+
+        List<BSPNode> connectedNodes = roomConnections[currentNode];
+        BSPNode closestNode = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (BSPNode node in connectedNodes)
+        {
+            float distance = Vector3.Distance(new Vector3(node.room.center.x, 0, node.room.center.y), new Vector3(targetNode.room.center.x, 0, targetNode.room.center.y));
+            if (distance < closestDistance)
+            {
+                closestNode = node;
+                closestDistance = distance;
+            }
+        }
+
+        return closestNode;
+    }
+
+    IEnumerator MovePlayerToStartRoom()
+    {
+        yield return new WaitForSeconds(1f);
+
+        if (player != null && startRoomNode != null && startRoomNode.roomObject != null)
+        {
+            // Calculate the position at the center of the room on the floor level (assuming Y = 0 is the floor)
+            Vector3 roomPosition = new Vector3(
+                startRoomNode.room.x + startRoomNode.room.width / 2,
+                0, // Assuming the floor level is at Y = 0
+                startRoomNode.room.y + startRoomNode.room.height / 2
+            );
+            player.transform.position = roomPosition;
+            player.gameObject.SetActive(true);
+            Debug.Log("Player moved to StartRoom at: " + roomPosition);
+        }
+        else
+        {
+            Debug.LogError("Failed to move player: Start room or player not properly initialized.");
+        }
+    }
 
 
 }

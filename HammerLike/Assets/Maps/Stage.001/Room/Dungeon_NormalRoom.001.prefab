@@ -1273,6 +1273,7 @@ GameObject:
   - component: {fileID: 4714665418184966077}
   - component: {fileID: 5701301786802802452}
   - component: {fileID: 539791156081309945}
+  - component: {fileID: 8055593966978316565}
   m_Layer: 0
   m_Name: Dungeon_NormalRoom.001
   m_TagString: Untagged
@@ -1363,7 +1364,7 @@ MonoBehaviour:
   EntranceW: {fileID: 3657244829836743636}
   EntranceS: {fileID: 6002319809964177778}
   monsterCount: -1
-  Ground: {fileID: 0}
+  Ground: {fileID: 8055593966978316565}
   monsterParent: {fileID: 0}
   nextMonsterGroup: {fileID: 0}
   Doors: []
@@ -1371,6 +1372,27 @@ MonoBehaviour:
   doorsClosed: 0
   meshBakingTileGroup: {fileID: 1538197770864287627}
   meshBakingWallGroup: {fileID: 813320654643037503}
+--- !u!65 &8055593966978316565
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2972145632830363524}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 40, y: 0, z: 40}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3105110303163049309
 GameObject:
   m_ObjectHideFlags: 0
