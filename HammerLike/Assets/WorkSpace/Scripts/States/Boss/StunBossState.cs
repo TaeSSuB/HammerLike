@@ -30,6 +30,8 @@ public class StunBossState : IBossAIState
         }
 
         stunDuration = startStunDuration;
+
+        B_AudioManager.Instance.PlaySound("Boss_Stun", AudioCategory.SFX);
     }
 
     public void OnUpdate()

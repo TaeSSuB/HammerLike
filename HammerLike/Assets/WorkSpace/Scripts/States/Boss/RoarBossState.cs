@@ -37,6 +37,8 @@ public class RoarBossState : IBossAIState
 
         b_Boss.Anim.SetTrigger("tPatternPlay");
         b_Boss.Anim.SetInteger("PatternIdx", patternIdx);
+
+        B_AudioManager.Instance.PlaySound("Boss_Roar", AudioCategory.SFX);
     }
 
     public void OnUpdate()
