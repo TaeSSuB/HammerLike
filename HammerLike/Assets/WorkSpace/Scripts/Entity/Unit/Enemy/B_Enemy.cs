@@ -160,14 +160,18 @@ public class B_Enemy : B_UnitBase
         {
             // Check Knockbacking
             if (!IsKnockback) return;
-            if(Rigid.velocity.magnitude < 5f) return;
+            if(Rigid.velocity.magnitude < 10f) return;
 
             // Get hit dir from wall
-            Vector3 hitDir = (transform.position - collision.transform.position).normalized;
+            // 입사각 & 반사각 ex.당구
+            Vector3 collisionNormal = collision.contacts[0].normal;
+            float angle = Vector3.Angle(collision.relativeVelocity, collisionNormal);
+
+            Vector3 reflection = Vector3.Reflect(collision.relativeVelocity, collisionNormal);
 
             // 데미지 강제 적용
             // 넉백 시 무적 판정이기에, 이를 무시하고 데미지를 적용
-            TakeDamage(hitDir, (int)Rigid.mass, Rigid.velocity.magnitude, true, false, true);
+            TakeDamage(reflection, (int)Rigid.mass, Rigid.velocity.magnitude * 0.5f, true, false, true);
 
             var vfxPos = collision.contacts[0].point;
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
