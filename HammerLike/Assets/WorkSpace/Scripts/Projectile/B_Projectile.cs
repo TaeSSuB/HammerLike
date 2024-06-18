@@ -88,10 +88,10 @@ public class B_Projectile : MonoBehaviour
             if (targetPlayer != null)
             {
                 // 플레이어에게 데미지를 입힘
-                targetPlayer.TakeDamage(transform.forward, projectileDamage, 0f, false);
+                targetPlayer.TakeDamage(transform.forward, projectileDamage, projectileDamage, true);
 
-                //SoundManager soundManager = SoundManager.Instance;
-                //soundManager.PlaySFX(soundManager.audioClip[8]);
+                var vfxPos = other.ClosestPointOnBounds(other.transform.position);
+                B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
 
                 // 투사체 파괴
                 DestroyProjectile();

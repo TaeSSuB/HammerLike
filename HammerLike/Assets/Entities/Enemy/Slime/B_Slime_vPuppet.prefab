@@ -1238,11 +1238,11 @@ MonoBehaviour:
   muscleSpring: 500
   muscleDamper: 0.1
   pinPow: 4
-  pinDistanceFalloff: 0.25
-  angularPinning: 0
+  pinDistanceFalloff: 0.05
+  angularPinning: 1
   updateJointAnchors: 1
   supportTranslationAnimation: 0
-  angularLimits: 0
+  angularLimits: 1
   internalCollisions: 0
   muscles:
   - name: GameObject
@@ -2492,6 +2492,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cd9d9700a02be6439c42fc044784743, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  remainKnockBackForce: 0
 --- !u!1 &7850114773254628272
 GameObject:
   m_ObjectHideFlags: 0

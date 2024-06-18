@@ -37,13 +37,10 @@ public class MeleeAttackBossState : IBossAIState
             weaponOrbitCommon.a *= 0.5f;
             weaponOrbitCommon.b *= 0.5f;
         }
-        // b_Boss.Anim.SetTrigger("tPatternPlay");
-        // b_Boss.Anim.SetInteger("PatternIdx", patternIdx);
-
-        // b_Boss.UnitStatus.currentAttackCooltime = b_Boss.UnitStatus.maxAttackCooltime;
 
         b_Boss.Anim.SetTrigger("tAttack");
-        //b_Boss.Anim.SetBool("bAttack", b_Boss.isAttacking);
+
+        B_AudioManager.Instance.PlaySound("Boss_Attack", AudioCategory.SFX);
 
         b_Boss.Attack();
     }

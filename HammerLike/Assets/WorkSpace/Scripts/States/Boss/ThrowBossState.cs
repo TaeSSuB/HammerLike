@@ -47,6 +47,9 @@ public class ThrowBossState : IBossAIState
 
         throwDelay = startThrowDelay;
         parried = false;
+
+        B_AudioManager.Instance.PlaySound("Boss_ThrowPrepare", AudioCategory.SFX);
+        B_AudioManager.Instance.PlaySound("Boss_Grunt", AudioCategory.SFX);
     }
 
     public void OnUpdate()

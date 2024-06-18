@@ -6,7 +6,8 @@ public enum WeaponType
 {
     Hammer,
     Stick,
-    Mace
+    Mace,
+    SqueakyHammer
 }
 
 [CreateAssetMenu(fileName = "New Weapon", menuName = "B_ScriptableObjects/Inventory/Equip/Weapon")]

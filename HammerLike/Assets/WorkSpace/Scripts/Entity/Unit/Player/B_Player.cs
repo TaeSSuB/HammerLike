@@ -178,20 +178,15 @@ public class B_Player : B_UnitBase
 
             // Take Damage and Knockback dir from player
             TakeDamage(hitDir, unit.UnitStatus.atkDamage, unit.UnitStatus.knockbackPower, true);
-            StartCoroutine(CoHitEvent(1f, hitDuration));
 
-            Anim.SetTrigger("tHit");
-
+            // Temp - a.HG : VFX 위치 임시 할당. TakeDamage 함수 내부로 이동 필요
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
 
             if (unitStatus.currentHP > 0)
             {
+                // Temp - a.HG : 피격 무기 SFX 임시 할당.. UnitBase에서 카테고리 별 SFX 재생 필요
                 B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
-            }
-            else
-            {
-                B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Death);
             }
         }
     }
@@ -304,7 +299,6 @@ public class B_Player : B_UnitBase
                         transform.LookAt(lookAt);
                         break;
                     case RotateType.LookAtMouseSmooth:
-
                         // 캐릭터 - 마우스 방향 벡터 & 각도 계산
                         var lookAtDir = lookAt - transform.position;
                         Quaternion targetRotation = Quaternion.LookRotation(lookAtDir);
@@ -315,10 +309,9 @@ public class B_Player : B_UnitBase
                         // 공격 상태, 마우스 방향으로 회전 판별
                         if (IsAttacking)
                         {
-                            
                             // 공격 시작 방향과 마우스 방향의 각도 계산
                             float signedAngle = Vector3.SignedAngle(attackStartDir, lookAtDir, Vector3.up);
-
+                            
                             // attackSign == 0, 즉 공격 시작 방향이 없으면 공격 시작 방향 설정
                             if(attackSign == 0)
                             {
@@ -330,13 +323,10 @@ public class B_Player : B_UnitBase
                                 {
                                     attackSign = 0;
                                 }
-                                
+
                                 // 애니메이션 적용
                                 Anim.SetFloat("fAttackX", attackSign);
-
                             }
-
-                          
 
                             // 공격 시작 방향과 마우스 방향이 일정 각도 이상 차이가 나면 회전
                             if (Quaternion.Angle(targetRotation, transform.rotation) > minAttackRotAmount)
@@ -358,7 +348,6 @@ public class B_Player : B_UnitBase
                     default:
                         break;
                 }
-                //transform.LookAt(lookAt);
             }
         }
     }
@@ -655,7 +644,7 @@ public class B_Player : B_UnitBase
 
         DisableWeaponCollider();
 
-        B_AudioManager.Instance.PlaySound("Player_Death", AudioCategory.SFX);
+        B_AudioManager.Instance.PlaySound("Player_Dead", AudioCategory.SFX);
 
         OnPlayerDeath?.Invoke();
     }
@@ -759,6 +748,28 @@ public class B_Player : B_UnitBase
     {
         base.TakeDamage(damageDir, damage, knockBackPower, knockBack, slowMotion);
 
+        // 피격 이벤트 코루틴 실행
+        StartCoroutine(CoHitEvent(1f, hitDuration));
+
+        // 피격 애니메이션 실행
+        Anim.SetTrigger("tHit");
+
+        // 피격 SFX 랜덤 실행
+        var rndIdx = UnityEngine.Random.Range(1, 3);
+        switch (rndIdx)
+        {
+            case 1:
+                B_AudioManager.Instance.PlaySound("Player_Hit_01", AudioCategory.SFX);
+                break;
+            case 2:
+                B_AudioManager.Instance.PlaySound("Player_Hit_02", AudioCategory.SFX);
+                break;
+            default:
+                B_AudioManager.Instance.PlaySound("Player_Hit_01", AudioCategory.SFX);
+                break;
+        }
+
+        // HP 변경 이벤트 실행
         OnHPChanged?.Invoke(unitStatus.currentHP);
     }
 
