@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4295742898837949395}
   - component: {fileID: 7423004856959773990}
   - component: {fileID: 7637356523305577113}
+  - component: {fileID: 5780992924592642721}
   m_Layer: 8
   m_Name: TrainingDoll
   m_TagString: Untagged
@@ -81,7 +82,6 @@ MonoBehaviour:
   isInvincible: 0
   unitIndex: 98
   anim: {fileID: 7423004856959773990}
-  agent: {fileID: 0}
   isGrounded: 0
   hpPosTR: {fileID: 1371752695025892479}
 --- !u!54 &5794850943227641414
@@ -118,7 +118,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3549329512787973906}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5
@@ -179,6 +179,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cd9d9700a02be6439c42fc044784743, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  remainKnockBackForce: 0
+--- !u!208 &5780992924592642721
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3549329512787973906}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.8, y: 1.315, z: 0.8}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1.284943, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &6602547701455984821
 GameObject:
   m_ObjectHideFlags: 0
