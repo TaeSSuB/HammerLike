@@ -18,9 +18,7 @@ public class BSPNode
     public BSPNode rightChild;
     public Rect room;
     public RoomType roomType = RoomType.None;
-    public GameObject roomObject; // 
-
-
+    public GameObject roomObject;
 }
 
 public class BSPGenerator : MonoBehaviour
@@ -29,26 +27,25 @@ public class BSPGenerator : MonoBehaviour
     public GameObject bossRoomPrefab;
     public GameObject eliteRoomPrefab;
     public GameObject[] normalRoomPrefabs;
-    public GameObject verticalTilePrefab;  // 
-    public GameObject horizontalTilePrefab;  // 
-    public GameObject topLeftCornerPrefab; // 
-    public GameObject topRightCornerPrefab; // 
-    public GameObject bottomLeftCornerPrefab; // 
-    public GameObject bottomRightCornerPrefab; // 
-    public int normalRoomCount; // 
+    public GameObject verticalTilePrefab;
+    public GameObject horizontalTilePrefab;
+    public GameObject topLeftCornerPrefab;
+    public GameObject topRightCornerPrefab;
+    public GameObject bottomLeftCornerPrefab;
+    public GameObject bottomRightCornerPrefab;
+    public int normalRoomCount;
     public int mapWidth;
     public int mapHeight;
-    public int divideCount; // 
+    public int divideCount;
     private Vector3 tileSize;
     private Dictionary<BSPNode, List<BSPNode>> roomConnections;
-    [SerializeField]private B_Player player;
+    [SerializeField] private B_Player player;
 
     public MB3_MeshBaker meshbaker;
     private List<GameObject> objsToCombine = new List<GameObject>();
 
     BSPNode startRoomNode = null;
     BSPNode bossRoomNode = null;
-
 
     [SerializeField] private NavMeshSurface navMesh;
     void Start()
@@ -58,8 +55,6 @@ public class BSPGenerator : MonoBehaviour
 
         roomConnections = new Dictionary<BSPNode, List<BSPNode>>();
         GenerateBSPDungeon();
-       
-
     }
 
     private Vector3 GetPrefabSize(GameObject prefab)
@@ -69,7 +64,7 @@ public class BSPGenerator : MonoBehaviour
         {
             return renderer.bounds.size;
         }
-        return new Vector3(1, 0, 1);  
+        return new Vector3(1, 0, 1);
     }
 
     public void ReGenerator()
@@ -77,19 +72,16 @@ public class BSPGenerator : MonoBehaviour
         roomConnections = new Dictionary<BSPNode, List<BSPNode>>();
         ClearNavMesh();
         StartCoroutine(ReGenerateCoroutine());
-        
     }
 
     private IEnumerator ReGenerateCoroutine()
     {
-        // 모든 자식 객체 제거 (BSPGenerator 자신은 제외)
         List<Transform> children = new List<Transform>();
         foreach (Transform child in transform)
         {
             children.Add(child);
         }
 
-        // 모든 자식 제거
         foreach (Transform child in children)
         {
             DestroyImmediate(child.gameObject);
@@ -99,7 +91,6 @@ public class BSPGenerator : MonoBehaviour
 
         yield return null;
 
-        // 던전 재생성
         GenerateBSPDungeon();
     }
 
@@ -113,11 +104,9 @@ public class BSPGenerator : MonoBehaviour
             ClearNode(node.rightChild);
         }
 
-        // 노드 트리를 순회하여 각 노드의 `roomObject` 속성을 초기화합니다.
         BSPNode rootNode = new BSPNode { room = new Rect(0, 0, mapWidth, mapHeight) };
         ClearNode(rootNode);
     }
-
 
     void GenerateBSPDungeon()
     {
@@ -134,10 +123,9 @@ public class BSPGenerator : MonoBehaviour
             TraceAndLogPath(startRoomNode, bossRoomNode);
         }
 
+        DeactivateMonsterParents();
         StartCoroutine(BakeNavMesh());
         StartCoroutine(BakeMeshes());
-        
-        
 
         if (startRoomNode != null)
         {
@@ -145,34 +133,18 @@ public class BSPGenerator : MonoBehaviour
         }
     }
 
-
-    void DrawLines(BSPNode node)
+    void DeactivateMonsterParents()
     {
-        if (node == null) return;
-
-        // LineRenderer 
-        GameObject lineObj = new GameObject("Line");
-        lineObj.transform.parent = this.transform; // BSPGenerator
-        LineRenderer lineRenderer = lineObj.AddComponent<LineRenderer>();
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default")); // 
-        lineRenderer.widthMultiplier = 0.05f; // 
-        lineRenderer.positionCount = 5; //
-
-        // 
-        Vector3[] corners = new Vector3[5];
-        corners[0] = new Vector3(node.room.xMin, 0, node.room.yMin);
-        corners[1] = new Vector3(node.room.xMax, 0, node.room.yMin);
-        corners[2] = new Vector3(node.room.xMax, 0, node.room.yMax);
-        corners[3] = new Vector3(node.room.xMin, 0, node.room.yMax);
-        corners[4] = corners[0]; // 
-
-        // 
-        lineRenderer.SetPositions(corners);
-
-        // 
-        DrawLines(node.leftChild);
-        DrawLines(node.rightChild);
+        foreach (Transform child in transform)
+        {
+            RoomPrefab roomPrefab = child.GetComponent<RoomPrefab>();
+            if (roomPrefab != null && roomPrefab.monsterParent != null)
+            {
+                roomPrefab.monsterParent.SetActive(false);
+            }
+        }
     }
+
     void SplitNode(BSPNode node, int depth)
     {
         if (depth <= 0) return;
@@ -195,8 +167,6 @@ public class BSPGenerator : MonoBehaviour
         SplitNode(node.leftChild, depth - 1);
         SplitNode(node.rightChild, depth - 1);
     }
-
-
 
     void ConnectRooms(BSPNode node)
     {
@@ -247,7 +217,6 @@ public class BSPGenerator : MonoBehaviour
             }
         }
     }
-
 
     BSPNode Find(Dictionary<BSPNode, BSPNode> parent, BSPNode node)
     {
@@ -322,10 +291,8 @@ public class BSPGenerator : MonoBehaviour
 
     void CreateLShapedPath(Vector3 startPosition, Vector3 endPosition, GameObject startEntrance, GameObject endEntrance)
     {
-
         float deltaX = endPosition.x - startPosition.x;
         float deltaZ = endPosition.z - startPosition.z;
-
 
         if (deltaX == 0 || deltaZ == 0)
         {
@@ -336,10 +303,9 @@ public class BSPGenerator : MonoBehaviour
         }
         else
         {
-            if(Mathf.Abs(deltaX) < 10 || Mathf.Abs(deltaZ) < 10)
+            if (Mathf.Abs(deltaX) < 10 || Mathf.Abs(deltaZ) < 10)
             {
-
-                ReGenerator(); 
+                ReGenerator();
                 return;
             }
 
@@ -357,11 +323,8 @@ public class BSPGenerator : MonoBehaviour
                 midPoint2 = new Vector3((startPosition.x + endPosition.x) / 2, endPosition.y, endPosition.z);
                 DetermineAndPlaceCornerObjects(startEntrance, endEntrance, midPoint1, midPoint2);
             }
-
-           
         }
     }
-    
 
     private void DetermineAndPlaceCornerObjects(GameObject start, GameObject end, Vector3 intermediate1, Vector3 intermediate2)
     {
@@ -371,7 +334,6 @@ public class BSPGenerator : MonoBehaviour
         {
             if (start.transform.position.x > end.transform.position.x)
             {
-
                 PlaceTopRightCornerObject(intermediate1, Quaternion.identity);
                 PlaceBottomLeftCornerObject(intermediate2, Quaternion.identity);
             }
@@ -384,12 +346,12 @@ public class BSPGenerator : MonoBehaviour
             Vector3 endPosition = end.transform.position;
             Vector3 midPoint1 = new Vector3(startPosition.x, startPosition.y, (startPosition.z + endPosition.z) / 2);
             Vector3 midPoint2 = new Vector3(endPosition.x, endPosition.y, (startPosition.z + endPosition.z) / 2);
-            Vector3 cornerSize = GetPrefabSize(verticalTilePrefab); // 
+            Vector3 cornerSize = GetPrefabSize(verticalTilePrefab);
             Vector3 direction1 = (midPoint2 - midPoint1).normalized;
-            Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 4; // 
+            Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 4;
             Vector3 direction0 = (midPoint1 - startPosition).normalized;
             Vector3 direction2 = (endPosition - midPoint2).normalized;
-            Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 8f; // 
+            Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 8f;
             Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 10;
             Vector3 offsetEnd11 = offsetEnd1 - direction0 * cornerSize.z * 6;
             Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
@@ -414,12 +376,12 @@ public class BSPGenerator : MonoBehaviour
             Vector3 endPosition = end.transform.position;
             Vector3 midPoint1 = new Vector3(startPosition.x, startPosition.y, (startPosition.z + endPosition.z) / 2);
             Vector3 midPoint2 = new Vector3(endPosition.x, endPosition.y, (startPosition.z + endPosition.z) / 2);
-            Vector3 cornerSize = GetPrefabSize(verticalTilePrefab); // 
+            Vector3 cornerSize = GetPrefabSize(verticalTilePrefab);
             Vector3 direction1 = (midPoint2 - midPoint1).normalized;
-            Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 4; // 
+            Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 4;
             Vector3 direction0 = (midPoint1 - startPosition).normalized;
             Vector3 direction2 = (endPosition - midPoint2).normalized;
-            Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 16; // 
+            Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 16;
             Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 10;
             Vector3 offsetEnd11 = offsetEnd1 - direction0 * cornerSize.z;
             Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
@@ -439,12 +401,12 @@ public class BSPGenerator : MonoBehaviour
                 Vector3 endPosition = end.transform.position;
                 Vector3 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
                 Vector3 midPoint2 = new Vector3((startPosition.x + endPosition.x) / 2, endPosition.y, endPosition.z);
-                Vector3 cornerSize = GetPrefabSize(verticalTilePrefab); // 
+                Vector3 cornerSize = GetPrefabSize(verticalTilePrefab);
                 Vector3 direction1 = (midPoint2 - midPoint1).normalized;
-                Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 16; // 
+                Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 16;
                 Vector3 direction0 = (midPoint1 - startPosition).normalized;
                 Vector3 direction2 = (endPosition - midPoint2).normalized;
-                Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f; // 
+                Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f;
                 Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 10;
                 Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
                 Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
@@ -462,12 +424,12 @@ public class BSPGenerator : MonoBehaviour
                 Vector3 endPosition = end.transform.position;
                 Vector3 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
                 Vector3 midPoint2 = new Vector3((startPosition.x + endPosition.x) / 2, endPosition.y, endPosition.z);
-                Vector3 cornerSize = GetPrefabSize(verticalTilePrefab); // 
+                Vector3 cornerSize = GetPrefabSize(verticalTilePrefab);
                 Vector3 direction1 = (midPoint2 - midPoint1).normalized;
-                Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 12; // 
+                Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 12;
                 Vector3 direction0 = (midPoint1 - startPosition).normalized;
                 Vector3 direction2 = (endPosition - midPoint2).normalized;
-                Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f; // 
+                Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f;
                 Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 10;
                 Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
                 Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
@@ -488,12 +450,12 @@ public class BSPGenerator : MonoBehaviour
                 Vector3 endPosition = end.transform.position;
                 Vector3 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
                 Vector3 midPoint2 = new Vector3((startPosition.x + endPosition.x) / 2, endPosition.y, endPosition.z);
-                Vector3 cornerSize = GetPrefabSize(verticalTilePrefab); // 
+                Vector3 cornerSize = GetPrefabSize(verticalTilePrefab);
                 Vector3 direction1 = (midPoint2 - midPoint1).normalized;
-                Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 16; // 
+                Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 16;
                 Vector3 direction0 = (midPoint1 - startPosition).normalized;
                 Vector3 direction2 = (endPosition - midPoint2).normalized;
-                Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f; // 
+                Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f;
                 Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 10;
                 Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
                 Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
@@ -511,12 +473,12 @@ public class BSPGenerator : MonoBehaviour
                 Vector3 endPosition = end.transform.position;
                 Vector3 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
                 Vector3 midPoint2 = new Vector3((startPosition.x + endPosition.x) / 2, endPosition.y, endPosition.z);
-                Vector3 cornerSize = GetPrefabSize(verticalTilePrefab); // 
+                Vector3 cornerSize = GetPrefabSize(verticalTilePrefab);
                 Vector3 direction1 = (midPoint2 - midPoint1).normalized;
-                Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 12; // 
+                Vector3 offsetStart1 = midPoint1 + direction1 * cornerSize.x * 12;
                 Vector3 direction0 = (midPoint1 - startPosition).normalized;
                 Vector3 direction2 = (endPosition - midPoint2).normalized;
-                Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f; // 
+                Vector3 offsetStart2 = midPoint2 + direction2 * cornerSize.x * 4f;
                 Vector3 offsetEnd1 = midPoint1 - direction0 * cornerSize.x * 10;
                 Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
                 Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
@@ -526,9 +488,7 @@ public class BSPGenerator : MonoBehaviour
                 PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);
             }
         }
-
     }
-
 
     private void PlaceTopLeftCornerObject(Vector3 position, Quaternion rotation)
     {
@@ -563,18 +523,15 @@ public class BSPGenerator : MonoBehaviour
         List<BSPNode> leafNodes = GetLeafNodes(node);
         if (leafNodes.Count < 3) return;
 
-        // StartRoom
         startRoomNode = leafNodes[Random.Range(0, leafNodes.Count)];
         InstantiateRoom(startRoomPrefab, startRoomNode.room, startRoomNode);
         startRoomNode.roomType = RoomType.StartRoom;
 
-        // BossRoom
         leafNodes.Remove(startRoomNode);
         bossRoomNode = GetFurthestNode(startRoomNode, leafNodes);
         InstantiateRoom(bossRoomPrefab, bossRoomNode.room, bossRoomNode);
         bossRoomNode.roomType = RoomType.BossRoom;
 
-        // EliteRoom
         leafNodes.Remove(bossRoomNode);
         BSPNode eliteNode = leafNodes[Random.Range(0, leafNodes.Count)];
         InstantiateRoom(eliteRoomPrefab, eliteNode.room, eliteNode);
@@ -583,12 +540,11 @@ public class BSPGenerator : MonoBehaviour
 
     void PlaceNormalRooms(BSPNode node, int count)
     {
-        // 
         List<BSPNode> leafNodes = GetLeafNodes(node);
         foreach (BSPNode leafNode in leafNodes)
         {
             if (count <= 0 || leafNode.roomType != RoomType.None) continue;
-            InstantiateRoom(normalRoomPrefabs[Random.Range(0, normalRoomPrefabs.Length)], leafNode.room, leafNode); // 
+            InstantiateRoom(normalRoomPrefabs[Random.Range(0, normalRoomPrefabs.Length)], leafNode.room, leafNode);
             leafNode.roomType = RoomType.NormalRoom;
             count--;
         }
@@ -609,11 +565,10 @@ public class BSPGenerator : MonoBehaviour
                 );
                 GameObject roomObject = Instantiate(prefab, position, Quaternion.identity);
                 roomObject.transform.parent = this.transform;
-                node.roomObject = roomObject; //
+                node.roomObject = roomObject;
             }
         }
     }
-
 
     List<BSPNode> GetLeafNodes(BSPNode node)
     {
@@ -633,7 +588,6 @@ public class BSPGenerator : MonoBehaviour
 
     BSPNode GetFurthestNode(BSPNode startNode, List<BSPNode> nodes)
     {
-
         BSPNode furthestNode = null;
         float maxDistance = 0;
         foreach (BSPNode node in nodes)
@@ -651,19 +605,15 @@ public class BSPGenerator : MonoBehaviour
         return furthestNode;
     }
 
-
     void CheckRoomConnections(BSPNode node, List<KeyValuePair<BSPNode, BSPNode>> connectedRooms)
     {
         if (node == null) return;
 
-        // Recursively check connections in child nodes
         CheckRoomConnections(node.leftChild, connectedRooms);
         CheckRoomConnections(node.rightChild, connectedRooms);
 
-        // Check if this node has a room object
         if (node.roomObject != null)
         {
-            // Check connection between left and right child rooms if they both have roomObjects
             if (node.leftChild != null && node.leftChild.roomObject != null &&
                 node.rightChild != null && node.rightChild.roomObject != null)
             {
@@ -725,23 +675,18 @@ public class BSPGenerator : MonoBehaviour
         }
     }
 
-
     private GameObject EnsureParentStructure()
     {
-        // "TileAndCorner" 오브젝트를 찾거나 새로 생성
         GameObject tileAndCornerParent = transform.Find("TileAndCorner")?.gameObject ?? new GameObject("TileAndCorner");
 
-        // "TileAndCorner" 오브젝트를 BSPGenerator의 하위로 설정
         if (tileAndCornerParent.transform.parent != transform)
         {
             tileAndCornerParent.transform.parent = transform;
         }
 
-        // "Tile"과 "Corner" 자식 오브젝트를 찾거나 생성
         GameObject tileParent = tileAndCornerParent.transform.Find("Tile")?.gameObject ?? new GameObject("Tile");
         GameObject cornerParent = tileAndCornerParent.transform.Find("Corner")?.gameObject ?? new GameObject("Corner");
 
-        // "Tile"과 "Corner"를 "TileAndCorner"의 하위로 설정
         if (tileParent.transform.parent != tileAndCornerParent.transform)
         {
             tileParent.transform.parent = tileAndCornerParent.transform;
@@ -751,17 +696,14 @@ public class BSPGenerator : MonoBehaviour
             cornerParent.transform.parent = tileAndCornerParent.transform;
         }
 
-        // "TileAndCorner" 오브젝트 반환
         return tileAndCornerParent;
     }
 
     IEnumerator BakeMeshes()
     {
-        // Clear the objsToCombine list
         objsToCombine.Clear();
         yield return new WaitForSeconds(1f);
 
-        // Add tile objects to the objsToCombine list
         Transform tileParent = transform.Find("TileAndCorner/Tile");
         if (tileParent != null)
         {
@@ -771,7 +713,6 @@ public class BSPGenerator : MonoBehaviour
             }
         }
 
-        // Add room objects' meshBakingTileGroup children to the objsToCombine list
         foreach (Transform child in transform)
         {
             RoomPrefab roomPrefab = child.GetComponent<RoomPrefab>();
@@ -781,16 +722,12 @@ public class BSPGenerator : MonoBehaviour
             }
         }
 
-        // Combine meshes for tile objects and room meshBakingTileGroup children only
         if (meshbaker.AddDeleteGameObjects(objsToCombine.ToArray(), null, true))
         {
             meshbaker.Apply();
         }
-
-        
     }
 
-    // Helper method to add child objects with MeshRenderer or SkinnedMeshRenderer components
     void AddChildObjectsWithMeshRenderer(Transform parent, List<GameObject> objsToCombine)
     {
         foreach (Transform child in parent)
@@ -809,7 +746,6 @@ public class BSPGenerator : MonoBehaviour
 
         if (navMesh.navMeshData == null)
             navMesh.BuildNavMesh();
-           
     }
 
     void ClearNavMesh()
@@ -823,21 +759,18 @@ public class BSPGenerator : MonoBehaviour
         List<BSPNode> path = new List<BSPNode>();
         if (startNode == null || endNode == null) return;
 
-        // 경로를 클리어하고 시작 노드를 추가
         path.Clear();
         path.Add(startNode);
         BSPNode currentNode = startNode;
 
-        // endNode를 찾을 때까지 연결을 따라감
         while (currentNode != endNode && currentNode != null)
         {
             BSPNode nextNode = FindNextNodeInPath(currentNode, endNode);
-            if (nextNode == null) break; // 경로가 끊기면 중단
+            if (nextNode == null) break;
             path.Add(nextNode);
             currentNode = nextNode;
         }
 
-        // 경로 출력
         string pathDescription = "Path from StartRoom to BossRoom: ";
         foreach (BSPNode node in path)
         {
@@ -845,7 +778,6 @@ public class BSPGenerator : MonoBehaviour
         }
         Debug.Log(pathDescription.TrimEnd(' ', '-', '>'));
     }
-
 
     BSPNode FindNextNodeInPath(BSPNode currentNode, BSPNode targetNode)
     {
@@ -875,10 +807,9 @@ public class BSPGenerator : MonoBehaviour
 
         if (player != null && startRoomNode != null && startRoomNode.roomObject != null)
         {
-            // Calculate the position at the center of the room on the floor level (assuming Y = 0 is the floor)
             Vector3 roomPosition = new Vector3(
                 startRoomNode.room.x + startRoomNode.room.width / 2,
-                0, // Assuming the floor level is at Y = 0
+                0,
                 startRoomNode.room.y + startRoomNode.room.height / 2
             );
             player.transform.position = roomPosition;
@@ -890,6 +821,4 @@ public class BSPGenerator : MonoBehaviour
             Debug.LogError("Failed to move player: Start room or player not properly initialized.");
         }
     }
-
-
 }

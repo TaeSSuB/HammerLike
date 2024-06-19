@@ -17,6 +17,8 @@ public class B_Enemy : B_UnitBase
     // get aIStateManager
     public AIStateManager AIStateManager => aIStateManager;
 
+    public static event Action<Vector3> OnMonsterDeath;
+
     #region Unity Callbacks & Init
     public override void Init()
     {
@@ -196,6 +198,7 @@ public class B_Enemy : B_UnitBase
     protected override void Dead(bool isSelf = false)
     {
         base.Dead(isSelf);
+        OnMonsterDeath?.Invoke(transform.position);
         aIStateManager.SetState(AIStateType.DEAD);
 
         //DisconnectMusclesRecursive(GameManager.Instance.Player.transform.position);
