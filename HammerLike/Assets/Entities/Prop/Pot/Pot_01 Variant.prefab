@@ -12,7 +12,9 @@ GameObject:
   - component: {fileID: 130928780427009419}
   - component: {fileID: 2753335728324405569}
   - component: {fileID: 6320283902246909277}
-  - component: {fileID: -6517824033602315686}
+  - component: {fileID: 4490919732333440862}
+  - component: {fileID: 4004306998690272141}
+  - component: {fileID: -6391069271839194835}
   m_Layer: 10
   m_Name: Pot_01 Variant
   m_TagString: Pot
@@ -108,21 +110,66 @@ CapsuleCollider:
   m_Height: 1.7740867
   m_Direction: 1
   m_Center: {x: 0.000000029802322, y: 0.88704336, z: -0.00000017881393}
---- !u!114 &-6517824033602315686
+--- !u!208 &4490919732333440862
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4410480002878228628}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.65500003, y: 0.887, z: 0.64000005}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.887, z: 0}
+  m_TimeToStationary: 0.5
+--- !u!54 &4004306998690272141
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4410480002878228628}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &-6391069271839194835
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4410480002878228628}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8eab486a190a9814fa13b8d5338032cb, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ef2371777775ec4fbace3f40322d77c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  meshObj: {fileID: 4410480002878228628}
+  col: {fileID: 6320283902246909277}
+  rigid: {fileID: 4004306998690272141}
+  isInvincible: 0
+  hp: 1
   CutCascades: 4
-  ExplodeForce: 2
-  deathTime: 10
-  maxHp: 1
-  curHp: 0
+  ExplodeForce: 10
+  deathTime: 5
