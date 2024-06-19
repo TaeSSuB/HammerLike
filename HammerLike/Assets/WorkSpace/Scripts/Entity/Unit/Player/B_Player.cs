@@ -924,6 +924,37 @@ public class B_Player : B_UnitBase
         B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, weaponOrbit.gameObject.transform.position - dirNormalized * 0.5f);
     }
 
+    void FootStepRunLeft()
+    {
+        B_AudioManager.Instance.PlaySound("Player_Run_FootStep_L", AudioCategory.SFX);
+    }
+
+    void FootStepRunRight()
+    {
+        B_AudioManager.Instance.PlaySound("Player_Run_FootStep_R", AudioCategory.SFX);
+    }
+
+    void FootStepWalkLeft()
+    {
+        B_AudioManager.Instance.PlaySound("Player_Walk_FootStep_L", AudioCategory.SFX);
+    }
+
+    void FootStepWalkRight()
+    {
+        B_AudioManager.Instance.PlaySound("Player_Walk_FootStep_L", AudioCategory.SFX);
+    }
+
+    void RollingStart()
+    {
+        B_AudioManager.Instance.PlaySound("Player_Rolling_Start", AudioCategory.SFX);
+
+    }
+
+    void RollingEnd()
+    {
+        B_AudioManager.Instance.PlaySound("Player_Rolling_End", AudioCategory.SFX);
+    }
+
     #endregion
 
     #region Weapon

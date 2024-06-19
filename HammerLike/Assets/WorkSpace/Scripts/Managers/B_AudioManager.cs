@@ -83,7 +83,9 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
             // GetLoopAudioSource().volume = volume;
             foreach (var info in targetInfos)
             {
-                info.volume = volume;
+                var resultVolume = volume * info.initialVolume; // Comment - a.HG : 초기 볼륨 값과 세팅 값 구분
+                resultVolume = Mathf.Clamp(resultVolume, 0f, 2f); // Comment - a.HG : 혹시 모르니 볼륨 값 제한
+                info.volume = resultVolume;
             }
             if (save)
             {
@@ -95,7 +97,9 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
         {
             foreach (var info in targetInfos)
             {
-                info.volume = volume;
+                var resultVolume = volume * info.initialVolume; // Comment - a.HG : 초기 볼륨 값과 세팅 값 구분
+                resultVolume = Mathf.Clamp(resultVolume, 0f, 2f); // Comment - a.HG : 혹시 모르니 볼륨 값 제한
+                info.volume = resultVolume;
             }
             if (save)
             {
@@ -118,6 +122,16 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
         // }
         // return 0;
         return GetAllAudioInfosWithCategory(category).Length > 0 ? GetAllAudioInfosWithCategory(category)[0].volume : 0;
+    }
+
+    public float GetVolume(string name)
+    {
+        var audioInfo = audioSet.audioInfos.FirstOrDefault(info => info.name == name);
+        if (audioInfo != null)
+        {
+            return audioInfo.volume;
+        }
+        return 0;
     }
 
     private void Start()
@@ -191,7 +205,7 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
                     audioSourceOnce = audioSourceOnces[0];
                 }
                 audioSourceOnce.clip = audioInfo.clip;
-                audioSourceOnce.volume = GetVolume(category);
+                audioSourceOnce.volume = GetVolume(name);
                 audioSourceOnce.loop = audioInfo.loop;
                 audioSourceOnce.Play();
                 Debug.Log($"Playing sound {name}");
@@ -206,7 +220,7 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
                     audioSourceLoop = audioSourceLoops[0];
                 }
                 audioSourceLoop.clip = audioInfo.clip;
-                audioSourceLoop.volume = GetVolume(category);
+                audioSourceLoop.volume = GetVolume(name);
                 audioSourceLoop.loop = audioInfo.loop;
                 audioSourceLoop.Play();
 
