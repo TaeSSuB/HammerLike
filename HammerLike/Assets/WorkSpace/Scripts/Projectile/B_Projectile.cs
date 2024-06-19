@@ -99,7 +99,7 @@ public class B_Projectile : MonoBehaviour
 
         }
         // Temp.. 나중에 수정
-        else if(other.gameObject.layer == LayerMask.NameToLayer("Object"))
+        else if(other.gameObject.layer == LayerMask.NameToLayer("Object") || other.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
             DestroyProjectile();
         }
