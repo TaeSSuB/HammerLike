@@ -29,49 +29,52 @@ public class MeshDestroy : MonoBehaviour
     void Start()
     {
         GameObject itemDB = GameObject.Find("ItemDB");
-        itemManager = itemDB.GetComponent<ItemManager>();
+        
+        // Temp 240426 - ì£¼ì„ì²˜ë¦¬ a.HG
+        //itemManager = itemDB.GetComponent<ItemManager>(); 
+
         curHp = maxHp;
         changeMaterial = GetComponent<ChangeMaterialObject>(); 
-        // player°¡ nullÀÎ °æ¿ì Player ÀÌ¸§À» °¡Áø ¿ÀºêÁ§Æ®¿¡¼­ Player ½ºÅ©¸³Æ®¸¦ Ã£¾Æ ÇÒ´ç
-        if (player == null)
-        {
-            GameObject playerObject = GameObject.Find("Player");
-            if (playerObject != null) // Player ¿ÀºêÁ§Æ®°¡ Á¸ÀçÇÏ´Â °æ¿ì
-            {
-                player = playerObject.GetComponent<Player>();
-                if (player == null) // Player ½ºÅ©¸³Æ®°¡ ÇØ´ç ¿ÀºêÁ§Æ®¿¡ ¾ø´Â °æ¿ì
-                {
-                    Debug.LogError("Player ¿ÀºêÁ§Æ®¿¡¼­ Player ½ºÅ©¸³Æ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
-                }
-            }
-            else
-            {
-                Debug.LogError("Scene ³»¿¡ Player ÀÌ¸§À» °¡Áø ¿ÀºêÁ§Æ®°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
-            }
-        }
+        // playerê°€ nullì¸ ê²½ìš° Player ì´ë¦„ì„ ê°€ì§„ ì˜¤ë¸Œì íŠ¸ì—ì„œ Player ìŠ¤í¬ë¦½íŠ¸ë¥¼ ì°¾ì•„ í• ë‹¹
+        //if (player == null)
+        //{
+        //    GameObject playerObject = GameObject.Find("Player");
+        //    if (playerObject != null) // Player ì˜¤ë¸Œì íŠ¸ê°€ ì¡´ì¬í•˜ëŠ” ê²½ìš°
+        //    {
+        //        player = playerObject.GetComponent<Player>();
+        //        if (player == null) // Player ìŠ¤í¬ë¦½íŠ¸ê°€ í•´ë‹¹ ì˜¤ë¸Œì íŠ¸ì— ì—†ëŠ” ê²½ìš°
+        //        {
+        //            Debug.LogError("Player ì˜¤ë¸Œì íŠ¸ì—ì„œ Player ìŠ¤í¬ë¦½íŠ¸ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Debug.LogError("Scene ë‚´ì— Player ì´ë¦„ì„ ê°€ì§„ ì˜¤ë¸Œì íŠ¸ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
+        //    }
+        //}
 
-        GameObject vcamObject = GameObject.Find("CM vcam1");
-        if (vcamObject != null) // CM vcam1 ¿ÀºêÁ§Æ®°¡ Á¸ÀçÇÏ´Â °æ¿ì
-        {
-            cameraShake = vcamObject.GetComponent<CameraShake>();
-            if (cameraShake == null) // CameraShake ÄÄÆ÷³ÍÆ®°¡ ÇØ´ç ¿ÀºêÁ§Æ®¿¡ ¾ø´Â °æ¿ì
-            {
-                Debug.LogError("CM vcam1 ¿ÀºêÁ§Æ®¿¡¼­ CameraShake ÄÄÆ÷³ÍÆ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
-            }
-        }
-        else
-        {
-            Debug.LogError("Scene ³»¿¡ CM vcam1 ÀÌ¸§À» °¡Áø ¿ÀºêÁ§Æ®°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
-        }
+        //GameObject vcamObject = GameObject.Find("CM vcam1");
+        //if (vcamObject != null) // CM vcam1 ì˜¤ë¸Œì íŠ¸ê°€ ì¡´ì¬í•˜ëŠ” ê²½ìš°
+        //{
+        //    cameraShake = vcamObject.GetComponent<CameraShake>();
+        //    if (cameraShake == null) // CameraShake ì»´í¬ë„ŒíŠ¸ê°€ í•´ë‹¹ ì˜¤ë¸Œì íŠ¸ì— ì—†ëŠ” ê²½ìš°
+        //    {
+        //        Debug.LogError("CM vcam1 ì˜¤ë¸Œì íŠ¸ì—ì„œ CameraShake ì»´í¬ë„ŒíŠ¸ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+        //    }
+        //}
+        //else
+        //{
+        //    Debug.LogError("Scene ë‚´ì— CM vcam1 ì´ë¦„ì„ ê°€ì§„ ì˜¤ë¸Œì íŠ¸ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
+        //}
 
     }
 
     void Update()
     {
-       if(Input.GetKeyDown(KeyCode.T))
+       /*if(Input.GetKeyDown(KeyCode.T))
         {
             DestroyMesh();
-        }
+        }*/
 
         /*if (meshCol != null && weaponCollider != null && weaponCollider.enabled && meshCol.bounds.Intersects(weaponCollider.bounds))
         {
@@ -103,13 +106,13 @@ public class MeshDestroy : MonoBehaviour
             WeaponCollider weaponCollider = other.GetComponent<WeaponCollider>();
             if (weaponCollider != null && lastProcessedAttackId != weaponCollider.CurrentAttackId)
             {
-                // ??©ö??? ©ö¡¿ ©ø?©ö? ?©ø¢¬¢ç
+                // ??Â¹??? Â¹Ã— Â³?Â¹? ?Â³Â¸Â®
                 PlayerAtk playerAttack = other.GetComponentInParent<PlayerAtk>();
                 if (playerAttack != null)
                 {
                     //TakeDamage(playerAttack.attackDamage);
                     //raycastShooter.ShootAtBone(targetBones[0]);
-                    /*Vector3 hitPoint = other.ClosestPointOnBounds(transform.position); // Ãæµ¹ ÁöÁ¡
+                    /*Vector3 hitPoint = other.ClosestPointOnBounds(transform.position); // ì¶©ëŒ ì§€ì 
                     Vector3 knockbackDirection = DetermineKnockbackDirection(hitPoint, other.transform);
                     ApplyKnockback(knockbackDirection);*/
                     //lastProcessedAttackId = weaponCollider.CurrentAttackId;
@@ -132,7 +135,7 @@ public class MeshDestroy : MonoBehaviour
                     //raycastShooter.ShootAtBoneWithForce(targetBones[0], customForce);
                     //raycastShooter.ShootAtBone(targetBones[0]);
                     lastProcessedAttackId = weaponCollider.CurrentAttackId;
-                    weaponCollider.hasProcessedAttack = true; // °ø°İ Ã³¸® Ç¥½Ã
+                    weaponCollider.hasProcessedAttack = true; // ê³µê²© ì²˜ë¦¬ í‘œì‹œ
                 }
 
             }
@@ -142,9 +145,9 @@ public class MeshDestroy : MonoBehaviour
 
     private void TakeDamage(float damage)
     {
-        if (curHp <= 0) return; // ??©ö? ??¢¬??? ¡Æ©¡¢¯? ??©ö???¢¬? ©ö¨­?? ¨ú??¨ö
+        if (curHp <= 0) return; // ??Â¹? ??Â¸??? Â°Ã¦Â¿? ??Â¹???Â¸? Â¹Ã?? Â¾??Â½
 
-        if (curHp > 0)  // ¢¬?¨ö¨¬??¡Æ¢® ??¨ú¨¡???? ¢Ò¡×¢¬¢¬ ??¡Æ? ?©ø¢¬¢ç
+        if (curHp > 0)  // Â¸?Â½Âº??Â°Â¡ ??Â¾Ã†???? Â¶Â§Â¸Â¸ ??Â°? ?Â³Â¸Â®
         {
             curHp -= damage;
             if (!CompareTag("Pot"))
@@ -165,7 +168,7 @@ public class MeshDestroy : MonoBehaviour
 
     public void DestroyMesh()
     {
-        if (hasBeenDestroyed) // ÀÌ¹Ì DestroyMesh°¡ È£ÃâµÇ¾úÀ¸¸é ¾Æ¹« °Íµµ ÇÏÁö ¾ÊÀ½
+        if (hasBeenDestroyed) // ì´ë¯¸ DestroyMeshê°€ í˜¸ì¶œë˜ì—ˆìœ¼ë©´ ì•„ë¬´ ê²ƒë„ í•˜ì§€ ì•ŠìŒ
             return;
 
         hasBeenDestroyed = true;
@@ -175,10 +178,10 @@ public class MeshDestroy : MonoBehaviour
         {
             
         }
-        // ¿©±â¼­ null Ã¼Å©¸¦ Ãß°¡ÇÕ´Ï´Ù.
+        // ì—¬ê¸°ì„œ null ì²´í¬ë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
         if (GetComponent<MeshFilter>() == null || player == null)
         {
-            Debug.LogError("MeshFilter ¶Ç´Â Player°¡ nullÀÔ´Ï´Ù.");
+            Debug.LogError("MeshFilter ë˜ëŠ” Playerê°€ nullì…ë‹ˆë‹¤.");
             return;
         }
 
@@ -219,20 +222,20 @@ public class MeshDestroy : MonoBehaviour
             subParts.Clear();
         }
 
-        Vector3 playerDirection = player.transform.forward; // ÇÃ·¹ÀÌ¾î°¡ ¹Ù¶óº¸´Â ¹æÇâ
+        Vector3 playerDirection = player.transform.forward; // í”Œë ˆì´ì–´ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥
 
         for (var i = 0; i < parts.Count; i++)
         {
             parts[i].MakeGameobject(this);
             var rigidbody = parts[i].GameObject.GetComponent<Rigidbody>();
 
-            // ÇÃ·¹ÀÌ¾î°¡ ¹Ù¶óº¸´Â ¹æÇâÀ¸·Î ÆÄÆí¿¡ ÈûÀ» °¡ÇÕ´Ï´Ù.
+            // í”Œë ˆì´ì–´ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ íŒŒí¸ì— í˜ì„ ê°€í•©ë‹ˆë‹¤.
             rigidbody.AddForce(playerDirection * ExplodeForce, ForceMode.Impulse);
-            // »ı¼ºµÈ °¢ ÆÄÆíÀ» 10ÃÊ ÈÄ¿¡ ÆÄ±«ÇÕ´Ï´Ù.
+            // ìƒì„±ëœ ê° íŒŒí¸ì„ 10ì´ˆ í›„ì— íŒŒê´´í•©ë‹ˆë‹¤.
             Destroy(parts[i].GameObject, deathTime);
         }
         Destroy(gameObject);
-        // ºÎ¸ğ ¿ÀºêÁ§Æ®ÀÇ BoxCollider¸¦ ÆÄ±«ÇÕ´Ï´Ù.
+        // ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸ì˜ BoxColliderë¥¼ íŒŒê´´í•©ë‹ˆë‹¤.
         if (transform.parent != null)
         {
             BoxCollider parentBoxCollider = transform.parent.gameObject.GetComponent<BoxCollider>();
@@ -244,7 +247,7 @@ public class MeshDestroy : MonoBehaviour
         }
         else
         {
-            // ºÎ¸ğ ¿ÀºêÁ§Æ®°¡ ¾øÀ¸¸é ÀÌ ¿ÀºêÁ§Æ® ÀÚÃ¼¸¦ ÆÄ±«ÇÕ´Ï´Ù.
+            // ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸ê°€ ì—†ìœ¼ë©´ ì´ ì˜¤ë¸Œì íŠ¸ ìì²´ë¥¼ íŒŒê´´í•©ë‹ˆë‹¤.
             Destroy(gameObject);
         }
     }
@@ -283,7 +286,7 @@ public class MeshDestroy : MonoBehaviour
                     continue;
                 }
 
-                //ÄÆ Æ÷ÀÎÆ®
+                //ì»· í¬ì¸íŠ¸
                 var singleIndex = sideB == sideC ? 0 : sideA == sideC ? 1 : 2;
 
                 ray1.origin = original.Vertices[triangles[j + singleIndex]];

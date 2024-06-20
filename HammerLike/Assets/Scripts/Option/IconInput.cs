@@ -7,8 +7,8 @@ using Rewired;
 [System.Serializable]
 public class AlphabetIconMapping
 {
-    public string keyName; // Å° ÀÌ¸§
-    public Sprite icon; // ¾ÆÀÌÄÜ
+    public string keyName; // í‚¤ ì´ë¦„
+    public Sprite icon; // ì•„ì´ì½˜
 }
 
 public class IconInput : MonoBehaviour
@@ -24,11 +24,14 @@ public class IconInput : MonoBehaviour
 
     void Start()
     {
+        
         player = ReInput.players.GetPlayer(0);
+        if(player!=null)
+        {
 
         foreach (var mapping in keyIconsMappings)
         {
-            string keyNameUpper = mapping.keyName.ToUpper(); // Å° ÀÌ¸§À» ´ë¹®ÀÚ·Î º¯È¯
+            string keyNameUpper = mapping.keyName.ToUpper(); // í‚¤ ì´ë¦„ì„ ëŒ€ë¬¸ìë¡œ ë³€í™˜
             if (!keyIcons.ContainsKey(keyNameUpper))
             {
                 keyIcons[keyNameUpper] = mapping.icon;
@@ -40,13 +43,14 @@ public class IconInput : MonoBehaviour
             inputField.onValueChanged.AddListener(HandleInputChanged);
             SetInitialIcon();
         }
+        }
     }
 
     private void HandleInputChanged(string input)
     {
         if (input.Length > 0)
         {
-            string inputUpper = input.ToUpper(); // ÀÔ·ÂÀ» ´ë¹®ÀÚ·Î º¯È¯
+            string inputUpper = input.ToUpper(); // ì…ë ¥ì„ ëŒ€ë¬¸ìë¡œ ë³€í™˜
             if (keyIcons.ContainsKey(inputUpper))
             {
                 iconDisplay.sprite = keyIcons[inputUpper];
@@ -64,7 +68,7 @@ public class IconInput : MonoBehaviour
                 if (element.actionId == actionId && element.axisContribution == axisContribution)
                 {
                     KeyCode currentKey = ReInput.controllers.Keyboard.GetKeyCodeById(element.elementIdentifierId);
-                    string keyNameUpper = currentKey.ToString().ToUpper(); // Å° ÀÌ¸§À» ´ë¹®ÀÚ·Î º¯È¯
+                    string keyNameUpper = currentKey.ToString().ToUpper(); // í‚¤ ì´ë¦„ì„ ëŒ€ë¬¸ìë¡œ ë³€í™˜
                     if (keyIcons.ContainsKey(keyNameUpper))
                     {
                         iconDisplay.sprite = keyIcons[keyNameUpper];

@@ -1,3 +1,120 @@
+1.1.55.0:
+
+   Changes:
+      - Added Update Mode option.
+      - Removed DualSense Edge Enhanced Device Support due to not functioning correctly.
+
+   API Changes:
+      - Added Rewired.ReInput.Update function.
+      - Added Rewired.ReInput.ConfigHelper.updateMode property.
+      - Added Rewired.Config.UpdateMode enum.
+      - Added Rewired.ControllerExtensions.DualShock4Extension.batteryCharging property.
+   
+   Bug Fixes:
+      - Sony Dual Shock 4, Enhanced Device Support: Fixed incorrect battery level.
+      - Sony Dual Sense, Enhanced Device Support: Fixed incorrect battery charging state and battery level.
+
+1.1.54.1:
+
+   Bug Fixes: 
+      - New Custom Platform Hardware Joystick Map Platform Map axis values are now set to the correct default values when adding an axis.
+
+1.1.54.0:
+
+    Changes:
+      - Added variants to Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMapSimple.
+    
+    API Changes:
+      - Added Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMapSimpleBase class.
+      - Moved Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMapSimple.MatchingCriteria class to Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMapSimpleBase.MatchingCriteria.
+
+    Bug Fixes:
+      - Added detection of initial application focused state with Application.isFocused (Unity 2017+) to eliminate edge case of application incorrectly responding to input events in builds if window is defocused during initial application loading while Application.runInBackground is true and Rewired is not initialized on Awake in the first scene of the application on certain platforms using certain input sources.
+
+1.1.53.0:
+
+    Changes:
+      - Added editor inspector support for Custom Platform Hardware Joystick Map Platform Map variants.
+      - Updated Custom Platform example to illustrate variants and HardwareJoystickMapCustomPlatformMapSimpleSO.
+      
+    API Changes:
+      - Added Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMapSimple class.
+      - Added Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMapSimple.MatchingCriteria class.
+      - Added HardwareJoystickMapCustomPlatformMapSimpleSO class.
+
+1.1.52.0:
+
+    Changes:
+      - Added Custom Platforms: Developers can now add support for platforms not supported natively by Rewired.
+      - Added Custom Platform example.
+      - Updated Unity version check handling for Unity 6 in preparation for Unity 6 support. (Unity 6 support has not been added in this release.)
+  
+    API Changes:
+      - Added Rewired.Platforms.Custom.CustomPlatformConfigVars class.
+      - Added Rewired.Platforms.Custom.CustomPlatformInitOptions class.
+      - Added Rewired.Platforms.Custom.CustomPlatformInputSource class.
+      - Added Rewired.Platforms.Custom.CustomPlatformInputSource.InitOptions class.
+      - Added Rewired.Platforms.Custom.CustomPlatformInputSource.Joystick class.
+      - Added Rewired.Platforms.Custom.CustomPlatformUnifiedControllerSource class.
+      - Added Rewired.Platforms.Custom.CustomPlatformUnifiedKeyboardSource class.
+      - Added Rewired.Platforms.Custom.CustomPlatformUnifiedMouseSource class.
+      - Added Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMap class.
+      - Added Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMap.Axis class.
+      - Added Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMap.Button class.
+      - Added Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMap.Elements class.    
+      - Added Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMap.MatchingCriteria class.
+      - Added Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMap<TMatchingCriteria> class.
+      - Added Rewired.Platforms.Custom.HardwareJoystickMapCustomPlatformMapSO class.
+      - Added Rewired.Platforms.Custom.ICustomPlatformInitializer interface.
+      - Added Rewired.Platforms.Custom.IHardwareJoystickMapCustomPlatformMapProvider interface.
+  
+    Bug Fixes:
+      - Updated editor code to handle recently changed Xbox Game Core build target strings when automatically setting Rewired_Core.dll build targets.
+
+1.1.51.0:
+
+  Changes:
+    - Windows Standalone, Unity 2023: Added ARM64 native library Rewired_WindowsGamingInput.dll.
+    - Windows Standalone: Rewired_DirectInput.dll minimum Windows version support changed to 10.0.17134.0.
+    - windows Standalone: Rewired_DirectInput.dll changed to static linking of VC runtime.
+
+  Bug Fixes:
+    - Unity 2023, Windows Standalone: Fixed Rewired_WindowsGamingInput.dll plugin importer settings that were not inherited properly when copying the meta file from an older version of Unity causing Unity to attempt to include the 64-bit DLL in 32-bit builds.
+
+1.1.50.0:
+
+  Changes:
+    - Added keyboard key combination override modes.
+    - Changed the default keyboard key combination override mode to Cancel. This mode makes key combination override behavior more intuitive, with Actions bound to modifier keys canceled when a key combo is activated that contains that modifier key. Canceled Actions do not return True until the bound key is released and pressed again. Existing Rewired Input Managers will retain the legacy mode (Pause), but newly created Rewired Input Managers will default to Cancel.
+    - Added Key Combination Override Mode to Rewired Input Manager Settings.
+    - Added Generate Key Events On Key Combination Override to Rewired Input Manager Settings.
+    - Added Enhanced Device Support device type exclusion options.
+
+  API Changes:
+    - Added Rewired.Config.KeyCombinationOverrideMode enum.
+    - Added ReInput.ConfigHelper.keyCombinationOverrideMode property.
+    - Added ReInput.ConfigHelper.generateKeyEventsOnKeyCombinationOverride property.
+    - Added Rewired.ControllerExtensions.DualSenseExtension.GetVibrationMode function.
+    - Added Rewired.ControllerExtensions.DualSenseExtension.SetVibrationMode function.
+    - Addde Rewired.ControllerExtensions.DualSenseVibrationMode enum.
+    - Added Rewired.Config.EnhancedDeviceSupportDeviceType enum.
+    - Added ReInput.ConfigHelper.enhancedDeviceSupportExcludedDeviceTypes property.
+  
+  Bug Fixes:
+    - Player.GetButtonTimePressed and Player.GetButtonTimeUnpressed now return correct values when an Action bound to a keyboard modifier key has its value blocked or unblocked due to a key combination being activated or deactivated that includes the modifier key and Key Combination Override mode is set to Pause and Generate Key Events On Key Combination Override is disabled.
+
+1.1.49.2:
+
+  Changes:
+    - Updated Cinemachine integration to work with Unity Editor Play Mode options.
+
+  Controller Definitions:
+    - Microsoft Xbox One, Android: Changed mapping of View button for newer Android versions dropping support for older versions of Android that map the View button to keyboard ESC.
+    
+  Bug Fixes:
+    - Rewired_MacOS library: Now ad-hoc signed instead of signed with development identity.
+    - Rewired_MacOS library: Prevent possible issues on MacOS versions < 11.
+
 1.1.49.1:
 
   Bug Fixes:

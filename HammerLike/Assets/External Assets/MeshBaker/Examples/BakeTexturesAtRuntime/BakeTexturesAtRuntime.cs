@@ -25,7 +25,7 @@ public class BakeTexturesAtRuntime : MonoBehaviour
     {
         if (MBVersion.DetectPipeline() == MBVersion.PipelineType.URP)
         {
-            return "Universal Render Pipeline/Lit";
+            return "HLPixelizer/SRP/HLPixelizer";
         }
         else if (MBVersion.DetectPipeline() == MBVersion.PipelineType.HDRP)
         {

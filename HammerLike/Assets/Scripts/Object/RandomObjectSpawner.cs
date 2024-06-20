@@ -7,7 +7,7 @@ public class RandomObjectSpawner : MonoBehaviour
     public class PrefabProbability
     {
         public GameObject prefab;
-        public float probability; // ÀÌ ºñÀ²Àº ÀüÃ¼ ÇÕ°è°¡ 1ÀÌ µÇ¾î¾ß ÇÔ
+        public float probability; // ì´ ë¹„ìœ¨ì€ ì „ì²´ í•©ê³„ê°€ 1ì´ ë˜ì–´ì•¼ í•¨
     }
 
     public List<PrefabProbability> prefabsWithProbability;
@@ -25,46 +25,50 @@ public class RandomObjectSpawner : MonoBehaviour
     {
         GameObject selectedPrefab = SelectRandomPrefab();
 
+        if (selectedPrefab == null)
+        {
+            Debug.LogError("No valid prefab selected.");
+            return;
+        }
+
         Quaternion rotation = useParentRotation ? transform.rotation : selectedPrefab.transform.rotation;
         Vector3 scale = useParentScale ? transform.localScale : selectedPrefab.transform.localScale;
+        Vector3 position = useParentPosition ? transform.position : transform.position + (selectedPrefab.transform.position);
 
-        Vector3 position;
-        if (useParentPosition)
-        {
-            position = transform.position;
-        }
-        else
-        {
-            position = transform.position + (selectedPrefab.transform.position);
-        }
-
-        // »õ ¿ÀºêÁ§Æ®¸¦ »ı¼ºÇÏ°í ºÎ¸ğ ¿ÀºêÁ§Æ®¿¡ ¿¬°á
         GameObject spawnedObject = Instantiate(selectedPrefab, position, rotation, transform.parent);
         spawnedObject.transform.localScale = scale;
 
-        // ¿øº» ¿ÀºêÁ§Æ® Ã³¸®
         if (destroyOriginal)
         {
             Destroy(gameObject);
         }
-        else
-        {
-            // ¿øº» ¿ÀºêÁ§Æ®¸¦ ºñÈ°¼ºÈ­ÇÏÁö ¾Ê°í ±×´ë·Î µÒ
-        }
     }
-
 
     private GameObject SelectRandomPrefab()
     {
-        float total = 0;
+        List<PrefabProbability> validPrefabs = new List<PrefabProbability>();
+        float totalProbability = 0;
+
+        // ìœ íš¨í•œ í”„ë¦¬íŒ¹ê³¼ ê·¸ í™•ë¥ ì„ ìˆ˜ì§‘í•©ë‹ˆë‹¤.
         foreach (var item in prefabsWithProbability)
         {
-            total += item.probability; // ¸ğµç È®·üÀÇ ÇÕÀ» °è»ê
+            if (item.prefab != null)
+            {
+                validPrefabs.Add(item);
+                totalProbability += item.probability;
+            }
         }
 
-        float randomPoint = Random.value * total; // 0°ú total »çÀÌÀÇ ¹«ÀÛÀ§ °ªÀ» ¼±ÅÃ
+        if (validPrefabs.Count == 0)
+        {
+            Debug.LogError("No valid prefabs available for spawning.");
+            return null;
+        }
 
-        foreach (var item in prefabsWithProbability)
+        // ëœë¤ ê°’ì„ í†µí•´ í”„ë¦¬íŒ¹ì„ ì„ íƒí•©ë‹ˆë‹¤.
+        float randomPoint = Random.value * totalProbability;
+
+        foreach (var item in validPrefabs)
         {
             if (randomPoint < item.probability)
                 return item.prefab;
@@ -72,7 +76,6 @@ public class RandomObjectSpawner : MonoBehaviour
                 randomPoint -= item.probability;
         }
 
-        return null; // ÀÌ °æ¿ì´Â ¹ß»ıÇÏÁö ¾Ê¾Æ¾ß ÇÔ
+        return null; // ì´ ê²½ìš°ëŠ” ë°œìƒí•˜ì§€ ì•Šì•„ì•¼ í•¨
     }
-
 }

@@ -244,8 +244,8 @@ public class GrassPainterWindow : EditorWindow
         toolSettings.paintBlockMask = InternalEditorUtility.ConcatenatedLayersMaskToLayerMask(tempMask0);
 
 
-        toolSettings.VertexColorSettings = (SO_GrassToolSettings.VertexColorSetting)EditorGUILayout.EnumPopup("Block On vertex Colors", toolSettings.VertexColorSettings);
-        toolSettings.VertexFade = (SO_GrassToolSettings.VertexColorSetting)EditorGUILayout.EnumPopup("Fade on Vertex Colors", toolSettings.VertexFade);
+        toolSettings.VertexColorSettings = (SO_GrassToolSettings.VertexColorSetting)EditorGUILayout.EnumFlagsField("Block On vertex Colors", toolSettings.VertexColorSettings);
+        toolSettings.VertexFade = (SO_GrassToolSettings.VertexColorSetting)EditorGUILayout.EnumFlagsField("Fade on Vertex Colors", toolSettings.VertexFade);
 
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Width and Length ", EditorStyles.boldLabel);
@@ -452,7 +452,7 @@ public class GrassPainterWindow : EditorWindow
         grassCompute.currentPresets.maxDrawDistance = EditorGUILayout.FloatField("Max Draw Distance", grassCompute.currentPresets.maxDrawDistance);
         grassCompute.currentPresets.cullingTreeDepth = EditorGUILayout.IntField("Culling Tree Depth", grassCompute.currentPresets.cullingTreeDepth);
 
-
+        grassCompute.enableCulling = EditorGUILayout.Toggle("Enable Culling", grassCompute.enableCulling);
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Other Settings", EditorStyles.boldLabel);
         grassCompute.currentPresets.affectStrength = EditorGUILayout.FloatField("Interactor Bend Strength", grassCompute.currentPresets.affectStrength);
@@ -852,61 +852,92 @@ public class GrassPainterWindow : EditorWindow
                     break;
                 }
             }
-            if (triIndex == -1)
-                Debug.LogError("triIndex should never be -1");
+            if (triIndex == -1) return; // Error handling
 
-            switch (VertexColorSettings)
+            bool block = false;
+
+            // 레드 체크 
+            // Red check
+            if ((VertexColorSettings & SO_GrassToolSettings.VertexColorSetting.Red) == SO_GrassToolSettings.VertexColorSetting.Red && MeshColors[MeshTriangles[triIndex * 3]].r > 0.5f)
             {
-                case SO_GrassToolSettings.VertexColorSetting.Red:
-                    if (MeshColors[MeshTriangles[triIndex * 3]].r > 0.5f)
-                    {
-                        Point[0] = Vector3.zero;
-                        return;
-                    }
-                    break;
-                case SO_GrassToolSettings.VertexColorSetting.Green:
-                    if (MeshColors[MeshTriangles[triIndex * 3]].g > 0.5f)
-                    {
-                        Point[0] = Vector3.zero;
-                        return;
-                    }
-                    break;
-                case SO_GrassToolSettings.VertexColorSetting.Blue:
-                    if (MeshColors[MeshTriangles[triIndex * 3]].b > 0.5f)
-                    {
-                        Point[0] = Vector3.zero;
-                        return;
-                    }
-                    break;
+                block = true;
             }
 
-            switch (VertexFade)
+            // Green check
+            if ((VertexColorSettings & SO_GrassToolSettings.VertexColorSetting.Green) == SO_GrassToolSettings.VertexColorSetting.Green && MeshColors[MeshTriangles[triIndex * 3]].g > 0.5f)
             {
-                case SO_GrassToolSettings.VertexColorSetting.Red:
-                    float red = MeshColors[MeshTriangles[triIndex * 3]].r;
-                    float red2 = MeshColors[MeshTriangles[triIndex * 3 + 1]].r;
-                    float red3 = MeshColors[MeshTriangles[triIndex * 3 + 2]].r;
-
-                    LengthWidth[0] = 1.0f - ((red + red2 + red3) * 0.3f);
-                    break;
-                case SO_GrassToolSettings.VertexColorSetting.Green:
-                    float green = MeshColors[MeshTriangles[triIndex * 3]].g;
-                    float green2 = MeshColors[MeshTriangles[triIndex * 3 + 1]].g;
-                    float green3 = MeshColors[MeshTriangles[triIndex * 3 + 2]].g;
-
-                    LengthWidth[0] = 1.0f - ((green + green2 + green3) * 0.3f);
-                    break;
-                case SO_GrassToolSettings.VertexColorSetting.Blue:
-                    float blue = MeshColors[MeshTriangles[triIndex * 3]].b;
-                    float blue2 = MeshColors[MeshTriangles[triIndex * 3 + 1]].b;
-                    float blue3 = MeshColors[MeshTriangles[triIndex * 3 + 2]].b;
-
-                    LengthWidth[0] = 1.0f - ((blue + blue2 + blue3) * 0.3f);
-                    break;
-                case SO_GrassToolSettings.VertexColorSetting.None:
-                    LengthWidth[0] = 1.0f;
-                    break;
+                block = true;
             }
+
+            // Blue check
+            if ((VertexColorSettings & SO_GrassToolSettings.VertexColorSetting.Blue) == SO_GrassToolSettings.VertexColorSetting.Blue && MeshColors[MeshTriangles[triIndex * 3]].b > 0.5f)
+            {
+                block = true;
+            }
+
+            if ((VertexColorSettings & SO_GrassToolSettings.VertexColorSetting.Alpha) == SO_GrassToolSettings.VertexColorSetting.Alpha && MeshColors[MeshTriangles[triIndex * 3]].a > 0.5f)
+            {
+                block = true;
+            }
+
+
+            if (block)
+            {
+                Point[0] = Vector3.zero;
+                return;
+            }
+
+            float fadeFactor = 1.0f; // 기본적으로 페이드를 적용하지 않음
+            int fadeCount = 0; // 페이드가 적용되는 색상 수
+
+            // Red Fade
+            if ((VertexFade & SO_GrassToolSettings.VertexColorSetting.Red) == SO_GrassToolSettings.VertexColorSetting.Red)
+            {
+                float redFade = (MeshColors[MeshTriangles[triIndex * 3]].r +
+                                 MeshColors[MeshTriangles[triIndex * 3 + 1]].r +
+                                 MeshColors[MeshTriangles[triIndex * 3 + 2]].r) / 3.0f;
+                fadeFactor *= redFade;
+                fadeCount++;
+            }
+
+            // Green Fade
+            if ((VertexFade & SO_GrassToolSettings.VertexColorSetting.Green) == SO_GrassToolSettings.VertexColorSetting.Green)
+            {
+                float greenFade = (MeshColors[MeshTriangles[triIndex * 3]].g +
+                                   MeshColors[MeshTriangles[triIndex * 3 + 1]].g +
+                                   MeshColors[MeshTriangles[triIndex * 3 + 2]].g) / 3.0f;
+                fadeFactor *= greenFade;
+                fadeCount++;
+            }
+
+            // Blue Fade
+            if ((VertexFade & SO_GrassToolSettings.VertexColorSetting.Blue) == SO_GrassToolSettings.VertexColorSetting.Blue)
+            {
+                float blueFade = (MeshColors[MeshTriangles[triIndex * 3]].b +
+                                  MeshColors[MeshTriangles[triIndex * 3 + 1]].b +
+                                  MeshColors[MeshTriangles[triIndex * 3 + 2]].b) / 3.0f;
+                fadeFactor *= blueFade;
+                fadeCount++;
+            }
+
+            // Alpha Fade
+            if ((VertexFade & SO_GrassToolSettings.VertexColorSetting.Alpha) == SO_GrassToolSettings.VertexColorSetting.Alpha)
+            {
+                float alphaFade = (MeshColors[MeshTriangles[triIndex * 3]].a +
+                                   MeshColors[MeshTriangles[triIndex * 3 + 1]].a +
+                                   MeshColors[MeshTriangles[triIndex * 3 + 2]].a) / 3.0f;
+                fadeFactor *= alphaFade;
+                fadeCount++;
+            }
+
+
+            // 평균 페이드 요소 계산 (여러 색상에 대한 페이드를 고려)
+            if (fadeCount > 0)
+            {
+                fadeFactor = Mathf.Pow(fadeFactor, 1.0f / fadeCount); // 평균을 계산하기 위해 거듭제곱근을 사용
+            }
+
+            LengthWidth[0] = 1.0f * fadeFactor; // 최종 길이/너비 조절 요소 적용
 
             Vector3 a = MeshVertices[MeshTriangles[triIndex * 3]];
             Vector3 b = MeshVertices[MeshTriangles[triIndex * 3 + 1]];

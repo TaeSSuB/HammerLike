@@ -1,8 +1,8 @@
-﻿#if UNITY_2024 || UNITY_2025 || UNITY_2026 || UNITY_2027 || UNITY_2028 || UNITY_2029 || UNITY_2030
-#define UNITY_2024_PLUS
+﻿#if UNITY_6000 || UNITY_6000_0_OR_NEWER
+#define UNITY_6000_PLUS
 #endif
 
-#if UNITY_2023 || UNITY_2024_PLUS
+#if UNITY_2023 || UNITY_6000_PLUS
 #define UNITY_2023_PLUS
 #endif
 
@@ -163,8 +163,7 @@ namespace Rewired.Utils {
 #endif
 #endif
 
-        public object GetPlatformInitializer()
-        {
+        public object GetPlatformInitializer() {
 #if UNITY_5_PLUS
 #if (!UNITY_EDITOR && UNITY_STANDALONE_WIN) || UNITY_EDITOR_WIN
             return Rewired.Utils.Platforms.Windows.Main.GetPlatformInitializer();
@@ -417,8 +416,7 @@ namespace Rewired.Utils {
 #if UNITY_2022_PLUS
             UnityEngine.Windows.Input.ForwardRawInput(rawInputHeaderIndices, rawInputDataIndices, indicesCount, rawInputData, rawInputDataSize);
 #elif UNITY_2021_2_OR_NEWER
-            //Rewired.Internal.Windows.Functions.ForwardRawInput(rawInputHeaderIndices, rawInputDataIndices, indicesCount, rawInputData, rawInputDataSize);
-            UnityEngine.Windows.Input.ForwardRawInput(rawInputHeaderIndices, rawInputDataIndices, indicesCount, rawInputData, rawInputDataSize);
+            Rewired.Internal.Windows.Functions.ForwardRawInput(rawInputHeaderIndices, rawInputDataIndices, indicesCount, rawInputData, rawInputDataSize);
 #else
             throw new System.NotImplementedException();
 #endif

@@ -12,16 +12,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1a3723b335e7004992e0a3ddfd87702, type: 3}
   m_Name: palette
   m_EditorClassIdentifier: 
-  Source: {fileID: 2800000, guid: 36e1c72b7e588ca4492b3116cac36d93, type: 3}
-  Method: 0
+  Source: {fileID: 2800000, guid: e82c16070a8d53d40a114784c6e2623b, type: 3}
+  Method: 4
   Weights: {x: 0, y: 0, z: 0}
   VConversionCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  UseDitherPattern: 0
-  DitherPattern: {fileID: 0}
-  GeneratedFileName: 
-  AutoGenerateFileName: 1
+  UseDitherPattern: 1
+  DitherPattern: {fileID: 11400000, guid: 486b901f5ee476c42885ef39290fa52d, type: 2}
+  GeneratedFileName: Wood_LUT
+  AutoGenerateFileName: 0

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,9 +23,9 @@ public class UVscroll : MonoBehaviour
         float offsetX = Time.time * scrollSpeedX;
         float offsetY = Time.time * scrollSpeedY;
 
-        rend.materials[materialId].SetTextureOffset("_MainTex", new Vector2(offsetX, offsetY));
+        //rend.materials[materialId].SetTextureOffset("_MainTex", new Vector2(offsetX, offsetY));
 
-        //rend.material.SetTextureOffset("_MainTex", new Vector2(offsetX, offsetY));
+        rend.material.SetTextureOffset("_MainTex", new Vector2(offsetX, offsetY));
     }
 
 }
