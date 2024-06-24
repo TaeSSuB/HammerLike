@@ -7,4 +7,6 @@ public class SO_Currency : SO_Item
 {
     [Header("Currency Data")]
     public int value;
+
+
 }

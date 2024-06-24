@@ -1,6 +1,8 @@
 using UnityEngine;
+using System.Collections.Generic;
 using System.Linq;
 using NuelLib;
+using UnityEngine.SceneManagement;
 
 public enum AudioCategory { BGM, SFX }
 public enum AudioTag
@@ -13,8 +15,10 @@ public enum AudioTag
     PickUp,
     Crash,
     Town,
-    SlimeDeath
+    SlimeDeath,
+    Click
 }
+
 
 public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
 {
@@ -22,20 +26,26 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
 
     // BGM, SFX source
     [SerializeField] private int audioSourceOnceCount = 5;
-    private AudioSource[] audioSourceOnces; // For SFX
-    private AudioSource audioSourceLoop; // For BGM
+    [SerializeField] private int audioSourceLoopCount = 5;
+    private AudioSource[] audioSourceOnces;
+    private AudioSource[] audioSourceLoops;
 
     private const string BGM_VOLUME_KEY = "BGMVolume";
     private const string SFX_VOLUME_KEY = "SFXVolume";
 
-    public AudioSource GetLoopAudioSource()
+    public AudioSource[] GetLoopAudioSources()
     {
-        return audioSourceLoop;
+        return audioSourceLoops;
     }
 
     public AudioSource[] GetOnceAudioSources()
     {
         return audioSourceOnces;
+    }
+
+    public SO_AudioSet.AudioInfo[] GetAllAudioInfosWithCategory(AudioCategory category)
+    {
+        return audioSet.audioInfos.Where(info => info.category == category).ToArray();
     }
 
     protected override void Awake()
@@ -48,7 +58,13 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
             audioSourceOnces[i] = gameObject.AddComponent<AudioSource>();
         }
 
-        audioSourceLoop = gameObject.AddComponent<AudioSource>();
+        audioSourceLoops = new AudioSource[audioSourceLoopCount];
+        for (int i = 0; i < audioSourceLoopCount; i++)
+        {
+            audioSourceLoops[i] = gameObject.AddComponent<AudioSource>();
+        }
+
+        //audioSourceLoop = gameObject.AddComponent<AudioSource>();
 
         // Load saved volumes
         float bgmVolume = PlayerPrefs.GetFloat(BGM_VOLUME_KEY, 1.0f);
@@ -60,9 +76,15 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
 
     public void SetVolume(AudioCategory category, float volume, bool save = true)
     {
+        var targetInfos = GetAllAudioInfosWithCategory(category);
+
         if (category == AudioCategory.BGM)
         {
-            GetLoopAudioSource().volume = volume;
+            // GetLoopAudioSource().volume = volume;
+            foreach (var info in targetInfos)
+            {
+                info.volume = volume;
+            }
             if (save)
             {
                 PlayerPrefs.SetFloat(BGM_VOLUME_KEY, volume);
@@ -71,9 +93,9 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
         }
         else if (category == AudioCategory.SFX)
         {
-            foreach (var source in GetOnceAudioSources())
+            foreach (var info in targetInfos)
             {
-                source.volume = volume;
+                info.volume = volume;
             }
             if (save)
             {
@@ -85,21 +107,36 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
 
     public float GetVolume(AudioCategory category)
     {
-        if (category == AudioCategory.BGM)
-        {
-            return GetLoopAudioSource().volume;
-        }
-        else if (category == AudioCategory.SFX)
-        {
-            return GetOnceAudioSources().Length > 0 ? GetOnceAudioSources()[0].volume : 0;
-        }
-        return 0;
+        // if (category == AudioCategory.BGM)
+        // {
+        //     return GetAllAudioSourcesWithCategory(category).Length > 0 ? GetAllAudioSourcesWithCategory(category)[0].volume : 0;
+        // }
+        // else if (category == AudioCategory.SFX)
+        // {
+        //     return GetAllAudioSourcesWithCategory(category).Length > 0 ? GetAllAudioSourcesWithCategory(category)[0].volume : 0;
+            
+        // }
+        // return 0;
+        return GetAllAudioInfosWithCategory(category).Length > 0 ? GetAllAudioInfosWithCategory(category)[0].volume : 0;
     }
 
     private void Start()
     {
         // Example: Play sound at start (optional)
         //PlaySound(AudioCategory.BGM, AudioTag.Town);
+    }
+
+    private void Update()
+    {
+        CheckForMainMenuClick();
+    }
+
+    private void CheckForMainMenuClick()
+    {
+        if (SceneManager.GetActiveScene().name == "Mainmenu" && Input.GetMouseButtonDown(0))
+        {
+            PlaySound(AudioCategory.SFX, AudioTag.Click);
+        }
     }
 
     public void PlaySound(AudioCategory category, AudioTag tag)
@@ -116,14 +153,20 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
                     audioSourceOnce = audioSourceOnces[0];
                 }
                 audioSourceOnce.clip = audioInfo.clip;
-                audioSourceOnce.volume = GetVolume(AudioCategory.SFX); // Set to the current SFX volume
+                audioSourceOnce.volume = GetVolume(category);
                 audioSourceOnce.loop = audioInfo.loop;
                 audioSourceOnce.Play();
             }
             else
             {
+                AudioSource audioSourceLoop = audioSourceLoops.FirstOrDefault(source => source && !source.isPlaying);
+
+                if (audioSourceLoop == null)
+                {
+                    audioSourceLoop = audioSourceLoops[0];
+                }
                 audioSourceLoop.clip = audioInfo.clip;
-                audioSourceLoop.volume = GetVolume(AudioCategory.BGM); // Set to the current BGM volume
+                audioSourceLoop.volume = GetVolume(category);
                 audioSourceLoop.loop = audioInfo.loop;
                 audioSourceLoop.Play();
             }
@@ -134,7 +177,7 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
         }
     }
 
-    public void PlaySound(string name)
+    public void PlaySound(string name, AudioCategory category)
     {
         var audioInfo = audioSet.audioInfos.FirstOrDefault(info => info.name == name);
         if (audioInfo != null && audioInfo.clip != null)
@@ -148,16 +191,26 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
                     audioSourceOnce = audioSourceOnces[0];
                 }
                 audioSourceOnce.clip = audioInfo.clip;
-                audioSourceOnce.volume = GetVolume(AudioCategory.SFX); // Set to the current SFX volume
+                audioSourceOnce.volume = GetVolume(category);
                 audioSourceOnce.loop = audioInfo.loop;
                 audioSourceOnce.Play();
+                Debug.Log($"Playing sound {name}");
+
             }
             else
             {
+                AudioSource audioSourceLoop = audioSourceLoops.FirstOrDefault(source => source && !source.isPlaying);
+
+                if (audioSourceLoop == null)
+                {
+                    audioSourceLoop = audioSourceLoops[0];
+                }
                 audioSourceLoop.clip = audioInfo.clip;
-                audioSourceLoop.volume = GetVolume(AudioCategory.BGM); // Set to the current BGM volume
+                audioSourceLoop.volume = GetVolume(category);
                 audioSourceLoop.loop = audioInfo.loop;
                 audioSourceLoop.Play();
+
+                Debug.Log($"Playing sound {name}");
             }
         }
         else
@@ -165,4 +218,36 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
             Debug.LogWarning($"No audio found for name {name}");
         }
     }
+
+    public void StopSound(string name)
+    {
+        var audioInfo = audioSet.audioInfos.FirstOrDefault(info => info.name == name);
+        if (audioInfo != null && audioInfo.clip != null)
+        {
+            if (!audioInfo.loop)
+            {
+                AudioSource audioSourceOnce = audioSourceOnces.FirstOrDefault(source => source && source.clip == audioInfo.clip);
+
+                if (audioSourceOnce != null)
+                {
+                    audioSourceOnce.Stop();
+                }
+            }
+            else
+            {
+                AudioSource audioSourceLoop = audioSourceLoops.FirstOrDefault(source => source && source.clip == audioInfo.clip);
+
+                if (audioSourceLoop != null)
+                {
+                    audioSourceLoop.Stop();
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"No audio found for name {name}");
+        }
+
+    }
+    
 }

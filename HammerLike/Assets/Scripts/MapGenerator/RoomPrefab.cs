@@ -18,7 +18,8 @@ public class RoomPrefab : MonoBehaviour
     public List<GameObject> Doors = new List<GameObject>(); // 다수의 문을 관리
     public bool doorsOpened = false;
     public bool doorsClosed = false;
-    private bool isCheck = false;
+    public GameObject meshBakingTileGroup;
+    public GameObject meshBakingWallGroup;
 
     private void Awake()
     {
@@ -32,24 +33,14 @@ public class RoomPrefab : MonoBehaviour
 
     private void Start()
     {
-        CountMonsters();
-        isCheck = true;
+        // RoomManager에서 몬스터 활성화 시 카운트가 갱신되므로 여기서 CountMonsters를 호출하지 않음
     }
 
-    private void Update()
+    private void UpdateRoomState()
     {
-        if (monsterCount == 0 && isCheck)
+        if (monsterCount <= 0 && !doorsOpened)
         {
             OpenDoors();
-            if(nextMonsterGroup!=null)
-            {
-
-            if (!nextMonsterGroup.gameObject.activeSelf)
-                {
-                nextMonsterGroup.SetActive(true);
-                    
-                }
-            }
         }
     }
 
@@ -66,7 +57,6 @@ public class RoomPrefab : MonoBehaviour
                 }
             }
         }
-        monsterCount = count;
         return count;
     }
 
@@ -76,17 +66,9 @@ public class RoomPrefab : MonoBehaviour
         onMonsterCountChange?.Invoke();
     }
 
-    private void UpdateRoomState()
-    {
-        if (monsterCount <= 0)
-        {
-            Debug.Log($"FollowOption changed in {gameObject.name} due to no remaining monsters.");
-        }
-    }
-
     public void OpenDoors()
     {
-        if (!doorsOpened && Doors.Count > 0 && monsterCount <= 0)
+        if (!doorsOpened && Doors.Count > 0)
         {
             doorsOpened = true;
             float moveDistance = 7.0f;
@@ -109,7 +91,6 @@ public class RoomPrefab : MonoBehaviour
             {
                 door.transform.DOMoveY(door.transform.position.y + moveDistance, duration).SetEase(Ease.InOutQuad);
             }
-
         }
     }
 

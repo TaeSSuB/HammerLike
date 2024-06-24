@@ -36,6 +36,10 @@ public class PullBossState : IBossAIState
         // b_Boss.Anim.SetInteger("PatternIdx", patternIdx);
 
         pullDelay = startPullDelay;
+
+        // 땅에 닿았을 때를 기준으로 효과음 재생
+        B_AudioManager.Instance.PlaySound("Boss_MaceGroundBlast", AudioCategory.SFX);
+
     }
 
     public void OnUpdate()

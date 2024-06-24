@@ -24,10 +24,12 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     [Header("Dev")]
     [SerializeField] private bool isDevMode;
+    [SerializeField] private bool isLimitFrame;
+    [SerializeField] private GameObject devCanvas;
+
     [SerializeField] private GameObject tempCombatTestGroupPrefab;
     private GameObject currentTempCombatTestGroup;
-    [SerializeField] private TMP_Text fpsText;
-    [SerializeField] private float fpsInterval = 0.5f;
+
     [SerializeField] private GameObject textPrefab;
     [SerializeField] private Transform textTR;
     public KeyCode resetKey = KeyCode.F5;
@@ -58,8 +60,13 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         resetTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Reset - " : "Destroy - ")}" + resetKey.ToString();
         ResetTester();
 
+        #if UNITY_EDITOR || DEVELOPMENT_BUILD
+        SetDevMode(true);
+        #else
+        SetDevMode(false);
+        #endif
 
-        StartCoroutine(GetFPSRoutine());
+        //StartCoroutine(GetFPSRoutine());
     }
 
     private void Update()
@@ -70,22 +77,53 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         }
         if(Input.GetKeyDown(devModeKey))
         {
-            isDevMode = !isDevMode;
-
-            devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();
-            resetTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Reset - " : "Destroy - " )}" + resetKey.ToString();
-
+            #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            SetDevMode(!isDevMode);
+            #endif
         }
 
-        if(Input.GetKeyDown(KeyCode.F1))
+        if(isDevMode && Input.GetKeyDown(KeyCode.F1))
         {
-            QualitySettings.vSyncCount = 0;
-            Application.targetFrameRate = 60;
+            var targetFrameArray = new int[] { 30, 60, 120};
+
+            var currentFrame = (int)Application.targetFrameRate;
+
+            switch(currentFrame)
+            {
+                case 30:
+                    SetFrameRate(targetFrameArray[1]);
+                    break;
+                case 60:
+                    SetFrameRate(targetFrameArray[2]);
+                    break;
+                case 120:
+                    SetFrameRate(targetFrameArray[0]);
+                    break;
+                // case 240:
+                //     SetFrameRate(targetFrameArray[0]);
+                //     break;
+                default:
+                    SetFrameRate(targetFrameArray[1]);
+                    break;
+            }
         }
     }
     #endregion
 
     #region Set System Settings
+
+    public float SetFrameRate(int inFrameRate)
+    {
+        Debug.Log($"Set Frame Rate to {inFrameRate}");
+        
+        QualitySettings.vSyncCount = 0;
+        
+        inFrameRate = Mathf.Clamp(inFrameRate, 1, 120);
+        Application.targetFrameRate = inFrameRate;
+        isLimitFrame = !isLimitFrame;
+        
+        return Application.targetFrameRate;
+    }
 
     /// <summary>
     /// SetTimeScale : TimeScale 설정
@@ -102,7 +140,30 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         
         Time.timeScale = inTimeScale;
         
-        return systemSettings.TimeScale;
+        return SystemSettings.TimeScale;
+    }
+
+    public void SlowMotion(float inTimeScale, float inDuration)
+    {
+        StartCoroutine(CoSlowMotion(inTimeScale, inDuration));
+    }
+
+    public IEnumerator CoSlowMotion(float inTimeScale, float inDuration)
+    {
+        float duration = inDuration;
+        float originTimeScale = 1f;
+
+        SetTimeScale(inTimeScale);
+
+        // while (duration > 0f)
+        // {
+        //     duration -= Time.unscaledDeltaTime;
+
+        //     yield return null;
+        // }
+        yield return new WaitForSecondsRealtime(inDuration);
+
+        SetTimeScale(originTimeScale);
     }
 
     #endregion
@@ -201,6 +262,19 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     #endregion
 
     #region Dev Mode
+
+    public void SetDevMode(bool inIsDevMode)
+    {
+        isDevMode = inIsDevMode;
+
+        if(devCanvas != null)
+            devCanvas?.SetActive(isDevMode);
+
+        devModeTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Dev" : "Play")} Mode - " + devModeKey.ToString();
+        resetTextObj.GetComponent<TextMeshProUGUI>().text = $"{(isDevMode ? "Reset - " : "Destroy - " )}" + resetKey.ToString();
+
+    }
+
     public void ResetTester()
     {
         if (currentTempCombatTestGroup != null)
@@ -218,14 +292,14 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     //     StartCoroutine(GetFPSRoutine());
     // }
 
-    private IEnumerator GetFPSRoutine()
-    {
-        while (true&&fpsText)
-        {
-            yield return new WaitForSeconds(fpsInterval);
-            fpsText.text = $"FPS : {1f / Time.deltaTime}";
-        }
-    }
+    // private IEnumerator GetFPSRoutine()
+    // {
+    //     while (true&&fpsText)
+    //     {
+    //         yield return new WaitForSeconds(fpsInterval);
+    //         fpsText.text = $"FPS : {1f / Time.deltaTime}";
+    //     }
+    // }
 
     #endregion
 

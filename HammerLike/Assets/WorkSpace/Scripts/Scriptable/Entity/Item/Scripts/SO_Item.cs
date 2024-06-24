@@ -8,6 +8,7 @@ public enum Rarity { Common, Uncommon, Rare, Epic, Legendary }
 
 public enum Attributes
 {
+    Gold,
     Health,
     Stamina,
     Damage,
@@ -25,6 +26,7 @@ public enum ItemType
     Pants,
     Boots,
     Weapon,
+    Gold,
     Default
 }
 
@@ -66,6 +68,7 @@ public abstract class SO_Item : ScriptableObject
     public B_Item itemData = new B_Item();
     public Rarity rarity = Rarity.Common;
     public ItemType itemType = ItemType.Default;
+  
 
     public B_Item CreateItem()
     {

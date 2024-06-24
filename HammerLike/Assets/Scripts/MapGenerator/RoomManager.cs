@@ -1,17 +1,18 @@
-using RoomGen;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+
 public class RoomManager : MonoBehaviour
 {
-    public Transform playerTransform; // Player transform assigned through the Unity Inspector
-    public GameObject monsterParent; // Direct reference to the Monster parent object
+    public Transform playerTransform;
+    public GameObject monsterParent;
     public CamCtrl camCtrl;
 
     private List<RoomPrefab> rooms = new List<RoomPrefab>();
-    private RoomPrefab currentRoom = null; // Track the current room the player is in
+    private RoomPrefab currentRoom = null;
     public GameObject entranceA;
     public GameObject entranceB;
+    public float activationDistance = 10.0f; // 몬스터 그룹 활성화 거리
 
     [Header("Temp")]
     [SerializeField] public RectTransform bossPanel;
@@ -20,6 +21,7 @@ public class RoomManager : MonoBehaviour
     private Vector2 disableBossPanelPos;
     private bool isPanelOn = false;
     [SerializeField] private GameObject boss;
+
     private void Awake()
     {
         disableBossPanelPos = bossPanel.anchoredPosition;
@@ -27,7 +29,6 @@ public class RoomManager : MonoBehaviour
 
     void Start()
     {
-        // Find all RoomPrefab objects in the scene
         RoomPrefab[] roomPrefabs = FindObjectsOfType<RoomPrefab>();
         rooms.AddRange(roomPrefabs);
 
@@ -37,7 +38,7 @@ public class RoomManager : MonoBehaviour
         }
         if (monsterParent == null)
         {
-            // Debug.LogError("Monster Parent is not assigned in the RoomManager.");
+            Debug.LogError("Monster Parent is not assigned in the RoomManager.");
         }
     }
 
@@ -46,6 +47,7 @@ public class RoomManager : MonoBehaviour
         if (playerTransform != null)
         {
             CheckCurrentRoom();
+            ActivateNearbyMonsterGroups();
             if (currentRoom != null)
             {
                 UpdateRoomMonsterStatus(currentRoom);
@@ -60,21 +62,22 @@ public class RoomManager : MonoBehaviour
         {
             if (room.IsPositionInside(playerTransform.position))
             {
-                foundRoom = room; // Found the room the player is currently in
-                break; // Stop checking once the correct room is found
+                foundRoom = room;
+                break;
             }
         }
 
         if (foundRoom != currentRoom)
         {
-            currentRoom = foundRoom; // Update the current room
-            if(foundRoom != null&&foundRoom.monsterParent!=null) 
-            monsterParent = foundRoom.monsterParent;
+            currentRoom = foundRoom;
+            if (foundRoom != null && foundRoom.monsterParent != null)
+                monsterParent = foundRoom.monsterParent;
             if (currentRoom != null)
             {
                 Debug.Log($"Player has entered a new room: {currentRoom.gameObject.name}");
                 camCtrl.UpdateCameraBounds(currentRoom.Ground.bounds);
-                if (currentRoom.Doors.Count > 0 && currentRoom.Doors[0].transform.position.y < 0)    // 일단 현재는 몬스터 없을때 있을때 구분 안함
+                int monsterCount = CountMonstersInRoom(currentRoom);
+                if (monsterCount > 0)
                 {
                     currentRoom.CloseDoors();
                 }
@@ -88,9 +91,7 @@ public class RoomManager : MonoBehaviour
 
     private void UpdateRoomMonsterStatus(RoomPrefab room)
     {
-        int monsterCount = CountMonstersInRoom(room);
-        room.monsterCount = monsterCount;
-        //Debug.Log($"{room.gameObject.name} currently has {monsterCount} monsters.");
+        int monsterCount = room.monsterCount; // CountMonstersInRoom(room);
         if (room.gameObject.name == "Room_Boss")
         {
             EnablePanel();
@@ -100,15 +101,17 @@ public class RoomManager : MonoBehaviour
             }
         }
 
-        if (monsterCount > 0)   // TODO) ?꾪닾以?
+        if (monsterCount > 0)
         {
             camCtrl.followOption = FollowOption.LimitedInRoom;
         }
         else
         {
             camCtrl.followOption = FollowOption.FollowToObject;
-            /*if(!room.doorOpened)
-            room.OpenDoor();*/
+            if (room.Doors.Count > 0 && !room.doorsOpened)
+            {
+                room.OpenDoors();
+            }
             if (entranceA != null && entranceB != null && entranceA.activeSelf && entranceB.activeSelf)
             {
                 entranceA.SetActive(false);
@@ -117,14 +120,28 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    // Count monsters within a specified room
+    private void ActivateNearbyMonsterGroups()
+    {
+        foreach (RoomPrefab room in rooms)
+        {
+            if (room.monsterParent != null && !room.monsterParent.activeSelf)
+            {
+                float distanceToPlayer = Vector3.Distance(room.monsterParent.transform.position, playerTransform.position);
+                if (distanceToPlayer <= activationDistance)
+                {
+                    room.monsterParent.SetActive(true);
+                }
+            }
+        }
+    }
+
     private int CountMonstersInRoom(RoomPrefab room)
     {
         int monsterCount = 0;
 
-        if (monsterParent != null)
+        if (room.monsterParent != null)
         {
-            foreach (Transform monsterParentTransform in monsterParent.transform)
+            foreach (Transform monsterParentTransform in room.monsterParent.transform)
             {
                 if (monsterParentTransform.gameObject.activeInHierarchy)
                 {
@@ -134,18 +151,17 @@ public class RoomManager : MonoBehaviour
                         if (monsterComponent != null && monsterComponent.CurrentStateType != AIStateType.DEAD && room.IsPositionInside(child.position))
                         {
                             monsterCount++;
-                            room.monsterCount = monsterCount;
                         }
                         B_BossController bBoss = child.GetComponent<B_BossController>();
                         if (bBoss != null && bBoss.CurrentStateType != BossAIStateType.DEAD && room.IsPositionInside(child.position))
                         {
                             monsterCount++;
-                            room.monsterCount = monsterCount;
                         }
                     }
                 }
             }
         }
+        room.monsterCount = monsterCount;
         return monsterCount;
     }
 
@@ -162,8 +178,9 @@ public class RoomManager : MonoBehaviour
     private void HandleMonsterDeath(Vector3 monsterPosition)
     {
         RoomPrefab room = FindRoomContainingPosition(monsterPosition);
-        if (room != null && room == currentRoom)
+        if (room != null)
         {
+            room.UpdateMonsterCount(-1);  // 몬스터 수 감소
             UpdateRoomMonsterStatus(room);
         }
     }
@@ -184,6 +201,5 @@ public class RoomManager : MonoBehaviour
     {
         isPanelOn = true;
         bossPanel.DOAnchorPos(bossPanelPos, duration);
-
     }
 }

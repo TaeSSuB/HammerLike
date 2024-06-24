@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NuelLib;
+using System;
 
 /// <summary>
 /// 인벤토리 매니저
@@ -14,6 +15,9 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
     public SO_InventoryObject playerEquipContainer;
     public SO_InventoryObject playerWeaponContainer;
 
+    public event Action<int> OnGoldChanged;
+
+
     private void Start() {
 
     }
@@ -23,6 +27,15 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
         WeaponSwitchWithWheel();
 
     }
+
+    public void AddGold(int amount)
+    {
+        playerInventory.AddGold(amount);
+
+        OnGoldChanged?.Invoke(playerInventory.goldAmount);
+    }
+
+   
 
     public int GetCurrentWeaponSlotIndex()
     {
@@ -43,15 +56,13 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
     void WeaponSwitchWithWheel() {
 
         if(Input.GetAxis("Mouse ScrollWheel") == 0) return;
-        if(GameManager.Instance.Player.isAttacking) return;
+        if(GameManager.Instance.Player.IsAttacking) return;
 
         var currentWeaponSlotIndex = GetCurrentWeaponSlotIndex();
         int nextWeaponIndex = currentWeaponSlotIndex;
         int maxWeaponIndex = playerWeaponContainer.Container.GetFilledSlotSize() - 1;
 
         if (Input.GetAxis("Mouse ScrollWheel") > 0) {
-            // Scroll Up
-            Debug.Log("Scroll Up");
 
             nextWeaponIndex = currentWeaponSlotIndex + 1;
             
@@ -61,22 +72,21 @@ public class B_InventoryManager : SingletonMonoBehaviour<B_InventoryManager>
 
         }
         if (Input.GetAxis("Mouse ScrollWheel") < 0) {
-            // Scroll Down
-            Debug.Log("Scroll Down");
 
             nextWeaponIndex = currentWeaponSlotIndex - 1;
 
             if (nextWeaponIndex < 0) {
                 nextWeaponIndex = maxWeaponIndex;
             }
-
         }
 
         if(currentWeaponSlotIndex == nextWeaponIndex) return;
 
         var targetWeapon = playerWeaponContainer.Container.Items[nextWeaponIndex].ItemObject as SO_Weapon;
-
-        GameManager.Instance.Player.EquipWeapon(targetWeapon);
+        
+        targetWeapon.Use(); // 플레이어 무기 장착
+        //GameManager.Instance.Player.EquipWeapon(targetWeapon);
+        
         B_UIManager.Instance.UI_InGame.UpdateWeaponImage(targetWeapon.itemIcon);
     }
 

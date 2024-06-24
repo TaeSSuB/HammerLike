@@ -19,6 +19,7 @@ public class SO_InventoryObject : ScriptableObject
     public SO_ItemDataBase database;
     //public int MAX_ITEMS;
     public B_Inventory Container;
+    public int goldAmount = 0;
 
     public bool AddItem(B_Item _item, int _amount)
     {
@@ -33,6 +34,12 @@ public class SO_InventoryObject : ScriptableObject
         }
         slot.AddAmount(_amount);
         return true;
+    }
+
+    public void AddGold(int _amount)
+    {
+        goldAmount += _amount;
+        Debug.Log("Gold Amount : " + goldAmount);
     }
 
     public int EmptySlotCount

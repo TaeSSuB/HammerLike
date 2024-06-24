@@ -33,6 +33,8 @@ public class DeadBossState : IBossAIState
         b_Boss.Rigid.velocity = Vector3.zero;
         b_Boss.Anim.SetTrigger("tDead");
 
+        B_AudioManager.Instance.PlaySound("Boss_Dead", AudioCategory.SFX);
+
     }
 
     public void OnExit()

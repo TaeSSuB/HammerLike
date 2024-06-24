@@ -1128,7 +1128,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 11400000, guid: e0492f0a8febfa74c9a0aeb035ac796c, type: 2}
-  canPickUp: 0
+  isPickUpItem: 0
+  isPlayerNearby: 0
+  canPurcahse: 0
+  interactiveObj: {fileID: 0}
 --- !u!114 &5857214950139287890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1215,6 +1218,7 @@ GameObject:
   - component: {fileID: 1615195204208193843}
   - component: {fileID: 7750128584165539614}
   - component: {fileID: 7096777147330401186}
+  - component: {fileID: 1323012531909371874}
   m_Layer: 9
   m_Name: B_Player
   m_TagString: Player
@@ -1324,35 +1328,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d3c7810508c534daf67b3eb220ca2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootObj: {fileID: 3763087956525344162}
   meshObj: {fileID: 7754532008668646012}
   col: {fileID: 1099706248768801138}
   rigid: {fileID: 710689367797499866}
   isInvincible: 0
   unitIndex: -1
   anim: {fileID: 1615195204208193843}
-  agent: {fileID: 0}
-  isAttacking: 0
-  knockbackDuration: 1
-  puppet: {fileID: 0}
-  groundLayer:
+  isGrounded: 0
+  mouseLayer:
     serializedVersion: 2
-    m_Bits: 2147483648
-  groundCheckDistance: 0.5
-  isKnockback: 0
+    m_Bits: 0
   chargeVFXObj: {fileID: 6845703354077671081}
   minChargeMoveRate: 0.1
   weaponObj: {fileID: 6340278027204700685}
-  weaponRenderer: {fileID: 4662868008994302170}
   weaponTR: {fileID: 7452244637401446656}
   weaponData: {fileID: 11400000, guid: e0492f0a8febfa74c9a0aeb035ac796c, type: 2}
   weaponCollider: {fileID: 4530652590999475678}
-  weaponOrbit: {fileID: 6787555921978898189}
+  weaponOrbit: {fileID: 0}
+  minAttackRotAmount: 20
   rotateType: 2
   rotSpeed: 30
+  atkRotSpeed: 5
   rotDeadZone: 1
-  AllowRotate_L: 1
-  AllowRotate_R: 1
+  sceneLoader: {fileID: 0}
+  interactionRange: 2
+  interactionKey: 102
+--- !u!114 &1323012531909371874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3763087956525344162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cd9d9700a02be6439c42fc044784743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  remainKnockBackForce: 0
 --- !u!1 &3785036922701802003
 GameObject:
   m_ObjectHideFlags: 0
@@ -2203,18 +2216,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0af50ee6e2923d4e87a83bb9c69f56b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rootObj: {fileID: 0}
+  isTracking: 1
   a: 2
   b: 4
   resolution: 100
   speed: 1
   offset: {x: 0, y: 0.5, z: 0}
   trackType: 3
+  instanceMode: 0
+  trailLifeTime: 0.25
   trailRenderer: {fileID: 3060916432753006746}
-  b_Weapon: {fileID: 7097611227271451757}
-  player: {fileID: 7096777147330401186}
+  trailMaterial: {fileID: 0}
+  targetObj: {fileID: 0}
+  centerObj: {fileID: 0}
   startWidthScale: 0.3
   endWidthScale: 0.1
-  debugMode: 0
   edgeCount: 24
 --- !u!96 &3060916432753006746
 TrailRenderer:
@@ -2755,7 +2772,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vfxObj: {fileID: 6845703354077671081}
-  meshObj: {fileID: 7968849705782775127}
+  meshRenderer: {fileID: 0}
   weaponTrailMat: {fileID: 0}
 --- !u!1 &8080382428439546672
 GameObject:
@@ -3791,12 +3808,6 @@ PrefabInstance:
 --- !u!4 &2955678968948022586 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2446888682497560212, guid: ee0968d4c30e6e1428dbb643222d8683,
-    type: 3}
-  m_PrefabInstance: {fileID: 644496427884319662}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &4662868008994302170 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 5207396650635426676, guid: ee0968d4c30e6e1428dbb643222d8683,
     type: 3}
   m_PrefabInstance: {fileID: 644496427884319662}
   m_PrefabAsset: {fileID: 0}

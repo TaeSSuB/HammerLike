@@ -4,6 +4,7 @@ using NuelLib;
 public class B_UIManager : SingletonMonoBehaviour<B_UIManager>
 {
     [SerializeField] private GameObject hpWorldUIPrefab;
+    [SerializeField] private GameObject interactiveWorldUIPrefab;
 
     [Header("Ingame UI")]
     [SerializeField] private GameObject ingameUI;
@@ -14,8 +15,10 @@ public class B_UIManager : SingletonMonoBehaviour<B_UIManager>
     [SerializeField] private GameObject inventoryObj;
     [SerializeField] private KeyCode inventoryKey = KeyCode.I;
 
-    public UI_InGame UI_InGame { get => ui_InGame;}
+    public UI_InGame UI_InGame { get => ui_InGame; }
 
+    // IngameUI의 public getter 추가
+    public GameObject IngameUI { get => ingameUI; }
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +32,7 @@ public class B_UIManager : SingletonMonoBehaviour<B_UIManager>
         {
             ingameUI.SetActive(true);
             ui_InGame = ingameUI.GetComponent<UI_InGame>();
+            UpdateGoldUI(B_InventoryManager.Instance.playerInventory.goldAmount);
         } 
     }
 
@@ -54,6 +58,14 @@ public class B_UIManager : SingletonMonoBehaviour<B_UIManager>
         b_HPBar.SetUnit(unit);
     }
 
+    public GameObject CreateInteractiveWorldUI(Transform target)
+    {
+        GameObject interactiveWorldUI = Instantiate(interactiveWorldUIPrefab, target.position, Quaternion.identity);
+        interactiveWorldUI.transform.SetParent(target);
+
+        return interactiveWorldUI;
+    }
+
     public void OpenInventory()
     {
         if (inventoryObj != null || inventoryObj.activeSelf)
@@ -76,6 +88,11 @@ public class B_UIManager : SingletonMonoBehaviour<B_UIManager>
             CloseInventory();
         else
             OpenInventory();
+    }
+
+    public void UpdateGoldUI(int goldAmount)
+    {
+        ui_InGame.UpdateGoldUI(goldAmount);
     }
 
     private void OnDisable()

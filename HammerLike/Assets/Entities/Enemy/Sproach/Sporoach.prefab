@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 5530478148761614162}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.4, y: 0, z: 6.48}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -661,6 +661,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 5163495457003439231}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 531ee4c8a8eadd4489462c0da056a2ca,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1054154990589816615}
   m_SourcePrefab: {fileID: 100100000, guid: 531ee4c8a8eadd4489462c0da056a2ca, type: 3}
 --- !u!4 &343978236930321802 stripped
 Transform:
@@ -888,24 +892,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e86985580c48c8249821791866d35aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootObj: {fileID: 5530478148761614162}
   meshObj: {fileID: 4324115109738055561}
   col: {fileID: 1754940391926724076}
   rigid: {fileID: 4019536129635222332}
   isInvincible: 0
   unitIndex: 4
   anim: {fileID: 8540874310223118576}
-  agent: {fileID: 8317560437314509844}
-  isAttacking: 0
-  knockbackDuration: 0.5
-  puppet: {fileID: 0}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 2147483648
-  groundCheckDistance: 0.1
-  isKnockback: 0
+  isGrounded: 0
   hpPosTR: {fileID: 6469274450052942726}
-  isTester: 0
   muzzleTR: {fileID: 7689427768120481052}
   projectilePrefab: {fileID: 5288796281280855363, guid: 52301030f9c8097458466e2150de7920,
     type: 3}
@@ -1528,7 +1522,7 @@ MonoBehaviour:
   baseTransform: {fileID: 6225097330378915096}
   Hips: {fileID: 2839718334594970089}
   ScaleReferenceMode: 3
-  finalScaleReference: 0.38349134
+  finalScaleReference: 0.38349128
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0
@@ -1557,6 +1551,19 @@ MonoBehaviour:
     type: 2}
   _Editor_LegHelperModule: {fileID: 11400000, guid: 0645fbea8059aec47aa6ae9d2c93c1d4,
     type: 2}
+--- !u!114 &1054154990589816615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6712665438398441378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cd9d9700a02be6439c42fc044784743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  remainKnockBackForce: 0
 --- !u!4 &7540645438352888433 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -5094550406504429438, guid: 531ee4c8a8eadd4489462c0da056a2ca,

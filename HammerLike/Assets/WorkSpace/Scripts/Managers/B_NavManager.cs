@@ -11,4 +11,5 @@ public class B_NavManager : SingletonMonoBehaviour<B_NavManager>
 {
     [Header("NavMesh")]
     [SerializeField] private NavMeshSurface navMeshSurface;
+    
 }
