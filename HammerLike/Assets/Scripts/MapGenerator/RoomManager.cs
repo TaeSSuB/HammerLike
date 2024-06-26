@@ -38,7 +38,7 @@ public class RoomManager : MonoBehaviour
         }
         if (monsterParent == null)
         {
-            Debug.LogError("Monster Parent is not assigned in the RoomManager.");
+            //Debug.LogError("Monster Parent is not assigned in the RoomManager.");
         }
     }
 
@@ -76,10 +76,13 @@ public class RoomManager : MonoBehaviour
             {
                 Debug.Log($"Player has entered a new room: {currentRoom.gameObject.name}");
                 camCtrl.UpdateCameraBounds(currentRoom.Ground.bounds);
-                int monsterCount = CountMonstersInRoom(currentRoom);
-                if (monsterCount > 0)
+                if (!foundRoom.doorsClosed)
                 {
-                    currentRoom.CloseDoors();
+                    int monsterCount = CountMonstersInRoom(currentRoom);
+                    if (monsterCount > 0)
+                    {
+                        currentRoom.CloseDoors();
+                    }
                 }
             }
             else
@@ -108,7 +111,7 @@ public class RoomManager : MonoBehaviour
         else
         {
             camCtrl.followOption = FollowOption.FollowToObject;
-            if (room.Doors.Count > 0 && !room.doorsOpened)
+            if (room.Doors.Count > 0 && !room.doorsOpened && room.doorsClosed)
             {
                 room.OpenDoors();
             }
@@ -130,6 +133,8 @@ public class RoomManager : MonoBehaviour
                 if (distanceToPlayer <= activationDistance)
                 {
                     room.monsterParent.SetActive(true);
+                    room.monsterCount = room.CountMonsters(); // 몬스터 그룹 활성화 시 카운트 갱신
+                    room.CloseDoors();
                 }
             }
         }
@@ -167,12 +172,12 @@ public class RoomManager : MonoBehaviour
 
     private void OnEnable()
     {
-        Monster.OnMonsterDeath += HandleMonsterDeath;
+        B_Enemy.OnMonsterDeath += HandleMonsterDeath;
     }
 
     private void OnDisable()
     {
-        Monster.OnMonsterDeath -= HandleMonsterDeath;
+        B_Enemy.OnMonsterDeath -= HandleMonsterDeath;
     }
 
     private void HandleMonsterDeath(Vector3 monsterPosition)

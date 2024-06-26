@@ -411,6 +411,59 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!1 &683799981
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 683799983}
+  - component: {fileID: 683799982}
+  m_Layer: 0
+  m_Name: ChangeCursor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &683799982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683799981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f249aeed16b983498044620ceba9dcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cursorTextures:
+  - index: 0
+    texture: {fileID: 2800000, guid: 93ab6de52ec4e7440a20c8a065673693, type: 3}
+  - index: 1
+    texture: {fileID: 2800000, guid: 038ab4af0c4b7844295b63f5610d8532, type: 3}
+  - index: 2
+    texture: {fileID: 2800000, guid: 0acbf6906e6b6de448292e7f63b13685, type: 3}
+  - index: 3
+    texture: {fileID: 2800000, guid: aee27b13b8733724faae2d660d0902ba, type: 3}
+--- !u!4 &683799983
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683799981}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 37.940613, y: -9.241833, z: 92.577545}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &702803522
 GameObject:
   m_ObjectHideFlags: 0
@@ -1308,3 +1361,4 @@ SceneRoots:
   - {fileID: 1634659715}
   - {fileID: 1456963418}
   - {fileID: 876402219}
+  - {fileID: 683799983}

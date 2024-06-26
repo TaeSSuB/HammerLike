@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
+using System;
 
 public enum RoomType
 {
@@ -48,6 +49,7 @@ public class BSPGenerator : MonoBehaviour
     BSPNode bossRoomNode = null;
 
     [SerializeField] private NavMeshSurface navMesh;
+    public event System.Action OnSuccessGenerate;
     void Start()
     {
         tileSize = GetPrefabSize(verticalTilePrefab);
@@ -71,10 +73,10 @@ public class BSPGenerator : MonoBehaviour
     {
         roomConnections = new Dictionary<BSPNode, List<BSPNode>>();
         ClearNavMesh();
-        StartCoroutine(ReGenerateCoroutine());
+        ReGenerate();
     }
 
-    private IEnumerator ReGenerateCoroutine()
+    private void ReGenerate()
     {
         List<Transform> children = new List<Transform>();
         foreach (Transform child in transform)
@@ -88,9 +90,6 @@ public class BSPGenerator : MonoBehaviour
         }
 
         ResetNodes();
-
-        yield return null;
-
         GenerateBSPDungeon();
     }
 
@@ -117,19 +116,30 @@ public class BSPGenerator : MonoBehaviour
         PlaceSpecialRooms(root);
         PlaceNormalRooms(root, normalRoomCount);
         ConnectRooms(root);
-
-        if (startRoomNode != null && bossRoomNode != null)
+        ReplaceAllObjects();
+        /*if (startRoomNode != null && bossRoomNode != null)
         {
             TraceAndLogPath(startRoomNode, bossRoomNode);
-        }
+        }*/
 
         DeactivateMonsterParents();
-        StartCoroutine(BakeNavMesh());
-        StartCoroutine(BakeMeshes());
+        BakeNavMesh();
+        BakeMeshes();
 
         if (startRoomNode != null)
         {
-            StartCoroutine(MovePlayerToStartRoom());
+            MovePlayerToStartRoom();
+        }
+
+        OnSuccessGenerate?.Invoke();
+    }
+
+    void ReplaceAllObjects()
+    {
+        RandomObjectSpawner[] spawners = FindObjectsOfType<RandomObjectSpawner>();
+        foreach (RandomObjectSpawner spawner in spawners)
+        {
+            spawner.ReplaceObject();
         }
     }
 
@@ -149,7 +159,7 @@ public class BSPGenerator : MonoBehaviour
     {
         if (depth <= 0) return;
 
-        float splitRatio = Mathf.Round(Random.Range(0.4f, 0.6f) * 100f) / 100f;
+        float splitRatio = Mathf.Round(UnityEngine.Random.Range(0.4f, 0.6f) * 100f) / 100f;
 
         if (node.room.width > node.room.height)
         {
@@ -257,12 +267,12 @@ public class BSPGenerator : MonoBehaviour
         GameObject endEntrance = null;
 
         Dictionary<GameObject, GameObject> symmetricEntrances = new Dictionary<GameObject, GameObject>
-        {
-            { roomPrefabA.EntranceN, roomPrefabB.EntranceS },
-            { roomPrefabA.EntranceE, roomPrefabB.EntranceW },
-            { roomPrefabA.EntranceS, roomPrefabB.EntranceN },
-            { roomPrefabA.EntranceW, roomPrefabB.EntranceE }
-        };
+    {
+        { roomPrefabA.EntranceN, roomPrefabB.EntranceS },
+        { roomPrefabA.EntranceE, roomPrefabB.EntranceW },
+        { roomPrefabA.EntranceS, roomPrefabB.EntranceN },
+        { roomPrefabA.EntranceW, roomPrefabB.EntranceE }
+    };
 
         foreach (var pair in symmetricEntrances)
         {
@@ -280,7 +290,7 @@ public class BSPGenerator : MonoBehaviour
         {
             start = startEntrance.transform.position;
             end = endEntrance.transform.position;
-            CreateLShapedPath(start, end, startEntrance, endEntrance);
+            CreateLShapedPath(start, end, startEntrance, endEntrance, nodeA, nodeB);
             if (startEntrance != null || endEntrance != null)
             {
                 startEntrance.SetActive(false);
@@ -289,44 +299,41 @@ public class BSPGenerator : MonoBehaviour
         }
     }
 
-    void CreateLShapedPath(Vector3 startPosition, Vector3 endPosition, GameObject startEntrance, GameObject endEntrance)
+    void CreateLShapedPath(Vector3 startPosition, Vector3 endPosition, GameObject startEntrance, GameObject endEntrance, BSPNode nodeA, BSPNode nodeB)
     {
+        GameObject corridorParent = new GameObject($"Corridor_{nodeA.roomType}_{nodeB.roomType}");
+        corridorParent.transform.parent = EnsureParentStructure().transform;
+
         float deltaX = endPosition.x - startPosition.x;
         float deltaZ = endPosition.z - startPosition.z;
 
         if (deltaX == 0 || deltaZ == 0)
         {
             if (deltaX == 0)
-                PlaceTilesAlongLineVertical(startPosition, endPosition, false);
+                PlaceTilesAlongLineVertical(startPosition, endPosition, false, corridorParent);
             if (deltaZ == 0)
-                PlaceTilesAlongLineHorizontal(startPosition, endPosition, false);
+                PlaceTilesAlongLineHorizontal(startPosition, endPosition, false, corridorParent);
         }
         else
         {
-            if (Mathf.Abs(deltaX) < 10 || Mathf.Abs(deltaZ) < 10)
-            {
-                ReGenerator();
-                return;
-            }
-
             Vector3 midPoint1, midPoint2;
 
             if (startEntrance.name.Contains("N") && endEntrance.name.Contains("S") || startEntrance.name.Contains("S") && endEntrance.name.Contains("N"))
             {
                 midPoint1 = new Vector3(startPosition.x, startPosition.y, (startPosition.z + endPosition.z) / 2);
                 midPoint2 = new Vector3(endPosition.x, endPosition.y, (startPosition.z + endPosition.z) / 2);
-                DetermineAndPlaceCornerObjects(startEntrance, endEntrance, midPoint1, midPoint2);
+                DetermineAndPlaceCornerObjects(startEntrance, endEntrance, midPoint1, midPoint2, corridorParent);
             }
             else
             {
                 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
                 midPoint2 = new Vector3((startPosition.x + endPosition.x) / 2, endPosition.y, endPosition.z);
-                DetermineAndPlaceCornerObjects(startEntrance, endEntrance, midPoint1, midPoint2);
+                DetermineAndPlaceCornerObjects(startEntrance, endEntrance, midPoint1, midPoint2, corridorParent);
             }
         }
     }
 
-    private void DetermineAndPlaceCornerObjects(GameObject start, GameObject end, Vector3 intermediate1, Vector3 intermediate2)
+    private void DetermineAndPlaceCornerObjects(GameObject start, GameObject end, Vector3 intermediate1, Vector3 intermediate2, GameObject corridorParent)
     {
         string startName = start.name;
         string endName = end.name;
@@ -334,13 +341,13 @@ public class BSPGenerator : MonoBehaviour
         {
             if (start.transform.position.x > end.transform.position.x)
             {
-                PlaceTopRightCornerObject(intermediate1, Quaternion.identity);
-                PlaceBottomLeftCornerObject(intermediate2, Quaternion.identity);
+                PlaceTopRightCornerObject(intermediate1, Quaternion.identity, corridorParent);
+                PlaceBottomLeftCornerObject(intermediate2, Quaternion.identity, corridorParent);
             }
             else
             {
-                PlaceTopLeftCornerObject(intermediate1, Quaternion.identity);
-                PlaceBottomRightCornerObject(intermediate2, Quaternion.identity);
+                PlaceTopLeftCornerObject(intermediate1, Quaternion.identity, corridorParent);
+                PlaceBottomRightCornerObject(intermediate2, Quaternion.identity, corridorParent);
             }
             Vector3 startPosition = start.transform.position;
             Vector3 endPosition = end.transform.position;
@@ -356,21 +363,21 @@ public class BSPGenerator : MonoBehaviour
             Vector3 offsetEnd11 = offsetEnd1 - direction0 * cornerSize.z * 6;
             Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
             Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 2;
-            PlaceTilesAlongLineVertical(startPosition, offsetEnd11, false);
-            PlaceTilesAlongLineHorizontal(offsetStart1, offsetEnd22, false);
-            PlaceTilesAlongLineVertical(offsetStart2, endPosition, false);
+            PlaceTilesAlongLineVertical(startPosition, offsetEnd11, false, corridorParent);
+            PlaceTilesAlongLineHorizontal(offsetStart1, offsetEnd22, false, corridorParent);
+            PlaceTilesAlongLineVertical(offsetStart2, endPosition, false, corridorParent);
         }
         else if ((startName.Contains("S") && endName.Contains("N")))
         {
             if (start.transform.position.x > end.transform.position.x)
             {
-                PlaceBottomRightCornerObject(intermediate1, Quaternion.identity);
-                PlaceTopLeftCornerObject(intermediate2, Quaternion.identity);
+                PlaceBottomRightCornerObject(intermediate1, Quaternion.identity, corridorParent);
+                PlaceTopLeftCornerObject(intermediate2, Quaternion.identity, corridorParent);
             }
             else
             {
-                PlaceBottomLeftCornerObject(intermediate1, Quaternion.identity);
-                PlaceTopRightCornerObject(intermediate2, Quaternion.identity);
+                PlaceBottomLeftCornerObject(intermediate1, Quaternion.identity, corridorParent);
+                PlaceTopRightCornerObject(intermediate2, Quaternion.identity, corridorParent);
             }
             Vector3 startPosition = start.transform.position;
             Vector3 endPosition = end.transform.position;
@@ -386,17 +393,16 @@ public class BSPGenerator : MonoBehaviour
             Vector3 offsetEnd11 = offsetEnd1 - direction0 * cornerSize.z;
             Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
             Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 2;
-            PlaceTilesAlongLineVertical(startPosition, offsetEnd11, false);
-            PlaceTilesAlongLineHorizontal(offsetStart1, offsetEnd22, false);
-            PlaceTilesAlongLineVertical(offsetStart2, endPosition, false);
+            PlaceTilesAlongLineVertical(startPosition, offsetEnd11, false, corridorParent);
+            PlaceTilesAlongLineHorizontal(offsetStart1, offsetEnd22, false, corridorParent);
+            PlaceTilesAlongLineVertical(offsetStart2, endPosition, false, corridorParent);
         }
         else if ((startName.Contains("E") && endName.Contains("W")))
         {
             if (start.transform.position.z > end.transform.position.z)
             {
-                PlaceTopRightCornerObject(intermediate1, Quaternion.identity);
-                PlaceBottomLeftCornerObject(intermediate2, Quaternion.identity);
-                Debug.Log("5");
+                PlaceTopRightCornerObject(intermediate1, Quaternion.identity, corridorParent);
+                PlaceBottomLeftCornerObject(intermediate2, Quaternion.identity, corridorParent);
                 Vector3 startPosition = start.transform.position;
                 Vector3 endPosition = end.transform.position;
                 Vector3 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
@@ -411,15 +417,14 @@ public class BSPGenerator : MonoBehaviour
                 Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
                 Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
                 Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 6;
-                PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false);
-                PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false);
-                PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);
+                PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false, corridorParent);
+                PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false, corridorParent);
+                PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false, corridorParent);
             }
             else
             {
-                PlaceBottomRightCornerObject(intermediate1, Quaternion.identity); ;
-                PlaceTopLeftCornerObject(intermediate2, Quaternion.identity);
-                Debug.Log("6");
+                PlaceBottomRightCornerObject(intermediate1, Quaternion.identity, corridorParent);
+                PlaceTopLeftCornerObject(intermediate2, Quaternion.identity, corridorParent);
                 Vector3 startPosition = start.transform.position;
                 Vector3 endPosition = end.transform.position;
                 Vector3 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
@@ -434,18 +439,17 @@ public class BSPGenerator : MonoBehaviour
                 Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
                 Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
                 Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 14;
-                PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false);
-                PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false);
-                PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);
+                PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false, corridorParent);
+                PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false, corridorParent);
+                PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false, corridorParent);
             }
         }
         else if ((startName.Contains("W") && endName.Contains("E")))
         {
             if (start.transform.position.z > end.transform.position.z)
             {
-                PlaceTopLeftCornerObject(intermediate1, Quaternion.identity);
-                PlaceBottomRightCornerObject(intermediate2, Quaternion.identity);
-                Debug.Log("7");
+                PlaceTopLeftCornerObject(intermediate1, Quaternion.identity, corridorParent);
+                PlaceBottomRightCornerObject(intermediate2, Quaternion.identity, corridorParent);
                 Vector3 startPosition = start.transform.position;
                 Vector3 endPosition = end.transform.position;
                 Vector3 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
@@ -460,15 +464,14 @@ public class BSPGenerator : MonoBehaviour
                 Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
                 Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
                 Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 6;
-                PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false);
-                PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false);
-                PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);
+                PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false, corridorParent);
+                PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false, corridorParent);
+                PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false, corridorParent);
             }
             else
             {
-                PlaceBottomLeftCornerObject(intermediate1, Quaternion.identity); ;
-                PlaceTopRightCornerObject(intermediate2, Quaternion.identity);
-                Debug.Log("8");
+                PlaceBottomLeftCornerObject(intermediate1, Quaternion.identity, corridorParent);
+                PlaceTopRightCornerObject(intermediate2, Quaternion.identity, corridorParent);
                 Vector3 startPosition = start.transform.position;
                 Vector3 endPosition = end.transform.position;
                 Vector3 midPoint1 = new Vector3((startPosition.x + endPosition.x) / 2, startPosition.y, startPosition.z);
@@ -483,39 +486,35 @@ public class BSPGenerator : MonoBehaviour
                 Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
                 Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
                 Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 14;
-                PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false);
-                PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false);
-                PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);
+                PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false, corridorParent);
+                PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false, corridorParent);
+                PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false, corridorParent);
             }
         }
     }
 
-    private void PlaceTopLeftCornerObject(Vector3 position, Quaternion rotation)
+    private void PlaceTopLeftCornerObject(Vector3 position, Quaternion rotation, GameObject corridorParent)
     {
-        GameObject parent = EnsureParentStructure().transform.Find("Corner").gameObject;
         GameObject corner = Instantiate(topLeftCornerPrefab, position, rotation);
-        corner.transform.parent = parent.transform;
+        corner.transform.parent = corridorParent.transform;
     }
 
-    private void PlaceTopRightCornerObject(Vector3 position, Quaternion rotation)
+    private void PlaceTopRightCornerObject(Vector3 position, Quaternion rotation, GameObject corridorParent)
     {
-        GameObject parent = EnsureParentStructure().transform.Find("Corner").gameObject;
         GameObject corner = Instantiate(topRightCornerPrefab, position, rotation);
-        corner.transform.parent = parent.transform;
+        corner.transform.parent = corridorParent.transform;
     }
 
-    private void PlaceBottomLeftCornerObject(Vector3 position, Quaternion rotation)
+    private void PlaceBottomLeftCornerObject(Vector3 position, Quaternion rotation, GameObject corridorParent)
     {
-        GameObject parent = EnsureParentStructure().transform.Find("Corner").gameObject;
         GameObject corner = Instantiate(bottomLeftCornerPrefab, position, rotation);
-        corner.transform.parent = parent.transform;
+        corner.transform.parent = corridorParent.transform;
     }
 
-    private void PlaceBottomRightCornerObject(Vector3 position, Quaternion rotation)
+    private void PlaceBottomRightCornerObject(Vector3 position, Quaternion rotation, GameObject corridorParent)
     {
-        GameObject parent = EnsureParentStructure().transform.Find("Corner").gameObject;
         GameObject corner = Instantiate(bottomRightCornerPrefab, position, rotation);
-        corner.transform.parent = parent.transform;
+        corner.transform.parent = corridorParent.transform;
     }
 
     void PlaceSpecialRooms(BSPNode node)
@@ -523,7 +522,7 @@ public class BSPGenerator : MonoBehaviour
         List<BSPNode> leafNodes = GetLeafNodes(node);
         if (leafNodes.Count < 3) return;
 
-        startRoomNode = leafNodes[Random.Range(0, leafNodes.Count)];
+        startRoomNode = leafNodes[UnityEngine.Random.Range(0, leafNodes.Count)];
         InstantiateRoom(startRoomPrefab, startRoomNode.room, startRoomNode);
         startRoomNode.roomType = RoomType.StartRoom;
 
@@ -533,7 +532,7 @@ public class BSPGenerator : MonoBehaviour
         bossRoomNode.roomType = RoomType.BossRoom;
 
         leafNodes.Remove(bossRoomNode);
-        BSPNode eliteNode = leafNodes[Random.Range(0, leafNodes.Count)];
+        BSPNode eliteNode = leafNodes[UnityEngine.Random.Range(0, leafNodes.Count)];
         InstantiateRoom(eliteRoomPrefab, eliteNode.room, eliteNode);
         eliteNode.roomType = RoomType.EliteRoom;
     }
@@ -544,7 +543,7 @@ public class BSPGenerator : MonoBehaviour
         foreach (BSPNode leafNode in leafNodes)
         {
             if (count <= 0 || leafNode.roomType != RoomType.None) continue;
-            InstantiateRoom(normalRoomPrefabs[Random.Range(0, normalRoomPrefabs.Length)], leafNode.room, leafNode);
+            InstantiateRoom(normalRoomPrefabs[UnityEngine.Random.Range(0, normalRoomPrefabs.Length)], leafNode.room, leafNode);
             leafNode.roomType = RoomType.NormalRoom;
             count--;
         }
@@ -621,9 +620,9 @@ public class BSPGenerator : MonoBehaviour
             }
         }
     }
-    private void PlaceTilesAlongLineVertical(Vector3 start, Vector3 end, bool skipLastTile)
+
+    private void PlaceTilesAlongLineVertical(Vector3 start, Vector3 end, bool skipLastTile, GameObject corridorParent)
     {
-        GameObject parent = EnsureParentStructure().transform.Find("Tile").gameObject;
         Vector3 direction = (end - start).normalized;
         float distance = Vector3.Distance(start, end);
         float tileStep = tileSize.x;
@@ -639,18 +638,17 @@ public class BSPGenerator : MonoBehaviour
         {
             Vector3 tilePosition = start + direction * tileStep * i;
             GameObject tile = Instantiate(verticalTilePrefab, tilePosition, rotation);
-            tile.transform.parent = parent.transform;
+            tile.transform.parent = corridorParent.transform;
             if (isDecimal || i == tileCount - 1 || i == tileCount - 2 || i == tileCount - 3)
             {
                 GameObject lastTile = Instantiate(verticalTilePrefab, end, rotation);
-                lastTile.transform.parent = parent.transform;
+                lastTile.transform.parent = corridorParent.transform;
             }
         }
     }
 
-    private void PlaceTilesAlongLineHorizontal(Vector3 start, Vector3 end, bool skipLastTile)
+    private void PlaceTilesAlongLineHorizontal(Vector3 start, Vector3 end, bool skipLastTile, GameObject corridorParent)
     {
-        GameObject parent = EnsureParentStructure().transform.Find("Tile").gameObject;
         Vector3 direction = (end - start).normalized;
         float distance = Vector3.Distance(start, end);
         float tileStep = tileSize.x;
@@ -666,11 +664,11 @@ public class BSPGenerator : MonoBehaviour
         {
             Vector3 tilePosition = start + direction * tileStep * i;
             GameObject tile = Instantiate(horizontalTilePrefab, tilePosition, rotation);
-            tile.transform.parent = parent.transform;
+            tile.transform.parent = corridorParent.transform;
             if (isDecimal || i == tileCount - 1)
             {
                 GameObject lastTile = Instantiate(horizontalTilePrefab, end, rotation);
-                lastTile.transform.parent = parent.transform;
+                lastTile.transform.parent = corridorParent.transform;
             }
         }
     }
@@ -698,33 +696,96 @@ public class BSPGenerator : MonoBehaviour
 
         return tileAndCornerParent;
     }
-
-    IEnumerator BakeMeshes()
+    #region BakeMesh
+    /*
+    void BakeMeshes()
     {
+        // Clear previous objects to combine
         objsToCombine.Clear();
-        yield return new WaitForSeconds(1f);
 
-        Transform tileParent = transform.Find("TileAndCorner/Tile");
-        if (tileParent != null)
+        // Iterate through all Corridor parents and bake their meshes separately
+        Transform tileAndCornerParent = transform.Find("TileAndCorner");
+        if (tileAndCornerParent != null)
         {
-            foreach (Transform tile in tileParent)
+            foreach (Transform corridorParent in tileAndCornerParent)
             {
-                AddChildObjectsWithMeshRenderer(tile, objsToCombine);
+                if (corridorParent.name.StartsWith("Corridor"))
+                {
+                    List<GameObject> corridorTilesToCombine = new List<GameObject>();
+                    AddChildObjectsWithMeshRenderer(corridorParent, corridorTilesToCombine);
+
+                    MB3_MeshBaker corridorMeshBaker = CreateNewMeshBaker(corridorParent.name);
+                    if (corridorMeshBaker.AddDeleteGameObjects(corridorTilesToCombine.ToArray(), null, true))
+                    {
+                        corridorMeshBaker.Apply();
+                        GameObject combinedCorridorMesh = corridorMeshBaker.meshCombiner.resultSceneObject;
+                        if (combinedCorridorMesh != null)
+                        {
+                            combinedCorridorMesh.name = $"Combined-mesh-{corridorParent.name}";
+                            SetLayerRecursively(combinedCorridorMesh, LayerMask.NameToLayer("Floor"));
+                        }
+                        else
+                        {
+                            Debug.LogError($"Combined-mesh-{corridorParent.name} object not found.");
+                        }
+                    }
+                }
             }
         }
 
+        // Create lists for room tile and wall objects
+        List<GameObject> roomTilesToCombine = new List<GameObject>();
+        List<GameObject> wallObjsToCombine = new List<GameObject>();
+
+        // Add room tile objects to roomTilesToCombine list
         foreach (Transform child in transform)
         {
             RoomPrefab roomPrefab = child.GetComponent<RoomPrefab>();
-            if (roomPrefab != null && roomPrefab.meshBakingTileGroup != null)
+            if (roomPrefab != null)
             {
-                AddChildObjectsWithMeshRenderer(roomPrefab.meshBakingTileGroup.transform, objsToCombine);
+                if (roomPrefab.meshBakingTileGroup != null)
+                {
+                    AddChildObjectsWithMeshRenderer(roomPrefab.meshBakingTileGroup.transform, roomTilesToCombine);
+                }
+                if (roomPrefab.meshBakingWallGroup != null)
+                {
+                    AddChildObjectsWithMeshRenderer(roomPrefab.meshBakingWallGroup.transform, wallObjsToCombine);
+                }
             }
         }
 
-        if (meshbaker.AddDeleteGameObjects(objsToCombine.ToArray(), null, true))
+        // Create a new Mesh Baker for room tiles
+        MB3_MeshBaker roomTileMeshBaker = CreateNewMeshBaker("RoomTiles");
+        if (roomTileMeshBaker.AddDeleteGameObjects(roomTilesToCombine.ToArray(), null, true))
         {
-            meshbaker.Apply();
+            roomTileMeshBaker.Apply();
+            GameObject combinedRoomTileMesh = roomTileMeshBaker.meshCombiner.resultSceneObject;
+            if (combinedRoomTileMesh != null)
+            {
+                combinedRoomTileMesh.name = "Combined-mesh-RoomTiles";
+                SetLayerRecursively(combinedRoomTileMesh, LayerMask.NameToLayer("Floor"));
+            }
+            else
+            {
+                Debug.LogError("Combined-mesh-RoomTiles object not found.");
+            }
+        }
+
+        // Create a new Mesh Baker for walls
+        MB3_MeshBaker wallMeshBaker = CreateNewMeshBaker("Walls");
+        if (wallMeshBaker.AddDeleteGameObjects(wallObjsToCombine.ToArray(), null, true))
+        {
+            wallMeshBaker.Apply();
+            GameObject combinedWallMesh = wallMeshBaker.meshCombiner.resultSceneObject;
+            if (combinedWallMesh != null)
+            {
+                combinedWallMesh.name = "Combined-mesh-Walls";
+                SetLayerRecursively(combinedWallMesh, LayerMask.NameToLayer("Wall"));
+            }
+            else
+            {
+                Debug.LogError("Combined-mesh-Walls object not found.");
+            }
         }
     }
 
@@ -740,10 +801,164 @@ public class BSPGenerator : MonoBehaviour
         }
     }
 
-    IEnumerator BakeNavMesh()
+    void SetLayerRecursively(GameObject obj, int newLayer)
     {
-        yield return new WaitForSeconds(1f);
+        if (obj == null) return;
 
+        obj.layer = newLayer;
+
+        foreach (Transform child in obj.transform)
+        {
+            if (child == null) continue;
+            SetLayerRecursively(child.gameObject, newLayer);
+        }
+    }
+
+    MB3_MeshBaker CreateNewMeshBaker(string name)
+    {
+        GameObject newBakerObject = new GameObject(name + "MeshBaker");
+        return newBakerObject.AddComponent<MB3_MeshBaker>();
+    }
+
+    */
+    #endregion
+    #region BakeMeshRoom
+
+    void BakeMeshes()
+    {
+        // Clear previous objects to combine
+        objsToCombine.Clear();
+
+        // Ensure BakeMeshObject exists
+        GameObject bakeMeshParent = GameObject.Find("BakeMeshObject");
+        if (bakeMeshParent == null)
+        {
+            bakeMeshParent = new GameObject("BakeMeshObject");
+        }
+
+        // Iterate through all Corridor parents and bake their meshes separately
+        Transform tileAndCornerParent = transform.Find("TileAndCorner");
+        if (tileAndCornerParent != null)
+        {
+            foreach (Transform corridorParent in tileAndCornerParent)
+            {
+                if (corridorParent.name.StartsWith("Corridor"))
+                {
+                    List<GameObject> corridorTilesToCombine = new List<GameObject>();
+                    AddChildObjectsWithMeshRenderer(corridorParent, corridorTilesToCombine);
+
+                    MB3_MeshBaker corridorMeshBaker = CreateNewMeshBaker(corridorParent.name);
+                    if (corridorMeshBaker.AddDeleteGameObjects(corridorTilesToCombine.ToArray(), null, true))
+                    {
+                        corridorMeshBaker.Apply();
+                        GameObject combinedCorridorMesh = corridorMeshBaker.meshCombiner.resultSceneObject;
+                        if (combinedCorridorMesh != null)
+                        {
+                            combinedCorridorMesh.name = $"Combined-mesh-{corridorParent.name}";
+                            SetLayerRecursively(combinedCorridorMesh, LayerMask.NameToLayer("Floor"));
+                            combinedCorridorMesh.transform.parent = bakeMeshParent.transform; // Set parent to BakeMeshObject
+                        }
+                        else
+                        {
+                            Debug.LogError($"Combined-mesh-{corridorParent.name} object not found.");
+                        }
+                    }
+                }
+            }
+        }
+
+        // Create lists for room tile and wall objects
+        foreach (Transform child in transform)
+        {
+            RoomPrefab roomPrefab = child.GetComponent<RoomPrefab>();
+            if (roomPrefab != null)
+            {
+                List<GameObject> roomTilesToCombine = new List<GameObject>();
+                List<GameObject> roomWallsToCombine = new List<GameObject>();
+
+                if (roomPrefab.meshBakingTileGroup != null)
+                {
+                    AddChildObjectsWithMeshRenderer(roomPrefab.meshBakingTileGroup.transform, roomTilesToCombine);
+                }
+                if (roomPrefab.meshBakingWallGroup != null)
+                {
+                    AddChildObjectsWithMeshRenderer(roomPrefab.meshBakingWallGroup.transform, roomWallsToCombine);
+                }
+
+                // Create a new Mesh Baker for room tiles
+                MB3_MeshBaker roomTileMeshBaker = CreateNewMeshBaker($"{child.name}-Tiles");
+                if (roomTileMeshBaker.AddDeleteGameObjects(roomTilesToCombine.ToArray(), null, true))
+                {
+                    roomTileMeshBaker.Apply();
+                    GameObject combinedRoomTileMesh = roomTileMeshBaker.meshCombiner.resultSceneObject;
+                    if (combinedRoomTileMesh != null)
+                    {
+                        combinedRoomTileMesh.name = $"Combined-mesh-{child.name}-Tiles";
+                        SetLayerRecursively(combinedRoomTileMesh, LayerMask.NameToLayer("Floor"));
+                        combinedRoomTileMesh.transform.parent = bakeMeshParent.transform; // Set parent to BakeMeshObject
+                    }
+                    else
+                    {
+                        Debug.LogError($"Combined-mesh-{child.name}-Tiles object not found.");
+                    }
+                }
+
+                // Create a new Mesh Baker for room walls
+                MB3_MeshBaker roomWallMeshBaker = CreateNewMeshBaker($"{child.name}-Walls");
+                if (roomWallMeshBaker.AddDeleteGameObjects(roomWallsToCombine.ToArray(), null, true))
+                {
+                    roomWallMeshBaker.Apply();
+                    GameObject combinedRoomWallMesh = roomWallMeshBaker.meshCombiner.resultSceneObject;
+                    if (combinedRoomWallMesh != null)
+                    {
+                        combinedRoomWallMesh.name = $"Combined-mesh-{child.name}-Walls";
+                        SetLayerRecursively(combinedRoomWallMesh, LayerMask.NameToLayer("Wall"));
+                        combinedRoomWallMesh.transform.parent = bakeMeshParent.transform; // Set parent to BakeMeshObject
+                    }
+                    else
+                    {
+                        Debug.LogError($"Combined-mesh-{child.name}-Walls object not found.");
+                    }
+                }
+            }
+        }
+    }
+
+    void AddChildObjectsWithMeshRenderer(Transform parent, List<GameObject> objsToCombine)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.GetComponent<MeshRenderer>() != null || child.GetComponent<SkinnedMeshRenderer>() != null)
+            {
+                objsToCombine.Add(child.gameObject);
+            }
+            AddChildObjectsWithMeshRenderer(child, objsToCombine);
+        }
+    }
+
+    void SetLayerRecursively(GameObject obj, int newLayer)
+    {
+        if (obj == null) return;
+
+        obj.layer = newLayer;
+
+        foreach (Transform child in obj.transform)
+        {
+            if (child == null) continue;
+            SetLayerRecursively(child.gameObject, newLayer);
+        }
+    }
+
+    MB3_MeshBaker CreateNewMeshBaker(string name)
+    {
+        GameObject newBakerObject = new GameObject(name + "MeshBaker");
+        return newBakerObject.AddComponent<MB3_MeshBaker>();
+    }
+
+    #endregion
+
+    void BakeNavMesh()
+    {
         if (navMesh.navMeshData == null)
             navMesh.BuildNavMesh();
     }
@@ -756,10 +971,9 @@ public class BSPGenerator : MonoBehaviour
 
     void TraceAndLogPath(BSPNode startNode, BSPNode endNode)
     {
-        List<BSPNode> path = new List<BSPNode>();
         if (startNode == null || endNode == null) return;
 
-        path.Clear();
+        List<BSPNode> path = new List<BSPNode>(2048);  // 용량을 다시 한번 줄여봅니다.
         path.Add(startNode);
         BSPNode currentNode = startNode;
 
@@ -801,10 +1015,8 @@ public class BSPGenerator : MonoBehaviour
         return closestNode;
     }
 
-    IEnumerator MovePlayerToStartRoom()
+    void MovePlayerToStartRoom()
     {
-        yield return new WaitForSeconds(1f);
-
         if (player != null && startRoomNode != null && startRoomNode.roomObject != null)
         {
             Vector3 roomPosition = new Vector3(
@@ -820,5 +1032,11 @@ public class BSPGenerator : MonoBehaviour
         {
             Debug.LogError("Failed to move player: Start room or player not properly initialized.");
         }
+    }
+
+    public void SuccessGenerate()
+    {
+
+        OnSuccessGenerate?.Invoke();
     }
 }

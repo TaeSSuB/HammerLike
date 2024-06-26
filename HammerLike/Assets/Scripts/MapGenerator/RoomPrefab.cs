@@ -101,4 +101,6 @@ public class RoomPrefab : MonoBehaviour
         Bounds localBounds = new Bounds(Ground.center, Ground.size);
         return localBounds.Contains(localPos);
     }
+
+    
 }

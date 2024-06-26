@@ -21,10 +21,13 @@ public class ChangeCursor : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            //DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded; // 씬이 로드될 때마다 호출할 이벤트 리스너 등록
         }
-        
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -42,26 +45,38 @@ public class ChangeCursor : MonoBehaviour
 
     public void SetCursorAttack()
     {
-        StartCoroutine(SetCursorByAttack());
+        if (this != null)
+        {
+            StartCoroutine(SetCursorByAttack());
+        }
     }
 
     public IEnumerator SetCursorByAttack()
     {
-        SetCursorWhenReady(1); // 피격 시 1번 인덱스 커서로 변경
-        yield return new WaitForSeconds(0.2f); // 0.2초 대기
-        SetCursorWhenReady(0); // 원래 커서로 복귀
+        if (this != null)
+        {
+            SetCursorWhenReady(1); // 피격 시 1번 인덱스 커서로 변경
+            yield return new WaitForSeconds(0.2f); // 0.2초 대기
+            SetCursorWhenReady(0); // 원래 커서로 복귀
+        }
     }
 
     public void OnButtonClick()
     {
-        StartCoroutine(HandleButtonClick());
+        if (this != null)
+        {
+            StartCoroutine(HandleButtonClick());
+        }
     }
 
     private IEnumerator HandleButtonClick()
     {
-        SetCursorWhenReady(2); // 버튼 클릭 시 2번 인덱스 커서로 변경
-        yield return new WaitForSeconds(0.5f); // 0.5초 대기
-        SetCursorWhenReady(3); // 다시 3번 인덱스 커서로 변경
+        if (this != null)
+        {
+            SetCursorWhenReady(2); // 버튼 클릭 시 2번 인덱스 커서로 변경
+            yield return new WaitForSeconds(0.5f); // 0.5초 대기
+            SetCursorWhenReady(3); // 다시 3번 인덱스 커서로 변경
+        }
     }
 
     // 주어진 인덱스에 해당하는 텍스처로 커서 이미지를 변경
@@ -80,12 +95,18 @@ public class ChangeCursor : MonoBehaviour
     // 텍스처 로딩이 준비되었는지 확인 후 커서를 설정
     public void SetCursorWhenReady(int index)
     {
-        StartCoroutine(WaitForTextureAndSetCursor(index));
+        if (this != null)
+        {
+            StartCoroutine(WaitForTextureAndSetCursor(index));
+        }
     }
 
     private IEnumerator WaitForTextureAndSetCursor(int index)
     {
-        yield return new WaitUntil(() => cursorTextures[index].texture.isReadable); // 텍스처가 읽기 가능할 때까지 대기
-        SetCursorByIndex(index); // 준비된 텍스처로 커서 설정
+        if (this != null)
+        {
+            yield return new WaitUntil(() => cursorTextures[index].texture.isReadable); // 텍스처가 읽기 가능할 때까지 대기
+            SetCursorByIndex(index); // 준비된 텍스처로 커서 설정
+        }
     }
 }
