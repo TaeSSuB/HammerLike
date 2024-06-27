@@ -100,7 +100,22 @@ public class B_Enemy : B_UnitBase
             
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
+            
 
+            if (RunTimeStatus.currentHP > 0)
+            {
+                //B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+                
+                // Temp - a.HG : Hit Sound 임시 할당..
+                B_AudioManager.Instance.PlaySound("Hit_" + weaponTypeName, AudioCategory.SFX);
+                CameraManager.Instance.ShakeCamera();
+            }
+            // else
+            // {
+            //     B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Death);
+            // }
+
+            //ChangeState(new ChaseState(this));
             if (aIStateManager?.CurrentStateType != AIStateType.HIT && aIStateManager?.CurrentStateType != AIStateType.DEAD)
                 aIStateManager?.SetState(AIStateType.HIT);
         }

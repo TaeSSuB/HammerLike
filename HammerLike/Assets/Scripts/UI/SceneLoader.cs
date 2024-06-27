@@ -11,37 +11,30 @@ public class SceneLoader : MonoBehaviour
 
     public GameObject deadPanel;
     public GameObject clearPanel;
-    // public string sceneToLoad;
 
     void Start()
     {
-        if(!targetImage.gameObject.activeSelf)
+        if (!targetImage.gameObject.activeSelf)
         {
             targetImage.gameObject.SetActive(true);
         }
         // 시작 시 페이드 아웃 실행
         FadeOut();
 
-        if (SceneManager.GetActiveScene().name == "Town")
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        if (currentSceneName == "Town")
             B_AudioManager.Instance.PlaySound(AudioCategory.BGM, AudioTag.Town);
-        else if (SceneManager.GetActiveScene().name == "Mainmenu")
+        else if (currentSceneName == "Mainmenu")
             B_AudioManager.Instance.PlaySound(AudioCategory.BGM, AudioTag.MainMenu);
         else
             B_AudioManager.Instance.PlaySound(AudioCategory.BGM, AudioTag.Battle);
     }
-    /*public void ChangeScene()
-    {
-        // sceneToLoad에 설정된 씬으로 이동합니다.
-        LoadingSceneController.LoadScene(sceneToLoad);
-    }*/
 
     public void ChangeScene(string sceneName)
     {
         if (Time.timeScale == 0)
             Time.timeScale = 1;
-        // sceneToLoad에 설정된 씬으로 이동합니다.
         LoadingSceneController.LoadScene(sceneName);
-        
     }
 
     public void ChangeSceneOther(string sceneName)
@@ -55,33 +48,37 @@ public class SceneLoader : MonoBehaviour
     {
         if (Time.timeScale == 0)
             Time.timeScale = 1;
-        FadeIn();
-        yield return new WaitForSeconds(1f);
-        ChangeScene(sceneName);
+        FadeInAndChangeScene(sceneName);
+        yield return null;
     }
 
     IEnumerator ChangeTown()
     {
-        FadeIn();
-        yield return new WaitForSeconds(1f);
-        ChangeScene("Town");
+        FadeInAndChangeScene("Town");
+        yield return null;
     }
 
     public void NextChangeTown()
     {
         StartCoroutine(ChangeTown());
     }
-    
+
+    public void FadeInAndChangeScene(string sceneName)
+    {
+        targetImage.DOFade(1, duration).SetEase(Ease.InOutQuad).OnComplete(() =>
+        {
+            LoadingSceneController.LoadScene(sceneName);
+        }).SetUpdate(true);
+    }
+
     public void FadeIn()
     {
-        // DOTween을 사용한 페이드 인: 투명도를 0에서 1로 변경
-        targetImage.DOFade(1, duration).SetEase(Ease.InOutQuad).SetUpdate(true); ;
+        targetImage.DOFade(1, duration).SetEase(Ease.InOutQuad).SetUpdate(true);
     }
 
     public void FadeOut()
     {
-        // DOTween을 사용한 페이드 아웃: 투명도를 1에서 0으로 변경
-        targetImage.DOFade(0, duration).SetEase(Ease.InOutQuad).SetUpdate(true); ;
+        targetImage.DOFade(0, duration).SetEase(Ease.InOutQuad).SetUpdate(true);
     }
 
     public void Exit()
@@ -93,27 +90,21 @@ public class SceneLoader : MonoBehaviour
     {
         FadeIn();
 
-        if (deadPanel != null)
+        if (deadPanel != null && !deadPanel.gameObject.activeSelf)
         {
-
-            if (!deadPanel.gameObject.activeSelf)
-                deadPanel.gameObject.SetActive(true);
+            deadPanel.gameObject.SetActive(true);
             Time.timeScale = 0;
         }
-   
     }
 
     public void BossDead()
     {
         FadeIn();
 
-        if (clearPanel != null)
+        if (clearPanel != null && !clearPanel.gameObject.activeSelf)
         {
-
-            if (!clearPanel.gameObject.activeSelf)
-                clearPanel.gameObject.SetActive(true);
-
-        Time.timeScale = 0;
+            clearPanel.gameObject.SetActive(true);
+            Time.timeScale = 0;
         }
     }
 

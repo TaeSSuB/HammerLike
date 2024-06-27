@@ -25,7 +25,7 @@ public class MeshDestroy : MonoBehaviour
     private Collider collider;
     private ItemManager itemManager;
     private ChangeMaterialObject changeMaterial;
-    private CameraShake cameraShake;
+    private CameraManager cameraShake;
     void Start()
     {
         GameObject itemDB = GameObject.Find("ItemDB");

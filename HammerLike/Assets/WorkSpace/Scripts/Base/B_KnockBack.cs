@@ -59,7 +59,7 @@ public class B_KnockBack : MonoBehaviour
     public IEnumerator CoApplySlowMotionAndKnockback(B_UnitBase unitBase, Vector3 direction, float force, Rigidbody rigidbody, AnimationCurve forceCurve, float knockbackDuration = 0.5f, ForceMode forceMode = ForceMode.VelocityChange)
     {
         // 피격 판정 후 슬로우모션 실행
-        yield return StartCoroutine(GameManager.Instance.CoSlowMotion(0.1f, 0.75f));
+        yield return StartCoroutine(GameManager.Instance.CoSlowMotion(GameManager.Instance.SystemSettings.SlowMotionTimeScale, GameManager.Instance.SystemSettings.SlowMotionDuration));
         
         unitBase.CheckDead();
 

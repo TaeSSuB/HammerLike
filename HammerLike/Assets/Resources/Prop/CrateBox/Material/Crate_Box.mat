@@ -22,6 +22,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Crate_Box
   m_Shader: {fileID: 4800000, guid: d766f21a08a9362468fb17420927adb8, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - PROPIXELIZER_DITHERING_ON
   - USE_OBJECT_POSITION_ON
@@ -32,6 +34,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -68,7 +71,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _LightingRamp:
-        m_Texture: {fileID: 2800000, guid: 0a7ebf1b416d4d045b028a804724ed56, type: 3}
+        m_Texture: {fileID: 2800000, guid: 211497300d75d8e4b9b3e2913a93e908, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -117,11 +120,13 @@ Material:
     - PROPIXELIZER_DITHERING: 1
     - RECEIVE_SHADOWS: 0
     - USE_OBJECT_POSITION: 1
+    - _Additional_Shadow: 1
     - _AlphaClip: 0
     - _AlphaClipThreshold: 0.5
     - _Blend: 0
     - _BlinnPhong: 0
     - _BumpScale: 1
+    - _ChargeAmount: 0
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Contrast: 1
@@ -131,14 +136,18 @@ Material:
     - _DetailNormalMapScale: 1
     - _DiffuseVertexColorWeight: 0
     - _DstBlend: 0
+    - _Edge_Bevel_Weight: 0
     - _EmissiveVertexColorWeight: 0
     - _EnableDynamicLight: 0
+    - _EnableDynamicLights: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1
+    - _HitAmount: 0
     - _Hue: 1
     - _ID: 2
+    - _Lighting_Step: 1.5
     - _Metallic: 0
     - _Mode: 0
     - _Normal_Strength: 0
@@ -148,10 +157,18 @@ Material:
     - _QueueControl: -1
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _ReflectionLight: 1
+    - _ReflectionLightPower: 2.2
+    - _RimLight: 0
+    - _RimLightPower: 3
     - _Saturation: 1
+    - _ShadowPower: 3
+    - _Show_Vertex_Color_Weight: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
+    - _Specular: 1
     - _SpecularHighlights: 1
+    - _SpecularPower: 0.3
     - _Specular_Power: 0.1
     - _SrcBlend: 1
     - _Surface: 0
@@ -159,13 +176,25 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _AmbientLight: {r: 0, g: 0, b: 0, a: 1}
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Albedo_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Albedo_Tiling: {r: 1, g: 1, b: 0, a: 0}
+    - _AmbientLight: {r: 0.754717, g: 0.68076795, b: 0.6016376, a: 1}
+    - _BaseColor: {r: 0.752143, g: 0.7372549, b: 0.7921569, a: 1}
+    - _ChargeColor: {r: 1, g: 0.5037829, b: 0, a: 1}
     - _Color: {r: 0.9063317, g: 0.9063317, b: 0.9063317, a: 1}
-    - _EdgeHighlightColor: {r: 1, g: 1, b: 1, a: 0}
+    - _EdgeHighlightColor: {r: 0.9910332, g: 1, b: 0.8537736, a: 0.9843137}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 0}
+    - _Emission_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Emission_Tiling: {r: 1, g: 1, b: 0, a: 0}
+    - _HitColor: {r: 1, g: 0, b: 0, a: 1}
+    - _Normal_Map_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Normal_Map_Tiling: {r: 1, g: 1, b: 0, a: 0}
+    - _OutlineColor: {r: 0.14150941, g: 0.10628152, b: 0.082102165, a: 0.4392157}
     - _PixelGridOrigin: {r: 0, g: 0, b: 0, a: 0}
+    - _ReflectionLightColor: {r: 0.5176471, g: 0.5019608, b: 0.69411767, a: 1}
+    - _RimLightColor: {r: 1, g: 0.9397242, b: 0.6556604, a: 1}
+    - _ShadowColor: {r: 0.6930847, g: 0.7361077, b: 0.8396226, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _SpecularColor: {r: 0.6226415, g: 0.4552332, b: 0.46814194, a: 1}
     - _Specular_Color: {r: 1, g: 0.1289373, b: 0, a: 0}
   m_BuildTextureStacks: []

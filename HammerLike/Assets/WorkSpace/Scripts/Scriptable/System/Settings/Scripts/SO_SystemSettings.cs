@@ -28,6 +28,8 @@ public class SO_SystemSettings : ScriptableObject
     [SerializeField] private ForceMode knockbackForceMode = ForceMode.Force;
     [SerializeField] private float knockbackDuration = 0.5f;
     [SerializeField] private float knockBackScale = 10f;
+    [SerializeField] private float slowMotionDuration = 0.75f;
+    [SerializeField] private float slowMotionTimeScale = 0.1f;
     private float maxKnockBackForce = 300f; // 넉백 최대 Force 값
     [SerializeField] private AnimationCurve knockbackCurve;
     [Space(10)]
@@ -58,6 +60,9 @@ public class SO_SystemSettings : ScriptableObject
     public bool IsDebugMode { get => isDebugMode; }
     public AnimationCurve KnockbackCurve { get => knockbackCurve;}
     public AnimationCurve PartsBreakForceCurve { get => partsBreakForceCurve;}
+
+    public float SlowMotionTimeScale {  get => slowMotionTimeScale; }
+    public float SlowMotionDuration {  get => slowMotionDuration; }
 
 
 

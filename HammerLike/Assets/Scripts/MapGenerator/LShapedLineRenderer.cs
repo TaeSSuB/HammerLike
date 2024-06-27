@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 
@@ -122,6 +123,7 @@ public class LShapedLineRenderer : MonoBehaviour
         float distance = Vector3.Distance(start, end);
         float tileStep = tileSize.x;
         bool isDecimal = false;
+        bool lastTile = false;
         if (distance % tileStep != 0)
         {
             isDecimal = true;
@@ -134,13 +136,16 @@ public class LShapedLineRenderer : MonoBehaviour
         //Quaternion rotation = Quaternion.LookRotation(direction);
         Quaternion rotation = Quaternion.identity;
 
-        for (int i = 0; i <= tileCount; i+=2)
+        for (int i = 1; i <= tileCount; i+=2)
         {
             Vector3 tilePosition = start + direction * tileStep * i;
             GameObject tile = Instantiate(horizontalTilePrefab, tilePosition, rotation, container.transform);
             if (isDecimal || i==tileCount-1)
             {
+                /*if (lastTile)
+                    return;*/
                 Instantiate(horizontalTilePrefab, end, rotation, container.transform);
+                //lastTile = true;
             }
         }
     }
@@ -327,6 +332,8 @@ public class LShapedLineRenderer : MonoBehaviour
                 Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
                 Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
                 Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 6;
+                startPosition.x += 0.5f;
+                endPosition.x += 0.5f;
                 PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false);
                 PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false);
                 PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);
@@ -350,6 +357,8 @@ public class LShapedLineRenderer : MonoBehaviour
                 Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
                 Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
                 Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 14;
+                startPosition.x += 0.5f;
+                endPosition.x += 0.5f;
                 PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false);
                 PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false);
                 PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);
@@ -378,6 +387,8 @@ public class LShapedLineRenderer : MonoBehaviour
                 Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
                 Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
                 Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 6;
+                startPosition.x += 0.5f;
+                endPosition.x += 0.5f;
                 PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false);
                 PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false);
                 PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);
@@ -401,6 +412,8 @@ public class LShapedLineRenderer : MonoBehaviour
                 Vector3 offsetEnd11 = offsetEnd1 + direction0 * cornerSize.z * 4;
                 Vector3 offsetEnd2 = midPoint2 - direction1 * cornerSize.x * 2;
                 Vector3 offsetEnd22 = offsetEnd2 - direction1 * cornerSize.z * 14;
+                startPosition.x += 0.5f;
+                endPosition.x += 0.5f;
                 PlaceTilesAlongLineHorizontal(startPosition, offsetEnd11, false);
                 PlaceTilesAlongLineVertical(offsetStart1, offsetEnd22, false);
                 PlaceTilesAlongLineHorizontal(offsetStart2, endPosition, false);

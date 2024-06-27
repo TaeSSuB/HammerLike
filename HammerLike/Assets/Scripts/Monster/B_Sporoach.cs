@@ -18,7 +18,7 @@ public class B_Sporoach : B_Enemy
 
     protected override void Dead(bool isSelf = false)
     {
-        
+        base.Dead(isSelf);
     }
 
     public override void OnEndAttack()

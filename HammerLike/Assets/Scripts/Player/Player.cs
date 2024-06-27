@@ -123,7 +123,7 @@ public class Player : MonoBehaviour
     public bool isEvading = false;
     public float chargeStartTime; // Charge 시작 시간
     private SaveDataManager saveDataManager;
-    public CameraShake camerashake;
+    public CameraManager camerashake;
     public ChangeMaterial[] changeMaterials;
     private bool isDead = false;
     private GameOver gameOver;
