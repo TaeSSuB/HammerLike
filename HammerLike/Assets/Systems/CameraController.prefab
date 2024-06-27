@@ -30,8 +30,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1205577275724422261}
   - {fileID: 603452360101314953}
+  - {fileID: 7483945560228824003}
+  - {fileID: 2010321360273200466}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6996977942932895074
@@ -124,6 +125,84 @@ MonoBehaviour:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
+--- !u!1 &468875171605621048
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2010321360273200466}
+  m_Layer: 0
+  m_Name: Shake
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2010321360273200466
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 468875171605621048}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8928222595677586948}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3505643106805160736
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7483945560228824003}
+  - component: {fileID: 8415307196754131339}
+  m_Layer: 0
+  m_Name: Shake
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7483945560228824003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3505643106805160736}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1205577275724422261}
+  m_Father: {fileID: 8928222595677586948}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8415307196754131339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3505643106805160736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dac93ebcfdc89e4d87234505ef1837b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeIntensity: 0.5
+  shakeTime: 0.1
 --- !u!1 &6142006901224811705
 GameObject:
   m_ObjectHideFlags: 0
@@ -140,7 +219,7 @@ GameObject:
   - component: {fileID: 3907168705507477894}
   - component: {fileID: 5488449821635773447}
   - component: {fileID: 7899703998499664364}
-  - component: {fileID: 2112561406831150886}
+  - component: {fileID: 7710692286597191192}
   m_Layer: 0
   m_Name: Camera_Main
   m_TagString: MainCamera
@@ -161,7 +240,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8928222595677586948}
+  m_Father: {fileID: 7483945560228824003}
   m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
 --- !u!20 &2813656274905827397
 Camera:
@@ -343,7 +422,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a9be06ea3fe3c6418191e9352de0547, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2112561406831150886
+--- !u!114 &7710692286597191192
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -352,11 +431,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6142006901224811705}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dac93ebcfdc89e4d87234505ef1837b, type: 3}
+  m_Script: {fileID: 11500000, guid: 2a9be06ea3fe3c6418191e9352de0547, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shakeIntensity: 0.5
-  shakeTime: 0.1
 --- !u!1 &6667207147711780988
 GameObject:
   m_ObjectHideFlags: 0

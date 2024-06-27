@@ -52,9 +52,9 @@ public class CameraManager : MonoBehaviour
 
             // Randomly shake the camera within a certain range
             float offsetX = Random.Range(-1f, 1f) * shakeIntensity;
-            float offsetY = Random.Range(-1f, 1f) * shakeIntensity;
+            float offsetZ = Random.Range(-1f, 1f) * shakeIntensity;
 
-            transform.localPosition = new Vector3(originalPosition.x + offsetX, originalPosition.y + offsetY, originalPosition.z);
+            transform.localPosition = new Vector3(originalPosition.x + offsetX, originalPosition.y, originalPosition.z + +offsetZ);
 
             // Reset the position after shaking is done
             if (timer <= 0)
