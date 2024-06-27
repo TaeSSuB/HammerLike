@@ -36,6 +36,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     public KeyCode devModeKey = KeyCode.F2;
     private GameObject devModeTextObj;
     private GameObject resetTextObj;
+    [SerializeField] private TextMeshPro Temptext;
 
     public B_Player Player { get => player; }
     public void SetPlayer(B_Player inPlayer)
@@ -107,6 +108,11 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
                     break;
             }
         }
+
+        if (Temptext != null)
+        {
+            Temptext.text = Time.timeScale.ToString();
+        }
     }
     #endregion
 
@@ -165,6 +171,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         yield return new WaitForSecondsRealtime(inDuration);
 
         SetTimeScale(originTimeScale);*/
+
         float originTimeScale = Time.timeScale;
 
         // 타임 스케일을 inTimeScale로 즉시 설정

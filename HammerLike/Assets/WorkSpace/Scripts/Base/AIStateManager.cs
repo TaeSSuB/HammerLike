@@ -10,7 +10,7 @@ public class AIStateManager : MonoBehaviour
     private IAIState currentState;
     private Dictionary<AIStateType, IAIState> states = new Dictionary<AIStateType, IAIState>();
     private B_UnitBase unitBase;
-    private bool isIdleForced = true; // 강제 IDLE 상태 플래그 문이 닫히기전 까지 플레이어 인식을 안하길 원해서 추가함
+    private bool isIdleForced = false; // 강제 IDLE 상태 플래그 문이 닫히기전 까지 플레이어 인식을 안하길 원해서 추가함
 
     public AIStateType CurrentStateType { get { return currentStateType; } }
 
