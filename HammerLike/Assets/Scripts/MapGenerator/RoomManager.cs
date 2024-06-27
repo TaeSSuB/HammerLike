@@ -12,7 +12,7 @@ public class RoomManager : MonoBehaviour
     private RoomPrefab currentRoom = null;
     public GameObject entranceA;
     public GameObject entranceB;
-    public float activationDistance = 10.0f; // 몬스터 그룹 활성화 거리
+    public float activationDistance = 10.0f;
 
     [Header("Temp")]
     [SerializeField] public RectTransform bossPanel;
@@ -71,7 +71,9 @@ public class RoomManager : MonoBehaviour
         {
             currentRoom = foundRoom;
             if (foundRoom != null && foundRoom.monsterParent != null)
+            {
                 monsterParent = foundRoom.monsterParent;
+            }
             if (currentRoom != null)
             {
                 Debug.Log($"Player has entered a new room: {currentRoom.gameObject.name}");
@@ -82,6 +84,7 @@ public class RoomManager : MonoBehaviour
                     if (monsterCount > 0)
                     {
                         currentRoom.CloseDoors();
+                        currentRoom.SetMonstersIdleForced(false); // 방에 들어올 때 IDLE 강제 해제
                     }
                 }
             }
@@ -94,7 +97,7 @@ public class RoomManager : MonoBehaviour
 
     private void UpdateRoomMonsterStatus(RoomPrefab room)
     {
-        int monsterCount = room.monsterCount; // CountMonstersInRoom(room);
+        int monsterCount = room.monsterCount;
         if (room.gameObject.name == "Room_Boss")
         {
             EnablePanel();
@@ -133,8 +136,8 @@ public class RoomManager : MonoBehaviour
                 if (distanceToPlayer <= activationDistance)
                 {
                     room.monsterParent.SetActive(true);
-                    room.monsterCount = room.CountMonsters(); // 몬스터 그룹 활성화 시 카운트 갱신
-                    room.CloseDoors();
+                    room.monsterCount = room.CountMonsters();
+                    room.SetMonstersIdleForced(true); // 활성화 시 IDLE 강제
                 }
             }
         }
@@ -152,12 +155,12 @@ public class RoomManager : MonoBehaviour
                 {
                     foreach (Transform child in monsterParentTransform)
                     {
-                        AIStateManager monsterComponent = child.GetComponent<AIStateManager>();
+                        AIStateManager monsterComponent = child.GetComponentInChildren<AIStateManager>();
                         if (monsterComponent != null && monsterComponent.CurrentStateType != AIStateType.DEAD && room.IsPositionInside(child.position))
                         {
                             monsterCount++;
                         }
-                        B_BossController bBoss = child.GetComponent<B_BossController>();
+                        B_BossController bBoss = child.GetComponentInChildren<B_BossController>();
                         if (bBoss != null && bBoss.CurrentStateType != BossAIStateType.DEAD && room.IsPositionInside(child.position))
                         {
                             monsterCount++;
@@ -185,7 +188,7 @@ public class RoomManager : MonoBehaviour
         RoomPrefab room = FindRoomContainingPosition(monsterPosition);
         if (room != null)
         {
-            room.UpdateMonsterCount(-1);  // 몬스터 수 감소
+            room.UpdateMonsterCount(-1);
             UpdateRoomMonsterStatus(room);
         }
     }

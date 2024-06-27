@@ -1,3 +1,4 @@
+using NuelLib;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,17 +19,19 @@ public class ChangeCursor : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
+        SceneManager.sceneLoaded += OnSceneLoaded; // 씬이 로드될 때마다 호출할 이벤트 리스너 등록
+
+    }
+
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            SceneManager.sceneLoaded += OnSceneLoaded; // 씬이 로드될 때마다 호출할 이벤트 리스너 등록
-        }
-        else
-        {
-            Destroy(gameObject);
+            SceneManager.sceneLoaded -= OnSceneLoaded; // 씬 로드 이벤트 리스너 해제
         }
     }
+
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {

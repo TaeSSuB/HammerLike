@@ -22,11 +22,7 @@ public class LoadingSceneController : MonoBehaviour
 
     void Start()
     {
-        if (!image.gameObject.activeSelf)
-        {
-            //image.gameObject.SetActive(true);
-        }
-        StartCoroutine(LoadSceneProcess());
+        StartCoroutine(LoadNextScene());
     }
 
     void OnEnable()
@@ -41,60 +37,59 @@ public class LoadingSceneController : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        /*if (scene.name == nextScene)
-        {*/
-            if (scene.name == "Stage01")
+       /* if (scene.name == "Loading")
+        {
+            StartCoroutine(LoadNextScene());
+        }
+        else if (scene.name == nextScene)
+        {
+            BSPGenerator generator = FindObjectOfType<BSPGenerator>();
+            if (generator != null)
             {
-                BSPGenerator generator = FindObjectOfType<BSPGenerator>();
-                if (generator != null)
-                {
-                    generator.OnSuccessGenerate += HandleSuccessGenerate;
-                }
+                generator.OnSuccessGenerate += HandleSuccessGenerate;
+                Debug.Log("OnSuccessGenerate event handler registered.");
             }
-        //}
+            else
+            {
+                Debug.LogError("BSPGenerator not found in the scene.");
+            }
+        }*/
     }
 
-    IEnumerator LoadSceneProcess()
+    IEnumerator LoadNextScene()
     {
-        //yield return null;
-        AsyncOperation op = SceneManager.LoadSceneAsync("Stage01");
+        yield return null; // 한 프레임 대기
+
+        AsyncOperation op = SceneManager.LoadSceneAsync(nextScene);
         op.allowSceneActivation = false;
 
         float timer = 0f;
+        float minLoadTime = 5f; // 최소 10초 대기
+
         while (!op.isDone)
         {
             yield return null;
-            
-            if (op.progress < 0.9f )
+            if (op.progress < 0.9f && !isGenerationComplete)
             {
                 progressBar.value = op.progress;
-                
             }
-            
             else
             {
                 timer += Time.unscaledDeltaTime;
-                progressBar.value = Mathf.Lerp(0.9f, 1f, timer / 10f); //끝나면 바로 시작 
-                if (timer > 10f) // 최소 3초 대기 후 생성 완료 확인
+                progressBar.value = Mathf.Lerp(0.9f, 1f, timer / minLoadTime);
+                if (progressBar.value >= 1f) // 최소 10초 대기 후 생성 완료 확인
                 {
                     op.allowSceneActivation = true;
 
-                    break;
+                    yield break;
                 }
             }
         }
-
-        // 이벤트 구독 해제
-        BSPGenerator generator = FindObjectOfType<BSPGenerator>();
-        if (generator != null)
-        {
-            generator.OnSuccessGenerate -= HandleSuccessGenerate;
-        }
-       
     }
 
     private void HandleSuccessGenerate()
     {
+        Debug.Log("HandleSuccessGenerate called.");
         isGenerationComplete = true;
     }
 
@@ -107,7 +102,7 @@ public class LoadingSceneController : MonoBehaviour
     {
         image.DOFade(0, duration).SetEase(Ease.InOutQuad).OnComplete(() =>
         {
-            StartCoroutine(LoadSceneProcess());
+            //StartCoroutine(LoadNextScene());
         });
     }
 }

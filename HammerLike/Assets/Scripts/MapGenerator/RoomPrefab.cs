@@ -91,6 +91,7 @@ public class RoomPrefab : MonoBehaviour
             {
                 door.transform.DOMoveY(door.transform.position.y + moveDistance, duration).SetEase(Ease.InOutQuad);
             }
+            SetMonstersIdleForced(false); // 문이 닫힌 후 IDLE 강제 해제
         }
     }
 
@@ -102,5 +103,31 @@ public class RoomPrefab : MonoBehaviour
         return localBounds.Contains(localPos);
     }
 
-    
+    public void SetMonstersIdleForced(bool forceIdle)
+    {
+        if (monsterParent != null)
+        {
+            foreach (Transform monster in monsterParent.transform)
+            {
+                SetIdleForcedRecursive(monster, forceIdle);
+            }
+        }
+    }
+
+    private void SetIdleForcedRecursive(Transform obj, bool forceIdle)
+    {
+        // 근데 이렇게 될 경우 부모 오브젝트에서 AIStateManager를 찾을 때 까지 재귀적으로 돌아야하는데
+        // 쓸데 없이 코스트가 큰거 같다 root 오브젝트를 두지 않고 
+        AIStateManager aiStateManager = obj.GetComponent<AIStateManager>();
+        if (aiStateManager != null)
+        {
+            aiStateManager.ForceIdle(forceIdle);
+        }
+        foreach (Transform child in obj)
+        {
+            SetIdleForcedRecursive(child, forceIdle);
+        }
+    }
+
+
 }

@@ -696,132 +696,7 @@ public class BSPGenerator : MonoBehaviour
 
         return tileAndCornerParent;
     }
-    #region BakeMesh
-    /*
-    void BakeMeshes()
-    {
-        // Clear previous objects to combine
-        objsToCombine.Clear();
 
-        // Iterate through all Corridor parents and bake their meshes separately
-        Transform tileAndCornerParent = transform.Find("TileAndCorner");
-        if (tileAndCornerParent != null)
-        {
-            foreach (Transform corridorParent in tileAndCornerParent)
-            {
-                if (corridorParent.name.StartsWith("Corridor"))
-                {
-                    List<GameObject> corridorTilesToCombine = new List<GameObject>();
-                    AddChildObjectsWithMeshRenderer(corridorParent, corridorTilesToCombine);
-
-                    MB3_MeshBaker corridorMeshBaker = CreateNewMeshBaker(corridorParent.name);
-                    if (corridorMeshBaker.AddDeleteGameObjects(corridorTilesToCombine.ToArray(), null, true))
-                    {
-                        corridorMeshBaker.Apply();
-                        GameObject combinedCorridorMesh = corridorMeshBaker.meshCombiner.resultSceneObject;
-                        if (combinedCorridorMesh != null)
-                        {
-                            combinedCorridorMesh.name = $"Combined-mesh-{corridorParent.name}";
-                            SetLayerRecursively(combinedCorridorMesh, LayerMask.NameToLayer("Floor"));
-                        }
-                        else
-                        {
-                            Debug.LogError($"Combined-mesh-{corridorParent.name} object not found.");
-                        }
-                    }
-                }
-            }
-        }
-
-        // Create lists for room tile and wall objects
-        List<GameObject> roomTilesToCombine = new List<GameObject>();
-        List<GameObject> wallObjsToCombine = new List<GameObject>();
-
-        // Add room tile objects to roomTilesToCombine list
-        foreach (Transform child in transform)
-        {
-            RoomPrefab roomPrefab = child.GetComponent<RoomPrefab>();
-            if (roomPrefab != null)
-            {
-                if (roomPrefab.meshBakingTileGroup != null)
-                {
-                    AddChildObjectsWithMeshRenderer(roomPrefab.meshBakingTileGroup.transform, roomTilesToCombine);
-                }
-                if (roomPrefab.meshBakingWallGroup != null)
-                {
-                    AddChildObjectsWithMeshRenderer(roomPrefab.meshBakingWallGroup.transform, wallObjsToCombine);
-                }
-            }
-        }
-
-        // Create a new Mesh Baker for room tiles
-        MB3_MeshBaker roomTileMeshBaker = CreateNewMeshBaker("RoomTiles");
-        if (roomTileMeshBaker.AddDeleteGameObjects(roomTilesToCombine.ToArray(), null, true))
-        {
-            roomTileMeshBaker.Apply();
-            GameObject combinedRoomTileMesh = roomTileMeshBaker.meshCombiner.resultSceneObject;
-            if (combinedRoomTileMesh != null)
-            {
-                combinedRoomTileMesh.name = "Combined-mesh-RoomTiles";
-                SetLayerRecursively(combinedRoomTileMesh, LayerMask.NameToLayer("Floor"));
-            }
-            else
-            {
-                Debug.LogError("Combined-mesh-RoomTiles object not found.");
-            }
-        }
-
-        // Create a new Mesh Baker for walls
-        MB3_MeshBaker wallMeshBaker = CreateNewMeshBaker("Walls");
-        if (wallMeshBaker.AddDeleteGameObjects(wallObjsToCombine.ToArray(), null, true))
-        {
-            wallMeshBaker.Apply();
-            GameObject combinedWallMesh = wallMeshBaker.meshCombiner.resultSceneObject;
-            if (combinedWallMesh != null)
-            {
-                combinedWallMesh.name = "Combined-mesh-Walls";
-                SetLayerRecursively(combinedWallMesh, LayerMask.NameToLayer("Wall"));
-            }
-            else
-            {
-                Debug.LogError("Combined-mesh-Walls object not found.");
-            }
-        }
-    }
-
-    void AddChildObjectsWithMeshRenderer(Transform parent, List<GameObject> objsToCombine)
-    {
-        foreach (Transform child in parent)
-        {
-            if (child.GetComponent<MeshRenderer>() != null || child.GetComponent<SkinnedMeshRenderer>() != null)
-            {
-                objsToCombine.Add(child.gameObject);
-            }
-            AddChildObjectsWithMeshRenderer(child, objsToCombine);
-        }
-    }
-
-    void SetLayerRecursively(GameObject obj, int newLayer)
-    {
-        if (obj == null) return;
-
-        obj.layer = newLayer;
-
-        foreach (Transform child in obj.transform)
-        {
-            if (child == null) continue;
-            SetLayerRecursively(child.gameObject, newLayer);
-        }
-    }
-
-    MB3_MeshBaker CreateNewMeshBaker(string name)
-    {
-        GameObject newBakerObject = new GameObject(name + "MeshBaker");
-        return newBakerObject.AddComponent<MB3_MeshBaker>();
-    }
-
-    */
-    #endregion
     #region BakeMeshRoom
 
     void BakeMeshes()
@@ -836,6 +711,13 @@ public class BSPGenerator : MonoBehaviour
             bakeMeshParent = new GameObject("BakeMeshObject");
         }
 
+        // Ensure MeshBaker parent exists
+        GameObject meshBakerParent = GameObject.Find("MeshBaker");
+        if (meshBakerParent == null)
+        {
+            meshBakerParent = new GameObject("MeshBaker");
+        }
+
         // Iterate through all Corridor parents and bake their meshes separately
         Transform tileAndCornerParent = transform.Find("TileAndCorner");
         if (tileAndCornerParent != null)
@@ -848,6 +730,7 @@ public class BSPGenerator : MonoBehaviour
                     AddChildObjectsWithMeshRenderer(corridorParent, corridorTilesToCombine);
 
                     MB3_MeshBaker corridorMeshBaker = CreateNewMeshBaker(corridorParent.name);
+                    corridorMeshBaker.transform.parent = meshBakerParent.transform; // Set parent to MeshBaker
                     if (corridorMeshBaker.AddDeleteGameObjects(corridorTilesToCombine.ToArray(), null, true))
                     {
                         corridorMeshBaker.Apply();
@@ -887,6 +770,7 @@ public class BSPGenerator : MonoBehaviour
 
                 // Create a new Mesh Baker for room tiles
                 MB3_MeshBaker roomTileMeshBaker = CreateNewMeshBaker($"{child.name}-Tiles");
+                roomTileMeshBaker.transform.parent = meshBakerParent.transform; // Set parent to MeshBaker
                 if (roomTileMeshBaker.AddDeleteGameObjects(roomTilesToCombine.ToArray(), null, true))
                 {
                     roomTileMeshBaker.Apply();
@@ -905,6 +789,7 @@ public class BSPGenerator : MonoBehaviour
 
                 // Create a new Mesh Baker for room walls
                 MB3_MeshBaker roomWallMeshBaker = CreateNewMeshBaker($"{child.name}-Walls");
+                roomWallMeshBaker.transform.parent = meshBakerParent.transform; // Set parent to MeshBaker
                 if (roomWallMeshBaker.AddDeleteGameObjects(roomWallsToCombine.ToArray(), null, true))
                 {
                     roomWallMeshBaker.Apply();
@@ -922,6 +807,12 @@ public class BSPGenerator : MonoBehaviour
                 }
             }
         }
+    }
+
+    MB3_MeshBaker CreateNewMeshBaker(string name)
+    {
+        GameObject newBakerObject = new GameObject(name + "MeshBaker");
+        return newBakerObject.AddComponent<MB3_MeshBaker>();
     }
 
     void AddChildObjectsWithMeshRenderer(Transform parent, List<GameObject> objsToCombine)
@@ -947,12 +838,6 @@ public class BSPGenerator : MonoBehaviour
             if (child == null) continue;
             SetLayerRecursively(child.gameObject, newLayer);
         }
-    }
-
-    MB3_MeshBaker CreateNewMeshBaker(string name)
-    {
-        GameObject newBakerObject = new GameObject(name + "MeshBaker");
-        return newBakerObject.AddComponent<MB3_MeshBaker>();
     }
 
     #endregion

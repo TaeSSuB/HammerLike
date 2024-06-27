@@ -100,6 +100,7 @@ public class B_Enemy : B_UnitBase
             
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
+            
 
             if (unitStatus.currentHP > 0)
             {
@@ -108,6 +109,7 @@ public class B_Enemy : B_UnitBase
                 // Temp - a.HG : Hit Sound 임시 할당..
                 var weaponTypeName = player.WeaponData.weaponType.ToString();
                 B_AudioManager.Instance.PlaySound("Hit_" + weaponTypeName, AudioCategory.SFX);
+                CameraManager.Instance.ShakeCamera();
             }
             // else
             // {
