@@ -36,7 +36,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     public KeyCode devModeKey = KeyCode.F2;
     private GameObject devModeTextObj;
     private GameObject resetTextObj;
-    [SerializeField] private TextMeshPro Temptext;
+    [SerializeField] private TextMeshProUGUI Temptext;
 
     public B_Player Player { get => player; }
     public void SetPlayer(B_Player inPlayer)
