@@ -1127,8 +1127,7 @@ public class B_Player : B_UnitBase, IInputHandler, IDashAble
 
         transform.LookAt(inDir + transform.position);
 
-        Vector3 coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDir);
-        StartCoroutine(CoDash(coordDir));
+        StartCoroutine(CoDash(inDir));
     }
 
     public IEnumerator CoDash(Vector3 inDir)

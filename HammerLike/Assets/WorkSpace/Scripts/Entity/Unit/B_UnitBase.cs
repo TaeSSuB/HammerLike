@@ -280,8 +280,10 @@ public class B_UnitBase : B_Entity, IAttackAble
     /// <returns>Agent 목표 위치</returns>
     public virtual Vector3 Move(Vector3 inPos, bool isForce = false)
     {
-        if (!isGrounded || (IsLockMove && !isForce) || !agent.enabled)
-            return Vector3.zero;
+        if (IsLockMove && !isForce) return Vector3.zero;
+        if (!isGrounded) return Vector3.zero;
+        if (!agent.enabled) return Vector3.zero;
+        if (!agent.isOnNavMesh) return Vector3.zero;
 
         var targetDir = inPos - transform.position;
 
