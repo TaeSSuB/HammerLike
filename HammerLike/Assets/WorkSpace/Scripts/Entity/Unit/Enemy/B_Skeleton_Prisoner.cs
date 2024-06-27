@@ -25,6 +25,8 @@ public class B_Skeleton_Prisoner : B_Enemy
     {
         base.Dead(isSelf);
 
+        B_AudioManager.Instance.PlaySound("Skeleton_Dead", AudioCategory.SFX);
+
         if(weaponColliderObj != null)
             weaponColliderObj.SetActive(false);
 
@@ -33,9 +35,9 @@ public class B_Skeleton_Prisoner : B_Enemy
         partsKnockBack.DisconnectMusclesRecursive(this, puppet, GameManager.Instance.Player.transform.position);
     }
 
-    public override void StartAttack()
+    public override void OnStartAttack()
     {
-        base.StartAttack();
+        base.OnStartAttack();
 
         // 각 축에 대한 가중치 반영
         //weaponColliderObj.transform.localScale += GameManager.Instance.ApplyCoordScaleAfterNormalize(transform.forward);
@@ -45,9 +47,9 @@ public class B_Skeleton_Prisoner : B_Enemy
         B_AudioManager.Instance.PlaySound("Attack_Knife", AudioCategory.SFX);
     }
 
-    public override void EndAttack()
+    public override void OnEndAttack()
     {
-        base.EndAttack();
+        base.OnEndAttack();
         weaponColliderObj.SetActive(false);
         //weaponColliderObj.transform.localScale = Vector3.one;
     }

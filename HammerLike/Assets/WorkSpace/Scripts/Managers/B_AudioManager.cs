@@ -208,8 +208,6 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
                 audioSourceOnce.volume = GetVolume(name);
                 audioSourceOnce.loop = audioInfo.loop;
                 audioSourceOnce.Play();
-                Debug.Log($"Playing sound {name}");
-
             }
             else
             {
@@ -223,8 +221,6 @@ public class B_AudioManager : SingletonMonoBehaviour<B_AudioManager>
                 audioSourceLoop.volume = GetVolume(name);
                 audioSourceLoop.loop = audioInfo.loop;
                 audioSourceLoop.Play();
-
-                Debug.Log($"Playing sound {name}");
             }
         }
         else

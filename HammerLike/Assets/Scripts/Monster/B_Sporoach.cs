@@ -21,9 +21,9 @@ public class B_Sporoach : B_Enemy
         
     }
 
-    public override void EndAttack()
+    public override void OnEndAttack()
     {
-        base.EndAttack();
+        base.OnEndAttack();
         Shot();
     }
 

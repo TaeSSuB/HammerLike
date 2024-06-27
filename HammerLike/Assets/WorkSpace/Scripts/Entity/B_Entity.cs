@@ -6,7 +6,7 @@ using UnityEngine;
 /// - Entity의 기본적인 정보를 담고 있는 클래스
 /// - 초기화 및 기본 기능들을 상속 받아 사용
 /// </summary>
-public class B_Entity : MonoBehaviour
+public abstract class B_Entity : MonoBehaviour
 {
     [Header("Base Object Info")]
     //[SerializeField] protected GameObject rootObj;
@@ -28,34 +28,10 @@ public class B_Entity : MonoBehaviour
     {
         //Init();
     }
-    protected virtual void OnEnable()
-    {
-        //Init();
-    }
 
     protected virtual void Start()
     {
         Init();
-    }
-
-    protected virtual void Update()
-    {
-
-    }
-
-    protected virtual void FixedUpdate()
-    {
-
-    }
-
-    protected virtual void OnTriggerEnter(Collider other)
-    {
-
-    }
-
-    protected virtual void OnCollisionEnter(Collision collision)
-    {
-
     }
 
     /// <summary>

@@ -15,9 +15,10 @@ using UnityEngine.AI;
 /// </summary>
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(B_KnockBack))]
-public class B_UnitBase : B_Entity
+public class B_UnitBase : B_Entity, IAttackAble
 {
-    protected SO_UnitStatus unitStatus;
+    public SO_UnitStatus InitStatus { protected get; set; }
+    public SO_UnitStatus RunTimeStatus { get; protected set; }
     protected B_KnockBack knockBack;
 
     [Header("Unit Data")]
@@ -35,7 +36,7 @@ public class B_UnitBase : B_Entity
 
     #region Getters & Setters
 
-    public SO_UnitStatus UnitStatus => unitStatus;
+    public SO_UnitStatus UnitStatus => RunTimeStatus;
     public Animator Anim => anim;
     public NavMeshAgent Agent => agent;
 
@@ -62,7 +63,7 @@ public class B_UnitBase : B_Entity
         set
         {
             unitIndex = value;
-            InitStatus();
+            StatusInitialize();
         }
     }
 
@@ -77,7 +78,7 @@ public class B_UnitBase : B_Entity
         agent = GetComponent<NavMeshAgent>();
         knockBack = GetComponent<B_KnockBack>();
 
-        InitStatus();
+        StatusInitialize();
 
         InitHP();
         ApplySystemSettings();
@@ -95,18 +96,14 @@ public class B_UnitBase : B_Entity
     }
 
     // Update is called once per frame
-    protected override void Update()
+    protected virtual void Update()
     {
-        base.Update();
-
         if (!isAlive)
             return;
     }
 
-    protected override void FixedUpdate() 
+    protected virtual void FixedUpdate() 
     {
-        base.FixedUpdate();
-        
         CheckGrounded();
 
         if (!isAlive)
@@ -129,20 +126,16 @@ public class B_UnitBase : B_Entity
         }
     }
 
-    protected override void OnTriggerEnter(Collider other)
-    {
-
-    }
-
     #endregion
 
     #region Control & Apply Status Data
 
-    protected virtual void InitStatus()
+    protected virtual void StatusInitialize()
     {
-        if(unitStatus != null)
+        if(InitStatus != null)
         {
             Debug.Log("Unit Status is already set");
+            RunTimeStatus = Instantiate(InitStatus);
             return;
         }
 
@@ -151,7 +144,8 @@ public class B_UnitBase : B_Entity
             Debug.LogError("Unit Index is not set");
             return;
         }
-        unitStatus = Instantiate(UnitManager.Instance.GetUnitStatus(unitIndex));
+        InitStatus = UnitManager.Instance.GetUnitStatus(unitIndex);
+        RunTimeStatus = Instantiate(InitStatus);
 
         Rigid.mass = UnitStatus.mass;
 
@@ -295,9 +289,15 @@ public class B_UnitBase : B_Entity
 
         var coordScale = GameManager.Instance.CalcCoordScale(targetDir);
 
-        agent.speed = unitStatus.moveSpeed * coordScale;
+        agent.speed = UnitStatus.moveSpeed * coordScale;
 
         return agent.nextPosition;
+    }
+
+    public virtual void StopMove()
+    {
+        agent.isStopped = true;
+        agent.ResetPath();
     }
 
     public virtual void Attack()
@@ -321,7 +321,7 @@ public class B_UnitBase : B_Entity
     /// <summary>
     /// StartAttack : 공격 시작 애니메이션 이벤트 함수
     /// </summary>
-    public virtual void StartAttack()
+    public virtual void OnStartAttack()
     {
         SetAttacking = true;
     }
@@ -329,9 +329,16 @@ public class B_UnitBase : B_Entity
     /// <summary>
     /// EndAttack : 공격 종료 애니메이션 이벤트 함수
     /// </summary>
-    public virtual void EndAttack()
+    public virtual void OnEndAttack()
     {
         SetAttacking = false;
     }
+
+    public virtual void ChargeAttack(){}
+
+    public virtual void MaximumChargeAttack(){}
+
+    public virtual void CancelAttack(){}
+    
     #endregion
 }

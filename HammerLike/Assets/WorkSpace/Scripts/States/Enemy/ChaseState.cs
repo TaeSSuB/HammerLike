@@ -31,6 +31,7 @@ public class ChaseState : IAIState
     {
         //Debug.Log("ChaseState OnExit");
         unitBase.Anim.SetBool("IsChasing", false);
+        unitBase.Move(unitBase.transform.position);
     }
 
     public void OnUpdate()
@@ -41,9 +42,7 @@ public class ChaseState : IAIState
 
         float applyCoordScale = GameManager.Instance.CalcCoordScale(moveDir);
         float distance = moveDir.magnitude / applyCoordScale;
-        float minDistance = Mathf.Infinity;
-
-        minDistance = unitBase.UnitStatus.atkRange;
+        float minDistance = unitBase.UnitStatus.atkRange;
 
         if (distance >= minDistance)
         {
@@ -51,10 +50,6 @@ public class ChaseState : IAIState
 
             // Look at Player
             unitBase.transform.LookAt(nextMove);
-        }
-        else
-        {
-            nextMove = unitBase.Move(unitBase.transform.position);
         }
     }
 }

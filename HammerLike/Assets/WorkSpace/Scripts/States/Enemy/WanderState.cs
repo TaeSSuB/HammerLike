@@ -28,7 +28,7 @@ public class WanderState : IAIState
 
     public void OnExit()
     {
-        // 필요한 경우 종료 로직
+        unit.Move(unit.transform.position);
     }
 
     private void PickRandomDirection()

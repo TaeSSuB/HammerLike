@@ -94,6 +94,9 @@ public class B_KnockBack : MonoBehaviour
         unitBase.IsKnockback = true;
         unitBase.IsInvincible = true;
 
+        var originRad = unitBase.Agent.radius;
+        unitBase.Agent.radius = originRad * 0.5f;
+
         while (Time.time < startTime + knockbackDuration)
         {
             float elapsed = (Time.time - startTime) / knockbackDuration;
@@ -106,9 +109,9 @@ public class B_KnockBack : MonoBehaviour
         unitBase.IsKnockback = false;
         unitBase.IsInvincible = false;
 
+        unitBase.Agent.radius = originRad;
+
         unitBase.EnableMovementAndRotation();
-        
-        Debug.Log(unitBase.gameObject.name + " : Knockback End");
 
         yield return null;
     }

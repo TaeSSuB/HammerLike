@@ -6,10 +6,8 @@ public class B_Prop : B_Entity
 {
     public int hp;
 
-    protected override void OnTriggerEnter(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
-        base.OnTriggerEnter(other);
-
         if (other.CompareTag("WeaponCollider"))
         {
             TakeDamage(1, other.ClosestPoint(transform.position));
@@ -22,11 +20,13 @@ public class B_Prop : B_Entity
         if (hp <= 0)
         {
             Dead();
+            B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, pos);
+            B_AudioManager.Instance.PlaySound("Break_Rock", AudioCategory.SFX);
         }
         else
         {
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, pos);
-            B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
+            B_AudioManager.Instance.PlaySound("Hit_Rock", AudioCategory.SFX);
         }
     }
 

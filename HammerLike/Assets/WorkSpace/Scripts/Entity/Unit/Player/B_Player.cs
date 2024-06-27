@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// B_Player : Player Base Class
 /// </summary>
-public class B_Player : B_UnitBase
+public class B_Player : B_UnitBase, IInputHandler, IDashAble
 {
     public enum RotateType
     {
@@ -22,10 +22,6 @@ public class B_Player : B_UnitBase
     [SerializeField] private GameObject chargeVFXObj;
     [SerializeField] private float minChargeMoveRate = 0.1f;
 
-    private int atkDamageOrigin;
-
-    private float knockbackPowerOrigin;
-    
     private float hitDuration;
 
     private bool isLockAttack;
@@ -51,8 +47,6 @@ public class B_Player : B_UnitBase
 
     public SO_Weapon WeaponData => weaponData;
 
-    public int AtkDamageOrigin => atkDamageOrigin;
-
     #region Events
     public event Action<int> OnHPChanged;
     public event Action<float> OnChargeChanged;
@@ -73,19 +67,20 @@ public class B_Player : B_UnitBase
     //init override
     public override void Init()
     {
+        // base Init
         base.Init();
+
         // Init logic
         GameManager.Instance.SetPlayer(this);
-
-        // Temp - 피격 시간. 일단 넉백 시간으로 임시 할당
-        hitDuration = GameManager.Instance.SystemSettings.KnockbackDuration;
-
-        chargeVFXObj.SetActive(false);
 
         var currentWeaponObj = GameManager.Instance.Player.WeaponData;
         
         currentWeaponObj.Use();
 
+        // Temp - 피격 시간. 일단 넉백 시간으로 임시 할당
+        hitDuration = GameManager.Instance.SystemSettings.KnockbackDuration;
+
+        chargeVFXObj.SetActive(false);
 
         lineRenderer = gameObject.AddComponent<LineRenderer>();
         lineRenderer.positionCount = 0;
@@ -113,11 +108,11 @@ public class B_Player : B_UnitBase
 
         InputCharge();
 
-        currentMovePos = InputMovement();
-        currentDashPos = InputDash(currentMovePos);
+        currentMovePos = GetMovementInput();
+
         TrackWeaponDirXZ();
         HandleInteraction();
-        
+
     }
 
     protected override void FixedUpdate() 
@@ -129,14 +124,14 @@ public class B_Player : B_UnitBase
         UpdateDashCoolTime();
 
         ApplyMovement(currentMovePos);
-        ApplyDash(currentDashPos);
+
+        if(IsDashButtonPressed())
+            Dash(ApplyDash(currentMovePos));
     }
 
     
-    protected override void OnTriggerEnter(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
-        base.OnTriggerEnter(other);
-
         if (other.CompareTag("Item"))
         {
             var item = other.GetComponent<GroundItem>();
@@ -183,7 +178,7 @@ public class B_Player : B_UnitBase
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
 
-            if (unitStatus.currentHP > 0)
+            if (UnitStatus.currentHP > 0)
             {
                 // Temp - a.HG : 피격 무기 SFX 임시 할당.. UnitBase에서 카테고리 별 SFX 재생 필요
                 B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
@@ -195,7 +190,8 @@ public class B_Player : B_UnitBase
 
     #region Input
 
-    private Vector3 InputMovement()
+
+    public Vector3 GetMovementInput()
     {
         if(IsLockMove)
             return Vector3.zero;
@@ -206,52 +202,72 @@ public class B_Player : B_UnitBase
 
         Vector3 coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(moveDir);
 
-        return coordDir;
+        return coordDir;    
     }
 
-    private void ApplyMovement(Vector3 inMoveDir)
+    public bool IsWalkButtonHeld()
     {
-        var move = Move(transform.position + inMoveDir);
-        //Debug.Log("Move - " + move);
-        //Debug.Log("ACSN - " + GameManager.instance.ApplyCoordScaleNormalize(moveDir));
-
-        MoveAnim(inMoveDir);
+        // Walk logic
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            return true;
+        }
+        return false;
     }
 
-    private Vector3 InputDash(Vector3 inDashDir)
+    public bool IsAttackButtonPressed()
+    {
+        // Attack logic
+        if (Input.GetMouseButtonDown(0))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool IsAttackButtonHeld()
+    {
+        // Charge attack logic
+        if (Input.GetMouseButton(0))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool IsAttackButtonRelease()
+    {
+        // Charge attack logic
+        if (Input.GetMouseButtonUp(0))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool IsInterActionButtonPressed()
+    {
+        // Interaction logic
+        if (Input.GetKeyDown(interactionKey))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool IsDashButtonPressed()
     {
         if(Input.GetKey(KeyCode.Space) || Input.GetMouseButton(1))
-        {
-            if(inDashDir == Vector3.zero)
-            {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, 100, mouseLayer))
-                {
-                    Vector3 lookAt = hit.point;
-                    inDashDir = lookAt - transform.position;
-                    inDashDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDashDir);
-                }
-            }
-
-            return inDashDir;
+        {            
+            return true;
         }
-
-        return Vector3.zero;
+        return false;
     }
 
-    private void ApplyDash(Vector3 inDashDir)
+    public float GetMouseScrollInput()
     {
-        if(inDashDir == Vector3.zero)
-            return;
-        if(IsLockMove)
-            return;
-        if((UnitStatus as SO_PlayerStatus).dashCooldown > 0)
-            return;
-
-        transform.LookAt(inDashDir + transform.position);
-        Dash(inDashDir);
+        // Mouse Scroll logic
+        return Input.GetAxis("Mouse ScrollWheel");
     }
 
     void InputCharge()
@@ -260,15 +276,39 @@ public class B_Player : B_UnitBase
             return;
             
         // Charge attack logic
-        if (Input.GetMouseButton(0))
+        if (IsAttackButtonHeld())
         {
             Charging();
             
         }
-        else if (Input.GetMouseButtonUp(0))
+        else if (IsAttackButtonRelease())
         {
             AttackSwitch();
         }
+    }
+
+    private void ApplyMovement(Vector3 inMoveDir)
+    {
+        var move = Move(transform.position + inMoveDir);
+
+        MoveAnim(inMoveDir);
+    }
+
+    private Vector3 ApplyDash(Vector3 inDashDir)
+    {
+        if(inDashDir == Vector3.zero)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, 100, mouseLayer))
+            {
+                Vector3 lookAt = hit.point;
+                inDashDir = lookAt - transform.position;
+            }
+        }
+
+        return inDashDir;
     }
 
     /// <summary>
@@ -408,18 +448,21 @@ public class B_Player : B_UnitBase
 
     void Charging()
     {
-        (unitStatus as SO_PlayerStatus).chargeRate += Time.deltaTime * (unitStatus as SO_PlayerStatus).chargeRateIncrease;
+        SO_PlayerStatus playerStatus = UnitStatus as SO_PlayerStatus;
+
+        playerStatus.chargeRate += Time.deltaTime * playerStatus.chargeRateIncrease;
 
         // clamp charge
-        (unitStatus as SO_PlayerStatus).chargeRate = Mathf.Clamp((unitStatus as SO_PlayerStatus).chargeRate, 1f, (unitStatus as SO_PlayerStatus).maxChargeRate);
+        playerStatus.chargeRate = Mathf.Clamp(playerStatus.chargeRate, 1f, playerStatus.maxChargeRate);
 
         // 0 ~ 1 사이의 값으로 정규화
-        float normalizeChargeRate = ((unitStatus as SO_PlayerStatus).chargeRate - 1) / ((unitStatus as SO_PlayerStatus).maxChargeRate - 1);
+        float normalizeChargeRate = (playerStatus.chargeRate - 1) / (playerStatus.maxChargeRate - 1);
 
-        var chargeRate = (unitStatus as SO_PlayerStatus).chargeRate;
-        var maxChargeRate = (unitStatus as SO_PlayerStatus).maxChargeRate;
+        var chargeRate = playerStatus.chargeRate;
+        var minChargeRate = playerStatus.minChargeRate;
+        var maxChargeRate = playerStatus.maxChargeRate;
 
-        if ((unitStatus as SO_PlayerStatus).chargeRate > (unitStatus as SO_PlayerStatus).minChargeRate)
+        if (chargeRate > minChargeRate)
         {
             Anim.SetBool("IsCharge", true);
 
@@ -432,7 +475,7 @@ public class B_Player : B_UnitBase
             }
 
             // Move Speed Reduce
-            UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin - (unitStatus as SO_PlayerStatus).MoveSpeedOrigin * Mathf.Clamp(normalizeChargeRate, 0f, 1f - minChargeMoveRate);
+            playerStatus.moveSpeed = playerStatus.MoveSpeedOrigin - playerStatus.MoveSpeedOrigin * Mathf.Clamp(normalizeChargeRate, 0f, 1f - minChargeMoveRate);
                if(chargeRate >= maxChargeRate && weaponData.itemSkill!=null)
             {
                 DrawSkillRange();
@@ -443,7 +486,7 @@ public class B_Player : B_UnitBase
 
         // 확장성을 위해 폐기
         // Init 해두고 재사용하기엔 편할 듯
-        //Anim.SetFloat("fAttackSpd", (unitStatus as SO_PlayerStatus).atkSpeed);
+        //Anim.SetFloat("fAttackSpd", playerStatus.atkSpeed);
         OnChargeChanged?.Invoke(normalizeChargeRate);
         
     }
@@ -452,9 +495,9 @@ public class B_Player : B_UnitBase
     {
         Anim.SetBool("IsCharge", false);
 
-        var chargeRate = (unitStatus as SO_PlayerStatus).chargeRate;
-        var minChargeRate = (unitStatus as SO_PlayerStatus).minChargeRate;
-        var maxChargeRate = (unitStatus as SO_PlayerStatus).maxChargeRate;
+        var chargeRate = (UnitStatus as SO_PlayerStatus).chargeRate;
+        var minChargeRate = (UnitStatus as SO_PlayerStatus).minChargeRate;
+        var maxChargeRate = (UnitStatus as SO_PlayerStatus).maxChargeRate;
 
         attackStartDir = transform.forward;
 
@@ -476,10 +519,11 @@ public class B_Player : B_UnitBase
         }
 
         OnChargeChanged?.Invoke(0f);
-        (unitStatus as SO_PlayerStatus).chargeRate = 1f;
 
-        UnitStatus.moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin;
+        UnitStatus.moveSpeed = (UnitStatus as SO_PlayerStatus).MoveSpeedOrigin;
     }
+
+    #region .Attack
 
     public override void Attack()
     {
@@ -488,10 +532,10 @@ public class B_Player : B_UnitBase
         Anim.SetBool("IsInWardAttack", true);
         // Attack damage = Original attack damage
 
-        Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
+        Anim.speed = (UnitStatus as SO_PlayerStatus).atkSpeed;
     }
 
-    void ChargeAttack()
+    public override void ChargeAttack()
     {
         // Charge attack logic
         Anim.SetBool("bAttack", true);
@@ -499,10 +543,10 @@ public class B_Player : B_UnitBase
 
         ApplyChargeDamage();
 
-        Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
+        Anim.speed = (UnitStatus as SO_PlayerStatus).atkSpeed;
     }
 
-    void MaximumChargeAttack()
+    public override void MaximumChargeAttack()
     {
         // Maximum charge attack logic
         if(weaponData.itemSkill==null)
@@ -517,13 +561,10 @@ public class B_Player : B_UnitBase
             ClearSkillRange();
         }
 
-        Anim.speed = (unitStatus as SO_PlayerStatus).atkSpeed;
+        Anim.speed = (UnitStatus as SO_PlayerStatus).atkSpeed;
     }
 
-    /// <summary>
-    /// 240505 a.HG : 임시 공격 리셋 메서드
-    /// </summary>
-    void ResetAttack()
+    public override void CancelAttack()
     {
         // Reset attack logic
         SetAttacking = false;
@@ -545,6 +586,7 @@ public class B_Player : B_UnitBase
         //zoomCam.orthographicSize = startZoom;
         ResetDamage();
     }
+    #endregion
 
     #region .Movement
     private void MoveAnim(Vector3 inDir)
@@ -564,74 +606,6 @@ public class B_Player : B_UnitBase
             Anim.SetBool("IsMoving", false);
         }
     }
-
-    #region ..Dash
-    void Dash(Vector3 inDir)
-    {
-        StartCoroutine(DashCoroutine(inDir));
-    }
-
-    private IEnumerator DashCoroutine(Vector3 coordDir)
-    {
-        float dashTime = (unitStatus as SO_PlayerStatus).dashDuration;
-
-        StartDash();
-
-        Debug.DrawLine(transform.position, coordDir + transform.position, Color.red, 3f);
-
-        while (dashTime > 0)
-        {
-            // move with rigid body
-            Move(transform.position + coordDir, true);
-
-            dashTime -= Time.deltaTime;
-            yield return null;
-        }
-
-        EndDash();
-    }
-
-    /// <summary>
-    /// StartDash : 대쉬 시작
-    /// moveSpeed를 대쉬 속도로 변경하고, 대쉬 상태를 고정
-    /// </summary>
-    protected void StartDash()
-    {
-        ResetAttack();
-
-        // Start dash logic
-        Anim.SetTrigger("tEvasion");
-        Anim.SetInteger("iEvasion", (int)(unitStatus as SO_PlayerStatus).evasionType);
-        Anim.speed = 1.2f / (unitStatus as SO_PlayerStatus).dashDuration;//(unitStatus as SO_PlayerStatus).dashSpeed;
-        (unitStatus as SO_PlayerStatus).moveSpeed = (unitStatus as SO_PlayerStatus).dashSpeed;
-
-        isLockAttack = true;
-        SetInvincible(true);
-        DisableMovementAndRotation();
-    }
-    
-    /// <summary>
-    /// EndDash : 대쉬 종료
-    /// moveSpeed를 원래대로 돌리고, 대쉬 상태를 초기화
-    /// </summary>
-    protected void EndDash()
-    {
-        // Temp. 리셋 두번은 필요 없을 듯? a.HG
-        ResetAttack();
-
-        // End dash logic & Initialize
-        Anim.SetTrigger("tIdle");
-        Anim.speed = 1f;//(unitStatus as SO_PlayerStatus);
-        (unitStatus as SO_PlayerStatus).moveSpeed = (unitStatus as SO_PlayerStatus).MoveSpeedOrigin;
-
-        isLockAttack = false;
-        SetInvincible(false);
-        EnableMovementAndRotation();
-
-        (unitStatus as SO_PlayerStatus).dashCooldown = (unitStatus as SO_PlayerStatus).DashCooldownOrigin;
-    }
-
-    #endregion
 
     #endregion
 
@@ -653,10 +627,30 @@ public class B_Player : B_UnitBase
 
     #region Control & Apply Status Data
 
-    protected override void InitStatus()
+    protected override void StatusInitialize()
     {
-        unitStatus = Instantiate(GameManager.Instance.PlayerStatus);
-        //unitStatus = GameManager.Instance.PlayerStatus;
+        InitStatus = GameManager.Instance.PlayerStatus;
+
+        //base.StatusInitialize();
+
+        RunTimeStatus = Instantiate(InitStatus);
+
+        Rigid.mass = UnitStatus.mass;
+
+        // Temp. 마찰력 전용 계산식 필요
+        Rigid.drag =  UnitStatus.mass * 0.5f;
+        Rigid.angularDrag = UnitStatus.mass * 0.5f;
+    }
+
+    protected void UpdateStatus()
+    {
+        InitStatus = Instantiate(UnitStatus);
+    }
+
+    protected void ResetDamage()
+    {
+        RunTimeStatus.atkDamage = InitStatus.atkDamage;
+        (RunTimeStatus as SO_PlayerStatus).chargeRate = 1f;
     }
 
     void ApplyWeaponStatus(SO_Weapon inWeapon)
@@ -664,35 +658,33 @@ public class B_Player : B_UnitBase
         if(inWeapon != null)
         {
             // Status Apply
-            (unitStatus as SO_PlayerStatus).atkDamage = inWeapon.attackPower;
-            atkDamageOrigin = (unitStatus as SO_PlayerStatus).atkDamage;
+            UnitStatus.atkDamage = inWeapon.attackPower;
 
-            (unitStatus as SO_PlayerStatus).knockbackPower = inWeapon.knockbackPower;
-            knockbackPowerOrigin = (unitStatus as SO_PlayerStatus).knockbackPower;
-            
-            (unitStatus as SO_PlayerStatus).atkRange = inWeapon.weaponRange;
-            (unitStatus as SO_PlayerStatus).atkSpeed = inWeapon.attackSpeed;
+            UnitStatus.knockbackPower = inWeapon.knockbackPower;
 
-            (unitStatus as SO_PlayerStatus).chargeRate = 1;
+            UnitStatus.atkRange = inWeapon.weaponRange;
+            UnitStatus.atkSpeed = inWeapon.attackSpeed;
 
-            (unitStatus as SO_PlayerStatus).evasionType = inWeapon.evasionType;
+            (UnitStatus as SO_PlayerStatus).chargeRate = 1;
+
+            (UnitStatus as SO_PlayerStatus).evasionType = inWeapon.evasionType;
         }
         else
         {
             // Status Apply
-            (unitStatus as SO_PlayerStatus).atkDamage = 1;
-            atkDamageOrigin = 1;
+            (UnitStatus as SO_PlayerStatus).atkDamage = InitStatus.atkDamage;
 
-            (unitStatus as SO_PlayerStatus).knockbackPower = 1;
-            knockbackPowerOrigin = 1;
-            
-            (unitStatus as SO_PlayerStatus).atkRange = 1f;
-            (unitStatus as SO_PlayerStatus).atkSpeed = 1f;
+            (UnitStatus as SO_PlayerStatus).knockbackPower = InitStatus.knockbackPower;
 
-            (unitStatus as SO_PlayerStatus).chargeRate = 1;
+            (UnitStatus as SO_PlayerStatus).atkRange = InitStatus.atkRange;
+            (UnitStatus as SO_PlayerStatus).atkSpeed = InitStatus.atkSpeed;
 
-            (unitStatus as SO_PlayerStatus).evasionType = 0;
+            (UnitStatus as SO_PlayerStatus).chargeRate = 1;
+
+            (UnitStatus as SO_PlayerStatus).evasionType = (InitStatus as SO_PlayerStatus).evasionType;
         }
+
+        UpdateStatus();
     }
 
     void ApplyWeaponResources(SO_Weapon inWeapon)
@@ -736,14 +728,11 @@ public class B_Player : B_UnitBase
 
     void ApplyChargeDamage()
     {
-        var resultAtk = (unitStatus as SO_PlayerStatus).atkDamage * (unitStatus as SO_PlayerStatus).chargeRate;
+        var resultAtk = (UnitStatus as SO_PlayerStatus).atkDamage * (UnitStatus as SO_PlayerStatus).chargeRate;
 
-        (unitStatus as SO_PlayerStatus).atkDamage = (int)resultAtk;
+        (UnitStatus as SO_PlayerStatus).atkDamage = (int)resultAtk;
     }
-    void ResetDamage()
-    {
-        (unitStatus as SO_PlayerStatus).atkDamage = atkDamageOrigin;
-    }
+
     public override void TakeDamage(Vector3 damageDir, int damage = 0, float knockBackPower = 0, bool knockBack = true, bool slowMotion = false, bool isForced = false)
     {
         base.TakeDamage(damageDir, damage, knockBackPower, knockBack, slowMotion);
@@ -770,14 +759,14 @@ public class B_Player : B_UnitBase
         }
 
         // HP 변경 이벤트 실행
-        OnHPChanged?.Invoke(unitStatus.currentHP);
+        OnHPChanged?.Invoke(UnitStatus.currentHP);
     }
 
     public override void RestoreHP(int hpRate = 0)
     {
         base.RestoreHP(hpRate);
 
-        OnHPChanged?.Invoke(unitStatus.currentHP);
+        OnHPChanged?.Invoke(UnitStatus.currentHP);
     }
 
     protected void UpdateDashCoolTime()
@@ -807,32 +796,32 @@ public class B_Player : B_UnitBase
 
     public void StartAttackDownWard()
     {
-        StartAttack();
+        OnStartAttack();
     }
 
     public void EndAttackDownWard()
     {
-        EndAttack();
+        OnEndAttack();
     }
 
     public void StartAttackOutWard()
     {
-        StartAttack();
+        OnStartAttack();
     }
 
     public void EndAttackOutWard()
     {
-        EndAttack();
+        OnEndAttack();
     }
 
     public void StartAttackInWard()
     {
-        StartAttack();
+        OnStartAttack();
     }
 
     public void EndAttackInWard()
     {
-        EndAttack();
+        OnEndAttack();
     }
 
     public void EndActiveSkill()
@@ -841,12 +830,12 @@ public class B_Player : B_UnitBase
 
         Debug.Log("EndActiveSkill");
 
-        EndAttack();
+        OnEndAttack();
     }
 
-    public override void StartAttack()
+    public override void OnStartAttack()
     {
-        base.StartAttack();
+        base.OnStartAttack();
 
         agent.updateRotation=false;
 
@@ -856,16 +845,17 @@ public class B_Player : B_UnitBase
 
         B_AudioManager.Instance.PlaySound("Attack_Hammer", AudioCategory.SFX);
     }
-    public override void EndAttack()
+    public override void OnEndAttack()
     {
-        base.EndAttack();
+        base.OnEndAttack();
+
         // End attack logic
         Anim.SetBool("bAttack", false);
         Anim.SetBool("IsOutWardAttack", false);
         Anim.SetBool("IsInWardAttack", false);
 
         Anim.SetTrigger("tIdle");
-        Anim.speed = 1f;//(unitStatus as SO_PlayerStatus).atkSpeed;
+        Anim.speed = 1f;//(UnitStatus as SO_PlayerStatus).atkSpeed;
 
         chargeVFXObj.SetActive(false);
         
@@ -877,6 +867,8 @@ public class B_Player : B_UnitBase
         //zoomCam.orthographicSize = startZoom;
 
         ResetDamage();
+
+        Debug.Log("Init Damage - " + InitStatus.atkDamage);
 
         agent.updateRotation = true;
 
@@ -1100,11 +1092,6 @@ public class B_Player : B_UnitBase
         }
     }
 
-
-
-
-
-
     private void PickUpItem(GroundItem item)
     {
         if (item != null)
@@ -1129,8 +1116,75 @@ public class B_Player : B_UnitBase
         }
     }
 
+    #region ..Dash
+
+    public void Dash(Vector3 inDir)
+    {        
+        if(IsLockMove)
+            return;
+        if((UnitStatus as SO_PlayerStatus).dashCooldown > 0)
+            return;
+
+        transform.LookAt(inDir + transform.position);
+
+        Vector3 coordDir = GameManager.Instance.ApplyCoordScaleAfterNormalize(inDir);
+        StartCoroutine(CoDash(coordDir));
+    }
+
+    public IEnumerator CoDash(Vector3 inDir)
+    {
+        float dashTime = (UnitStatus as SO_PlayerStatus).dashDuration;
+
+        OnStartDash();
+
+        Debug.DrawLine(transform.position, inDir + transform.position, Color.red, 3f);
+
+        while (dashTime > 0)
+        {
+            // move with rigid body
+            Move(transform.position + inDir, true);
+
+            dashTime -= Time.deltaTime;
+            yield return null;
+        }
+
+        OnEndDash();
+    }
+
+    public void OnStartDash()
+    {
+        CancelAttack();
+
+        // Start dash logic
+        Anim.SetTrigger("tEvasion");
+        Anim.SetInteger("iEvasion", (int)(UnitStatus as SO_PlayerStatus).evasionType);
+        Anim.speed = 1.2f / (UnitStatus as SO_PlayerStatus).dashDuration;//(UnitStatus as SO_PlayerStatus).dashSpeed;
+        (UnitStatus as SO_PlayerStatus).moveSpeed = (UnitStatus as SO_PlayerStatus).dashSpeed;
+
+        isLockAttack = true;
+        SetInvincible(true);
+        DisableMovementAndRotation();
+    }
+
+    public void OnEndDash()
+    {
+        // Temp. 리셋 두번은 필요 없을 듯? a.HG
+        CancelAttack();
+
+        // End dash logic & Initialize
+        Anim.SetTrigger("tIdle");
+        Anim.speed = 1f;//(UnitStatus as SO_PlayerStatus);
+        (UnitStatus as SO_PlayerStatus).moveSpeed = (UnitStatus as SO_PlayerStatus).MoveSpeedOrigin;
+
+        isLockAttack = false;
+        SetInvincible(false);
+        EnableMovementAndRotation();
+
+        (UnitStatus as SO_PlayerStatus).dashCooldown = (UnitStatus as SO_PlayerStatus).DashCooldownOrigin;    
+    }
 
     #endregion
 
+    #endregion
 
 }
