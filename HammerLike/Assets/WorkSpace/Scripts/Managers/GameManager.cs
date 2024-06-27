@@ -157,7 +157,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     public IEnumerator CoSlowMotion(float inTimeScale, float inDuration)
     {
-        /*float duration = inDuration;
+        float duration = inDuration;
         float originTimeScale = 1f;
 
         SetTimeScale(inTimeScale);
@@ -170,9 +170,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         // }
         yield return new WaitForSecondsRealtime(inDuration);
 
-        SetTimeScale(originTimeScale);*/
+        SetTimeScale(originTimeScale);
 
-        float originTimeScale = Time.timeScale;
+        /*float originTimeScale = Time.timeScale;
 
         // 타임 스케일을 inTimeScale로 즉시 설정
         SetTimeScale(inTimeScale);
@@ -189,7 +189,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         }
 
         // 최종적으로 타임 스케일을 원래 값으로 설정
-        SetTimeScale(originTimeScale);
+        SetTimeScale(originTimeScale);*/
     }
 
     #endregion

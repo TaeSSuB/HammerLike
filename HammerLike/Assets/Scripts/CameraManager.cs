@@ -10,6 +10,7 @@ public class CameraManager : MonoBehaviour
 
     private float timer;
     private Vector3 originalPosition;
+    private bool isShaking;
 
     private void Awake()
     {
@@ -26,20 +27,24 @@ public class CameraManager : MonoBehaviour
 
     private void Start()
     {
-       timer = 0f;
+        timer = 0f;
+        isShaking = false;
     }
 
     public void ShakeCamera()
     {
-        originalPosition = transform.localPosition;
-        timer = shakeTime;
+        if (!isShaking)
+        {
+            originalPosition = transform.localPosition;
+            timer = shakeTime;
+            isShaking = true;
+        }
     }
 
     void Update()
     {
         /*if (Input.GetKeyDown(KeyCode.H))
             ShakeCamera();*/
-
 
         if (timer > 0)
         {
@@ -55,6 +60,7 @@ public class CameraManager : MonoBehaviour
             if (timer <= 0)
             {
                 transform.localPosition = originalPosition;
+                isShaking = false;
             }
         }
     }
