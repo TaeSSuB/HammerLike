@@ -175,7 +175,7 @@ public class B_Enemy : B_UnitBase
 
             // 데미지 강제 적용
             // 넉백 시 무적 판정이기에, 이를 무시하고 데미지를 적용
-            TakeDamage(reflection, (int)Rigid.mass, Rigid.velocity.magnitude * 0.5f, true, false, true);
+            TakeDamage(reflection, (int)Rigid.mass, Rigid.velocity.magnitude * 10f, true, false, true);
 
             var vfxPos = collision.contacts[0].point;
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
