@@ -373,13 +373,14 @@ public class B_Player : B_UnitBase, IInputHandler, IDashAble
                             {
                                 // Lerp 등의 함수는 방향에 상관없이 항상 최소 이동 거리만을 반환함.
                                 // 회전 방향을 고정하기 위해 대신 Rotate와 DeltaTime 사용
-                                transform.Rotate(Vector3.up, attackSign * Time.deltaTime * currentRotSpeed);
+                                //transform.Rotate(Vector3.up, attackSign * Time.fixedDeltaTime * currentRotSpeed);
+                                Rigid.MoveRotation(Rigid.rotation * Quaternion.Euler(Vector3.up * attackSign * Time.fixedDeltaTime * currentRotSpeed));
                             }
                         }
                         else
                         {
                             // 회전 속도 적용, 부드러운 회전
-                            Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * currentRotSpeed);
+                            Quaternion newRot = Quaternion.Slerp(transform.rotation, targetRotation, Time.fixedDeltaTime * currentRotSpeed);
 
                             transform.rotation = newRot;
                         }

@@ -169,9 +169,21 @@ public class B_Enemy : B_UnitBase
             // Get hit dir from wall
             // 입사각 & 반사각 ex.당구
             Vector3 collisionNormal = collision.contacts[0].normal;
-            float angle = Vector3.Angle(collision.relativeVelocity, collisionNormal);
+            
+            float angle = Vector3.Angle(-collision.relativeVelocity, collisionNormal);
 
-            Vector3 reflection = Vector3.Reflect(collision.relativeVelocity, collisionNormal);
+            Vector3 reflection = Vector3.Reflect(-collision.relativeVelocity, collisionNormal);
+
+            // Debug.Log("Debug Velocity : " + Rigid.velocity);
+            // Debug.Log("Debug NormalVector : " + collisionNormal);
+            // Debug.Log("Debug WallRelative : " + -collision.relativeVelocity);
+            // Debug.Log("Debug Angle : " + angle);
+            // Debug.Log("Debug Reflecft : " + reflection);
+
+            Debug.DrawLine(transform.position, transform.position + Rigid.velocity.normalized * 10f, Color.white, 5f);
+            Debug.DrawLine(transform.position, transform.position + collisionNormal * 10f, Color.red, 5f);
+            Debug.DrawLine(transform.position, transform.position + -collision.relativeVelocity.normalized * 10f, Color.cyan, 5f);
+            Debug.DrawLine(transform.position, transform.position + reflection.normalized * 10f, Color.green, 5f);
 
             // 데미지 강제 적용
             // 넉백 시 무적 판정이기에, 이를 무시하고 데미지를 적용

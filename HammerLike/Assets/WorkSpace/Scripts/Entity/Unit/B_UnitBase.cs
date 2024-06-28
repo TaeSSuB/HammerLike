@@ -195,7 +195,7 @@ public class B_UnitBase : B_Entity, IAttackAble
 
         OnHitEvent?.Invoke();
 
-        Debug.Log(this.gameObject.name + " TakeDamage : " + damage);
+        //Debug.Log(this.gameObject.name + " TakeDamage : " + damage);
         //ChangeCursor.Instance.SetCursorAttack();    // 명진. 0514 임시 Cursor 변경 싱글톤으로 받아감
         if (enableKnockBack)
         {
