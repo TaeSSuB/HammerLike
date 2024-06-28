@@ -44,12 +44,11 @@ public class B_Enemy : B_UnitBase
             float applyCoordScale = GameManager.Instance.CalcCoordScale(moveDir);
             var targetDis = moveDir.magnitude / applyCoordScale;
 
-            if (targetDis <= unitStatus.detectRange)
+            if (targetDis <= UnitStatus.detectRange)
             {
-                if (targetDis <= unitStatus.atkRange)
+                if (targetDis <= UnitStatus.atkRange)
                 {
                     aIStateManager?.SetState(AIStateType.ATTACK);
-                    //Attack();
                 }
                 else
                 {
@@ -65,10 +64,8 @@ public class B_Enemy : B_UnitBase
         }
     }
 
-    protected override void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
-        base.OnTriggerEnter(other);
-
         if(other.CompareTag("WeaponCollider") && UnitStatus.currentHP > 0)
         {
             if(isInvincible) return;
@@ -82,12 +79,13 @@ public class B_Enemy : B_UnitBase
             // Get hit dir from player
             Vector3 hitDir = (transform.position - player.transform.position).normalized;
 
-            //var chargeAmount = (player.UnitStatus as SO_PlayerStatus).chargeRate;
-            var chargeAmount = (float)(player.UnitStatus.atkDamage / player.AtkDamageOrigin);
-            
+            var chargeAmount = (player.UnitStatus as SO_PlayerStatus).chargeRate;
+            //var chargeAmount = (float)(player.UnitStatus.atkDamage / 10); // Temp. Magic Number
+            var weaponTypeName = player.WeaponData.weaponType.ToString();
+
             if((player.UnitStatus as SO_PlayerStatus).maxChargeRate <= chargeAmount)
             {
-                TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount, true, true);
+                TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount);
             }
             else
             {
@@ -95,19 +93,20 @@ public class B_Enemy : B_UnitBase
                 {
                     player.WeaponData.WeaponAttack(transform.position, transform);
                 }
-                TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount, true, false);
+                TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount, true);
             }
+
+            B_AudioManager.Instance.PlaySound("Hit_" + weaponTypeName, AudioCategory.SFX);
             
             var vfxPos = other.ClosestPointOnBounds(transform.position);
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
             
 
-            if (unitStatus.currentHP > 0)
+            if (RunTimeStatus.currentHP > 0)
             {
                 //B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
                 
                 // Temp - a.HG : Hit Sound 임시 할당..
-                var weaponTypeName = player.WeaponData.weaponType.ToString();
                 B_AudioManager.Instance.PlaySound("Hit_" + weaponTypeName, AudioCategory.SFX);
                 CameraManager.Instance.ShakeCamera();
             }
@@ -122,10 +121,8 @@ public class B_Enemy : B_UnitBase
         }
     }
 
-    protected override void OnCollisionEnter(Collision collision)
+    protected virtual void OnCollisionEnter(Collision collision)
     {
-        base.OnCollisionEnter(collision);
-
         // When hit Other Enemy
         if (collision.gameObject.CompareTag("Enemy"))
         {
@@ -141,12 +138,15 @@ public class B_Enemy : B_UnitBase
             // Get hit dir from another enemy
             Vector3 hitDir = (transform.position - collision.transform.position).normalized;
 
-            TakeDamage(hitDir, (int)(other.Rigid.mass / 2f), other.Rigid.mass, true);
+            Vector3 reflection = Vector3.Reflect(collision.relativeVelocity, hitDir);
+            
+            TakeDamage(hitDir, (int)(other.Rigid.mass / 2f), other.Rigid.mass);
+            other.TakeDamage(reflection, (int)(other.Rigid.mass / 2f), other.Rigid.mass);
 
             var vfxPos = collision.contacts[0].point;
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
 
-            if (unitStatus.currentHP > 0)
+            if (UnitStatus.currentHP > 0)
             {
                 B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
             }
@@ -169,9 +169,21 @@ public class B_Enemy : B_UnitBase
             // Get hit dir from wall
             // 입사각 & 반사각 ex.당구
             Vector3 collisionNormal = collision.contacts[0].normal;
-            float angle = Vector3.Angle(collision.relativeVelocity, collisionNormal);
+            
+            float angle = Vector3.Angle(-collision.relativeVelocity, collisionNormal);
 
-            Vector3 reflection = Vector3.Reflect(collision.relativeVelocity, collisionNormal);
+            Vector3 reflection = Vector3.Reflect(-collision.relativeVelocity, collisionNormal);
+
+            // Debug.Log("Debug Velocity : " + Rigid.velocity);
+            // Debug.Log("Debug NormalVector : " + collisionNormal);
+            // Debug.Log("Debug WallRelative : " + -collision.relativeVelocity);
+            // Debug.Log("Debug Angle : " + angle);
+            // Debug.Log("Debug Reflecft : " + reflection);
+
+            Debug.DrawLine(transform.position, transform.position + Rigid.velocity.normalized * 10f, Color.white, 5f);
+            Debug.DrawLine(transform.position, transform.position + collisionNormal * 10f, Color.red, 5f);
+            Debug.DrawLine(transform.position, transform.position + -collision.relativeVelocity.normalized * 10f, Color.cyan, 5f);
+            Debug.DrawLine(transform.position, transform.position + reflection.normalized * 10f, Color.green, 5f);
 
             // 데미지 강제 적용
             // 넉백 시 무적 판정이기에, 이를 무시하고 데미지를 적용
@@ -180,7 +192,7 @@ public class B_Enemy : B_UnitBase
             var vfxPos = collision.contacts[0].point;
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
 
-            if (unitStatus.currentHP > 0)
+            if (UnitStatus.currentHP > 0)
             {
                 //B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
                 B_AudioManager.Instance.PlaySound("Hit_" + "Wall", AudioCategory.SFX);
@@ -218,14 +230,14 @@ public class B_Enemy : B_UnitBase
     #endregion
 
     #region Animation Event
-    public override void StartAttack()
+    public override void OnStartAttack()
     {
-        base.StartAttack();
+        base.OnStartAttack();
     }
 
-    public override void EndAttack()
+    public override void OnEndAttack()
     {
-        base.EndAttack();
+        base.OnEndAttack();
     }
     #endregion
 

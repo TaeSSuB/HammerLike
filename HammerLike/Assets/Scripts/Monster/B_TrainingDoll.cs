@@ -7,7 +7,7 @@ public class TrainingDoll : B_Enemy
 
     protected override void OnTriggerEnter(Collider other)
     {
-        base.OnTriggerEnter(other);
+        //base.OnTriggerEnter(other);
 
         if (other.CompareTag("WeaponCollider") && UnitStatus.currentHP > 0)
         {
@@ -26,7 +26,7 @@ public class TrainingDoll : B_Enemy
                           .Append(transform.DORotateQuaternion(Quaternion.identity, 0.2f));
 
             //var chargeAmount = (player.UnitStatus as SO_PlayerStatus).chargeRate;
-            var chargeAmount = (float)(player.UnitStatus.atkDamage / player.AtkDamageOrigin);
+            var chargeAmount = (float)(player.UnitStatus.atkDamage / 10f); // player.AtkDamageOrigin
 
             // Take Damage and Knockback dir from player
             TakeDamage(hitDir, player.UnitStatus.atkDamage, player.UnitStatus.knockbackPower * chargeAmount, false);
@@ -35,7 +35,7 @@ public class TrainingDoll : B_Enemy
             B_VFXPoolManager.Instance.PlayVFX(VFXName.Hit, vfxPos);
 
             // Audio handling
-            if (unitStatus.currentHP > 0)
+            if (UnitStatus.currentHP > 0)
             {
                 B_AudioManager.Instance.PlaySound(AudioCategory.SFX, AudioTag.Battle);
             }

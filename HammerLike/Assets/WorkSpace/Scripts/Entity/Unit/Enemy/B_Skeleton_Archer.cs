@@ -23,6 +23,8 @@ public class B_Skeleton_Archer : B_Enemy
     {
         base.Dead(isSelf);
 
+        B_AudioManager.Instance.PlaySound("Skeleton_Dead", AudioCategory.SFX);
+
         // 스켈레톤 유닛은 Dead 시 puppet 분리
         // Temp. 임시로 플레이어 위치 기반 분리
         partsKnockBack.DisconnectMusclesRecursive(this, puppet, GameManager.Instance.Player.transform.position);
@@ -35,9 +37,9 @@ public class B_Skeleton_Archer : B_Enemy
         projectile.GetComponent<B_Projectile>().projectileDamage = UnitStatus.atkDamage;
     }
     
-    public override void EndAttack()
+    public override void OnEndAttack()
     {
-        base.EndAttack();
+        base.OnEndAttack();
         Shot();
     }
 

@@ -34,9 +34,9 @@ public class B_Slime : B_Enemy
         StartCoroutine(CoSlimeAttack());
     }
 
-    public override void StartAttack()
+    public override void OnStartAttack()
     {
-        base.StartAttack();
+        base.OnStartAttack();
         
         //col.enabled = false;
         weaponCollider.enabled = true;
@@ -46,9 +46,9 @@ public class B_Slime : B_Enemy
         B_AudioManager.Instance.PlaySound("Attack_Slime", AudioCategory.SFX);
     }
 
-    public override void EndAttack()
+    public override void OnEndAttack()
     {
-        base.EndAttack();
+        base.OnEndAttack();
 
         col.enabled = true;
         weaponCollider.enabled = false;
@@ -84,7 +84,7 @@ public class B_Slime : B_Enemy
 
         if(AIStateManager.CurrentStateType == AIStateType.DEAD || AIStateManager.CurrentStateType == AIStateType.HIT)
         {
-            unitStatus.currentAttackCooltime = unitStatus.maxAttackCooltime;
+            UnitStatus.currentAttackCooltime = UnitStatus.maxAttackCooltime;
         
             weaponCollider.enabled = false;
 
@@ -92,7 +92,7 @@ public class B_Slime : B_Enemy
         }
 
         // 공격 시작
-        StartAttack();
+        OnStartAttack();
 
         // Rigidbody에 초기 속도 적용
         Rigid.velocity = dir * Vx + Vector3.up * Vy;
@@ -103,14 +103,14 @@ public class B_Slime : B_Enemy
             yield return null;
         }
 
-        unitStatus.currentAttackCooltime = unitStatus.maxAttackCooltime;
+        UnitStatus.currentAttackCooltime = UnitStatus.maxAttackCooltime;
         
         weaponCollider.enabled = false;
 
         yield return new WaitForSeconds(delayTime);
 
         // 공격 종료
-        EndAttack();
+        OnEndAttack();
     }
 
     IEnumerator CoSlimeDead()

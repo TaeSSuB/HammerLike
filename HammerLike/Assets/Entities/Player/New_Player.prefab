@@ -1967,7 +1967,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d3c7810508c534daf67b3eb220ca2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshObj: {fileID: 0}
+  meshObj: {fileID: 1664669462386473587}
   col: {fileID: 1573497740668637135}
   rigid: {fileID: 915088432224291653}
   isInvincible: 0
@@ -1979,16 +1979,15 @@ MonoBehaviour:
     m_Bits: 2147483648
   chargeVFXObj: {fileID: 749713000050730778}
   minChargeMoveRate: 0.1
-  weaponObj: {fileID: 3413249456866697398, guid: c3f32ee94b7a04349a4a7880ad979eea,
-    type: 3}
+  weaponObj: {fileID: 6234814406206314052}
   weaponTR: {fileID: 2818622505626584306}
   weaponData: {fileID: 11400000, guid: e0492f0a8febfa74c9a0aeb035ac796c, type: 2}
   weaponCollider: {fileID: 7924932067787915456}
   weaponOrbit: {fileID: 3270109978748935104}
-  minAttackRotAmount: 15
+  minAttackRotAmount: 45
   rotateType: 2
   rotSpeed: 30
-  atkRotSpeed: 360
+  atkRotSpeed: 720
   rotDeadZone: 1
   sceneLoader: {fileID: 0}
   interactionRange: 2
@@ -2525,8 +2524,6 @@ GameObject:
   - component: {fileID: 1553246462872740025}
   - component: {fileID: 6858167413615219453}
   - component: {fileID: 6210715206858013252}
-  - component: {fileID: 2210977039168895221}
-  - component: {fileID: 8318593110685970732}
   m_Layer: 9
   m_Name: Test_Hammer
   m_TagString: Untagged
@@ -2652,36 +2649,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2210977039168895221
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7489930189567367767}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd354a6bd2cb7ba448e09456d06d58f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  vfxObj: {fileID: 749713000050730778}
-  meshRenderer: {fileID: 0}
-  weaponTrailMat: {fileID: 0}
---- !u!114 &8318593110685970732
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7489930189567367767}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd354a6bd2cb7ba448e09456d06d58f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  vfxObj: {fileID: 749713000050730778}
-  meshRenderer: {fileID: 0}
-  weaponTrailMat: {fileID: 0}
 --- !u!1 &7917835654571325853
 GameObject:
   m_ObjectHideFlags: 0
@@ -3154,6 +3121,12 @@ PrefabInstance:
 --- !u!4 &2918083731763175795 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2446888682497560212, guid: ee0968d4c30e6e1428dbb643222d8683,
+    type: 3}
+  m_PrefabInstance: {fileID: 687368470427856871}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6234814406206314052 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6848997911658609059, guid: ee0968d4c30e6e1428dbb643222d8683,
     type: 3}
   m_PrefabInstance: {fileID: 687368470427856871}
   m_PrefabAsset: {fileID: 0}
@@ -3660,6 +3633,12 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 3792291875460821095}
   m_SourcePrefab: {fileID: 100100000, guid: d1c975f0863c73d408593b944a60c967, type: 3}
+--- !u!1 &1664669462386473587 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -1881750641321871088, guid: d1c975f0863c73d408593b944a60c967,
+    type: 3}
+  m_PrefabInstance: {fileID: 8284571404907119459}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2818622505626584306 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -3033886898434979951, guid: d1c975f0863c73d408593b944a60c967,

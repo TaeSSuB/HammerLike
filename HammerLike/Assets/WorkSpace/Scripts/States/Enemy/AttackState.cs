@@ -8,6 +8,8 @@ public class AttackState : IAIState
 {
     private B_UnitBase unitBase;
 
+    private Vector3 playerPos;
+
     public AttackState(B_UnitBase unitBase)
     {
         this.unitBase = unitBase;
@@ -16,8 +18,9 @@ public class AttackState : IAIState
     public void OnEnter()
     {
         //Debug.Log("AttackState OnEnter");
+        playerPos = GameManager.Instance.Player.transform.position;
 
-        var xzPlayerPos = new Vector3(GameManager.Instance.Player.transform.position.x, unitBase.transform.position.y, GameManager.Instance.Player.transform.position.z);
+        var xzPlayerPos = new Vector3(playerPos.x, unitBase.transform.position.y, playerPos.z);
         unitBase.transform.LookAt(xzPlayerPos);
     }
 
@@ -51,6 +54,7 @@ public class AttackState : IAIState
             unitBase.Anim.SetTrigger("tAttack");
         }
     }
+
 
 
 }
