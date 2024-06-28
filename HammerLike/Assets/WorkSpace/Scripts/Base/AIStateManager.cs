@@ -55,11 +55,11 @@ public class AIStateManager : MonoBehaviour
 
     public void ForceIdle(bool forceIdle)
     {
-        /*isIdleForced = forceIdle;
+        isIdleForced = forceIdle;
         if (isIdleForced)
         {
             SetState(AIStateType.IDLE);
-        }*/
+        }
     }
 
     void Update()

@@ -69,7 +69,7 @@ public class LoadingSceneController : MonoBehaviour
         while (!op.isDone)
         {
             yield return null;
-            if (op.progress < 0.9f && !isGenerationComplete)
+            if (op.progress < 0.9f )
             {
                 progressBar.value = op.progress;
             }

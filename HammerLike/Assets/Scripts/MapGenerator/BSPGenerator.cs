@@ -47,9 +47,12 @@ public class BSPGenerator : MonoBehaviour
 
     BSPNode startRoomNode = null;
     BSPNode bossRoomNode = null;
-
+    [Header("Minimap")]
+    [SerializeField] private GameObject miniMapGeneratorPrefab;
+    private MiniMap miniMapGenerator;
     [SerializeField] private NavMeshSurface navMesh;
     public event System.Action OnSuccessGenerate;
+
     void Start()
     {
         tileSize = GetPrefabSize(verticalTilePrefab);
@@ -57,6 +60,12 @@ public class BSPGenerator : MonoBehaviour
 
         roomConnections = new Dictionary<BSPNode, List<BSPNode>>();
         GenerateBSPDungeon();
+
+        if (miniMapGeneratorPrefab != null)
+        {
+            GameObject miniMapObj = Instantiate(miniMapGeneratorPrefab, Vector3.zero, Quaternion.identity);
+            miniMapGenerator = miniMapObj.GetComponent<MiniMap>();
+        }
     }
 
     private Vector3 GetPrefabSize(GameObject prefab)
@@ -132,6 +141,12 @@ public class BSPGenerator : MonoBehaviour
         }
 
         OnSuccessGenerate?.Invoke();
+
+        List<BSPNode> leafNodes = GetLeafNodes(root);
+        if (miniMapGenerator != null)
+        {
+            miniMapGenerator.GenerateMiniMap(leafNodes);
+        }
     }
 
     void ReplaceAllObjects()

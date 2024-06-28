@@ -109,7 +109,7 @@ public class RoomPrefab : MonoBehaviour
         {
             foreach (Transform monster in monsterParent.transform)
             {
-                SetIdleForcedRecursive(monster, forceIdle);
+                  SetIdleForcedRecursive(monster, forceIdle);
             }
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using NuelLib;
+using HutongGames.PlayMaker.Actions;
 
 /// <summary>
 /// GameManager : 게임 매니저 클래스 (Singleton MonoBehavior)
@@ -37,6 +38,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     private GameObject devModeTextObj;
     private GameObject resetTextObj;
     [SerializeField] private TextMeshProUGUI Temptext;
+
+    private Coroutine slowMotionCoroutine;
+    private bool isSlowMotionActive = false;
 
     public B_Player Player { get => player; }
     public void SetPlayer(B_Player inPlayer)
@@ -112,7 +116,13 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         if (Temptext != null)
         {
             Temptext.text = Time.timeScale.ToString();
+            
         }
+        if(Input.GetKeyDown(KeyCode.J))
+        {
+            SlowMotion(systemSettings.SlowMotionTimeScale, systemSettings.SlowMotionDuration);
+        }
+      
     }
     #endregion
 
@@ -152,7 +162,13 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     public void SlowMotion(float inTimeScale, float inDuration)
     {
-        StartCoroutine(CoSlowMotion(inTimeScale, inDuration));
+        // 명진. 슬로우 모션이 진행중일 때 또 슬로우모션이 발생하면(몬스터가 피격중에 다른 몬스터가 피격되면 다시 처음부터 슬로우모션 재진행)
+        /*if (slowMotionCoroutine != null)
+        {
+            StopCoroutine(slowMotionCoroutine);
+            isSlowMotionActive = false;
+        }
+        slowMotionCoroutine = */StartCoroutine(CoSlowMotion(inTimeScale, inDuration));
     }
 
     public IEnumerator CoSlowMotion(float inTimeScale, float inDuration)
@@ -172,7 +188,14 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
         SetTimeScale(originTimeScale);
 
-        /*float originTimeScale = Time.timeScale;
+        /*while (isSlowMotionActive)
+        {
+            yield return null;
+        }
+
+        isSlowMotionActive = true;
+
+        float originTimeScale = 1f;
 
         // 타임 스케일을 inTimeScale로 즉시 설정
         SetTimeScale(inTimeScale);
@@ -189,7 +212,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         }
 
         // 최종적으로 타임 스케일을 원래 값으로 설정
-        SetTimeScale(originTimeScale);*/
+        SetTimeScale(originTimeScale);
+        isSlowMotionActive = false;
+        slowMotionCoroutine = null;*/
     }
 
     #endregion
